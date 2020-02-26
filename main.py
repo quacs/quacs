@@ -22,6 +22,19 @@ def cleanOutAbbr(text):
     text = re.sub('<\/abbr>','', text)
     return text
 
+def timeToMilitary(time, useStartTime):
+    if "TBA" in time:
+        return -1
+    if useStartTime:
+        time = time.split('-')[0]
+    else:
+        time = time.split('-')[1]
+
+    offset = 0
+    if("pm" in time and '12:' not in time):
+        offset = 1200
+    return int("".join(time.strip().split(":"))[:4])+offset
+
 
 payload = f'sid={os.getenv("RIN")}&PIN={os.getenv("PASSWORD")}'
 headers = {
@@ -66,23 +79,16 @@ with requests.Session() as s:
                     "code": "",
                     "courses": []
                 })
-                # current_department = getContent(th[0])
-                # current_courses = []
-                # data['departments'].append({
-                #     "name": current_department,
-                #     "code": "",
-                #     "courses": []
-                # })
         else:
             td = row.findAll("td")
 
             timeslot_data = {
-                "Days":getContent(td[8]).split(),
-                "Time-start":getContentFromChild(td[9], 'abbr'),
-                "Time-end":getContentFromChild(td[9], 'abbr'),
+                "Days":list(getContent(td[8])),
+                "Time-start":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
+                "Time-end":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
                 "Instructor":cleanOutAbbr(getContent(td[19])),
-                "Date-start":getContentFromChild(td[20], 'abbr'),
-                "Date-end":getContentFromChild(td[20], 'abbr'),
+                "Date-start":getContentFromChild(td[20], 'abbr').split('-')[0],
+                "Date-end":getContentFromChild(td[20], 'abbr').split('-')[1],
                 "Location":getContentFromChild(td[21], 'abbr')
             }
 
@@ -91,6 +97,11 @@ with requests.Session() as s:
                 continue;
 
 
+            credit_min = float(getContent(td[6]).split('-')[0])
+            credit_max = credit_min
+            if len(getContent(td[6]).split('-')) > 1:
+                credit_max = float(getContent(td[6]).split('-')[1])
+
             section_data = {
                 "Select":getContentFromChild(td[0], 'abbr'),
                 "CRN":int(getContentFromChild(td[1], 'a')),
@@ -98,7 +109,8 @@ with requests.Session() as s:
                 "Crse":int(getContent(td[3])),
                 "Sec":getContent(td[4]),
                 "Cmp":getContent(td[5]),
-                "Cred":float(getContent(td[6]).split('-')[0]),
+                "Cred-min":credit_min,
+                "Cred-max":credit_max,
                 "Title":getContent(td[7]).title(),
                 "Cap":int(getContent(td[10])),
                 "Act":int(getContent(td[11])),
@@ -125,7 +137,8 @@ with requests.Session() as s:
                 "Crse":int(getContent(td[3])),
                 "Sections":[section_data]
             })
-            if int(getContent(td[3])):
-                data['departments'][-1]['code'] = int(getContent(td[3]))
+
+            if len(getContent(td[2])) > 0:
+                data['departments'][-1]['code'] = getContent(td[2])
 
     print(json.dumps(data, indent=4, sort_keys=True))
