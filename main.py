@@ -3,17 +3,24 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import json
-
+import re
 
 load_dotenv()
 
 
 
 def getContent(element):
-    return element.encode_contents().decode().strip().replace('&amp;', '&')
+    return ' '.join(element.encode_contents().decode().strip().replace('&amp;', '&').split())
 
 def getContentFromChild(element, childType):
-    return getContent(element.findAll(childType)[0])
+    if len(element.findAll(childType)) > 0:
+        element = element.findAll(childType)[0]
+    return getContent(element)
+
+def cleanOutAbbr(text):
+    text = re.sub('<abbr.*?>','', text)
+    text = re.sub('<\/abbr>','', text)
+    return text
 
 
 payload = f'sid={os.getenv("RIN")}&PIN={os.getenv("PASSWORD")}'
@@ -47,15 +54,15 @@ with requests.Session() as s:
     current_code = None
     current_courses = None
 
-    # current_class = None
-    # current_sections = None
+    last_subject = None
+    last_course_code = None
     for row in rows:
         th = row.findAll("th")
         if len(th) != 0:
             if 'ddtitle' in th[0].attrs['class']:
                 # if(current_department):
                 data['departments'].append({
-                    "name": getContent(th[0]),
+                    "name": getContent(th[0]).title(),
                     "code": "",
                     "courses": []
                 })
@@ -71,16 +78,16 @@ with requests.Session() as s:
 
             timeslot_data = {
                 "Days":getContent(td[8]).split(),
-                "Time-start":getContent(td[9]),
-                "Time-end":getContent(td[9]),
-                "Instructor":getContent(td[19]),
-                "Date-start":getContent(td[20]),
-                "Date-end":getContent(td[20]),
-                "Location":getContent(td[21])
+                "Time-start":getContentFromChild(td[9], 'abbr'),
+                "Time-end":getContentFromChild(td[9], 'abbr'),
+                "Instructor":cleanOutAbbr(getContent(td[19])),
+                "Date-start":getContentFromChild(td[20], 'abbr'),
+                "Date-end":getContentFromChild(td[20], 'abbr'),
+                "Location":getContentFromChild(td[21], 'abbr')
             }
 
             if len(getContent(td[0])) == 0:
-                data['departments'][-1]['courses'][-1]['Sections']['timeslots'].append(timeslot_data)
+                data['departments'][-1]['courses'][-1]['Sections'][-1]['timeslots'].append(timeslot_data)
                 continue;
 
 
@@ -92,7 +99,7 @@ with requests.Session() as s:
                 "Sec":getContent(td[4]),
                 "Cmp":getContent(td[5]),
                 "Cred":float(getContent(td[6]).split('-')[0]),
-                "Title":getContent(td[7]),
+                "Title":getContent(td[7]).title(),
                 "Cap":int(getContent(td[10])),
                 "Act":int(getContent(td[11])),
                 "Rem":int(getContent(td[12])),
@@ -106,11 +113,19 @@ with requests.Session() as s:
                 "timeslots":[timeslot_data]
             }
 
+            if section_data['Subj'] == last_subject and section_data['Crse'] == last_course_code:
+                data['departments'][-1]['courses'][-1]['Sections'].append(section_data)
+                continue;
+
+            last_subject = getContent(td[2])
+            last_course_code = int(getContent(td[3]))
             data['departments'][-1]['courses'].append({
                 "Title":getContent(td[7]),
                 "Subj":getContent(td[2]),
                 "Crse":int(getContent(td[3])),
-                "Sections":section_data
+                "Sections":[section_data]
             })
+            if int(getContent(td[3])):
+                data['departments'][-1]['code'] = int(getContent(td[3]))
 
     print(json.dumps(data, indent=4, sort_keys=True))
