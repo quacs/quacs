@@ -84,11 +84,11 @@ with requests.Session() as s:
 
             timeslot_data = {
                 "Days":list(getContent(td[8])),
-                "Time-start":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
-                "Time-end":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
+                "Time_start":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
+                "Time_end":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
                 "Instructor":cleanOutAbbr(getContent(td[19])),
-                "Date-start":getContentFromChild(td[20], 'abbr').split('-')[0],
-                "Date-end":getContentFromChild(td[20], 'abbr').split('-')[1],
+                "Date_start":getContentFromChild(td[20], 'abbr').split('-')[0],
+                "Date_end":getContentFromChild(td[20], 'abbr').split('-')[1],
                 "Location":getContentFromChild(td[21], 'abbr')
             }
 
@@ -109,18 +109,18 @@ with requests.Session() as s:
                 "Crse":int(getContent(td[3])),
                 "Sec":getContent(td[4]),
                 "Cmp":getContent(td[5]),
-                "Cred-min":credit_min,
-                "Cred-max":credit_max,
+                "Cred_min":credit_min,
+                "Cred_max":credit_max,
                 "Title":getContent(td[7]).title(),
                 "Cap":int(getContent(td[10])),
                 "Act":int(getContent(td[11])),
                 "Rem":int(getContent(td[12])),
-                "WL Cap":int(getContent(td[13])),
-                "WL Act":int(getContent(td[14])),
-                "WL Rem":int(getContent(td[15])),
-                "XL Cap":int(getContent(td[16])),
-                "XL Act":int(getContent(td[17])),
-                "XL Rem":int(getContent(td[18])),
+                "WL_Cap":int(getContent(td[13])),
+                "WL_Act":int(getContent(td[14])),
+                "WL_Rem":int(getContent(td[15])),
+                "XL_Cap":int(getContent(td[16])),
+                "XL_Act":int(getContent(td[17])),
+                "XL_Rem":int(getContent(td[18])),
                 "Attribute":getContent(td[22]),
                 "timeslots":[timeslot_data]
             }
