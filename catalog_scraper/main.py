@@ -33,28 +33,10 @@ def scrapePage(url, data):
 
         description = data_soup.find('hr')
         if description:
-            data[key]['description'] = ""
-            while(True):
-                print(data[key]['description'])
-                partial_desc = ""
-                description = description.nextSibling
-                print(description)
-                if description == "":
-                    break;
-                strong = description.find('strong')
-                if strong and strong != -1:
-                    em = strong.find('em')
-                    if em and em != -1:
-                        partial_desc = em.text
-                    else:
-                        partial_desc = em.text
-                else:
-                    partial_desc = description.strip()
-
-                data[key]['description'] += " "+partial_desc
-
-            data[key]['description'] = data[key]['description'].strip()
+            data[key]['description'] = description.nextSibling.strip()
             print(data[key]['description'])
+        else:
+            print("error")
 
         when_offered = data_soup.find('strong', text='When Offered:')
         if when_offered:
@@ -70,12 +52,13 @@ def scrapePage(url, data):
 
         credit_hours = data_soup.find('em', text='Credit Hours:')
         if credit_hours:
+            print(credit_hours.nextSibling.nextSibling.text)
             credit_hours = credit_hours.nextSibling.nextSibling.text.split("to")
             if len(credit_hours) > 1:
                 data[key]['credit_hours_max'] = int(credit_hours[1])
             data[key]['credit_hours_min'] = int(credit_hours[0])
 
-        pprint.pprint(data)
+        # pprint.pprint(data)
 
     next_page = final_row.findChildren('strong')[0].findNext('a', recursive=False)
     if next_page['href'] != '#':
