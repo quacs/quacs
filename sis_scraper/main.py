@@ -51,7 +51,7 @@ with requests.Session() as s:
 
 
     url = "https://sis.rpi.edu/rss/bwskfcls.P_GetCrse_Advanced"
-    payload = 'rsts=dummy&crn=dummy&term_in=202005&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=ADMN&sel_subj=ARCH&sel_subj=ARTS&sel_subj=ASTR&sel_subj=BCBP&sel_subj=BIOL&sel_subj=BMED&sel_subj=CHME&sel_subj=CHEM&sel_subj=CIVL&sel_subj=COGS&sel_subj=COMM&sel_subj=CSCI&sel_subj=ENGR&sel_subj=ERTH&sel_subj=ECON&sel_subj=ECSE&sel_subj=ENVE&sel_subj=GSAS&sel_subj=ISYE&sel_subj=ISCI&sel_subj=LANG&sel_subj=LGHT&sel_subj=LITR&sel_subj=MGMT&sel_subj=MTLE&sel_subj=MATH&sel_subj=MANE&sel_subj=PHIL&sel_subj=PHYS&sel_subj=PSYC&sel_subj=STSH&sel_subj=STSS&sel_subj=WRIT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
+    payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=ADMN&sel_subj=ARCH&sel_subj=ARTS&sel_subj=ASTR&sel_subj=BCBP&sel_subj=BIOL&sel_subj=BMED&sel_subj=CHME&sel_subj=CHEM&sel_subj=CIVL&sel_subj=COGS&sel_subj=COMM&sel_subj=CSCI&sel_subj=ENGR&sel_subj=ERTH&sel_subj=ECON&sel_subj=ECSE&sel_subj=ENVE&sel_subj=GSAS&sel_subj=ISYE&sel_subj=ISCI&sel_subj=LANG&sel_subj=LGHT&sel_subj=LITR&sel_subj=MGMT&sel_subj=MTLE&sel_subj=MATH&sel_subj=MANE&sel_subj=PHIL&sel_subj=PHYS&sel_subj=PSYC&sel_subj=STSH&sel_subj=STSS&sel_subj=WRIT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
     headers = {
     }
     response = s.request("POST", url, headers=headers, data = payload)
@@ -81,16 +81,26 @@ with requests.Session() as s:
                 })
         else:
             td = row.findAll("td")
-
-            timeslot_data = {
-                "Days":list(getContent(td[8])),
-                "Time_start":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
-                "Time_end":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
-                "Instructor":cleanOutAbbr(getContent(td[19])),
-                "Date_start":getContentFromChild(td[20], 'abbr').split('-')[0],
-                "Date_end":getContentFromChild(td[20], 'abbr').split('-')[1],
-                "Location":getContentFromChild(td[21], 'abbr')
-            }
+            if "TBA" not in getContent(td[8]):
+                timeslot_data = {
+                    "Days":list(getContent(td[8])),
+                    "Time_start":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
+                    "Time_end":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
+                    "Instructor":cleanOutAbbr(getContent(td[19])),
+                    "Date_start":getContentFromChild(td[20], 'abbr').split('-')[0],
+                    "Date_end":getContentFromChild(td[20], 'abbr').split('-')[1],
+                    "Location":getContentFromChild(td[21], 'abbr')
+                }
+            else:
+                timeslot_data = {
+                    "Date_end": "",
+                    "Date_start": "",
+                    "Days": [],
+                    "Instructor": "",
+                    "Location": "",
+                    "Time_end": -1,
+                    "Time_start": -1
+                }
 
             if len(getContent(td[0])) == 0:
                 data['departments'][-1]['courses'][-1]['Sections'][-1]['timeslots'].append(timeslot_data)
@@ -118,10 +128,10 @@ with requests.Session() as s:
                 "WL_Cap":int(getContent(td[13])),
                 "WL_Act":int(getContent(td[14])),
                 "WL_Rem":int(getContent(td[15])),
-                "XL_Cap":int(getContent(td[16])),
-                "XL_Act":int(getContent(td[17])),
-                "XL_Rem":int(getContent(td[18])),
-                "Attribute":getContent(td[22]),
+                "XL_Cap":getContent(td[16]),
+                "XL_Act":getContent(td[17]),
+                "XL_Rem":getContent(td[18]),
+                "Attribute":getContent(td[22]) if 22 < len(td) else "",
                 "timeslots":[timeslot_data]
             }
 
