@@ -1,5 +1,9 @@
 .env
 
+transcript_scraper/*.html
+!transcript_scraper/index.html
+transcript_scraper/*_files/*
+
 *.json
 
 # Byte-compiled / optimized / DLL files
