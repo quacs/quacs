@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>QuACS</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://npmcdn.com/vue-router/dist/vue-router.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
   </head>
   <body>
     <div id="app">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#" v-on:click="page = 'test'" >Navbar</a>
+        <router-link class="navbar-brand" to="/">Quacs</router-link>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -19,7 +21,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              <router-link class="nav-link" to="/">Home</router-link>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Link</a>
@@ -46,45 +48,85 @@
         </div>
       </nav>
       <div class="container-fluid" style="margin-top:1rem">
-        <div class="row">
-          <div class="col-md-2"></div>
 
-          <!-- Homepage -->
-          <template v-if="page == 'homepage'">
-            <div class="col-md-4" style="background:red; min-height:100px">
-              <div v-for="department in courses">
-                {{department.name}}
-              </div>
-            </div>
-            <div class="col-md-4" style="background:blue">
+          <router-view></router-view>
 
-            </div>
-          </template>
-          <!-- End Homepate -->
-
-          <div class="col-md-2"></div>
         </div>
       </div>
     </div>
 
     <script type="text/javascript">
+
+    const Homepage = { template: `
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+          <div v-for="department in this.$parent.courses.departments">
+            <router-link class="nav-link" :to="'/department/'+department.code">{{department.name}}</router-link>
+          </div>
+        </div>
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      `
+    }
+    const Department = {
+      data: function () {
+        return {
+          count: 0
+        }
+      },
+      computed: {
+        department: function () {
+          if(Object.keys(this.$parent.courses).length === 0){
+            return {};
+          }
+          for(let i=0;i<this.$parent.courses.departments.length;i++){
+            if(this.$parent.courses.departments[i].code == this.$route.params.code){
+              return this.$parent.courses.departments[i];
+            }
+          }
+        }
+      },
+      template: `
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+          <h1>{{$route.params.code}}</h1>
+          <div v-for="course in department.courses">
+            {{course.title}}
+          </div>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      `
+    }
+
+
       var app = new Vue({
         el: '#app',
+        router: new VueRouter({
+          routes: [
+            { path: '/', component: Homepage },
+            { path: '/department/:code', component: Department }
+          ]
+        }),
         data: {
           page: "homepage",
           courses: {},
           catalog: {},
-        },
-        mounted () {
-          $.getJSON('./data/courses.json', function (json) {
-              app.courses = json.departments;
-              console.log("courses json parsed")
-          });
-          $.getJSON('./data/catalog.json', function (json) {
-              app.catalog = json;
-          });
         }
-      })
+      }).$mount('#app')
+      $.getJSON('./data/courses.json', function (json) {
+          app.courses = json;
+          console.log("done loading courses")
+      });
+      $.getJSON('./data/catalog.json', function (json) {
+          app.catalog = json;
+      });
     </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
   </body>
 </html>

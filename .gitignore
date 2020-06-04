@@ -1,3 +1,6 @@
+*.msgpack
+
+
 # Logs
 logs
 *.log
