@@ -1,0 +1,54 @@
+/* Extra small devices (portrait phones, less than 576px)
+No media query since this is the default in Bootstrap */
+
+.loading {
+  display: none;
+}
+
+#loading-icon {
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 25%;
+}
+
+.week-day-time {
+  font-size: 10pt;
+  padding: 1px!important;
+}
+
+.list-group {
+  border-radius: 0px;
+}
+
+.list-group-item, .card-header {
+  padding: 10px;
+}
+
+.card-body {
+  padding: 0px;
+}
+
+.card-columns {
+  column-count: 1;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .card-columns {
+    column-count: 2;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+}
