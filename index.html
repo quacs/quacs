@@ -94,15 +94,15 @@
           let min = (time%100).toString()
           let output = ""
           if(hour > 12){
-            output = ('0' + (hour-12)).slice(-2);
+            output = hour-12;
           }else{
-            output = ('0' + hour).slice(-2);
+            output = hour;
           }
           output+=":"+('0' + min).slice(-2);
           if(hour > 11){
-            output+="pm";
+            output+="p";
           }else{
-            output+="am";
+            output+="a";
           }
           return output;
         },
@@ -132,6 +132,7 @@
       template:`
       <div class="card">
         <div class="card-header" v-on:click="expanded=!expanded">
+          <i class="fas fa-caret-right open_close_icon" :class="{opened_icon:expanded}"></i>
           <span class="font-weight-bold">{{course.subj}}-{{course.crse}}: {{course.title}}</span>
           <!--TODO format credit nicely using min and max only showing what is needed -->
           {{course.sections[0].cred_min}} credit<template v-if="course.sections[0].cred_min!=1">s</template>
@@ -139,7 +140,7 @@
           {{getDescription(course.subj, course.crse)}}
         </div>
         <div class="card-body course-card-body" :class="{expanded:expanded}">
-          <ul class="list-group">
+          <ul class="list-group mobile-only">
             <li v-for="section in course.sections" v-on:click="toggleSelection(section.crn, section.conflicts)"  class="list-group-item" :class="{selected:selected.courses[section.crn], conflict:conflict_list[section.crn]>0}">
               <span class="font-weight-bold">{{section.sec}}</span>
               {{section.crn}}
@@ -157,6 +158,31 @@
               </span>
             </li>
           </ul>
+          <table class="desktop-only table table-bordered" style="margin-bottom:0px">
+            <thead>
+              <tr>
+                <th style="width:100%">Info</th>
+                <th v-for="day in days" class="week-day">{{day}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="section in course.sections" v-on:click="toggleSelection(section.crn, section.conflicts)" :class="{selected:selected.courses[section.crn], conflict:conflict_list[section.crn]>0}">
+                <td class="info-cell">
+                  <span class="font-weight-bold">{{section.sec}}</span>-{{section.crn}}
+                  {{section.instructor}}
+                  {{section.timeslots[0].date_start}}-{{section.timeslots[0].date_end}}
+                  {{section.timeslots[0].instructor}}
+                </td>
+                <td v-for="day in days" class="time-cell">
+                  <template v-if="getDay(section.timeslots, day)">
+                    {{formatTime(getDay(section.timeslots, day).time_start)}}-
+                    <br>
+                    {{formatTime(getDay(section.timeslots, day).time_end)}}
+                  </template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
       `
