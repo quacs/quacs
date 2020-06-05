@@ -19,12 +19,11 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"><img src="media/quacs_40.png" alt="QuACS" style="height:40px"></router-link>
         <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <input class="form-control mr-sm-2" type="search" placeholder="COMING SOON Search" aria-label="COMING SOON: Search" disabled>
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
       </nav>
       <div class="container-fluid" style="margin-top:1rem">
-
           <div><i id="loading-icon" class="fas fa-spinner fa-spin fa-4x fa-fw"></i></div>
           <div class="loading">
             <router-view></router-view>
@@ -37,45 +36,43 @@
     <script type="text/javascript">
     "use strict";
 
+    // TODO switch this to follow the same row/col format as courses page
     const Homepage = { template: `
       <div class="row">
         <div class="col-md-2"></div>
-        <div class="col-md-4">
+        <div class="col-md-8">
+          <h3>
+            Join the QuACS development discord server!
+            <a href="https://discord.gg/3xNxfBy">https://discord.gg/3xNxfBy</a>
+          </h3>
+          <br><br>
           <div v-for="department in this.$parent.courses.departments">
-            <router-link class="nav-link" :to="'/department/'+department.code">{{department.name}}</router-link>
+            <router-link class="nav-link" :to="'/department/'+department.code">{{department.code}}: {{department.name}}</router-link>
           </div>
-        </div>
-        <div class="col-md-4">
-
         </div>
         <div class="col-md-2"></div>
       </div>
       `
     }
-    const Department = {
+
+    Vue.component('course-card', {
+      props: {
+        course: Object,
+        catalog: Object,
+        selected: Object,
+        conflict_list: Object,
+      },
       data: function () {
         return {
           days: ['M','T', 'W', 'R', 'F'],
+          expanded: false,
         }
-      },
-      computed: {
-        department: function () {
-          //TODO switch scraper to dictionary where department code is the key
-          if(Object.keys(this.$parent.courses).length === 0){
-            return {};
-          }
-          for(let i=0;i<this.$parent.courses.departments.length;i++){
-            if(this.$parent.courses.departments[i].code == this.$route.params.code){
-              return this.$parent.courses.departments[i];
-            }
-          }
-        },
       },
       methods: {
         getDescription: function(subject, code){
           let output = ""
-          if(subject+'-'+code in app.catalog){
-            output+=app.catalog[subject+'-'+code].description
+          if(subject+'-'+code in this.catalog){
+            output+=this.catalog[subject+'-'+code].description
             // output+=' ' + app.catalog[subject+'-'+code].pre_req
           }
           return output
@@ -111,25 +108,78 @@
         },
         toggleSelection(crn, conflicts, state=null) {
           if(state !== null){
-            Vue.set(this.$parent.selected.courses, crn, state);
+            Vue.set(this.selected.courses, crn, state);
           }else{
-            if(typeof this.$parent.selected.courses[crn] === 'undefined'){
-              Vue.set(this.$parent.selected.courses, crn, true);
+            if(typeof this.selected.courses[crn] === 'undefined'){
+              Vue.set(this.selected.courses, crn, true);
             }else{
-              Vue.set(this.$parent.selected.courses, crn, !this.$parent.selected.courses[crn]);
+              Vue.set(this.selected.courses, crn, !this.selected.courses[crn]);
             }
           }
           for(var conflict in conflicts){
-            if(this.$parent.selected.courses[crn]){
-              Vue.set(this.$parent.conflict_list, conflict, (this.$parent.conflict_list[conflict]+1) || 1);
+            if(this.selected.courses[crn]){
+              Vue.set(this.conflict_list, conflict, (this.conflict_list[conflict]+1) || 1);
             }else{
-              Vue.set(this.$parent.conflict_list, conflict, (this.$parent.conflict_list[conflict]-1) || 0);
+              Vue.set(this.conflict_list, conflict, (this.conflict_list[conflict]-1) || 0);
             }
 
           }
         },
         isSelected(crn){
-          return this.$parent.selected.courses[crn] === true ? 'selected':'';
+          return this.selected.courses[crn] === true ? 'selected':'';
+        },
+      },
+      template:`
+      <div class="card">
+        <div class="card-header" v-on:click="expanded=!expanded">
+          <span class="font-weight-bold">{{course.subj}}-{{course.crse}}: {{course.title}}</span>
+          <!--TODO format credit nicely using min and max only showing what is needed -->
+          {{course.sections[0].cred_min}} credit<template v-if="course.sections[0].cred_min!=1">s</template>
+          <br>
+          {{getDescription(course.subj, course.crse)}}
+        </div>
+        <div class="card-body course-card-body" :class="{expanded:expanded}">
+          <ul class="list-group">
+            <li v-for="section in course.sections" v-on:click="toggleSelection(section.crn, section.conflicts)"  class="list-group-item" :class="{selected:selected.courses[section.crn], conflict:conflict_list[section.crn]>0}">
+              <span class="font-weight-bold">{{section.sec}}</span>
+              {{section.crn}}
+              {{section.instructor}}
+              {{section.timeslots[0].date_start}}-{{section.timeslots[0].date_end}}
+              <br>
+              {{section.timeslots[0].instructor}}
+              <br>
+              <span class="week-day-time">
+                <template v-for="day in days">
+                  <template v-if="getDay(section.timeslots, day)">
+                    <span class="font-weight-bold">{{day}}:</span>{{formatTime(getDay(section.timeslots, day).time_start)}}-{{formatTime(getDay(section.timeslots, day).time_end)}}
+                  </template>
+                </template>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      `
+    })
+
+
+    const Department = {
+      data: function () {
+        return {
+          days: ['M','T', 'W', 'R', 'F'],
+        }
+      },
+      computed: {
+        department: function () {
+          //TODO switch scraper to dictionary where department code is the key
+          if(Object.keys(this.$parent.courses).length === 0){
+            return {};
+          }
+          for(let i=0;i<this.$parent.courses.departments.length;i++){
+            if(this.$parent.courses.departments[i].code == this.$route.params.code){
+              return this.$parent.courses.departments[i];
+            }
+          }
         },
       },
       template: `
@@ -138,32 +188,13 @@
         <div class="col-lg">
           <h1>{{department.code}}: {{department.name}}</h1>
           <div class="card-columns">
-            <div class="card" v-for="course in department.courses">
-              <div class="card-header">
-                <span class="font-weight-bold">{{course.title}} ({{course.subj}}-{{course.crse}})</span>
-                <br>
-                {{getDescription(course.subj, course.crse)}}
-              </div>
-              <div class="card-body">
-                <ul class="list-group">
-                  <li v-for="section in course.sections" v-on:click="toggleSelection(section.crn, section.conflicts)"  class="list-group-item" :class="{selected:$parent.selected.courses[section.crn], conflict:$parent.conflict_list[section.crn]>0}">
-                    <span class="font-weight-bold">{{section.sec}}</span>
-                    {{section.crn}}
-                    {{section.instructor}}
-                    {{section.timeslots[0].date_start}}-{{section.timeslots[0].date_end}}
-                    <br>
-                    {{section.timeslots[0].instructor}}
-                    <br>
-                    <span class="week-day-time">
-                      <template v-for="day in days">
-                        <template v-if="getDay(section.timeslots, day)">
-                          <span class="font-weight-bold">{{day}}:</span>{{formatTime(getDay(section.timeslots, day).time_start)}}-{{formatTime(getDay(section.timeslots, day).time_end)}}
-                        </template>
-                      </template>
-                    </span>
-                  </li>
-                </ul>
-              </div>
+            <div v-for="course in department.courses">
+              <course-card
+                v-bind:course="course"
+                v-bind:catalog="$parent.catalog"
+                v-bind:selected="$parent.selected"
+                v-bind:conflict_list="$parent.conflict_list"
+              />
             </div>
           </div>
         </div>
@@ -182,7 +213,6 @@
           ]
         }),
         data: {
-          page: "homepage",
           courses: {},
           catalog: {},
           version: '0.0.1',

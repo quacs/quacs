@@ -43,6 +43,17 @@ No media query since this is the default in Bootstrap */
   background: #9198f9;
 }
 
+/* TODO fix the 1px tall color showing when closed */
+.course-card-body {
+  max-height: 0px;
+  overflow:hidden;
+  transition: max-height 1s ease-in;
+}
+
+.expanded {
+  max-height: 9999px;
+}
+
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
@@ -51,7 +62,7 @@ No media query since this is the default in Bootstrap */
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   .card-columns {
-    column-count: 2;
+    column-count: 1;
   }
 }
 
