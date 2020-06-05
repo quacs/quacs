@@ -18,10 +18,11 @@
     <div id="app">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"><img src="media/quacs_40.png" alt="QuACS" style="height:40px"></router-link>
+        <router-link class="navbar-brand" to="/schedule">Schedule</router-link>
         <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="COMING SOON Search" aria-label="COMING SOON: Search" disabled>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
+            <input class="form-control mr-sm-2" type="search" placeholder="COMING SOON Search" aria-label="COMING SOON: Search" disabled>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
       </nav>
       <div class="container-fluid" style="margin-top:1rem">
           <div><i id="loading-icon" class="fas fa-spinner fa-spin fa-4x fa-fw"></i></div>
@@ -229,12 +230,66 @@
       `
     }
 
+    const Schedule = {
+      data:function () {
+        return {
+          keep_selected:{},
+        }
+      },
+      methods:{
+        selectedCourse: function(course){
+          if(this.keep_selected[course.subj+'-'+course.crse]){
+            return true;
+          }
+
+          for(let i=0;i<course.sections.length;i++){
+            if(this.$parent.selected.courses[course.sections[i].crn]){
+              this.keep_selected[course.sections[i].crn] = true;
+              Vue.set(this.keep_selected, course.subj+'-'+course.crse, true);
+              return true;
+            }
+          }
+          return false;
+        },
+        wereThereSelections: function(){
+          return Object.keys(this.keep_selected).length === 0;
+        }
+      },
+      template: `
+      <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg">
+          <div class="card-columns">
+            <template v-if="wereThereSelections()">
+              <h3>It looks like you have no selected any courses yet :(</h3>
+              <router-link class="navbar-brand" to="/">Click to slect a course</router-link>
+            </template>
+            <div v-for="department in this.$parent.courses.departments">
+              <div v-for="course in department.courses">
+                <template v-if="selectedCourse(course)">
+                  <course-card
+                    v-bind:course="course"
+                    v-bind:catalog="$parent.catalog"
+                    v-bind:selected="$parent.selected"
+                    v-bind:conflict_list="$parent.conflict_list"
+                  />
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-1"></div>
+      </div>
+      `
+    }
+
 
       var app = new Vue({
         el: '#app',
         router: new VueRouter({
           routes: [
             { path: '/', component: Homepage },
+            { path: '/schedule', component: Schedule },
             { path: '/department/:code', component: Department }
           ]
         }),
