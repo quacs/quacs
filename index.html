@@ -87,6 +87,9 @@
               }
             }
           }
+          todays_times.sort(function(a, b) {
+            return a.time_start - b.time_start;
+          });
           return todays_times;
         },
         formatTime: function(time) {
@@ -175,9 +178,8 @@
                 </td>
                 <td v-for="day in days" class="time-cell">
                   <template v-for="time in getDay(section.timeslots, day)">
-                    {{formatTime(time.time_start)}}-
+                    <nobr>{{formatTime(time.time_start)}}-{{formatTime(time.time_end)}}</nobr>
                     <br>
-                    {{formatTime(time.time_end)}}
                   </template>
                 </td>
               </tr>
