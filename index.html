@@ -79,16 +79,15 @@
           return output
         },
         getDay: function(timeslots, day){
-          //TODO this does not work when a class has more than one timeslot in the same day
-          //Switch the scraper to a dictionary with day as the key and an array of times that day
+          let todays_times = [];
           for(let i=0;i<timeslots.length;i++){
             for(let j=0;j<timeslots[i].days.length;j++){
               if(timeslots[i].days[j] === day){
-                return timeslots[i];
+                todays_times.push(timeslots[i]);
               }
             }
           }
-          return null;
+          return todays_times;
         },
         formatTime: function(time) {
           let hour = Math.floor(time/100)
@@ -152,8 +151,8 @@
               <br>
               <span class="week-day-time">
                 <template v-for="day in days">
-                  <template v-if="getDay(section.timeslots, day)">
-                    <span class="font-weight-bold">{{day}}:</span>{{formatTime(getDay(section.timeslots, day).time_start)}}-{{formatTime(getDay(section.timeslots, day).time_end)}}
+                  <template v-for="time in getDay(section.timeslots, day)">
+                    <span class="font-weight-bold">{{day}}:</span>{{formatTime(time.time_start)}}-{{formatTime(time.time_end)}}
                   </template>
                 </template>
               </span>
@@ -175,10 +174,10 @@
                   {{section.timeslots[0].instructor}}
                 </td>
                 <td v-for="day in days" class="time-cell">
-                  <template v-if="getDay(section.timeslots, day)">
-                    {{formatTime(getDay(section.timeslots, day).time_start)}}-
+                  <template v-for="time in getDay(section.timeslots, day)">
+                    {{formatTime(time.time_start)}}-
                     <br>
-                    {{formatTime(getDay(section.timeslots, day).time_end)}}
+                    {{formatTime(time.time_end)}}
                   </template>
                 </td>
               </tr>
