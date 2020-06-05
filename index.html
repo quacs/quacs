@@ -135,6 +135,28 @@
           }
           return output;
         },
+        toggleSelection(crn, conflicts, state=null) {
+          if(state !== null){
+            Vue.set(this.$parent.selected.courses, crn, state);
+          }else{
+            if(typeof this.$parent.selected.courses[crn] === 'undefined'){
+              Vue.set(this.$parent.selected.courses, crn, true);
+            }else{
+              Vue.set(this.$parent.selected.courses, crn, !this.$parent.selected.courses[crn]);
+            }
+          }
+          for(var conflict in conflicts){
+            if(this.$parent.selected.courses[crn]){
+              Vue.set(this.$parent.conflict_list, conflict, (this.$parent.conflict_list[conflict]+1) || 1);
+            }else{
+              Vue.set(this.$parent.conflict_list, conflict, (this.$parent.conflict_list[conflict]-1) || 0);
+            }
+
+          }
+        },
+        isSelected(crn){
+          return this.$parent.selected.courses[crn] === true ? 'selected':'';
+        },
       },
       template: `
       <div class="row">
@@ -150,7 +172,7 @@
               </div>
               <div class="card-body">
                 <ul class="list-group">
-                  <li class="list-group-item" v-for="section in course.sections">
+                  <li v-for="section in course.sections" v-on:click="toggleSelection(section.crn, section.conflicts)"  class="list-group-item" :class="{selected:$parent.selected.courses[section.crn], conflict:$parent.conflict_list[section.crn]>0}">
                     <span class="font-weight-bold">{{section.sec}}</span>
                     {{section.crn}}
                     {{section.instructor}}
@@ -189,15 +211,56 @@
           page: "homepage",
           courses: {},
           catalog: {},
-        }
+          version: '0.0.1',
+          selected: {'courses':[]},
+          conflict_list: {},
+        },
+        mounted() {
+          if (localStorage.selected) {
+            this.selected = JSON.parse(localStorage.getItem('selected'));
+            if(this.selected == null || this.selected == "" || !this.selected['version'] || this.selected['version'] != this.version){
+              this.selected = {'version':this.version, 'courses':{}};
+              localStorage.setItem('selected', JSON.stringify(this.selected));
+            }
+          }else{
+            this.selected = {'version':this.version, 'courses':{}};
+            localStorage.setItem('selected', JSON.stringify(this.selected));
+          }
+        },
+        watch: {
+          selected: {
+            handler() {
+              localStorage.setItem('selected', JSON.stringify(this.selected));
+            },
+            deep: true,
+          },
+          courses: {
+            handler() {
+              for(let j=0;j<this.courses.departments.length;j++){
+                for(let k=0;k<this.courses.departments[j].courses.length;k++){
+                  for(let l=0;l<this.courses.departments[j].courses[k].sections.length;l++){
+                    if(!this.selected.courses[this.courses.departments[j].courses[k].sections[l].crn]){
+                      continue;
+                    }
+                    for(var conflict in this.courses.departments[j].courses[k].sections[l].conflicts){
+                      Vue.set(this.conflict_list, conflict, (this.conflict_list[conflict]+1) || 1);
+                    }
+                  }
+                }
+              }
+
+              $('.loading').removeClass('loading');
+              $('#loading-icon').hide();
+              console.log("done loading courses")
+            },
+            deep: false,
+          }
+        },
       }).$mount('#app')
+
       $.getJSON('./data/courses.json', function (json) {
           app.courses = json;
-          console.log("done loading courses")
-      }).then(function(){
-        $('.loading').removeClass('loading');
-        $('#loading-icon').hide();
-      });
+      })
       $.getJSON('./data/catalog.json', function (json) {
           app.catalog = json;
       });

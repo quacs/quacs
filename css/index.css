@@ -34,6 +34,16 @@ No media query since this is the default in Bootstrap */
   column-count: 1;
 }
 
+.conflict {
+  text-decoration:line-through;
+  background: #ff7b7b;
+}
+
+.selected {
+  background: #9198f9;
+}
+
+
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
 }
