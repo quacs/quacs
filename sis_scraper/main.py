@@ -8,7 +8,7 @@ import re
 load_dotenv()
 
 def addConflicts(data):
-    for department in data['departments']:
+    for department in data:
         for course in department['courses']:
             for section in course['sections']:
                 section['conflicts'] = getConflict(data, section['timeslots'], section['subj']+str(section['crse']))
@@ -16,7 +16,7 @@ def addConflicts(data):
 def getConflict(data, check_timeslots, course_code):
     conflicts = {}
 
-    for department in data['departments']:
+    for department in data:
         for course in department['courses']:
             for section in course['sections']:
                 for timeslot in section['timeslots']:
@@ -50,6 +50,25 @@ def getConflict(data, check_timeslots, course_code):
                                 conflicts[section['crn']] = True
 
     return conflicts
+
+
+def reformatJson(data):
+    departments_copy = data
+    reformat = {}
+    for department in departments_copy:
+        reformat[department['code']] = department
+        course_copy = department['courses']
+        reformat[department['code']]['courses'] = {}
+        for course in course_copy:
+            reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"] = course
+            sections_copy = course['sections']
+            reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'] = {}
+            for section in sections_copy:
+                reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'][section['crn']] = section
+
+
+    return reformat
+
 
 
 def getContent(element):
@@ -97,14 +116,13 @@ with requests.Session() as s:
     payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=ADMN&sel_subj=USAF&sel_subj=ARCH&sel_subj=ARTS&sel_subj=ASTR&sel_subj=BCBP&sel_subj=BIOL&sel_subj=BMED&sel_subj=CHME&sel_subj=CHEM&sel_subj=CIVL&sel_subj=COGS&sel_subj=COMM&sel_subj=CSCI&sel_subj=ENGR&sel_subj=ERTH&sel_subj=ECON&sel_subj=ECSE&sel_subj=ESCI&sel_subj=ENVE&sel_subj=GSAS&sel_subj=ISYE&sel_subj=ITWS&sel_subj=IENV&sel_subj=IHSS&sel_subj=ISCI&sel_subj=LANG&sel_subj=LGHT&sel_subj=LITR&sel_subj=MGMT&sel_subj=MTLE&sel_subj=MATP&sel_subj=MATH&sel_subj=MANE&sel_subj=USAR&sel_subj=USNA&sel_subj=PHIL&sel_subj=PHYS&sel_subj=PSYC&sel_subj=STSH&sel_subj=STSS&sel_subj=WRIT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
 
     # This payload is for testing. It will only return CSCI classes and will therefore be a bit faster
-    # payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=CSCI&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
+    # payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=CSCI&sel_subj=LGHT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
 
     headers = {
     }
     response = s.request("POST", url, headers=headers, data = payload)
 
-    data = {}
-    data['departments'] = []
+    data = []
 
     # print(response.text.encode('utf8'))
     soup = BeautifulSoup(response.text.encode('utf8'), "html.parser")
@@ -121,7 +139,7 @@ with requests.Session() as s:
         if len(th) != 0:
             if 'ddtitle' in th[0].attrs['class']:
                 # if(current_department):
-                data['departments'].append({
+                data.append({
                     "name": getContent(th[0]).title(),
                     "code": "",
                     "courses": []
@@ -150,7 +168,7 @@ with requests.Session() as s:
                 }
 
             if len(getContent(td[0])) == 0:
-                data['departments'][-1]['courses'][-1]['sections'][-1]['timeslots'].append(timeslot_data)
+                data[-1]['courses'][-1]['sections'][-1]['timeslots'].append(timeslot_data)
                 continue;
 
 
@@ -160,35 +178,35 @@ with requests.Session() as s:
                 credit_max = float(getContent(td[6]).split('-')[1])
 
             section_data = {
-                "select":getContentFromChild(td[0], 'abbr'),
+                # "select":getContentFromChild(td[0], 'abbr'),
                 "crn":int(getContentFromChild(td[1], 'a')),
                 "subj":getContent(td[2]),
                 "crse":int(getContent(td[3])),
                 "sec":getContent(td[4]),
-                "cmp":getContent(td[5]),
+                # "cmp":getContent(td[5]),
                 "cred_min":credit_min,
                 "cred_max":credit_max,
                 "title":getContent(td[7]).title(),
                 "cap":int(getContent(td[10])),
-                "act":int(getContent(td[11])),
+                # "act":int(getContent(td[11])),
                 "rem":int(getContent(td[12])),
-                "wl_cap":int(getContent(td[13])),
-                "wl_act":int(getContent(td[14])),
-                "wl_rem":int(getContent(td[15])),
-                "xl_cap":getContent(td[16]),
-                "xl_act":getContent(td[17]),
-                "xl_rem":getContent(td[18]),
-                "attribute":getContent(td[22]) if 22 < len(td) else "",
+                # "wl_cap":int(getContent(td[13])),
+                # "wl_act":int(getContent(td[14])),
+                # "wl_rem":int(getContent(td[15])),
+                # "xl_cap":getContent(td[16]),
+                # "xl_act":getContent(td[17]),
+                # "xl_rem":getContent(td[18]),
+                # "attribute":getContent(td[22]) if 22 < len(td) else "",
                 "timeslots":[timeslot_data]
             }
 
             if section_data['subj'] == last_subject and section_data['crse'] == last_course_code:
-                data['departments'][-1]['courses'][-1]['sections'].append(section_data)
+                data[-1]['courses'][-1]['sections'].append(section_data)
                 continue;
 
             last_subject = getContent(td[2])
             last_course_code = int(getContent(td[3]))
-            data['departments'][-1]['courses'].append({
+            data[-1]['courses'].append({
                 "title":getContent(td[7]),
                 "subj":getContent(td[2]),
                 "crse":int(getContent(td[3])),
@@ -196,8 +214,9 @@ with requests.Session() as s:
             })
 
             if len(getContent(td[2])) > 0:
-                data['departments'][-1]['code'] = getContent(td[2])
+                data[-1]['code'] = getContent(td[2])
 
     addConflicts(data)
+    data = reformatJson(data)
 
     print(json.dumps(data))

@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
+import sys
 
 
 def scrapePage(url, data):
@@ -39,29 +40,29 @@ def scrapePage(url, data):
             description = re.sub("<.*?>", "", description)
             data[key]['description'] = description.strip()
 
-        when_offered = data_soup.find('strong', text='When Offered:')
-        if when_offered:
-            data[key]['when_offered'] = when_offered.nextSibling.strip()
-
-        cross_listed = data_soup.find('strong', text='Cross Listed:')
-        if cross_listed:
-            data[key]['cross_listed'] = cross_listed.nextSibling.strip()
-
-        pre_req = data_soup.find('strong', text='Prerequisites/Corequisites:')
-        if pre_req:
-            data[key]['pre_req'] = pre_req.nextSibling.strip()
-
-        credit_hours = data_soup.find('em', text='Credit Hours:')
-        if credit_hours:
-            credit_hours = credit_hours.nextSibling.nextSibling.text.strip()
-            if(credit_hours == 'Variable'):
-                data[key]['credit_hours_max'] = 0
-                data[key]['credit_hours_min'] = 999
-            else:
-                data[key]['credit_hours'] = credit_hours
+        # when_offered = data_soup.find('strong', text='When Offered:')
+        # if when_offered:
+        #     data[key]['when_offered'] = when_offered.nextSibling.strip()
+        #
+        # cross_listed = data_soup.find('strong', text='Cross Listed:')
+        # if cross_listed:
+        #     data[key]['cross_listed'] = cross_listed.nextSibling.strip()
+        #
+        # pre_req = data_soup.find('strong', text='Prerequisites/Corequisites:')
+        # if pre_req:
+        #     data[key]['pre_req'] = pre_req.nextSibling.strip()
+        #
+        # credit_hours = data_soup.find('em', text='Credit Hours:')
+        # if credit_hours:
+        #     credit_hours = credit_hours.nextSibling.nextSibling.text.strip()
+        #     if(credit_hours == 'Variable'):
+        #         data[key]['credit_hours_max'] = 0
+        #         data[key]['credit_hours_min'] = 999
+        #     else:
+        #         data[key]['credit_hours'] = credit_hours
 
     next_page = final_row.findChildren('strong')[0].findNext('a', recursive=False)
-    if next_page['href'] != '#':
+    if next_page['href'] != '#' and next_page['href'] != 'javascript:void(0);':
         return next_page['href']
     return None
 
