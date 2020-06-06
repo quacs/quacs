@@ -16,5 +16,8 @@ Vue.use(BootstrapVue);
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  beforeCreate() {
+    this.$store.commit("sections/initializeStore");
+  }
 }).$mount("#app");
