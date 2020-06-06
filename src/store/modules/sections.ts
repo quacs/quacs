@@ -23,7 +23,6 @@ export default class Sections extends VuexModule {
   @Mutation
   setSelected(p: { crn: number; selected: boolean }) {
     Vue.set(this.selectedSections, p.crn, p.selected);
-    console.log("yote");
   }
 
   @Mutation
@@ -43,8 +42,6 @@ export default class Sections extends VuexModule {
         );
       }
     }
-
-    console.log("yeet");
   }
 
   @Mutation

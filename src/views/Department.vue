@@ -16,9 +16,9 @@
 </template>
 
 <script lang="ts">
-import CourseCard from "../components/CourseCard.vue";
-
 import { Component, Prop, Vue } from "vue-property-decorator";
+
+import CourseCard from "../components/CourseCard.vue";
 
 @Component({
   components: {
