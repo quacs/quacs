@@ -45,7 +45,7 @@ import DesktopSections from "./sections/DesktopSections.vue";
 })
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
-  @Prop({ default: false }) expanded!: boolean;
+  expanded = false;
 
   getDescription(subject: string, code: string): string {
     const catname = subject + "-" + code;
