@@ -1,10 +1,14 @@
 <template>
-  <b-card>
-    <template v-slot:header v-on:click="expanded = !expanded">
-      <DropdownCaret v-bind:expanded="expanded" />
+  <div class="card">
+    <!-- header -->
+    <div class="card-header" v-on:click="toggleExpanded()">
+      <i
+        class="fas fa-caret-right open_close_icon"
+        :class="{ opened_icon: expanded }"
+      ></i>
 
-      <span class="font-weight-bold"
-        >{{ course.subj }}-{{ course.crse }}: {{ course.title }}</span
+      <span class="font-weight-bold">
+        {{ course.subj }}-{{ course.crse }}: {{ course.title }}</span
       >
       <!--TODO format credit nicely using min and max only showing what is needed -->
       {{ course.sections[0].cred_min }} credit<template
@@ -12,20 +16,18 @@
         >s</template
       >
       <br />
+
       {{ getDescription(course.subj, course.crse) }}
-    </template>
+    </div>
 
-    <!-- only rendered on mobile -->
-    <!--MobileSections
-      v-for="section in this.course.sections"
-      v-bind:key="section.crn"
-      v-bind:section="section"
-      v-bind:course="course"
-    /-->
+    <div class="card-body course-card-body" :class="{ expanded: expanded }">
+      <!-- only rendered on mobile -->
+      <MobileSections v-bind:course="course" />
 
-    <!-- only rendered on desktop -->
-    <DesktopSections v-bind:course="course" />
-  </b-card>
+      <!-- only rendered on desktop -->
+      <DesktopSections v-bind:course="course" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -34,13 +36,11 @@ import { Course } from "@/typings";
 
 import MobileSections from "./sections/MobileSections.vue";
 import DesktopSections from "./sections/DesktopSections.vue";
-import DropdownCaret from "./utils/DropdownCaret.vue";
 
 @Component({
   components: {
     MobileSections,
-    DesktopSections,
-    DropdownCaret
+    DesktopSections
   }
 })
 export default class CourseCard extends Vue {
@@ -55,5 +55,42 @@ export default class CourseCard extends Vue {
 
     return "";
   }
+
+  get rotation() {
+    if (this.expanded) {
+      return 90;
+    } else {
+      return 0;
+    }
+  }
+
+  toggleExpanded() {
+    this.expanded = !this.expanded;
+    console.log("toggled");
+  }
 }
 </script>
+
+<style scoped>
+.open_close_icon {
+  transition: 0.2s;
+}
+
+.opened_icon {
+  transform: rotate(90deg);
+}
+
+.course-card-body {
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in;
+}
+
+.card-body {
+  padding: 0px;
+}
+
+.expanded {
+  max-height: 9999px;
+}
+</style>

@@ -1,21 +1,16 @@
 <template>
-  <div class="row">
-    <div class="col-lg-1"></div>
-    <div class="col-lg">
-      <div class="card-columns">
-        <template v-if="courses.length == 0">
-          <h3>It looks like you have not selected any courses yet :(</h3>
-          <router-link class="navbar-brand" to="/"
-            >Click to select a course</router-link
-          >
-        </template>
-        <CourseCard
-          v-for="course in courses"
-          v-bind:key="course.subj + course.crse + course.title"
-          v-bind:course="course"
-        />
-      </div>
-    </div>
+  <div class="card-columns">
+    <template v-if="courses.length == 0">
+      <h3>It looks like you have not selected any courses yet :(</h3>
+      <router-link class="navbar-brand" to="/"
+        >Click to select a course</router-link
+      >
+    </template>
+    <CourseCard
+      v-for="course in courses"
+      v-bind:key="course.subj + course.crse + course.title"
+      v-bind:course="course"
+    />
   </div>
 </template>
 
@@ -49,3 +44,9 @@ export default class Schedule extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.card-columns {
+  column-count: 1;
+}
+</style>

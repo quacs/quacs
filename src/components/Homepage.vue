@@ -1,19 +1,15 @@
 <template>
-  <div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-      <h3>
-        Join the QuACS development discord server!
-        <a href="https://discord.gg/3xNxfBy">https://discord.gg/3xNxfBy</a>
-      </h3>
-      <br /><br />
-      <div v-for="department in departments" v-bind:key="department.code">
-        <router-link class="nav-link" :to="'/department/' + department.code"
-          >{{ department.code }}: {{ department.name }}</router-link
-        >
-      </div>
+  <div>
+    <h3>
+      Join the QuACS development discord server!
+      <a href="https://discord.gg/3xNxfBy">https://discord.gg/3xNxfBy</a>
+    </h3>
+    <br /><br />
+    <div v-for="department in departments" v-bind:key="department.code">
+      <router-link class="nav-link" :to="'/department/' + department.code"
+        >{{ department.code }}: {{ department.name }}</router-link
+      >
     </div>
-    <div class="col-md-2"></div>
   </div>
 </template>
 

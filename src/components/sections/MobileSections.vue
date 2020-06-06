@@ -1,9 +1,10 @@
 <template>
-  <b-list-group class="mobile-only">
-    <b-list-group-item
+  <ul class="list-group mobile-only">
+    <li
       v-for="section in course.sections"
       v-bind:key="section.crn"
       v-on:click="toggleSelection(section)"
+      class="list-group-item"
       :class="{
         selected: isSelected(section.crn),
         conflict: isInConflict(section.crn)
@@ -29,8 +30,8 @@
           </span>
         </template>
       </span>
-    </b-list-group-item>
-  </b-list-group>
+    </li>
+  </ul>
 </template>
 
 <script lang="ts">
@@ -72,17 +73,5 @@ export default class MobileSections extends Vue {
 </script>
 
 <style scoped>
-.week-day-time {
-  font-size: 10pt;
-  padding: 1px !important;
-}
-
-.conflict {
-  text-decoration: line-through;
-  background: #ff7b7b;
-}
-
-.selected {
-  background: #9198f9;
-}
+@import "./style.css";
 </style>
