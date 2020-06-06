@@ -23,7 +23,11 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
-      paths: ["sections.selectedSections"]
+      paths: ["sections.selectedSections"],
+      rehydrated: store => {
+        // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
+        store.commit("sections/populateConflicts", store.state.departments);
+      }
     })
   ]
 });

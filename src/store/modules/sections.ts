@@ -1,6 +1,8 @@
 import { Module, VuexModule, Mutation } from "vuex-module-decorators";
 import Vue from "vue";
 
+import { Department } from "@/typings";
+
 @Module({ namespaced: true, name: "sections" })
 export default class Sections extends VuexModule {
   selectedSections: { [id: number]: boolean } = {};
@@ -56,5 +58,33 @@ export default class Sections extends VuexModule {
         this.selectedSections = stored.sections;
       }
     }
+  }
+
+  @Mutation
+  populateConflicts(departments: readonly Department[]) {
+    const start = new Date().getTime();
+
+    console.log("Generating conflicts..");
+    for (const dept of departments) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          if (!this.selectedSections[section.crn]) {
+            continue;
+          }
+
+          for (const conflict in section.conflicts) {
+            Vue.set(
+              this.conflictingSectionCounts,
+              conflict,
+              this.conflictingSectionCounts[Number(conflict)] + 1 || 1
+            );
+          }
+        }
+      }
+    }
+
+    const end = new Date().getTime();
+
+    console.log("Conflict generation complete, took " + (end - start) + " ms");
   }
 }
