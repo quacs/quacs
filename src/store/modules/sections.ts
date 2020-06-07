@@ -22,6 +22,17 @@ export default class Sections extends VuexModule {
     return (crn: number) => this.conflictingSectionCounts[crn] > 0;
   }
 
+  get selectedCRNs() {
+    const selected = [];
+    for (const crn in this.selectedSections) {
+      if (this.selectedSections[crn]) {
+        selected.push(crn);
+      }
+    }
+
+    return selected;
+  }
+
   @Mutation
   setSelected(p: { crn: number; selected: boolean }) {
     Vue.set(this.selectedSections, p.crn, p.selected);

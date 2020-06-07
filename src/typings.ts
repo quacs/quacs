@@ -1,4 +1,4 @@
-export enum Day {
+export enum ShortDay {
   Monday = "M",
   Tuesday = "T",
   Wednesday = "W",
@@ -6,8 +6,13 @@ export enum Day {
   Friday = "F"
 }
 
+export interface Day {
+  name: string;
+  short: string;
+}
+
 export interface Timeslot {
-  days: Day[];
+  days: ShortDay[];
   timeStart: number;
   timeEnd: number;
   instructor: string;

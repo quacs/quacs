@@ -1,16 +1,21 @@
 <template>
-  <div class="card-columns">
+  <div>
     <template v-if="courses.length == 0">
       <h3>It looks like you have not selected any courses yet :(</h3>
       <router-link class="navbar-brand" to="/"
         >Click to select a course</router-link
       >
     </template>
-    <CourseCard
-      v-for="course in courses"
-      v-bind:key="course.subj + course.crse + course.title"
-      v-bind:course="course"
-    />
+
+    <Calendar />
+
+    <div class="card-columns">
+      <CourseCard
+        v-for="course in courses"
+        v-bind:key="course.subj + course.crse + course.title"
+        v-bind:course="course"
+      />
+    </div>
   </div>
 </template>
 
@@ -18,10 +23,12 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
 
-import CourseCard from "../components/CourseCard.vue";
+import CourseCard from "@/components/CourseCard.vue";
+import Calendar from "@/components/Calendar.vue";
 
 @Component({
   components: {
+    Calendar,
     CourseCard
   }
 })

@@ -47,7 +47,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import { Course, CourseSection } from "@/typings";
-import { formatTimeslot, getSessions, formatCourseSize } from "./utilities";
+import { formatTimeslot, getSessions, formatCourseSize } from "@/utilities";
 
 @Component({
   computed: {

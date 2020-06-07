@@ -34,7 +34,7 @@
           <span
             :title="
               'There are ' +
-                formatCourseSize(section.crn) +
+                formatCourseSize(section.crn, courseSizes) +
                 ' spots currently available'
             "
             >{{ formatCourseSize(section.crn) }}</span
@@ -68,16 +68,17 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { Course, CourseSection, Timeslot } from "@/typings";
-import { formatTimeslot, getSessions, formatCourseSize } from "./utilities";
+import { formatTimeslot, getSessions, formatCourseSize } from "@/utilities";
 
 @Component({
   computed: {
     formatTimeslot,
     formatCourseSize,
     getSessions,
-    ...mapGetters("sections", ["isSelected", "isInConflict"])
+    ...mapGetters("sections", ["isSelected", "isInConflict"]),
+    ...mapState(["courseSizes"])
   }
 })
 export default class Section extends Vue {
@@ -131,7 +132,6 @@ export default class Section extends Vue {
       //sort and go through each time giving them an index value
       const sortedTimes = Object.keys(times);
       sortedTimes.sort();
-      console.log(sortedTimes);
       this.sessionOrders[crn] = {};
       for (let i = 0; i < sortedTimes.length; i++) {
         this.sessionOrders[crn][parseInt(sortedTimes[i])] = i;
@@ -145,9 +145,7 @@ export default class Section extends Vue {
   //Times on different days line up
   spaceOutSessions(crn: string, timeslots: Timeslot[]): Timeslot[] {
     const spacedTimeslots: Timeslot[] = [];
-    if (crn == "25567") {
-      console.log(this.sessionIndex()[crn]);
-    }
+
     //Go through all the timeslots inserting spacers when needed to line up times
     for (let i = 0, count = 1; i < timeslots.length; i++, count++) {
       if (

@@ -1,8 +1,31 @@
-import { CourseSection, Timeslot, Day } from "@/typings";
+import { CourseSection, Timeslot, ShortDay, Day } from "@/typings";
 import store from "@/store";
 
+export const DAYS: Day[] = [
+  {
+    name: "Monday",
+    short: ShortDay.Monday
+  },
+  {
+    name: "Tuesday",
+    short: ShortDay.Tuesday
+  },
+  {
+    name: "Wednesday",
+    short: ShortDay.Wednesday
+  },
+  {
+    name: "Thursday",
+    short: ShortDay.Thursday
+  },
+  {
+    name: "Friday",
+    short: ShortDay.Friday
+  }
+];
+
 export function getSessions() {
-  return (section: CourseSection, day: Day): Timeslot[] => {
+  return (section: CourseSection, day: ShortDay): Timeslot[] => {
     const sessions = [];
 
     for (const timeslot of section.timeslots) {
@@ -59,4 +82,26 @@ export function formatCourseSize() {
     }
     return "";
   };
+}
+
+export function minuteTimeToHour(minuteTime: number): string {
+  const hour = Math.floor(minuteTime / 60);
+  if (hour < 12) {
+    return hour + " AM";
+  } else if (hour == 12) {
+    return "Noon";
+  } else {
+    return hour - 12 + " PM";
+  }
+}
+
+// Converts a timeslot time into minutes since midnight
+export function toMinutes(time: number): number {
+  const hour = Math.floor(time / 100);
+  const minute = Math.floor(time % 100);
+  return hour * 60 + minute;
+}
+
+export function getDuration(timeslot: Timeslot): number {
+  return toMinutes(timeslot.timeEnd) - toMinutes(timeslot.timeStart);
 }

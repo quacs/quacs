@@ -4,14 +4,12 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import createPersistedState from "vuex-persistedstate";
 
-import { Department, CatalogCourse } from "@/typings";
+import { Department, CatalogCourse, CourseSize } from "@/typings";
 
 import COURSES_JSON from "./data/courses.json";
 import CATALOG_JSON from "./data/catalog.json";
 
 import sections from "./modules/sections";
-
-import { CourseSize } from "@/typings";
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios);
