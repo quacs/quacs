@@ -8,11 +8,11 @@ export enum Day {
 
 export interface Timeslot {
   days: Day[];
-  time_start: number;
-  time_end: number;
+  timeStart: number;
+  timeEnd: number;
   instructor: string;
-  date_start: string;
-  date_end: string;
+  dateStart: string;
+  dateEnd: string;
   location: string;
 }
 

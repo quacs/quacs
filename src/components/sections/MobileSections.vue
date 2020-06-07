@@ -13,7 +13,7 @@
       <span class="font-weight-bold">{{ section.sec }}</span>
       {{ section.crn }}
       {{ section.instructor }}
-      {{ section.timeslots[0].date_start }}-{{ section.timeslots[0].date_end }}
+      {{ section.timeslots[0].dateStart }}-{{ section.timeslots[0].dateEnd }}
       {{ formatCourseSize(section.crn) }}
       <br />
       {{ section.timeslots[0].instructor }}
@@ -28,7 +28,7 @@
             v-bind:key="
               'mobile' +
                 day +
-                session.time_start +
+                session.timeStart +
                 section.crn +
                 session.instrutor +
                 session.location

@@ -1,4 +1,5 @@
 import { CourseSection, Timeslot, Day } from "@/typings";
+import store from "@/store";
 
 export function getSessions() {
   return (section: CourseSection, day: Day): Timeslot[] => {
@@ -11,7 +12,7 @@ export function getSessions() {
     }
 
     sessions.sort((a, b) => {
-      return a.time_start - b.time_start;
+      return a.timeStart - b.timeStart;
     });
 
     return sessions;
@@ -42,18 +43,18 @@ function formatTime(time: number): string {
 
 export function formatTimeslot() {
   return (timeslot: Timeslot) =>
-    formatTime(timeslot.time_start) + "-" + formatTime(timeslot.time_end);
+    timeslot.timeStart >= 0
+      ? formatTime(timeslot.timeStart) + "-" + formatTime(timeslot.timeEnd)
+      : "";
 }
 
 export function formatCourseSize() {
-  //TODO I cannot figure out how to make typescript like this function
-  //I have no idea what type 'this' is and I have just given up on trying
-  return function(this: any, crn: string): string {
-    if (crn in this.$store.state.courseSizes) {
+  return function(crn: string): string {
+    if (crn in store.state.courseSizes) {
       return (
-        this.$store.state.courseSizes[crn].avail +
+        store.state.courseSizes[crn].avail +
         "/" +
-        this.$store.state.courseSizes[crn].seats
+        store.state.courseSizes[crn].seats
       );
     }
     return "";
