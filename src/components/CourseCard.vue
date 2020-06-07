@@ -22,7 +22,7 @@
 
     <div class="card-body course-card-body" :class="{ expanded: expanded }">
       <!-- only rendered on mobile -->
-      <!--MobileSections v-bind:course="course" /-->
+      <MobileSections v-bind:course="course" />
 
       <!-- only rendered on desktop -->
       <DesktopSections v-bind:course="course" />
