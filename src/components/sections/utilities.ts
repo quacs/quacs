@@ -1,4 +1,4 @@
-import { CourseSection, Timeslot, Day } from "../../typings";
+import { CourseSection, Timeslot, Day } from "@/typings";
 
 export function getSessions() {
   return (section: CourseSection, day: Day): Timeslot[] => {
@@ -46,7 +46,9 @@ export function formatTimeslot() {
 }
 
 export function formatCourseSize() {
-  return (this: any, crn: string): string => {
+  //TODO I cannot figure out how to make typescript like this function
+  //I have no idea what type 'this' is and I have just given up on trying
+  return function(this: any, crn: string): string {
     if (crn in this.$store.state.courseSizes) {
       return (
         this.$store.state.courseSizes[crn].avail +
