@@ -11,10 +11,7 @@
         {{ course.subj }}-{{ course.crse }}: {{ course.title }}</span
       >
       <!--TODO format credit nicely using min and max only showing what is needed -->
-      {{ course.sections[0].cred_min }} credit<template
-        v-if="course.sections[0].cred_min != 1"
-        >s</template
-      >
+      {{ credMin }} credit<template v-if="credMin != 1">s</template>
       <br />
 
       {{ getDescription(course.subj, course.crse) }}
@@ -46,6 +43,10 @@ import DesktopSections from "./sections/DesktopSections.vue";
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
   expanded = false;
+
+  get credMin() {
+    return Object.values(this.course.sections)[0].cred_min;
+  }
 
   getDescription(subject: string, code: string): string {
     const catname = subject + "-" + code;

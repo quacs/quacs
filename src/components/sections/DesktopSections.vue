@@ -11,7 +11,7 @@
 
     <tbody>
       <tr
-        v-for="section in course.sections"
+        v-for="section in sections"
         v-bind:key="section.crn"
         v-on:click="toggleSelection(section)"
         class="course-row"
@@ -27,10 +27,10 @@
           >-<span title="CRN: the unique id given to each section in sis">{{
             section.crn
           }}</span>
-          {{ section.timeslots[0].date_start }}-{{
-            section.timeslots[0].date_end
-          }}
           {{ section.timeslots[0].instructor }}
+          ({{ section.timeslots[0].date_start }}-{{
+            section.timeslots[0].date_end
+          }})
           <span
             :title="
               'There are ' +
@@ -80,6 +80,14 @@ import { formatTimeslot, getSessions, formatCourseSize } from "./utilities";
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
+
+  get sections() {
+    const sections = [];
+    for (const crn in this.course.sections) {
+      sections.push(this.course.sections[crn]);
+    }
+    return sections;
+  }
 
   toggleSelection(section: CourseSection, selected: boolean | null = null) {
     let newState = true;
