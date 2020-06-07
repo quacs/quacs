@@ -14,6 +14,7 @@
         v-for="section in course.sections"
         v-bind:key="section.crn"
         v-on:click="toggleSelection(section)"
+        class="course-row"
         v-bind:class="{
           selected: isSelected(section.crn),
           conflict: isInConflict(section.crn)
@@ -30,9 +31,17 @@
         </td>
 
         <td v-for="day in days" v-bind:key="day" class="time-cell">
+          <!-- TODO: fix different instructors for same timeslot -->
           <span
             v-for="session in getSessions(section, day)"
-            v-bind:key="session.time_start"
+            v-bind:key="
+              'desktop' +
+                day +
+                session.time_start +
+                section.crn +
+                session.instructor +
+                session.location
+            "
           >
             <nobr>{{ formatTimeslot(session) }}</nobr>
             <br />

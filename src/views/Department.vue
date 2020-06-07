@@ -2,12 +2,11 @@
   <div>
     <h1>{{ department.code }}: {{ department.name }}</h1>
     <div class="card-column">
-      <div
+      <CourseCard
         v-for="course in department.courses"
         v-bind:key="course.subj + course.crse + course.title"
-      >
-        <CourseCard v-bind:course="course" />
-      </div>
+        v-bind:course="course"
+      />
     </div>
   </div>
 </template>

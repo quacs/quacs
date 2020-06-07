@@ -4,7 +4,7 @@
       v-for="section in course.sections"
       v-bind:key="section.crn"
       v-on:click="toggleSelection(section)"
-      class="list-group-item"
+      class="list-group-item course-row"
       :class="{
         selected: isSelected(section.crn),
         conflict: isInConflict(section.crn)
@@ -21,9 +21,17 @@
       <!-- List timeslots -->
       <span class="week-day-time">
         <template v-for="day in days">
+          <!-- TODO: fix different instructors for same timeslot -->
           <span
             v-for="session in getSessions(section, day)"
-            v-bind:key="session.time_start"
+            v-bind:key="
+              'mobile' +
+                day +
+                session.time_start +
+                section.crn +
+                session.instrutor +
+                session.location
+            "
           >
             <span class="font-weight-bold">{{ day }}:</span>
             {{ formatTimeslot(session) }}

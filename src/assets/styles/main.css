@@ -24,7 +24,7 @@
         padding: 10px;
 }
 
-.card-columns {
+.card-column {
         column-count: 1;
         margin-bottom: 0.75rem;
 }

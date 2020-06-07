@@ -1,11 +1,12 @@
 {
-	"name": "quacs-good",
+	"name": "QuACS",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build",
-		"lint": "vue-cli-service lint"
+		"lint": "vue-cli-service lint",
+		"gh-pages-deploy": "node scripts/gh-pages-deploy.js"
 	},
 	"dependencies": {
 		"bootstrap": "^4.5.0",
@@ -32,6 +33,7 @@
 		"eslint": "^6.7.2",
 		"eslint-plugin-prettier": "^3.1.3",
 		"eslint-plugin-vue": "^6.2.2",
+		"execa": "^4.0.2",
 		"lint-staged": "^9.5.0",
 		"prettier": "^1.19.1",
 		"typescript": "~3.9.3",

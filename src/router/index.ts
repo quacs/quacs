@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import Department from "../views/Department.vue";
-import Schedule from "../views/Schedule.vue";
 
 Vue.use(VueRouter);
 
@@ -18,7 +17,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/schedule",
-    component: Schedule
+    component: () => import("../views/Schedule.vue")
   }
 ];
 

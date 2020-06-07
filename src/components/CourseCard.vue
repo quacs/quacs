@@ -1,7 +1,7 @@
 <template>
-  <div class="card">
+  <div class="card course-card">
     <!-- header -->
-    <div class="card-header" v-on:click="toggleExpanded()">
+    <div class="card-header course-card-header" v-on:click="toggleExpanded()">
       <i
         class="fas fa-caret-right open_close_icon"
         :class="{ opened_icon: expanded }"
@@ -22,7 +22,7 @@
 
     <div class="card-body course-card-body" :class="{ expanded: expanded }">
       <!-- only rendered on mobile -->
-      <MobileSections v-bind:course="course" />
+      <!--MobileSections v-bind:course="course" /-->
 
       <!-- only rendered on desktop -->
       <DesktopSections v-bind:course="course" />
@@ -92,5 +92,13 @@ export default class CourseCard extends Vue {
 
 .expanded {
   max-height: 9999px;
+}
+
+.course-card {
+  margin-bottom: 0.75rem;
+}
+
+.course-card-header {
+  cursor: pointer;
 }
 </style>

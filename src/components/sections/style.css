@@ -38,3 +38,7 @@
                 display: none;
         }
 }
+
+.course-row {
+        cursor: pointer;
+}
