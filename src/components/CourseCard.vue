@@ -66,7 +66,6 @@ export default class CourseCard extends Vue {
 
   toggleExpanded() {
     this.expanded = !this.expanded;
-    console.log("toggled");
   }
 }
 </script>

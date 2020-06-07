@@ -55,3 +55,11 @@ export interface CatalogCourse {
   coid: string;
   url: string;
 }
+
+export interface CourseSize {
+  avail: number;
+  crn: number;
+  num: number;
+  seats: number;
+  students: number;
+}

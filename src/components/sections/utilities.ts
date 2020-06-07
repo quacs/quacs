@@ -44,3 +44,16 @@ export function formatTimeslot() {
   return (timeslot: Timeslot) =>
     formatTime(timeslot.time_start) + "-" + formatTime(timeslot.time_end);
 }
+
+export function formatCourseSize() {
+  return (this: any, crn: string): string => {
+    if (crn in this.$store.state.courseSizes) {
+      return (
+        this.$store.state.courseSizes[crn].avail +
+        "/" +
+        this.$store.state.courseSizes[crn].seats
+      );
+    }
+    return "";
+  };
+}

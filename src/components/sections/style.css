@@ -18,6 +18,7 @@
 .time-cell {
         font-size: 10pt;
         padding: 3px !important;
+        white-space: nowrap
 }
 
 .desktop-only {

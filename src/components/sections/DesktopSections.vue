@@ -2,7 +2,7 @@
   <table class="desktop-only table table-bordered" style="margin-bottom: 0px">
     <thead>
       <tr>
-        <th style="width:100%">Info</th>
+        <th style="width:100%">Section Info</th>
         <th v-for="day in days" v-bind:key="day" class="week-day">
           {{ day }}
         </th>
@@ -21,13 +21,24 @@
         }"
       >
         <td class="info-cell">
-          <span class="font-weight-bold">{{ section.sec }}</span
-          >-{{ section.crn }}
-          {{ section.instructor }}
+          <span class="font-weight-bold" title="Section number">{{
+            section.sec
+          }}</span
+          >-<span title="CRN: the unique id given to each section in sis">{{
+            section.crn
+          }}</span>
           {{ section.timeslots[0].date_start }}-{{
             section.timeslots[0].date_end
           }}
           {{ section.timeslots[0].instructor }}
+          <span
+            :title="
+              'There are ' +
+                formatCourseSize(section.crn) +
+                ' spots currently available'
+            "
+            >{{ formatCourseSize(section.crn) }}</span
+          >
         </td>
 
         <td v-for="day in days" v-bind:key="day" class="time-cell">
@@ -43,7 +54,7 @@
                 session.location
             "
           >
-            <nobr>{{ formatTimeslot(session) }}</nobr>
+            {{ formatTimeslot(session) }}
             <br />
           </span>
         </td>
@@ -56,11 +67,12 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import { Course, CourseSection } from "@/typings";
-import { formatTimeslot, getSessions } from "./utilities";
+import { formatTimeslot, getSessions, formatCourseSize } from "./utilities";
 
 @Component({
   computed: {
     formatTimeslot,
+    formatCourseSize,
     getSessions,
     ...mapGetters("sections", ["isSelected", "isInConflict"])
   }

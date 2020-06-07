@@ -14,8 +14,9 @@
       {{ section.crn }}
       {{ section.instructor }}
       {{ section.timeslots[0].date_start }}-{{ section.timeslots[0].date_end }}
+      {{ formatCourseSize(section.crn) }}
       <br />
-      {{ section.timeslots[0].instrutor }}
+      {{ section.timeslots[0].instructor }}
       <br />
 
       <!-- List timeslots -->
@@ -46,12 +47,13 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import { Course, CourseSection } from "@/typings";
-import { formatTimeslot, getSessions } from "./utilities";
+import { formatTimeslot, getSessions, formatCourseSize } from "./utilities";
 
 @Component({
   computed: {
     formatTimeslot,
     getSessions,
+    formatCourseSize,
     ...mapGetters("sections", ["isSelected", "isInConflict"])
   }
 })
