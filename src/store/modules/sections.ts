@@ -8,7 +8,8 @@ export default class Sections extends VuexModule {
   selectedSections: { [id: number]: boolean } = {};
   conflictingSectionCounts: { [id: number]: number } = {};
 
-  version = "0.0.1";
+  CURRENT_STORAGE_VERSION = "0.0.1";
+  storedVersion = ""; // If a value is in localstorage, this will be set to that on load
 
   get isSelected() {
     return (crn: number) => this.selectedSections[crn];
@@ -59,15 +60,11 @@ export default class Sections extends VuexModule {
 
   @Mutation
   initializeStore() {
-    if (localStorage.getItem("selectedSections") !== null) {
-      const stored: {
-        data?: string;
-        sections?: { [id: string]: boolean };
-      } = JSON.parse(localStorage.getItem("selectedSections") as string);
+    if (this.storedVersion !== this.CURRENT_STORAGE_VERSION) {
+      console.log("Out of date or uninitialized sections, clearing");
 
-      if (stored.data === this.version && stored.sections) {
-        this.selectedSections = stored.sections;
-      }
+      this.storedVersion = this.CURRENT_STORAGE_VERSION;
+      this.selectedSections = {};
     }
   }
 
