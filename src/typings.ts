@@ -38,13 +38,13 @@ export interface Course {
   title: string;
   subj: string;
   crse: number;
-  sections: CourseSection[];
+  sections: { [id: string]: CourseSection };
 }
 
 export interface Department {
   name: string;
   code: string;
-  courses: Course[];
+  courses: { [id: string]: Course };
 }
 
 export interface CatalogCourse {

@@ -1,7 +1,7 @@
 <template>
   <ul class="list-group mobile-only">
     <li
-      v-for="section in course.sections"
+      v-for="section in sections"
       v-bind:key="section.crn"
       v-on:click="toggleSelection(section)"
       class="list-group-item course-row"
@@ -58,6 +58,14 @@ import { formatTimeslot, getSessions } from "./utilities";
 export default class MobileSections extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
+
+  get sections() {
+    const sections = [];
+    for (const crn in this.course.sections) {
+      sections.push(this.course.sections[crn]);
+    }
+    return sections;
+  }
 
   toggleSelection(section: CourseSection, selected: boolean | null = null) {
     let newState = true;

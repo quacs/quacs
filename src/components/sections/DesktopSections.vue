@@ -11,7 +11,7 @@
 
     <tbody>
       <tr
-        v-for="section in course.sections"
+        v-for="section in sections"
         v-bind:key="section.crn"
         v-on:click="toggleSelection(section)"
         class="course-row"
@@ -22,12 +22,12 @@
       >
         <td class="info-cell">
           <span class="font-weight-bold">{{ section.sec }}</span
-          >-{{ section.crn }}
-          {{ section.instructor }}
-          {{ section.timeslots[0].date_start }}-{{
-            section.timeslots[0].date_end
-          }}
+          >-{{ section.crn }}:
           {{ section.timeslots[0].instructor }}
+
+          ({{ section.timeslots[0].date_start }}-{{
+            section.timeslots[0].date_end
+          }})
         </td>
 
         <td v-for="day in days" v-bind:key="day" class="time-cell">
@@ -68,6 +68,14 @@ import { formatTimeslot, getSessions } from "./utilities";
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
+
+  get sections() {
+    const sections = [];
+    for (const crn in this.course.sections) {
+      sections.push(this.course.sections[crn]);
+    }
+    return sections;
+  }
 
   toggleSelection(section: CourseSection, selected: boolean | null = null) {
     let newState = true;

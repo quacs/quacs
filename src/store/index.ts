@@ -13,7 +13,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    departments: COURSES_JSON as Department[],
+    departments: COURSES_JSON as { [id: string]: Department },
     catalog: CATALOG_JSON as { [id: string]: CatalogCourse }
   },
   mutations: {},
