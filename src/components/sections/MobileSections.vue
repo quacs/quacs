@@ -64,8 +64,8 @@ export default class MobileSections extends Vue {
 
     if (selected !== null) {
       newState = selected;
-    } else if (section.crn in this.$store.state.courses.selectedSections) {
-      newState = !this.$store.state.courses.selected(section.crn);
+    } else if (section.crn in this.$store.state.sections.selectedSections) {
+      newState = !this.$store.getters["sections/isSelected"](section.crn);
     }
 
     this.$store.commit("sections/setSelected", {
