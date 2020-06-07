@@ -26,12 +26,12 @@ def getConflict(data, check_timeslots, course_code):
                             continue
 
                         # If this course does not have a timeslot just skip it
-                        if timeslot['time_start'] == -1 or timeslot['time_end'] == -1:
+                        if timeslot['timeStart'] == -1 or timeslot['timeEnd'] == -1:
                             continue
 
                         for check_timeslot in check_timeslots:
                             # If this course does not have a timeslot just skip it
-                            if check_timeslot['time_start'] == -1 or check_timeslot['time_end'] == -1:
+                            if check_timeslot['timeStart'] == -1 or check_timeslot['timeEnd'] == -1:
                                 continue
 
                             # If not happening on the same day skip it
@@ -39,11 +39,11 @@ def getConflict(data, check_timeslots, course_code):
                                 continue
 
                             # If the dates dont overlap skip it
-                            if not max(check_timeslot['date_start'], timeslot['date_start']) < min(check_timeslot['date_end'], timeslot['date_end']):
+                            if not max(check_timeslot['dateStart'], timeslot['dateStart']) < min(check_timeslot['dateEnd'], timeslot['dateEnd']):
                                 continue
 
                             # There is a conflict
-                            if max(check_timeslot['time_start'], timeslot['time_start']) < min(check_timeslot['time_end'], timeslot['time_end']):
+                            if max(check_timeslot['timeStart'], timeslot['timeStart']) < min(check_timeslot['timeEnd'], timeslot['timeEnd']):
                                 # JSON does not support hashtables without a value so the value
                                 # is always set to true even though just by being in the conflicts
                                 # hash table is enough to know it conflicts
@@ -149,22 +149,22 @@ with requests.Session() as s:
             if "TBA" not in getContent(td[8]):
                 timeslot_data = {
                     "days":list(getContent(td[8])),
-                    "time_start":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
-                    "time_end":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
+                    "timeStart":timeToMilitary(getContentFromChild(td[9], 'abbr'), True),
+                    "timeEnd":timeToMilitary(getContentFromChild(td[9], 'abbr'), False),
                     "instructor":cleanOutAbbr(getContent(td[19])),
-                    "date_start":getContentFromChild(td[20], 'abbr').split('-')[0],
-                    "date_end":getContentFromChild(td[20], 'abbr').split('-')[1],
+                    "dateStart":getContentFromChild(td[20], 'abbr').split('-')[0],
+                    "dateEnd":getContentFromChild(td[20], 'abbr').split('-')[1],
                     "location":getContentFromChild(td[21], 'abbr')
                 }
             else:
                 timeslot_data = {
-                    "date_end": "",
-                    "date_start": "",
+                    "dateEnd": "",
+                    "dateStart": "",
                     "days": [],
                     "instructor": "",
                     "location": "",
-                    "time_end": -1,
-                    "time_start": -1
+                    "timeEnd": -1,
+                    "timeStart": -1
                 }
 
             if len(getContent(td[0])) == 0:
@@ -184,18 +184,18 @@ with requests.Session() as s:
                 "crse":int(getContent(td[3])),
                 "sec":getContent(td[4]),
                 # "cmp":getContent(td[5]),
-                "cred_min":credit_min,
-                "cred_max":credit_max,
+                "credMin":credit_min,
+                "credMax":credit_max,
                 "title":getContent(td[7]).title(),
                 "cap":int(getContent(td[10])),
                 # "act":int(getContent(td[11])),
                 "rem":int(getContent(td[12])),
-                # "wl_cap":int(getContent(td[13])),
-                # "wl_act":int(getContent(td[14])),
-                # "wl_rem":int(getContent(td[15])),
-                # "xl_cap":getContent(td[16]),
-                # "xl_act":getContent(td[17]),
-                # "xl_rem":getContent(td[18]),
+                # "wlCap":int(getContent(td[13])),
+                # "wlAct":int(getContent(td[14])),
+                # "wlRem":int(getContent(td[15])),
+                # "xlCap":getContent(td[16]),
+                # "xlAct":getContent(td[17]),
+                # "xlRem":getContent(td[18]),
                 # "attribute":getContent(td[22]) if 22 < len(td) else "",
                 "timeslots":[timeslot_data]
             }
