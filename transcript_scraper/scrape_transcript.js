@@ -73,10 +73,11 @@ async function scrape_transcript(file_id) {
       quality_points: columns[4].innerText.trim(),
       gpa: columns[5].innerText.trim(),
     })
+    row_num += 4;
   }
 
+  row_num += 1;
   //INSTITUTION CREDIT
-  row_num += 5;
   while (!rows[row_num].children[0].innerText.startsWith('TRANSCRIPT TOTALS')) {
     const term_data = {}
     term_data.term = rows[row_num].children[0].innerText.split('Term: ')[1].trim();
