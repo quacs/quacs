@@ -90,6 +90,8 @@ export default class Section extends Vue {
     for (const crn in this.course.sections) {
       sections.push(this.course.sections[crn]);
     }
+
+    sections.sort((s1, s2) => (s1.sec > s2.sec ? 1 : -1));
     return sections;
   }
 
