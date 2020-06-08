@@ -8,6 +8,7 @@ import { Department, CatalogCourse, CourseSize } from "@/typings";
 
 import COURSES_JSON from "./data/courses.json";
 import CATALOG_JSON from "./data/catalog.json";
+import SCHOOLS_JSON from "./data/schools.json";
 
 import sections from "./modules/sections";
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
   state: {
     departments: COURSES_JSON as { [id: string]: Department },
     catalog: CATALOG_JSON as { [id: string]: CatalogCourse },
+    schools: SCHOOLS_JSON as { [id: string]: string[] },
     courseSizes: {} as { [id: string]: CourseSize }
   },
   mutations: {
