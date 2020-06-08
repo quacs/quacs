@@ -33,7 +33,10 @@
           :style="{
             'margin-top': eventPosition(session.timeslot) + 'px',
             height: eventHeight(session.timeslot) + 'px',
-            width: dayWidth + '%'
+            width: dayWidth + '%',
+            backgroundColor: colors(session.section.crn).bg,
+            borderColor: colors(session.section.crn).border,
+            color: colors(session.section.crn).text
           }"
         >
           <div class="event-text">
@@ -90,15 +93,13 @@ export default class Calendar extends Vue {
 
   get selected() {
     return this.$store.getters["sections/selectedCRNs"]
-      .map((crn: number) => {
-        for (const deptName in this.$store.state.departments) {
-          const dept = this.$store.state.departments[deptName];
-
-          for (const courseName in dept.courses) {
-            const course = dept.courses[courseName];
-
-            if (crn in course.sections) {
-              return course.sections[crn];
+      .map((crn: string) => {
+        for (const dept of this.$store.state.departments) {
+          for (const course of dept.courses) {
+            for (const section of course.sections) {
+              if (String(section.crn) === crn) {
+                return section;
+              }
             }
           }
         }
@@ -148,12 +149,22 @@ export default class Calendar extends Vue {
       );
     };
   }
+
+  get colors() {
+    return (crn: number) => {
+      const colorIdx = this.selected.findIndex(
+        (section: CourseSection) => section.crn === crn
+      );
+      return this.$store.getters["sections/colors"](colorIdx);
+    };
+  }
 }
 </script>
 
 <style scoped lang="scss">
 $labelOffset: 0.35em;
-$hourFontSize: 0.5em;
+$hourFontSize: 0.6em;
+$dayFontSize: 0.8em;
 
 .calendar {
   margin-top: 10px;
@@ -188,7 +199,7 @@ $hourFontSize: 0.5em;
   display: block;
   margin: 0 auto;
   text-align: center;
-  font-size: 0.8em;
+  font-size: $dayFontSize;
   font-variant: small-caps;
 }
 

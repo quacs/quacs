@@ -17,7 +17,7 @@
         >
           <router-link class="nav-link" :to="'/department/' + departmentCode"
             >{{ departmentCode }}
-            {{ departments[departmentCode].name }}</router-link
+            {{ getDepartment(departmentCode).name }}</router-link
           >
         </div>
       </b-card>
@@ -26,12 +26,24 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
 import { mapState } from "vuex";
 
-export default {
-  name: "Home",
+@Component({
   computed: mapState(["departments", "schools"])
-};
+})
+export default class Home extends Vue {
+  get getDepartment() {
+    return (code: string) => {
+      for (const dept of this.$store.state.departments) {
+        if (dept.code == code) {
+          return dept;
+        }
+      }
+      return {};
+    };
+  }
+}
 </script>
 
 <style scoped>
