@@ -9,6 +9,8 @@
 
     <Calendar />
 
+    <br />
+
     <div class="card-columns">
       <CourseCard
         v-for="course in courses"
