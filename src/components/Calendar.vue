@@ -33,7 +33,10 @@
           :style="{
             'margin-top': eventPosition(session.timeslot) + 'px',
             height: eventHeight(session.timeslot) + 'px',
-            width: dayWidth + '%'
+            width: dayWidth + '%',
+            backgroundColor: colors(session.section.crn).bg,
+            borderColor: colors(session.section.crn).border,
+            color: colors(session.section.crn).text
           }"
         >
           <div class="event-text">
@@ -63,8 +66,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { minuteTimeToHour, getDuration, toMinutes, DAYS } from "@/utilities";
-import { CourseSection, Timeslot, Day } from "@/typings";
+import { CourseSection, Day, Timeslot } from "@/typings";
+import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
 
 @Component({
   computed: {
@@ -90,18 +93,11 @@ export default class Calendar extends Vue {
 
   get selected() {
     return this.$store.getters["sections/selectedCRNs"]
-      .map((crn: number) => {
-        for (const deptName in this.$store.state.departments) {
-          const dept = this.$store.state.departments[deptName];
-
-          for (const courseName in dept.courses) {
-            const course = dept.courses[courseName];
-
-            if (crn in course.sections) {
-              return course.sections[crn];
-            }
-          }
-        }
+      .map((crn: string) => {
+        for (const dept of this.$store.state.departments)
+          for (const course of dept.courses)
+            for (const section of course.sections)
+              if (String(section.crn) === crn) return section;
 
         return null;
       })
@@ -112,16 +108,13 @@ export default class Calendar extends Vue {
     return (day: Day): { section: CourseSection; timeslot: Timeslot }[] => {
       const ret = [];
 
-      for (const section of this.selected) {
-        for (const timeslot of section.timeslots) {
-          if (timeslot.days.indexOf(day.short) !== -1) {
+      for (const section of this.selected)
+        for (const timeslot of section.timeslots)
+          if (timeslot.days.indexOf(day.short) !== -1)
             ret.push({
               section: section,
               timeslot: timeslot
             });
-          }
-        }
-      }
 
       return ret;
     };
@@ -129,9 +122,9 @@ export default class Calendar extends Vue {
 
   get strHours() {
     const hours = [];
-    for (let time = this.startTime; time < this.endTime; time += 60) {
+    for (let time = this.startTime; time < this.endTime; time += 60)
       hours.push(minuteTimeToHour(time));
-    }
+
     return hours;
   }
 
@@ -148,12 +141,22 @@ export default class Calendar extends Vue {
       );
     };
   }
+
+  get colors() {
+    return (crn: number) => {
+      const colorIdx = this.selected.findIndex(
+        (section: CourseSection) => section.crn === crn
+      );
+      return this.$store.getters["sections/colors"](colorIdx);
+    };
+  }
 }
 </script>
 
 <style scoped lang="scss">
 $labelOffset: 0.35em;
-$hourFontSize: 0.5em;
+$hourFontSize: 0.6em;
+$dayFontSize: 0.8em;
 
 .calendar {
   margin-top: 10px;
@@ -188,7 +191,7 @@ $hourFontSize: 0.5em;
   display: block;
   margin: 0 auto;
   text-align: center;
-  font-size: 0.8em;
+  font-size: $dayFontSize;
   font-variant: small-caps;
 }
 

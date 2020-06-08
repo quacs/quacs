@@ -9,6 +9,8 @@
 
     <Calendar />
 
+    <br />
+
     <div class="card-columns">
       <CourseCard
         v-for="course in courses"
@@ -21,10 +23,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Course } from "@/typings";
-
-import CourseCard from "@/components/CourseCard.vue";
 import Calendar from "@/components/Calendar.vue";
+import { Course } from "@/typings";
+import CourseCard from "@/components/CourseCard.vue";
 
 @Component({
   components: {
@@ -36,16 +37,13 @@ export default class Schedule extends Vue {
   get courses(): Course[] {
     const selected = [];
 
-    for (const dept of this.$store.state.departments) {
-      for (const course of dept.courses) {
-        for (const crn in course.sections) {
-          if (this.$store.getters["sections/isSelected"](crn)) {
+    for (const dept of this.$store.state.departments)
+      for (const course of dept.courses)
+        for (const section of course.sections)
+          if (this.$store.getters["sections/isSelected"](section.crn)) {
             selected.push(course);
             break;
           }
-        }
-      }
-    }
 
     return selected;
   }

@@ -44,10 +44,10 @@
 </template>
 
 <script lang="ts">
+import { Course, CourseSection } from "@/typings";
+import { formatCourseSize, formatTimeslot, getSessions } from "@/utilities";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters } from "vuex";
-import { Course, CourseSection } from "@/typings";
-import { formatTimeslot, getSessions, formatCourseSize } from "@/utilities";
 
 @Component({
   computed: {
@@ -64,11 +64,9 @@ export default class MobileSections extends Vue {
   toggleSelection(section: CourseSection, selected: boolean | null = null) {
     let newState = true;
 
-    if (selected !== null) {
-      newState = selected;
-    } else if (section.crn in this.$store.state.sections.selectedSections) {
+    if (selected !== null) newState = selected;
+    else if (section.crn in this.$store.state.sections.selectedSections)
       newState = !this.$store.getters["sections/isSelected"](section.crn);
-    }
 
     this.$store.commit("sections/setSelected", {
       crn: section.crn,
