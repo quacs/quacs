@@ -42,7 +42,8 @@ import MobileSections from "./sections/MobileSections.vue";
 })
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
-  expanded = false;
+  @Prop() readonly startExpanded!: boolean;
+  expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin() {
     return this.course.sections[0].credMin;

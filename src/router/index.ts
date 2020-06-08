@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import Department from "../views/Department.vue";
+import Coursepage from "../views/Coursepage.vue";
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,11 @@ const routes: Array<RouteConfig> = [
   {
     path: "/schedule",
     component: () => import("../views/Schedule.vue")
+  },
+  {
+    path: "/course/:courseid",
+    component: Coursepage,
+    props: true
   }
 ];
 
