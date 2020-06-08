@@ -44,20 +44,20 @@
         <td v-for="day in days" v-bind:key="day" class="time-cell">
           <!-- TODO: fix different instructors for same timeslot -->
           <span
-            v-for="session in spaceOutSessions(
+            v-for="timeslot in spaceOutTimeslots(
               section.crn,
               getSessions(section, day)
             )"
             v-bind:key="
               'desktop' +
                 day +
-                session.timeStart +
+                timeslot.timeStart +
                 section.crn +
-                session.instructor +
-                session.location
+                timeslot.instructor +
+                timeslot.location
             "
           >
-            {{ formatTimeslot(session) }}
+            {{ formatTimeslot(timeslot) }}
             <br />
           </span>
         </td>
@@ -84,7 +84,6 @@ import { formatTimeslot, getSessions, formatCourseSize } from "@/utilities";
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
-  sessionOrders: { [crn: string]: { [time: number]: number } } = {};
 
   get sections() {
     const sections = [];
@@ -116,56 +115,86 @@ export default class Section extends Vue {
   // Calculates the order of the timeslots for each section
   // For example if a section with the crn 1234 has times that start at 1000, 1100, 800
   //This will return a json of {1234:{800:0, 1000:1, 1100:2}}
-  sessionIndex(): { [crn: string]: { [time: number]: number } } {
-    //This is used to cache the data
-    //TODO figure out how to use vue to do the caching for me. There must be a better way
-    if (Object.keys(this.sessionOrders).length !== 0) {
-      return this.sessionOrders;
-    }
+  get sessionIndex(): { [crn: string]: { [time: number]: number } } {
+    const sessionOrders: { [crn: string]: { [time: number]: number } } = {};
+
     for (const crn in this.course.sections) {
-      //collect all the times and put them as keys in the times object (to remove duplicates)
-      const times: { [key: string]: boolean } = {};
+      // Since some course sections have multiple timeslots at the same time on the same
+      // day (thanks SIS!), we first have to count up how many times this timeslot has
+      // occurred each day.
+      const dayTimes: { [day: string]: { [time: number]: number } } = {};
+
       for (const timeslot of this.course.sections[crn].timeslots) {
-        times[timeslot.timeStart] = true;
+        for (const day of timeslot.days) {
+          if (!(day in dayTimes)) {
+            dayTimes[day] = {};
+          }
+
+          if (timeslot.timeStart in dayTimes[day]) {
+            dayTimes[day][timeslot.timeStart]++;
+          } else {
+            dayTimes[day][timeslot.timeStart] = 1;
+          }
+        }
       }
 
-      //sort and go through each time giving them an index value
-      const sortedTimes = Object.keys(times);
-      sortedTimes.sort();
-      this.sessionOrders[crn] = {};
-      for (let i = 0; i < sortedTimes.length; i++) {
-        this.sessionOrders[crn][parseInt(sortedTimes[i])] = i;
+      // Store the max number of occurrences of each time so we can correctly space things out
+      const times: { [key: number]: number } = {};
+      for (const day in dayTimes) {
+        for (const time in dayTimes[day]) {
+          const occurrences = dayTimes[day][time];
+
+          if (!(time in times) || occurrences > times[time]) {
+            times[time] = occurrences;
+          }
+        }
       }
+
+      const sortedTimes = Object.keys(times);
+      sortedTimes.sort((a, b) => parseInt(a) > parseInt(b));
+      sessionOrders[crn] = {};
+
+      let currRow = 0;
+      console.log(crn);
+      console.log(sortedTimes);
+      for (const time of sortedTimes) {
+        sessionOrders[crn][time] = currRow;
+        console.log(times);
+        currRow += times[time];
+      }
+
+      console.log(sessionOrders[crn]);
     }
-    return this.sessionOrders;
+
+    return sessionOrders;
   }
 
   //Takes in a crn and a list of timeslots
   //Returns a list of timeslots but with spacers inserted so that
   //Times on different days line up
-  spaceOutSessions(crn: string, timeslots: Timeslot[]): Timeslot[] {
+  spaceOutTimeslots(crn: string, timeslots: Timeslot[]): Timeslot[] {
     const spacedTimeslots: Timeslot[] = [];
 
     //Go through all the timeslots inserting spacers when needed to line up times
-    for (let i = 0, count = 1; i < timeslots.length; i++, count++) {
-      if (
-        spacedTimeslots.length ==
-        this.sessionIndex()[crn][timeslots[i].timeStart]
+    let numSpacers = 0;
+    for (const timeslot of timeslots) {
+      while (
+        spacedTimeslots.length < this.sessionIndex[crn][timeslot.timeStart]
       ) {
-        spacedTimeslots.push(timeslots[i]);
-      } else {
+        numSpacers++;
         //This acts as a spacer
         spacedTimeslots.push({
           days: [],
-          timeStart: -1 * count,
-          timeEnd: -1 * count,
+          timeStart: -1 * numSpacers,
+          timeEnd: -1 * numSpacers,
           instructor: "",
           dateStart: "",
           dateEnd: "",
           location: ""
         });
-        i--;
       }
+
+      spacedTimeslots.push(timeslot);
     }
     return spacedTimeslots;
   }
