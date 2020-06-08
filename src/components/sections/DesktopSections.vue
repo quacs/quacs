@@ -11,7 +11,7 @@
 
     <tbody>
       <tr
-        v-for="section in sections"
+        v-for="section in course.sections"
         v-bind:key="section.crn"
         v-on:click="toggleSelection(section)"
         class="course-row"
@@ -85,16 +85,6 @@ export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
 
-  get sections() {
-    const sections = [];
-    for (const crn in this.course.sections) {
-      sections.push(this.course.sections[crn]);
-    }
-
-    sections.sort((s1, s2) => (s1.sec > s2.sec ? 1 : -1));
-    return sections;
-  }
-
   toggleSelection(section: CourseSection, selected: boolean | null = null) {
     let newState = true;
 
@@ -120,13 +110,13 @@ export default class Section extends Vue {
   get sessionIndex(): { [crn: string]: { [time: number]: number } } {
     const sessionOrders: { [crn: string]: { [time: number]: number } } = {};
 
-    for (const crn in this.course.sections) {
+    for (const section of this.course.sections) {
       // Since some course sections have multiple timeslots at the same time on the same
       // day (thanks SIS!), we first have to count up how many times this timeslot has
       // occurred each day.
       const dayTimes: { [day: string]: { [time: number]: number } } = {};
 
-      for (const timeslot of this.course.sections[crn].timeslots) {
+      for (const timeslot of section.timeslots) {
         for (const day of timeslot.days) {
           if (!(day in dayTimes)) {
             dayTimes[day] = {};
@@ -154,11 +144,11 @@ export default class Section extends Vue {
 
       const sortedTimes = Object.keys(times);
       sortedTimes.sort((a, b) => (parseInt(a) > parseInt(b) ? 1 : -1));
-      sessionOrders[crn] = {};
+      sessionOrders[section.crn] = {};
 
       let currRow = 0;
       for (const time of sortedTimes) {
-        sessionOrders[crn][parseInt(time)] = currRow;
+        sessionOrders[section.crn][parseInt(time)] = currRow;
         currRow += times[parseInt(time)];
       }
     }

@@ -28,8 +28,8 @@ export interface CourseSection {
   sec: string;
   crn: number;
 
-  cred_min: number;
-  cred_max: number;
+  credMin: number;
+  credMax: number;
 
   cap: number;
   rem: number;
@@ -43,13 +43,13 @@ export interface Course {
   title: string;
   subj: string;
   crse: number;
-  sections: { [id: string]: CourseSection };
+  sections: CourseSection[];
 }
 
 export interface Department {
   name: string;
   code: string;
-  courses: { [id: string]: Course };
+  courses: Course[];
 }
 
 export interface CatalogCourse {

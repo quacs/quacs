@@ -69,22 +69,16 @@ export default class Sections extends VuexModule {
   }
 
   @Mutation
-  populateConflicts(departments: { [id: string]: Department }) {
+  populateConflicts(departments: readonly Department[]) {
     const start = new Date().getTime();
 
     console.log("Generating conflicts..");
-    for (const deptName in departments) {
-      const dept = departments[deptName];
-
-      for (const courseName in dept.courses) {
-        const course = dept.courses[courseName];
-
-        for (const crn in course.sections) {
-          if (!this.selectedSections[Number(crn)]) {
+    for (const dept of departments) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          if (!this.selectedSections[Number(section.crn)]) {
             continue;
           }
-
-          const section = course.sections[crn];
 
           for (const conflict in section.conflicts) {
             Vue.set(

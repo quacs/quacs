@@ -45,7 +45,7 @@ export default class CourseCard extends Vue {
   expanded = false;
 
   get credMin() {
-    return Object.values(this.course.sections)[0].cred_min;
+    return this.course.sections[0].credMin;
   }
 
   getDescription(subject: string, code: string): string {

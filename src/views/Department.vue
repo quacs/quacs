@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1>{{ department.code }}: {{ department.name }}</h1>
+    <h1>{{ code }}: {{ name }}</h1>
     <div class="card-column">
       <CourseCard
-        v-for="course in department.courses"
+        v-for="course in courses"
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
       />
@@ -25,7 +25,24 @@ export default class Department extends Vue {
   @Prop() code!: string;
 
   get department() {
-    return this.$store.state.departments[this.code];
+    for (const dept of this.$store.state.departments) {
+      if (dept.code == this.code) {
+        console.log("found it!");
+        return dept;
+      }
+    }
+
+    console.log("didn't find it :(");
+
+    return {};
+  }
+
+  get courses() {
+    return this.department.courses;
+  }
+
+  get name() {
+    return this.department.name;
   }
 }
 </script>

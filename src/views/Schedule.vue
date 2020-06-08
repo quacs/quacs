@@ -36,11 +36,8 @@ export default class Schedule extends Vue {
   get courses(): Course[] {
     const selected = [];
 
-    for (const deptName in this.$store.state.departments) {
-      const dept = this.$store.state.departments[deptName];
-      for (const courseName in dept.courses) {
-        const course = dept.courses[courseName];
-
+    for (const dept of this.$store.state.departments) {
+      for (const course of dept.courses) {
         for (const crn in course.sections) {
           if (this.$store.getters["sections/isSelected"](crn)) {
             selected.push(course);
