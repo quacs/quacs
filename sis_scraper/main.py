@@ -51,24 +51,24 @@ def getConflict(data, check_timeslots, course_code):
 
     return conflicts
 
-
-def reformatJson(data):
-    departments_copy = data
-    reformat = {}
-    for department in departments_copy:
-        reformat[department['code']] = department
-        course_copy = department['courses']
-        reformat[department['code']]['courses'] = {}
-        for course in course_copy:
-            reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"] = course
-            sections_copy = course['sections']
-            reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'] = {}
-            for section in sections_copy:
-                reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'][section['crn']] = section
-
-
-    return reformat
-
+# We decided not to use this but I left it just in case
+# def reformatJson(data):
+#     departments_copy = data
+#     reformat = {}
+#     for department in departments_copy:
+#         reformat[department['code']] = department
+#         course_copy = department['courses']
+#         reformat[department['code']]['courses'] = {}
+#         for course in course_copy:
+#             reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"] = course
+#             sections_copy = course['sections']
+#             reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'] = {}
+#             for section in sections_copy:
+#                 reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'][section['crn']] = section
+#
+#
+#     return reformat
+#
 
 
 def getContent(element):
@@ -217,6 +217,6 @@ with requests.Session() as s:
                 data[-1]['code'] = getContent(td[2])
 
     addConflicts(data)
-    data = reformatJson(data)
+    # data = reformatJson(data)
 
     print(json.dumps(data))
