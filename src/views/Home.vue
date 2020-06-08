@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import { mapState } from "vuex";
-import { sortList } from "@/utilities";
 
 export default {
   name: "Home",
