@@ -1,7 +1,6 @@
-import { Module, VuexModule, Mutation } from "vuex-module-decorators";
-import Vue from "vue";
-
+import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { Department } from "@/typings";
+import Vue from "vue";
 
 const BG_COLORS = [
   "#ffd4df",
@@ -54,11 +53,8 @@ export default class Sections extends VuexModule {
 
   get selectedCRNs() {
     const selected = [];
-    for (const crn in this.selectedSections) {
-      if (this.selectedSections[crn]) {
-        selected.push(crn);
-      }
-    }
+    for (const crn in this.selectedSections)
+      if (this.selectedSections[crn]) selected.push(crn);
 
     return selected;
   }
@@ -70,21 +66,19 @@ export default class Sections extends VuexModule {
 
   @Mutation
   updateConflicts(p: { crn: number; conflicts: readonly number[] }) {
-    for (const conflict in p.conflicts) {
-      if (this.selectedSections[p.crn]) {
+    for (const conflict in p.conflicts)
+      if (this.selectedSections[p.crn])
         Vue.set(
           this.conflictingSectionCounts,
           conflict,
           this.conflictingSectionCounts[conflict] + 1 || 1
         );
-      } else {
+      else
         Vue.set(
           this.conflictingSectionCounts,
           conflict,
           this.conflictingSectionCounts[conflict] - 1 || 0
         );
-      }
-    }
   }
 
   @Mutation
@@ -104,23 +98,18 @@ export default class Sections extends VuexModule {
 
     // eslint-disable-next-line
     console.log("Generating conflicts..");
-    for (const dept of departments) {
-      for (const course of dept.courses) {
+    for (const dept of departments)
+      for (const course of dept.courses)
         for (const section of course.sections) {
-          if (!this.selectedSections[Number(section.crn)]) {
-            continue;
-          }
+          if (!this.selectedSections[Number(section.crn)]) continue;
 
-          for (const conflict in section.conflicts) {
+          for (const conflict in section.conflicts)
             Vue.set(
               this.conflictingSectionCounts,
               conflict,
               this.conflictingSectionCounts[Number(conflict)] + 1 || 1
             );
-          }
         }
-      }
-    }
 
     const end = new Date().getTime();
 

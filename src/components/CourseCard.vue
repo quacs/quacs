@@ -31,8 +31,8 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
 
-import MobileSections from "./sections/MobileSections.vue";
 import DesktopSections from "./sections/DesktopSections.vue";
+import MobileSections from "./sections/MobileSections.vue";
 
 @Component({
   components: {
@@ -50,19 +50,15 @@ export default class CourseCard extends Vue {
 
   getDescription(subject: string, code: string): string {
     const catname = subject + "-" + code;
-    if (catname in this.$store.state.catalog) {
+    if (catname in this.$store.state.catalog)
       return this.$store.state.catalog[catname].description;
-    }
 
     return "";
   }
 
   get rotation() {
-    if (this.expanded) {
-      return 90;
-    } else {
-      return 0;
-    }
+    if (this.expanded) return 90;
+    else return 0;
   }
 
   toggleExpanded() {

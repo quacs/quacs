@@ -1,13 +1,14 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import { CatalogCourse, CourseSize, Department } from "@/typings";
+
 import axios from "axios";
-import VueAxios from "vue-axios";
 import createPersistedState from "vuex-persistedstate";
 
-import { Department, CatalogCourse, CourseSize } from "@/typings";
+import Vue from "vue";
+import VueAxios from "vue-axios";
+import Vuex from "vuex";
 
-import COURSES_JSON from "./data/courses.json";
 import CATALOG_JSON from "./data/catalog.json";
+import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
 
 import sections from "./modules/sections";

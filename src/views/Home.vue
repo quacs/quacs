@@ -35,11 +35,9 @@ import { mapState } from "vuex";
 export default class Home extends Vue {
   get getDepartment() {
     return (code: string) => {
-      for (const dept of this.$store.state.departments) {
-        if (dept.code == code) {
-          return dept;
-        }
-      }
+      for (const dept of this.$store.state.departments)
+        if (dept.code === code) return dept;
+
       return {};
     };
   }

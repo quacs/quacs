@@ -59,7 +59,44 @@
       "ecmaVersion": 2020
     },
     "rules": {
-      "no-console": "warn"
+      "array-callback-return": "warn",
+      "block-scoped-var": "error",
+      "curly": ["warn", "multi"],
+      "dot-notation": "warn",
+      "eqeqeq": "warn",
+      "init-declarations": "error",
+      "no-alert": "warn",
+      "no-caller": "error",
+      "no-confusing-arrow": "warn",
+      "no-console": "warn",
+      "no-duplicate-imports": "warn",
+      "no-eq-null": "warn",
+      "no-eval": "error",
+      "no-floating-decimal": "warn",
+      "no-implicit-coercion": "warn",
+      "no-implied-eval": "error",
+      "no-lone-blocks": "warn",
+      "no-multi-spaces": "warn",
+      "no-new": "warn",
+      "no-new-wrappers": "warn",
+      "no-param-reassign": "warn",
+      "no-script-url": "error",
+      "no-self-compare": "warn",
+      "no-sequences": "warn",
+      "no-shadow": "warn",
+      "no-template-curly-in-string": "warn",
+      "no-undef-init": "warn",
+      "no-undefined": "warn",
+      "no-unused-expressions": "warn",
+      "no-use-before-define": "warn",
+      "no-useless-computed-key": "warn",
+      "no-useless-concat": "warn",
+      "no-useless-rename": "warn",
+      "no-var": "error",
+      "sort-imports": ["warn", {
+        "ignoreDeclarationSort": true
+      }],
+      "vars-on-top": "warn"
     }
   },
   "browserslist": [

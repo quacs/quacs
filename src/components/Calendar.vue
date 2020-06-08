@@ -66,8 +66,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { minuteTimeToHour, getDuration, toMinutes, DAYS } from "@/utilities";
-import { CourseSection, Timeslot, Day } from "@/typings";
+import { CourseSection, Day, Timeslot } from "@/typings";
+import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
 
 @Component({
   computed: {
@@ -94,15 +94,10 @@ export default class Calendar extends Vue {
   get selected() {
     return this.$store.getters["sections/selectedCRNs"]
       .map((crn: string) => {
-        for (const dept of this.$store.state.departments) {
-          for (const course of dept.courses) {
-            for (const section of course.sections) {
-              if (String(section.crn) === crn) {
-                return section;
-              }
-            }
-          }
-        }
+        for (const dept of this.$store.state.departments)
+          for (const course of dept.courses)
+            for (const section of course.sections)
+              if (String(section.crn) === crn) return section;
 
         return null;
       })
@@ -113,16 +108,13 @@ export default class Calendar extends Vue {
     return (day: Day): { section: CourseSection; timeslot: Timeslot }[] => {
       const ret = [];
 
-      for (const section of this.selected) {
-        for (const timeslot of section.timeslots) {
-          if (timeslot.days.indexOf(day.short) !== -1) {
+      for (const section of this.selected)
+        for (const timeslot of section.timeslots)
+          if (timeslot.days.indexOf(day.short) !== -1)
             ret.push({
               section: section,
               timeslot: timeslot
             });
-          }
-        }
-      }
 
       return ret;
     };
@@ -130,9 +122,9 @@ export default class Calendar extends Vue {
 
   get strHours() {
     const hours = [];
-    for (let time = this.startTime; time < this.endTime; time += 60) {
+    for (let time = this.startTime; time < this.endTime; time += 60)
       hours.push(minuteTimeToHour(time));
-    }
+
     return hours;
   }
 
