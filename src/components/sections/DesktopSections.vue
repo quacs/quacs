@@ -151,19 +151,14 @@ export default class Section extends Vue {
       }
 
       const sortedTimes = Object.keys(times);
-      sortedTimes.sort((a, b) => parseInt(a) > parseInt(b));
+      sortedTimes.sort((a, b) => (parseInt(a) > parseInt(b) ? 1 : -1));
       sessionOrders[crn] = {};
 
       let currRow = 0;
-      console.log(crn);
-      console.log(sortedTimes);
       for (const time of sortedTimes) {
-        sessionOrders[crn][time] = currRow;
-        console.log(times);
-        currRow += times[time];
+        sessionOrders[crn][parseInt(time)] = currRow;
+        currRow += times[parseInt(time)];
       }
-
-      console.log(sessionOrders[crn]);
     }
 
     return sessionOrders;
