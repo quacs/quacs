@@ -1,0 +1,58 @@
+{
+	"Humanities, Arts, and Social Sciences": [
+		"ARTS",
+		"COGS",
+		"COMM",
+		"ECON",
+		"GSAS",
+		"IHSS",
+		"LANG",
+		"LITR",
+		"PHIL",
+		"PSYC",
+		"STSH",
+		"STSS",
+		"WRIT"
+	],
+	"Business Management": [
+		"MGMT"
+	],
+	"Engineering": [
+		"BMED",
+		"CHME",
+		"CIVL",
+		"ECSE",
+		"ENGR",
+		"ENVE",
+		"ESCI",
+		"ISYE",
+		"MANE",
+		"MTLE"
+	],
+	"Information Technology and Web Science": [
+		"ITWS"
+	],
+	"Architecture": [
+		"ARCH"
+	],
+	"Science": [
+		"ASTR",
+		"BCBP",
+		"BIOL",
+		"CHEM",
+		"CSCI",
+		"ERTH",
+		"IENV",
+		"ISCI",
+		"MATH",
+		"MATP",
+		"PHYS"
+	],
+	"Other": [
+		"ADMN",
+		"LGHT",
+		"USAF",
+		"USAR",
+		"USNA"
+	]
+}
