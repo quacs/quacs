@@ -207,7 +207,7 @@ with requests.Session() as s:
             last_subject = getContent(td[2])
             last_course_code = int(getContent(td[3]))
             data[-1]['courses'].append({
-                "title":getContent(td[7]),
+                "title":getContent(td[7]).title(),
                 "subj":getContent(td[2]),
                 "crse":int(getContent(td[3])),
                 "sections":[section_data]
