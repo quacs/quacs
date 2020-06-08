@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <router-link class="navbar-brand" to="/"
         ><img
-          src="@/assets/images/quacs_full_40.png"
+          src="@/assets/images/quacs_logo_white.svg"
           alt="QuACS Home"
           style="height:40px"
       /></router-link>
@@ -41,7 +41,11 @@
         aria-label="Visit our GitHub"
         ><i class="fab fa-github"></i
       ></a>
-      <img src="@/assets/images/quacs_40.png" alt="QuACS" style="height:40px" />
+      <img
+        src="@/assets/images/quacs_white.svg"
+        alt="QuACS"
+        style="height:40px"
+      />
       <a
         href="https://discord.gg/EyGZTAP"
         title="Join our development Discord server"

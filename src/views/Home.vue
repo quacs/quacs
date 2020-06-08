@@ -1,10 +1,5 @@
 <template>
   <div class="home">
-    <h3>
-      Join the QuACS development discord server!
-      <a href="https://discord.gg/3xNxfBy">https://discord.gg/3xNxfBy</a>
-    </h3>
-    <br /><br />
     <b-card-group columns>
       <b-card
         v-for="(departmentCodes, school) in schools"

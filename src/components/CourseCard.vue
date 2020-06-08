@@ -103,4 +103,8 @@ export default class CourseCard extends Vue {
 .course-card-header {
   cursor: pointer;
 }
+
+.card-header:hover {
+  background: #eaeaea;
+}
 </style>
