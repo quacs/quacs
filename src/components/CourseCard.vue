@@ -1,7 +1,12 @@
 <template>
   <div class="card course-card">
     <!-- header -->
-    <div class="card-header course-card-header" v-on:click="toggleExpanded()">
+    <div
+      class="card-header course-card-header"
+      v-on:click="toggleExpanded()"
+      v-on:keyup.enter="toggleExpanded()"
+      tabindex="0"
+    >
       <i
         class="fas fa-caret-right open_close_icon"
         :class="{ opened_icon: expanded }"

@@ -1,8 +1,0 @@
-diff a/src/App.vue b/src/App.vue	(rejected hunks)
-@@ -18 +18,5 @@
--        <b-nav-item >  <router-link class="navbar-brand" to="/schedule">Schedule</router-link></b-nav-item>
-+          <b-nav-item>
-+            <router-link class="navbar-brand" to="/schedule"
-+              >Schedule</router-link
-+            ></b-nav-item
-+          >

@@ -2,7 +2,10 @@
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <router-link class="navbar-brand" to="/"
-        ><img src="@/assets/images/quacs_40.png" alt="QuACS" style="height:40px"
+        ><img
+          src="@/assets/images/quacs_full_40.png"
+          alt="QuACS Home"
+          style="height:40px"
       /></router-link>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -31,6 +34,21 @@
         <div class="col-lg-1"></div>
       </div>
     </div>
+    <footer>
+      <a
+        href="https://github.com/quacs/quacs"
+        title="Visit our GitHub"
+        aria-label="Visit our GitHub"
+        ><i class="fab fa-github"></i
+      ></a>
+      <img src="@/assets/images/quacs_40.png" alt="QuACS" style="height:40px" />
+      <a
+        href="https://discord.gg/EyGZTAP"
+        title="Join our development Discord server"
+        aria-label="Join our development Discord server"
+        ><i class="fab fa-discord"></i
+      ></a>
+    </footer>
   </div>
 </template>
 
@@ -106,4 +124,24 @@ export default class App extends Vue {
 
 <style scoped>
 @import "./assets/styles/main.css";
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  background: lightgrey;
+}
+
+footer > * {
+  color: black;
+  font-size: 2.4rem;
+  padding: 0rem 1rem;
+}
+
+footer > a:hover {
+  color: DimGrey;
+}
 </style>
