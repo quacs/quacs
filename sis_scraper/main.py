@@ -210,7 +210,8 @@ with requests.Session() as s:
                 "title":getContent(td[7]).title(),
                 "subj":getContent(td[2]),
                 "crse":int(getContent(td[3])),
-                "sections":[section_data]
+                "id":getContent(td[2])+"-"+getContent(td[3]),
+                "sections":[section_data],
             })
 
             if len(getContent(td[2])) > 0:
@@ -219,4 +220,4 @@ with requests.Session() as s:
     addConflicts(data)
     # data = reformatJson(data)
 
-    print(json.dumps(data))
+    print(json.dumps(data,sort_keys=False,indent=2))
