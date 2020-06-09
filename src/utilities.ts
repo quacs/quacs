@@ -28,8 +28,11 @@ export function getSessions() {
   return (section: CourseSection, day: ShortDay): Timeslot[] => {
     const sessions = [];
 
-    for (const timeslot of section.timeslots)
-      if (timeslot.days.includes(day)) sessions.push(timeslot);
+    for (const timeslot of section.timeslots) {
+      if (timeslot.days.includes(day)) {
+        sessions.push(timeslot);
+      }
+    }
 
     sessions.sort((a, b) => {
       return a.timeStart - b.timeStart;
@@ -46,13 +49,19 @@ function formatTime(time: number, isMilitaryTime: boolean): string {
   if (isMilitaryTime) return hour + ":" + ("0" + minute).slice(-2);
 
   let output = "";
-  if (hour > 12) output = String(hour - 12);
-  else output = String(hour);
+  if (hour > 12) {
+    output = String(hour - 12);
+  } else {
+    output = String(hour);
+  }
 
   output += ":" + ("0" + minute).slice(-2);
 
-  if (hour > 11) output += "p";
-  else output += "a";
+  if (hour > 11) {
+    output += "p";
+  } else {
+    output += "a";
+  }
 
   return output;
 }
@@ -69,12 +78,13 @@ export function formatTimeslot() {
 
 export function formatCourseSize() {
   return function(crn: string): string {
-    if (crn in store.state.courseSizes)
+    if (crn in store.state.courseSizes) {
       return (
         store.state.courseSizes[crn].avail +
         "/" +
         store.state.courseSizes[crn].seats
       );
+    }
 
     return "";
   };
@@ -82,9 +92,13 @@ export function formatCourseSize() {
 
 export function minuteTimeToHour(minuteTime: number): string {
   const hour = Math.floor(minuteTime / 60);
-  if (hour < 12) return hour + " AM";
-  else if (hour === 12) return "Noon";
-  else return hour - 12 + " PM";
+  if (hour < 12) {
+    return hour + " AM";
+  } else if (hour === 12) {
+    return "Noon";
+  } else {
+    return hour - 12 + " PM";
+  }
 }
 
 // Converts a timeslot time into minutes since midnight

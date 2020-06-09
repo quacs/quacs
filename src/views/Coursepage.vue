@@ -27,9 +27,13 @@ export default class Coursepage extends Vue {
   @Prop() courseid!: string;
 
   get course(): Course | null {
-    for (const dept of this.$store.state.departments)
-      for (const course of dept.courses)
-        if (course.subj + "-" + course.crse === this.courseid) return course;
+    for (const dept of this.$store.state.departments) {
+      for (const course of dept.courses) {
+        if (course.subj + "-" + course.crse === this.courseid) {
+          return course;
+        }
+      }
+    }
 
     return null;
   }

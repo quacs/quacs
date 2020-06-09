@@ -25,8 +25,11 @@ export default class Department extends Vue {
   @Prop() code!: string;
 
   get department() {
-    for (const dept of this.$store.state.departments)
-      if (dept.code === this.code) return dept;
+    for (const dept of this.$store.state.departments) {
+      if (dept.code === this.code) {
+        return dept;
+      }
+    }
 
     return {};
   }

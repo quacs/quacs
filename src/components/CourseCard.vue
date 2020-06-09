@@ -60,15 +60,19 @@ export default class CourseCard extends Vue {
 
   getDescription(subject: string, code: string): string {
     const catname = subject + "-" + code;
-    if (catname in this.$store.state.catalog)
+    if (catname in this.$store.state.catalog) {
       return this.$store.state.catalog[catname].description;
+    }
 
     return "";
   }
 
   get rotation() {
-    if (this.expanded) return 90;
-    else return 0;
+    if (this.expanded) {
+      return 90;
+    } else {
+      return 0;
+    }
   }
 
   toggleExpanded() {

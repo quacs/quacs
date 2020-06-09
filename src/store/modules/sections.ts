@@ -1,5 +1,5 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
-import { CalendarColor, Department, SelectedSection } from "@/typings";
+import { CalendarColor, Course, Department, SelectedSection } from "@/typings";
 import Vue from "vue";
 
 const BG_COLORS = [
@@ -58,6 +58,17 @@ export default class Sections extends VuexModule {
       .filter((selected: SelectedSection) => selected.selected);
   }
 
+  get selectedCourses(): readonly Course[] {
+    return this.selected
+      .map((s: SelectedSection) => s.course)
+      .filter(
+        (course: Course, idx: number, self) =>
+          self.findIndex(
+            (c: Course) => c.subj + c.crse === course.subj + course.crse
+          ) === idx
+      );
+  }
+
   @Mutation
   setSelected(p: SelectedSection): void {
     Vue.set(this.selectedSections, p.section.crn, p);
@@ -65,19 +76,21 @@ export default class Sections extends VuexModule {
 
   @Mutation
   updateConflicts(p: { crn: number; conflicts: readonly number[] }): void {
-    for (const conflict in p.conflicts)
-      if (this.selectedSections[p.crn])
+    for (const conflict in p.conflicts) {
+      if (this.selectedSections[p.crn]) {
         Vue.set(
           this.conflictingSectionCounts,
           conflict,
           this.conflictingSectionCounts[conflict] + 1 || 1
         );
-      else
+      } else {
         Vue.set(
           this.conflictingSectionCounts,
           conflict,
           this.conflictingSectionCounts[conflict] - 1 || 0
         );
+      }
+    }
   }
 
   @Mutation
@@ -97,18 +110,23 @@ export default class Sections extends VuexModule {
 
     // eslint-disable-next-line
     console.log("Generating conflicts..");
-    for (const dept of departments)
-      for (const course of dept.courses)
+    for (const dept of departments) {
+      for (const course of dept.courses) {
         for (const section of course.sections) {
-          if (!this.selectedSections[Number(section.crn)]) continue;
+          if (!this.selectedSections[Number(section.crn)]) {
+            continue;
+          }
 
-          for (const conflict in section.conflicts)
+          for (const conflict in section.conflicts) {
             Vue.set(
               this.conflictingSectionCounts,
               conflict,
               this.conflictingSectionCounts[Number(conflict)] + 1 || 1
             );
+          }
         }
+      }
+    }
 
     const end = new Date().getTime();
 

@@ -65,8 +65,9 @@ export default class MobileSections extends Vue {
   toggleSelection(section: CourseSection) {
     let selected = true;
 
-    if (section.crn in this.$store.state.sections.selectedSections)
+    if (section.crn in this.$store.state.sections.selectedSections) {
       selected = !this.$store.getters["sections/isSelected"](section.crn);
+    }
 
     const selectedSection = {
       course: this.course,
