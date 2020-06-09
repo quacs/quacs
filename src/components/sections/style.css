@@ -1,5 +1,14 @@
 .week-day {
         width: fit-content;
+        text-align: center;
+}
+
+.course-row {
+        cursor: pointer;
+}
+
+.course-row:hover {
+        background: #f0f0f0;
 }
 
 .conflict {
@@ -9,6 +18,10 @@
 
 .selected {
         background: #9198f9;
+}
+
+.selected:hover {
+        background: #acb2ff;
 }
 
 .info-cell {
@@ -38,8 +51,4 @@
         .mobile-only {
                 display: none;
         }
-}
-
-.course-row {
-        cursor: pointer;
 }

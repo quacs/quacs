@@ -14,6 +14,8 @@
         v-for="section in course.sections"
         v-bind:key="section.crn"
         v-on:click="toggleSelection(section)"
+        v-on:keyup.enter="toggleSelection(section)"
+        tabindex="0"
         class="course-row"
         v-bind:class="{
           selected: isSelected(section.crn),

@@ -60,7 +60,7 @@ export default class Sections extends VuexModule {
 
   @Mutation
   setSelected(p: SelectedSection): void {
-    Vue.set(this.selectedSections, p.section.crn, p.selected);
+    Vue.set(this.selectedSections, p.section.crn, p);
   }
 
   @Mutation

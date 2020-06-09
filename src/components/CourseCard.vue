@@ -1,7 +1,12 @@
 <template>
   <div class="card course-card">
     <!-- header -->
-    <div class="card-header course-card-header" v-on:click="toggleExpanded()">
+    <div
+      class="card-header course-card-header"
+      v-on:click="toggleExpanded()"
+      v-on:keyup.enter="toggleExpanded()"
+      tabindex="0"
+    >
       <i
         class="fas fa-caret-right open_close_icon"
         :class="{ opened_icon: expanded }"
@@ -42,7 +47,8 @@ import MobileSections from "./sections/MobileSections.vue";
 })
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
-  expanded = false;
+  @Prop() readonly startExpanded!: boolean;
+  expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin() {
     return this.course.sections[0].credMin;
@@ -96,5 +102,9 @@ export default class CourseCard extends Vue {
 
 .course-card-header {
   cursor: pointer;
+}
+
+.card-header:hover {
+  background: #eaeaea;
 }
 </style>
