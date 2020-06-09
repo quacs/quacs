@@ -32,6 +32,9 @@
               <b-nav-item to="#" class="nav-text" disabled
                 >Fall 2020</b-nav-item
               >
+              <b-nav-item class="nav-text" v-b-modal.settings-modal>
+                <i class="fas fa-cog" tabindex="-1" title="Settings"></i
+              ></b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>
         </b-collapse>
@@ -45,6 +48,7 @@
         </div>
       </div>
     </div>
+    <Settings></Settings>
     <footer class="footer">
       <a
         href="https://github.com/quacs/quacs"
@@ -73,12 +77,18 @@ import { Course } from "@/typings";
 
 import Fuse from "fuse.js";
 
+import Settings from "@/components/Settings.vue";
+
 // @ts-expect-error: Typescript doesn't know the types for this
 import Autocomplete from "@trevoreyre/autocomplete-vue";
 import "@trevoreyre/autocomplete-vue/dist/style.css";
 Vue.use(Autocomplete);
 
-@Component
+@Component({
+  components: {
+    Settings
+  }
+})
 export default class App extends Vue {
   searchString = "";
   fuseOptions = {

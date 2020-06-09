@@ -35,7 +35,7 @@
             "
           >
             <span class="font-weight-bold">{{ day }}:</span>
-            {{ formatTimeslot(session) }}
+            {{ formatTimeslot(session, isMilitaryTime()) }}
           </span>
         </template>
       </span>
@@ -54,6 +54,7 @@ import { mapGetters } from "vuex";
     formatTimeslot,
     getSessions,
     formatCourseSize,
+    ...mapGetters("settings", ["isMilitaryTime"]),
     ...mapGetters("sections", ["isSelected", "isInConflict"])
   }
 })

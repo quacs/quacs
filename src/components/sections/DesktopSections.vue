@@ -59,7 +59,7 @@
                 timeslot.location
             "
           >
-            {{ formatTimeslot(timeslot) }}
+            {{ formatTimeslot(timeslot, isMilitaryTime()) }}
             <br />
           </span>
         </td>
@@ -79,6 +79,7 @@ import { formatCourseSize, formatTimeslot, getSessions } from "@/utilities";
     formatTimeslot,
     formatCourseSize,
     getSessions,
+    ...mapGetters("settings", ["isMilitaryTime"]),
     ...mapGetters("sections", ["isSelected", "isInConflict"]),
     ...mapState(["courseSizes"])
   }

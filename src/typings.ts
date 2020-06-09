@@ -81,3 +81,8 @@ export interface CalendarColor {
   text: string;
   border: string;
 }
+
+export enum TimePreference {
+  Military = "M",
+  Standard = "S"
+}

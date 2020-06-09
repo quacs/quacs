@@ -12,6 +12,7 @@ import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
 
 import sections from "./modules/sections";
+import settings from "./modules/settings";
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios);
@@ -58,11 +59,16 @@ export default new Vuex.Store({
     }
   },
   modules: {
-    sections
+    sections,
+    settings
   },
   plugins: [
     createPersistedState({
-      paths: ["sections.selectedSections", "sections.storedVersion"],
+      paths: [
+        "sections.selectedSections",
+        "sections.storedVersion",
+        "settings.timePreference"
+      ],
       rehydrated: store => {
         // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
         store.commit("sections/populateConflicts", store.state.departments);

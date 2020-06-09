@@ -39,9 +39,11 @@ export function getSessions() {
   };
 }
 
-function formatTime(time: number): string {
+function formatTime(time: number, isMilitaryTime: boolean): string {
   const hour = Math.floor(time / 100);
   const minute = (time % 100).toString();
+
+  if (isMilitaryTime) return hour + ":" + ("0" + minute).slice(-2);
 
   let output = "";
   if (hour > 12) output = String(hour - 12);
@@ -56,9 +58,11 @@ function formatTime(time: number): string {
 }
 
 export function formatTimeslot() {
-  return (timeslot: Timeslot) => {
+  return (timeslot: Timeslot, isMilitaryTime: boolean) => {
     return timeslot.timeStart >= 0
-      ? formatTime(timeslot.timeStart) + "-" + formatTime(timeslot.timeEnd)
+      ? formatTime(timeslot.timeStart, isMilitaryTime) +
+          "-" +
+          formatTime(timeslot.timeEnd, isMilitaryTime)
       : "";
   };
 }

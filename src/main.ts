@@ -19,6 +19,7 @@ new Vue({
   render: h => h(App),
   beforeCreate() {
     this.$store.commit("sections/initializeStore");
+    this.$store.commit("settings/initializeStore");
   },
   mounted() {
     this.$store.dispatch("loadCourseSizes");
