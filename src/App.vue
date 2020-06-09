@@ -14,7 +14,6 @@
             <autocomplete
               aria-label="Search"
               placeholder="Search Courses"
-              auto-select
               :search="filterResults"
               :get-result-value="displayResult"
               @submit="search"
@@ -80,9 +79,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
 
-import Fuse from "fuse.js";
-
 import Settings from "@/components/Settings.vue";
+
+import { fuseSearch } from "@/searchUtilities";
 
 // @ts-expect-error: Typescript doesn't know the types for this
 import Autocomplete from "@trevoreyre/autocomplete-vue";
@@ -96,50 +95,10 @@ Vue.use(Autocomplete);
 })
 export default class App extends Vue {
   searchString = "";
-  fuseOptions = {
-    isCaseSensitive: false,
-    // includeScore: true,
-    shouldSort: true,
-    // includeMatches: false,
-    // findAllMatches: false,
-    // minMatchCharLength: 5,
-    // location: 0,
-    threshold: 0.2,
-    // distance: 100,
-    // useExtendedSearch: false,
-    keys: [
-      "title",
-      "crse",
-      "subj",
-      "id",
-      "sections.crn",
-      "sections.timeslots.instructor",
-      "sections.timeslots.location"
-    ]
-  };
-
-  get courses(): Course[] {
-    const courses = [];
-    for (const deptName in this.$store.state.departments) {
-      const dept = this.$store.state.departments[deptName];
-      for (const courseName in dept.courses) {
-        courses.push(dept.courses[courseName]);
-      }
-    }
-    return courses;
-  }
 
   filterResults(input: string) {
     this.searchString = input;
-    if (input.length === 0) {
-      return [];
-    }
-    const fuse = new Fuse(this.courses, this.fuseOptions);
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve(fuse.search(input));
-      }, 1);
-    });
+    return fuseSearch(input);
   }
 
   displayResult(result: { item: Course; refIndex: number }) {
@@ -148,28 +107,11 @@ export default class App extends Vue {
 
   search(result: { item: Course; refIndex: number }) {
     if (result) {
-      this.$router
-        .push("/course/" + result.item.subj + "-" + result.item.crse)
-        .catch(() => {
-          return;
-        });
-    } else {
-      const fuse = new Fuse(this.courses, this.fuseOptions);
-      const results = fuse.search(this.searchString);
-      if (results.length > 0) {
-        this.$router
-          .push("/course/" + results[0].item.subj + "-" + results[0].item.crse)
-          .catch(() => {
-            return;
-          });
-      } else if (this.searchString.match(/[A-Z]{4}-\d{4}/)) {
-        this.$router
-          .push("/course/" + this.searchString.slice(0, 9))
-          .catch(() => {
-            return;
-          });
-      }
+      this.searchString = this.displayResult(result);
     }
+    this.$router.push("/search/" + this.searchString).catch(() => {
+      return;
+    });
   }
 }
 </script>

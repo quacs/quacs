@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import Department from "../views/Department.vue";
-import Coursepage from "../views/Coursepage.vue";
+import Search from "../views/Search.vue";
 
 Vue.use(VueRouter);
 
@@ -21,8 +21,8 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/Schedule.vue")
   },
   {
-    path: "/course/:courseid",
-    component: Coursepage,
+    path: "/search/:searchString",
+    component: Search,
     props: true
   }
 ];

@@ -43,6 +43,7 @@ export interface Course {
   title: string;
   subj: string;
   crse: number;
+  id: string;
   sections: CourseSection[];
 }
 
