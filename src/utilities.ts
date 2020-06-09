@@ -84,7 +84,8 @@ export function formatCourseSize() {
       return (
         store.state.courseSizes[crn].avail +
         "/" +
-        store.state.courseSizes[crn].seats
+        store.state.courseSizes[crn].seats +
+        " seats"
       );
     }
 

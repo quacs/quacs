@@ -13,7 +13,7 @@
           <router-link
             class="nav-link department-link"
             :to="'/department/' + departmentCode"
-            ><span style="font-weight:bold">{{ departmentCode }}</span>
+            ><span class="department-code">{{ departmentCode }}</span>
             {{ getDepartment(departmentCode).name }}</router-link
           >
         </div>
@@ -89,5 +89,11 @@ a {
   .department-cards {
     column-count: 3;
   }
+}
+
+.department-code {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 1.7rem;
 }
 </style>

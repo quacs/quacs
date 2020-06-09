@@ -86,4 +86,15 @@ export default class MobileSections extends Vue {
 
 <style scoped>
 @import "./style.css";
+
+.mobile-only {
+  display: block;
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .mobile-only {
+    display: none;
+  }
+}
 </style>

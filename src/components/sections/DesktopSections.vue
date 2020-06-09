@@ -29,15 +29,20 @@
           >-<span title="CRN: the unique id given to each section in sis">{{
             section.crn
           }}</span>
-          {{ section.timeslots[0].instructor }}
-          ({{ section.timeslots[0].dateStart }}-{{
-            section.timeslots[0].dateEnd
-          }})
+          <span class="padding-left" title="Professor(s)">{{
+            section.timeslots[0].instructor
+          }}</span>
+          <span class="padding-left"
+            >({{ section.timeslots[0].dateStart }}-{{
+              section.timeslots[0].dateEnd
+            }})</span
+          >
           <span
+            class="padding-left"
             :title="
               'There are ' +
                 formatCourseSize(section.crn, courseSizes) +
-                ' spots currently available'
+                ' seats currently available'
             "
             >{{ formatCourseSize(section.crn) }}</span
           >
@@ -194,4 +199,33 @@ export default class Section extends Vue {
 
 <style scoped>
 @import "./style.css";
+
+.time-cell {
+  font-size: 10pt;
+  padding: 3px !important;
+  white-space: nowrap;
+}
+
+.info-cell {
+  font-size: 11pt;
+}
+
+.desktop-only {
+  display: none;
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .desktop-only {
+    display: block;
+  }
+}
+
+.location {
+  font-style: italic;
+}
+
+.padding-left {
+  padding-left: 0.6rem;
+}
 </style>

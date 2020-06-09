@@ -13,7 +13,8 @@
       ></i>
 
       <span class="font-weight-bold">
-        {{ course.subj }}-{{ course.crse }}: {{ course.title }}</span
+        <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>
+        {{ course.title }}</span
       >
       <!--TODO format credit nicely using min and max only showing what is needed -->
       {{ credMin }} credit<template v-if="credMin != 1">s</template>
@@ -114,5 +115,11 @@ export default class CourseCard extends Vue {
 
 .card-header:hover {
   background: #eaeaea;
+}
+
+.course-code {
+  font-family: monospace;
+  font-size: 1.5rem;
+  margin-left: 0.3rem;
 }
 </style>

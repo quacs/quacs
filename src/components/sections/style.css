@@ -27,32 +27,3 @@
 .selected:hover {
         background: #acb2ff;
 }
-
-.info-cell {
-        font-size: 11pt;
-}
-
-.time-cell {
-        font-size: 10pt;
-        padding: 3px !important;
-        white-space: nowrap
-}
-
-.desktop-only {
-        display: none;
-}
-
-.mobile-only {
-        display: block;
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-        .desktop-only {
-                display: block;
-        }
-
-        .mobile-only {
-                display: none;
-        }
-}
