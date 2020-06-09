@@ -93,8 +93,14 @@ export function formatCourseSize() {
   };
 }
 
-export function minuteTimeToHour(minuteTime: number): string {
+export function minuteTimeToHour(
+  minuteTime: number,
+  isMilitaryTime: boolean
+): string {
   const hour = Math.floor(minuteTime / 60);
+  if (isMilitaryTime) {
+    return hour.toString();
+  }
   if (hour < 12) {
     return hour + " AM";
   } else if (hour === 12) {

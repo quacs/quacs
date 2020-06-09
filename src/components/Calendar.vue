@@ -3,6 +3,7 @@
     <div class="calendar-times">
       <div
         class="hour-label"
+        :class="{ hour_label_military: isMilitaryTime() }"
         v-for="hour of strHours"
         :key="hour"
         :style="{ height: hourHeight + '%' }"
@@ -68,10 +69,12 @@
 import { Component, Vue } from "vue-property-decorator";
 import { CourseSection, Day, SelectedSection, Timeslot } from "@/typings";
 import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
+import { mapGetters } from "vuex";
 
 @Component({
   computed: {
-    days: () => DAYS
+    days: () => DAYS,
+    ...mapGetters("settings", ["isMilitaryTime"])
   }
 })
 export default class Calendar extends Vue {
@@ -119,7 +122,9 @@ export default class Calendar extends Vue {
   get strHours() {
     const hours = [];
     for (let time = this.startTime; time < this.endTime; time += 60) {
-      hours.push(minuteTimeToHour(time));
+      hours.push(
+        minuteTimeToHour(time, this.$store.getters["settings/isMilitaryTime"]())
+      );
     }
 
     return hours;
@@ -152,7 +157,7 @@ export default class Calendar extends Vue {
 
 <style scoped lang="scss">
 $labelOffset: 0.35em;
-$hourFontSize: 0.6em;
+$hourFontSize: 0.7em;
 $dayFontSize: 0.8em;
 
 .calendar {
@@ -170,10 +175,15 @@ $dayFontSize: 0.8em;
 }
 
 .hour-label {
-  color: #777777;
+  color: #757575;
   font-size: $hourFontSize;
   text-align: right;
   font-variant: small-caps;
+}
+
+.hour_label_military {
+  position: relative;
+  left: 1rem;
 }
 
 .calendar-grid {
@@ -184,7 +194,7 @@ $dayFontSize: 0.8em;
 }
 
 .day-label {
-  color: #777777;
+  color: #757575;
   display: block;
   margin: 0 auto;
   text-align: center;

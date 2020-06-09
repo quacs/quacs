@@ -34,8 +34,14 @@ import CourseCard from "@/components/CourseCard.vue";
   }
 })
 export default class Schedule extends Vue {
+  keepSelected: Course[] = [];
+
   get courses(): Course[] {
-    return this.$store.getters["sections/selectedCourses"];
+    if (this.keepSelected.length > 0) {
+      return this.keepSelected;
+    }
+    this.keepSelected = [...this.$store.getters["sections/selectedCourses"]];
+    return this.keepSelected;
   }
 }
 </script>
