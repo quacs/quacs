@@ -18,7 +18,7 @@
               :search="filterResults"
               :get-result-value="displayResult"
               @submit="search"
-              debounceTime="200"
+              :debounce-time="200"
             ></autocomplete>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
