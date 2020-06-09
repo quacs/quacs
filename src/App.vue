@@ -33,7 +33,12 @@
                 >Fall 2020</b-nav-item
               >
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
-                <i class="fas fa-cog" tabindex="-1" title="Settings"></i
+                <i
+                  class="fas fa-cog"
+                  tabindex="-1"
+                  title="Settings"
+                  style="font-size:1.9rem"
+                ></i
               ></b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>
