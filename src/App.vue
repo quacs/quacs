@@ -96,6 +96,7 @@ export default class App extends Vue {
       "title",
       "crse",
       "subj",
+      "id",
       "sections.crn",
       "sections.timeslots.instructor",
       "sections.timeslots.location"
@@ -106,10 +107,8 @@ export default class App extends Vue {
     const courses = [];
     for (const deptName in this.$store.state.departments) {
       const dept = this.$store.state.departments[deptName];
-      for (const courseName in dept.courses) {
-        const course = dept.courses[courseName];
-        courses.push(course);
-      }
+      for (const courseName in dept.courses)
+        courses.push(dept.courses[courseName]);
     }
     return courses;
   }
