@@ -18,18 +18,70 @@ def get_prereq_string(term, crn):
                 section = "_".join(el.string.lower().split())
                 section = ''.join([i for i in section if i.isalpha() or i=="_"])
                 if(section not in data):
-                    data[section] = ""
+                    data[section] = []
                 el = el.next_sibling
                 continue;
 
             if(section):
-                data[section]+=el.string
+                if(el.string.strip()):
+                    data[section].append(el.string.strip())
 
 
         el = el.next_sibling
 
-    for key in data:
-        data[key] = " ".join(data[key].split())
+    if('prerequisites' in data):
+        pass
+
+    if('corequisites' in data):
+        data['corequisites'] = [ "-".join(course.split()) for course in data['corequisites'] ]
+
+    if('cross_list_courses' in data):
+        data['cross_list_courses'] = [ "-".join(course.split()) for course in data['cross_list_courses'] ]
+
+    if('restrictions' in data):
+        data['restrictions_clean'] = {}
+        section = ""
+        subsection = ""
+        for part in data['restrictions']:
+            if(part.endswith('Majors:')):
+                section = "major"
+                data['restrictions_clean'][section] = {}
+            elif(part.endswith('Levels:')):
+                section = "level"
+                data['restrictions_clean'][section] = {}
+            elif(part.endswith('Classifications:')):
+                section = "classification"
+                data['restrictions_clean'][section] = {}
+            elif(part.endswith('Fields of Study (Major, Minor, or Concentration):')):
+                section = "field_of_study"
+                data['restrictions_clean'][section] = {}
+            elif(part.endswith('Degrees:')):
+                section = "degree"
+                data['restrictions_clean'][section] = {}
+            elif(part.endswith('Colleges:')):
+                section = "college"
+                data['restrictions_clean'][section] = {}
+            elif(part.endswith('Campuses:')):
+                section = "campus"
+                data['restrictions_clean'][section] = {}
+
+            if(part.startswith('Must be enrolled')):
+                subsection = "must_be"
+                data['restrictions_clean'][section]['must_be'] = []
+                continue
+            elif(part.startswith('May not be enrolled')):
+                subsection = "may_not_be"
+                data['restrictions_clean'][section]['may_not_be'] = []
+                continue
+
+
+
+
+            if(section):
+                data['restrictions_clean'][section][subsection].append(part)
+        data['restrictions'] = data['restrictions_clean']
+        del data['restrictions_clean']
+
 
     print(json.dumps(data, indent=4))
     return data
@@ -38,8 +90,8 @@ def get_prereq_string(term, crn):
 prerequs = {}
 
 # For testing
-# get_prereq_string(202009, 25715)
-# exit()
+get_prereq_string(202009, 28655)
+exit()
 
 crns = []
 with open('courses.json') as json_file:
