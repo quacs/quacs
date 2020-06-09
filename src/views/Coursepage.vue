@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="card-columns">
-      <CourseCard :course="course" :startExpanded="true" />
+      <template v-if="course">
+        <CourseCard :course="course" :startExpanded="true" />
+      </template>
+      <template v-else>
+        <h3>Unable to find course {{ courseid }}</h3>
+      </template>
     </div>
   </div>
 </template>

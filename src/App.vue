@@ -1,40 +1,40 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <router-link class="navbar-brand" to="/"
-        ><img
-          src="@/assets/images/quacs_logo_white.svg"
-          alt="QuACS Home"
-          style="height:40px"
-      /></router-link>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-      <b-collapse id="nav-collapse" is-nav>
-        <autocomplete
-          aria-label="Search"
-          placeholder="Search Courses"
-          auto-select
-          :search="filterResults"
-          :get-result-value="displayResult"
-          @submit="search"
-        ></autocomplete>
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item>
+    <div id="wrapper">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <router-link class="navbar-brand" to="/"
+          ><img
+            src="@/assets/images/quacs_logo_white.svg"
+            alt="QuACS Home"
+            style="height:40px"
+        /></router-link>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <autocomplete
+            aria-label="Search"
+            placeholder="Search Courses"
+            auto-select
+            :search="filterResults"
+            :get-result-value="displayResult"
+            @submit="search"
+          ></autocomplete>
+          <b-navbar-nav class="ml-auto">
             <router-link class="navbar-brand" to="/schedule"
               >Schedule</router-link
-            ></b-nav-item
-          >
-        </b-navbar-nav>
-      </b-collapse>
-    </nav>
+            >
+          </b-navbar-nav>
+        </b-collapse>
+      </nav>
 
-    <div class="container-fluid" style="margin-top: 1rem;">
-      <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg"><router-view /></div>
-        <div class="col-lg-1"></div>
+      <div class="container-fluid" style="margin-top: 1rem;">
+        <div class="row">
+          <div class="col-lg-1"></div>
+          <div class="col-lg"><router-view /></div>
+          <div class="col-lg-1"></div>
+        </div>
       </div>
     </div>
-    <footer>
+    <footer class="footer">
       <a
         href="https://github.com/quacs/quacs"
         title="Visit our GitHub"
@@ -69,7 +69,7 @@ Vue.use(Autocomplete);
 
 @Component
 export default class App extends Vue {
-  searchValue = "";
+  searchString = "";
   fuseOptions = {
     isCaseSensitive: false,
     // includeScore: true,
@@ -104,6 +104,7 @@ export default class App extends Vue {
   }
 
   filterResults(input: string) {
+    this.searchString = input;
     if (input.length === 0) return [];
     const fuse = new Fuse(this.courses, this.fuseOptions);
     return new Promise(resolve => {
@@ -119,9 +120,27 @@ export default class App extends Vue {
 
   search(result: { item: Course; refIndex: number }) {
     if (result)
-      this.$router.replace(
-        "/course/" + result.item.subj + "-" + result.item.crse
-      );
+      this.$router
+        .push("/course/" + result.item.subj + "-" + result.item.crse)
+        .catch(() => {
+          return;
+        });
+    else {
+      const fuse = new Fuse(this.courses, this.fuseOptions);
+      const results = fuse.search(this.searchString);
+      if (results.length > 0)
+        this.$router
+          .push("/course/" + results[0].item.subj + "-" + results[0].item.crse)
+          .catch(() => {
+            return;
+          });
+      else if (this.searchString.match(/[A-Z]{4}-\d{4}/))
+        this.$router
+          .push("/course/" + this.searchString.slice(0, 9))
+          .catch(() => {
+            return;
+          });
+    }
   }
 }
 </script>

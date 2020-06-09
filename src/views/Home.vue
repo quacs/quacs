@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <b-card-group columns>
+    <b-card-group columns class="department-cards">
       <b-card
         v-for="(departmentCodes, school) in schools"
         v-bind:key="school"
@@ -10,8 +10,10 @@
           v-for="departmentCode in departmentCodes"
           v-bind:key="departmentCode"
         >
-          <router-link class="nav-link" :to="'/department/' + departmentCode"
-            >{{ departmentCode }}
+          <router-link
+            class="nav-link department-link"
+            :to="'/department/' + departmentCode"
+            ><span style="font-weight:bold">{{ departmentCode }}</span>
             {{ getDepartment(departmentCode).name }}</router-link
           >
         </div>
@@ -60,5 +62,29 @@ a {
   font-weight: bold;
   font-size: 1.4rem;
   padding: 0.5rem 0.75rem;
+}
+
+.department-link {
+  padding: 0.25rem 1rem;
+  font-size: 1.2rem;
+  color: black;
+}
+
+.department-link:hover {
+  background: lightgrey;
+}
+
+.department-cards {
+  column-count: 1;
+}
+@media (min-width: 1100px) {
+  .department-cards {
+    column-count: 2;
+  }
+}
+@media (min-width: 1400px) {
+  .department-cards {
+    column-count: 3;
+  }
 }
 </style>
