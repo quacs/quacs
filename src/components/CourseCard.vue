@@ -22,7 +22,11 @@
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
-    <div class="card-body course-card-body" :class="{ expanded: expanded }">
+    <div
+      class="card-body course-card-body"
+      :class="{ expanded: expanded }"
+      v-show="expanded"
+    >
       <!-- only rendered on mobile -->
       <MobileSections v-bind:course="course" />
 

@@ -10,18 +10,29 @@
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
-          <autocomplete
-            aria-label="Search"
-            placeholder="Search Courses"
-            auto-select
-            :search="filterResults"
-            :get-result-value="displayResult"
-            @submit="search"
-          ></autocomplete>
+          <b-navbar-nav>
+            <autocomplete
+              aria-label="Search"
+              placeholder="Search Courses"
+              auto-select
+              :search="filterResults"
+              :get-result-value="displayResult"
+              @submit="search"
+              debounceTime="200"
+            ></autocomplete>
+          </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
-            <router-link class="navbar-brand" to="/schedule"
-              >Schedule</router-link
-            >
+            <b-navbar-nav>
+              <b-nav-item
+                to="/schedule"
+                class="nav-text"
+                :active="this.$route.path == '/schedule'"
+                >Schedule</b-nav-item
+              >
+              <b-nav-item to="#" class="nav-text" disabled
+                >Fall 2020</b-nav-item
+              >
+            </b-navbar-nav>
           </b-navbar-nav>
         </b-collapse>
       </nav>
@@ -110,7 +121,7 @@ export default class App extends Vue {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(fuse.search(input));
-      }, 200);
+      }, 1);
     });
   }
 
@@ -166,5 +177,9 @@ footer > * {
 
 footer > a:hover {
   color: DimGrey;
+}
+
+.nav-text {
+  font-size: 1.5rem;
 }
 </style>
