@@ -44,42 +44,9 @@
 </template>
 
 <script lang="ts">
-import { Course, CourseSection } from "@/typings";
-import { formatCourseSize, formatTimeslot, getSessions } from "@/utilities";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
+import GeneralSections from "./GeneralSections.vue";
 
-@Component({
-  computed: {
-    formatTimeslot,
-    getSessions,
-    formatCourseSize,
-    ...mapGetters("sections", ["isSelected", "isInConflict"])
-  }
-})
-export default class MobileSections extends Vue {
-  @Prop() readonly course!: Course;
-  days = ["M", "T", "W", "R", "F"];
-
-  toggleSelection(section: CourseSection) {
-    let selected = true;
-
-    if (section.crn in this.$store.state.sections.selectedSections)
-      selected = !this.$store.getters["sections/isSelected"](section.crn);
-
-    const selectedSection = {
-      course: this.course,
-      section,
-      selected
-    };
-
-    this.$store.commit("sections/setSelected", selectedSection);
-    this.$store.commit("sections/updateConflicts", {
-      crn: section.crn,
-      conflicts: section.conflicts
-    });
-  }
-}
+export default GeneralSections;
 </script>
 
 <style scoped>
