@@ -90,8 +90,9 @@ export default class Section extends Vue {
   toggleSelection(section: CourseSection) {
     let selected = true;
 
-    if (section.crn in this.$store.state.sections.selectedSections)
+    if (section.crn in this.$store.state.sections.selectedSections) {
       selected = !this.$store.getters["sections/isSelected"](section.crn);
+    }
 
     const selectedSection = {
       course: this.course,
@@ -118,24 +119,31 @@ export default class Section extends Vue {
       // occurred each day.
       const dayTimes: { [day: string]: { [time: number]: number } } = {};
 
-      for (const timeslot of section.timeslots)
+      for (const timeslot of section.timeslots) {
         for (const day of timeslot.days) {
-          if (!(day in dayTimes)) dayTimes[day] = {};
+          if (!(day in dayTimes)) {
+            dayTimes[day] = {};
+          }
 
-          if (timeslot.timeStart in dayTimes[day])
+          if (timeslot.timeStart in dayTimes[day]) {
             dayTimes[day][timeslot.timeStart]++;
-          else dayTimes[day][timeslot.timeStart] = 1;
+          } else {
+            dayTimes[day][timeslot.timeStart] = 1;
+          }
         }
+      }
 
       // Store the max number of occurrences of each time so we can correctly space things out
       const times: { [key: number]: number } = {};
-      for (const day in dayTimes)
+      for (const day in dayTimes) {
         for (const time in dayTimes[day]) {
           const occurrences = dayTimes[day][time];
 
-          if (!(time in times) || occurrences > times[time])
+          if (!(time in times) || occurrences > times[time]) {
             times[time] = occurrences;
+          }
         }
+      }
 
       const sortedTimes = Object.keys(times);
       sortedTimes.sort((a, b) => (parseInt(a) > parseInt(b) ? 1 : -1));

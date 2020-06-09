@@ -101,13 +101,16 @@ export default class Calendar extends Vue {
     return (day: Day): { section: CourseSection; timeslot: Timeslot }[] => {
       const ret = [];
 
-      for (const section of this.selected)
-        for (const timeslot of section.timeslots)
-          if (timeslot.days.indexOf(day.short) !== -1)
+      for (const section of this.selected) {
+        for (const timeslot of section.timeslots) {
+          if (timeslot.days.indexOf(day.short) !== -1) {
             ret.push({
               section: section,
               timeslot: timeslot
             });
+          }
+        }
+      }
 
       return ret;
     };
@@ -115,8 +118,9 @@ export default class Calendar extends Vue {
 
   get strHours() {
     const hours = [];
-    for (let time = this.startTime; time < this.endTime; time += 60)
+    for (let time = this.startTime; time < this.endTime; time += 60) {
       hours.push(minuteTimeToHour(time));
+    }
 
     return hours;
   }

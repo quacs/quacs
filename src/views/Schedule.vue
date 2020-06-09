@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Calendar from "@/components/Calendar.vue";
-import { Course, SelectedSection } from "@/typings";
+import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
 
 @Component({
@@ -35,9 +35,7 @@ import CourseCard from "@/components/CourseCard.vue";
 })
 export default class Schedule extends Vue {
   get courses(): Course[] {
-    return this.$store.getters["sections/selected"].map(
-      (section: SelectedSection) => section.course
-    );
+    return this.$store.getters["sections/selectedCourses"];
   }
 }
 </script>
