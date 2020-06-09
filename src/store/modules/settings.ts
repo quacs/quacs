@@ -11,8 +11,9 @@ export default class Settings extends VuexModule {
 
   @Mutation
   initializeStore(): void {
-    if (this.timePreference === "")
+    if (this.timePreference === "") {
       this.timePreference = TimePreference.Standard;
+    }
   }
 
   @Mutation

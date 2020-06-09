@@ -117,15 +117,18 @@ export default class App extends Vue {
     const courses = [];
     for (const deptName in this.$store.state.departments) {
       const dept = this.$store.state.departments[deptName];
-      for (const courseName in dept.courses)
+      for (const courseName in dept.courses) {
         courses.push(dept.courses[courseName]);
+      }
     }
     return courses;
   }
 
   filterResults(input: string) {
     this.searchString = input;
-    if (input.length === 0) return [];
+    if (input.length === 0) {
+      return [];
+    }
     const fuse = new Fuse(this.courses, this.fuseOptions);
     return new Promise(resolve => {
       setTimeout(() => {
@@ -139,27 +142,28 @@ export default class App extends Vue {
   }
 
   search(result: { item: Course; refIndex: number }) {
-    if (result)
+    if (result) {
       this.$router
         .push("/course/" + result.item.subj + "-" + result.item.crse)
         .catch(() => {
           return;
         });
-    else {
+    } else {
       const fuse = new Fuse(this.courses, this.fuseOptions);
       const results = fuse.search(this.searchString);
-      if (results.length > 0)
+      if (results.length > 0) {
         this.$router
           .push("/course/" + results[0].item.subj + "-" + results[0].item.crse)
           .catch(() => {
             return;
           });
-      else if (this.searchString.match(/[A-Z]{4}-\d{4}/))
+      } else if (this.searchString.match(/[A-Z]{4}-\d{4}/)) {
         this.$router
           .push("/course/" + this.searchString.slice(0, 9))
           .catch(() => {
             return;
           });
+      }
     }
   }
 }

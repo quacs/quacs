@@ -46,7 +46,9 @@ function formatTime(time: number, isMilitaryTime: boolean): string {
   const hour = Math.floor(time / 100);
   const minute = (time % 100).toString();
 
-  if (isMilitaryTime) return hour + ":" + ("0" + minute).slice(-2);
+  if (isMilitaryTime) {
+    return hour + ":" + ("0" + minute).slice(-2);
+  }
 
   let output = "";
   if (hour > 12) {
