@@ -1,5 +1,5 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
-import { Department } from "@/typings";
+import { CalendarColor, Department, SelectedSection } from "@/typings";
 import Vue from "vue";
 
 const BG_COLORS = [
@@ -33,39 +33,38 @@ const NUM_COLORS = 7;
 
 @Module({ namespaced: true, name: "sections" })
 export default class Sections extends VuexModule {
-  selectedSections: { [id: number]: boolean } = {};
-  conflictingSectionCounts: { [id: number]: number } = {};
+  selectedSections: { [crn: number]: SelectedSection } = {};
+  conflictingSectionCounts: { [crn: number]: number } = {};
 
-  CURRENT_STORAGE_VERSION = "0.0.1";
+  CURRENT_STORAGE_VERSION = "0.0.2";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
 
-  get isSelected() {
-    return (crn: number) => this.selectedSections[crn];
+  get isSelected(): (crn: number) => boolean {
+    return (crn: number) =>
+      this.isInitialized(crn) && this.selectedSections[crn].selected;
   }
 
-  get isInitialized() {
+  get isInitialized(): (crn: number) => boolean {
     return (crn: number) => crn in this.selectedSections;
   }
 
-  get isInConflict() {
+  get isInConflict(): (crn: number) => boolean {
     return (crn: number) => this.conflictingSectionCounts[crn] > 0;
   }
 
-  get selectedCRNs() {
-    const selected = [];
-    for (const crn in this.selectedSections)
-      if (this.selectedSections[crn]) selected.push(crn);
-
-    return selected;
+  get selected(): readonly SelectedSection[] {
+    return Object.keys(this.selectedSections)
+      .map((k: string) => this.selectedSections[(k as unknown) as number])
+      .filter((selected: SelectedSection) => selected.selected);
   }
 
   @Mutation
-  setSelected(p: { crn: number; selected: boolean }) {
-    Vue.set(this.selectedSections, p.crn, p.selected);
+  setSelected(p: SelectedSection): void {
+    Vue.set(this.selectedSections, p.section.crn, p.selected);
   }
 
   @Mutation
-  updateConflicts(p: { crn: number; conflicts: readonly number[] }) {
+  updateConflicts(p: { crn: number; conflicts: readonly number[] }): void {
     for (const conflict in p.conflicts)
       if (this.selectedSections[p.crn])
         Vue.set(
@@ -82,7 +81,7 @@ export default class Sections extends VuexModule {
   }
 
   @Mutation
-  initializeStore() {
+  initializeStore(): void {
     if (this.storedVersion !== this.CURRENT_STORAGE_VERSION) {
       // eslint-disable-next-line
       console.log("Out of date or uninitialized sections, clearing");
@@ -93,7 +92,7 @@ export default class Sections extends VuexModule {
   }
 
   @Mutation
-  populateConflicts(departments: readonly Department[]) {
+  populateConflicts(departments: readonly Department[]): void {
     const start = new Date().getTime();
 
     // eslint-disable-next-line
@@ -118,7 +117,7 @@ export default class Sections extends VuexModule {
   }
 
   // COLORS!!!
-  get colors() {
+  get colors(): (idx: number) => CalendarColor {
     return (idx: number) => {
       return {
         bg: BG_COLORS[idx % NUM_COLORS],

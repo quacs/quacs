@@ -61,17 +61,19 @@ export default class MobileSections extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
 
-  toggleSelection(section: CourseSection, selected: boolean | null = null) {
-    let newState = true;
+  toggleSelection(section: CourseSection) {
+    let selected = true;
 
-    if (selected !== null) newState = selected;
-    else if (section.crn in this.$store.state.sections.selectedSections)
-      newState = !this.$store.getters["sections/isSelected"](section.crn);
+    if (section.crn in this.$store.state.sections.selectedSections)
+      selected = !this.$store.getters["sections/isSelected"](section.crn);
 
-    this.$store.commit("sections/setSelected", {
-      crn: section.crn,
-      selected: newState
-    });
+    const selectedSection = {
+      course: this.course,
+      section,
+      selected
+    };
+
+    this.$store.commit("sections/setSelected", selectedSection);
     this.$store.commit("sections/updateConflicts", {
       crn: section.crn,
       conflicts: section.conflicts

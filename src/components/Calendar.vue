@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { CourseSection, Day, Timeslot } from "@/typings";
+import { CourseSection, Day, SelectedSection, Timeslot } from "@/typings";
 import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
 
 @Component({
@@ -92,16 +92,9 @@ export default class Calendar extends Vue {
   }
 
   get selected() {
-    return this.$store.getters["sections/selectedCRNs"]
-      .map((crn: string) => {
-        for (const dept of this.$store.state.departments)
-          for (const course of dept.courses)
-            for (const section of course.sections)
-              if (String(section.crn) === crn) return section;
-
-        return null;
-      })
-      .filter((x: CourseSection | null) => x !== null);
+    return this.$store.getters["sections/selected"].map(
+      (selected: SelectedSection) => selected.section
+    );
   }
 
   get sessionsOnDay() {

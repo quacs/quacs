@@ -68,3 +68,16 @@ export interface CourseSize {
   seats: number;
   students: number;
 }
+
+export interface SelectedSection {
+  section: CourseSection;
+  course: Course;
+  dept?: Department;
+  selected: boolean;
+}
+
+export interface CalendarColor {
+  bg: string;
+  text: string;
+  border: string;
+}
