@@ -4,7 +4,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
-            src="@/assets/images/quacs_logo_white.svg"
+            src="@/assets/images/quacs_logo.svg"
             alt="QuACS Home"
             style="height:40px"
         /></router-link>
@@ -126,7 +126,7 @@ footer {
   margin-top: 2rem;
   padding-top: 2rem;
   padding-bottom: 2rem;
-  background: lightgrey;
+  background: var(--footer-background);
 }
 
 footer > * {

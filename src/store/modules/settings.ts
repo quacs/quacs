@@ -1,23 +1,28 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { TimePreference } from "@/typings";
+import { setColorTheme } from "@/utilities";
 
 @Module({ namespaced: true, name: "settings" })
 export default class Settings extends VuexModule {
-  timePreference: TimePreference | "" = ""; // If a value is in localstorage, this will be set to that on load
+  timePreference: TimePreference = TimePreference.Standard; // If a value is in localstorage, this will be set to that on load
+  colorTheme = "system";
 
   get isMilitaryTime(): () => boolean {
     return () => this.timePreference === "M";
   }
 
   @Mutation
-  initializeStore(): void {
-    if (this.timePreference === "") {
-      this.timePreference = TimePreference.Standard;
-    }
+  setTimePreference(newVal: TimePreference): void {
+    this.timePreference = newVal;
+  }
+
+  get getColorTheme(): () => string {
+    return () => this.colorTheme;
   }
 
   @Mutation
-  setTimePreference(newVal: TimePreference): void {
-    this.timePreference = newVal;
+  setColorTheme(newVal: string): void {
+    this.colorTheme = newVal;
+    setColorTheme(this.colorTheme);
   }
 }

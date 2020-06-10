@@ -120,3 +120,25 @@ export function toMinutes(time: number): number {
 export function getDuration(timeslot: Timeslot): number {
   return toMinutes(timeslot.timeEnd) - toMinutes(timeslot.timeStart);
 }
+
+//Sets the color theme to the word that is passed in
+//If the string is made up of 2 words, the second word is used to set the theme accent
+//The theme accent is usually used for slight modifications of a different theme
+//EX: Black mode is only slightly different from dark mode
+//Also the hard coded word "system" will swap between light/dark based on device reference
+export function setColorTheme(colorTheme: string): void {
+  let newColorTheme = colorTheme;
+  if (colorTheme === "system") {
+    newColorTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+  document.documentElement.setAttribute(
+    "data-theme",
+    newColorTheme.split(" ")[0]
+  );
+  document.documentElement.setAttribute(
+    "data-theme-accent",
+    newColorTheme.split(" ")[1]
+  );
+}

@@ -70,11 +70,11 @@ a {
 .department-link {
   padding: 0.25rem 1rem;
   font-size: 1.2rem;
-  color: black;
+  color: var(--text-default);
 }
 
 .department-link:hover {
-  background: lightgrey;
+  background: var(--department-link-hover);
 }
 
 .department-cards {

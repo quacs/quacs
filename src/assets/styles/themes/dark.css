@@ -1,0 +1,34 @@
+[data-theme="dark"] {
+  --card-header-text: #ffffff;
+  --card-body-text: #ffffff;
+  --background: #202225;
+  --global-text: #dcddde;
+  --card-body-background: #36393f;
+  --card-header-background: #2b2e33;
+  --footer-background: #5b5b5b;
+  --navbar-background: #36393f;
+  --navbar-unselected-text: rgba(255, 255, 255, 0.5);
+  --navbar-unselected-text-hover: rgba(255, 255, 255, 0.7);
+  --navbar-text-focus: rgba(255, 255, 255, 0.7);
+  --navbar-text-disabled: rgba(255, 255, 255, 0.3);
+  --navbar-text-active: rgba(255, 255, 255, 0.9);
+  --modal-header-background: #2b2e33;
+  --modal-header-text: #dcddde;
+  --modal-body-background: #36393f;
+  --modal-body-text: #dcddde;
+  --modal-footer-background: #36393f;
+  --modal-footer-text: #dcddde;
+  --btn-primary-background: #1e4e82;
+  --btn-primary-text: #dcddde;
+  --department-link-hover: #504f4f;
+  --select-background: #4a4a4a;
+  --select-text: #dcddde;
+  --modal-close-x-hover: #ffffff;
+  --card-header-hover: #3d474c;
+  --table-text: #dcddde;
+  --course-row-hover: #3d474c;
+  --conflict-row: #7b0808;
+  --conflict-row-hover: #920b0b;
+  --selected-row: #383d84;
+  --selected-row-hover: #3f459c;
+}

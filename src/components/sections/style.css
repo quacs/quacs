@@ -8,22 +8,22 @@
 }
 
 .course-row:hover {
-        background: #f0f0f0;
+        background: var(--course-row-hover);
 }
 
 .conflict {
         text-decoration: line-through;
-        background: #ff6060;
+        background: var(--conflict-row);
 }
 
 .conflict:hover {
-        background: #ff7b7b;
+        background: var(--conflict-row-hover);
 }
 
 .selected {
-        background: #9198f9;
+        background: var(--selected-row);
 }
 
 .selected:hover {
-        background: #acb2ff;
+        background: var(--selected-row-hover);
 }

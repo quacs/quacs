@@ -5,9 +5,17 @@ import { BootstrapVue } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
+import "@/assets/styles/global.css";
+
+// Import theme css files here
+import "@/assets/styles/colors.css";
+import "@/assets/styles/themes/dark.css";
+import "@/assets/styles/themes/black.css";
+
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import { setColorTheme } from "./utilities";
 
 Vue.config.productionTip = false;
 
@@ -19,9 +27,10 @@ new Vue({
   render: h => h(App),
   beforeCreate() {
     this.$store.commit("sections/initializeStore");
-    this.$store.commit("settings/initializeStore");
+    this.$store.commit("sections/initializeSettings");
   },
   mounted() {
+    setColorTheme(this.$store.state.settings.colorTheme);
     this.$store.dispatch("loadCourseSizes");
   }
 }).$mount("#app");

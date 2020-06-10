@@ -67,7 +67,8 @@ export default new Vuex.Store({
       paths: [
         "sections.selectedSections",
         "sections.storedVersion",
-        "settings.timePreference"
+        "settings.timePreference",
+        "settings.colorTheme"
       ],
       rehydrated: store => {
         // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes

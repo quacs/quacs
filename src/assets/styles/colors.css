@@ -1,0 +1,34 @@
+:root {
+  --card-header-text: #000000;
+  --card-body-text: #000000;
+  --background: #ffffff;
+  --global-text: #000000;
+  --card-body-background: #ffffff;
+  --card-header-background: #f7f7f7;
+  --footer-background: #d3d3d3;
+  --navbar-background: #f8f9fa;
+  --navbar-unselected-text: rgba(0, 0, 0, 0.5);
+  --navbar-unselected-text-hover: rgba(0, 0, 0, 0.7);
+  --navbar-text-focus: rgba(0, 0, 0, 0.7);
+  --navbar-text-disabled: rgba(0, 0, 0, 0.3);
+  --navbar-text-active: rgba(0, 0, 0, 0.9);
+  --modal-header-background: #ffffff;
+  --modal-header-text: rgb(33, 37, 41);
+  --modal-body-background: #ffffff;
+  --modal-body-text: rgb(33, 37, 41);
+  --modal-footer-background: #ffffff;
+  --modal-footer-text: rgb(33, 37, 41);
+  --btn-primary-background: #007bff;
+  --btn-primary-text: #ffffff;
+  --department-link-hover: #d3d3d3;
+  --select-background: #ffffff;
+  --select-text: #495057;
+  --modal-close-x-hover: #000000;
+  --card-header-hover: #eaeaea;
+  --table-text: #212529;
+  --course-row-hover: #f0f0f0;
+  --conflict-row: #ff6060;
+  --conflict-row-hover: #ff7b7b;
+  --selected-row: #9198f9;
+  --selected-row-hover: #acb2ff;
+}

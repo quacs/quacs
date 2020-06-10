@@ -38,3 +38,11 @@ yarn serve
 ```
 yarn lint
 ```
+
+## Contributing a theme
+Please replace `dark` with your theme name
+1. Make a copy of `src/assets/styles/colors.css` into the themes folder with the name `dark.css`
+2. Import your theme in `src/main.ts` using `import "@/assets/styles/themes/dark.css";`
+2. Replace `:root {` on line 1 in the new css file with `[data-theme="dark"] {`
+3. Go to `src/components/Settings.vue` and add your theme to `themeOptions` in the format `{ value: "dark", text: "Dark" },`
+4. Edit the colors in your new css file and when you are ready, make a pull request!
