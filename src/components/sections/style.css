@@ -3,11 +3,11 @@
         text-align: center;
 }
 
-.course-row {
+.select-section {
         cursor: pointer;
 }
 
-.course-row:hover {
+.select-section:hover {
         background: var(--course-row-hover);
 }
 
@@ -16,7 +16,7 @@
         background: var(--conflict-row);
 }
 
-.conflict:hover {
+.conflict > .select-section:hover {
         background: var(--conflict-row-hover);
 }
 
@@ -24,6 +24,11 @@
         background: var(--selected-row);
 }
 
-.selected:hover {
+.selected >.select-section:hover {
         background: var(--selected-row-hover);
+}
+
+
+.invisible {
+  visibility: hidden;
 }

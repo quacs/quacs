@@ -6,8 +6,10 @@
           :course="course.item"
           :startExpanded="false"
           :key="course.item.id"
+          v-on:open-prerequisite-modal="setPrerequisiteModalCrn"
         />
       </template>
+      <PrerequisiteModal :crn="prerequisiteModalCrn"></PrerequisiteModal>
     </div>
   </div>
 </template>
@@ -16,16 +18,19 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 import CourseCard from "@/components/CourseCard.vue";
+import PrerequisiteModal from "@/components/PrerequisiteModal.vue";
 
 import { instantFuseSearch } from "@/searchUtilities";
 
 @Component({
   components: {
-    CourseCard
+    CourseCard,
+    PrerequisiteModal
   }
 })
 export default class Search extends Vue {
   @Prop() searchString!: string;
+  prerequisiteModalCrn = "";
 
   get fuseCourses() {
     if (this.searchString.match(/[A-Z]{4}[-\w]\d{4}/)) {
@@ -35,6 +40,10 @@ export default class Search extends Vue {
       }
     }
     return instantFuseSearch(this.searchString);
+  }
+
+  setPrerequisiteModalCrn(crn: string) {
+    this.prerequisiteModalCrn = crn;
   }
 }
 </script>

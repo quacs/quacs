@@ -89,3 +89,28 @@ export enum TimePreference {
   Military = "M",
   Standard = "S"
 }
+
+export interface PrerequisiteJSON {
+  [crn: number]: {
+    corequisites?: string[];
+    cross_list_courses?: string[];
+    restrictions?: Restriction;
+    prerequisites?: Prerequisite;
+  };
+}
+
+export interface Prerequisite {
+  type: string;
+  solo: string[];
+  nested: Prerequisite[];
+}
+
+export interface Restriction {
+  level: { must_be: string[]; may_not_be: string[] };
+  major: { must_be: string[]; may_not_be: string[] };
+  classification: { must_be: string[]; may_not_be: string[] };
+  field_of_study: { must_be: string[]; may_not_be: string[] };
+  degree: { must_be: string[]; may_not_be: string[] };
+  college: { must_be: string[]; may_not_be: string[] };
+  campus: { must_be: string[]; may_not_be: string[] };
+}

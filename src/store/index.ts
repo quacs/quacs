@@ -1,4 +1,9 @@
-import { CatalogCourse, CourseSize, Department } from "@/typings";
+import {
+  CatalogCourse,
+  CourseSize,
+  Department,
+  PrerequisiteJSON
+} from "@/typings";
 
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
@@ -10,6 +15,7 @@ import Vuex from "vuex";
 import CATALOG_JSON from "./data/catalog.json";
 import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
+import PREREQUISITES_JSON from "./data/prerequisites.json";
 
 import sections from "./modules/sections";
 import settings from "./modules/settings";
@@ -22,6 +28,7 @@ export default new Vuex.Store({
     departments: COURSES_JSON as Department[],
     catalog: CATALOG_JSON as { [id: string]: CatalogCourse },
     schools: SCHOOLS_JSON as { [id: string]: string[] },
+    prerequisites: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
     courseSizes: {} as { [id: string]: CourseSize }
   },
   mutations: {

@@ -23,11 +23,7 @@
     </div>
 
     <div class="card-body" :class="{ expanded: expanded }" v-if="expanded">
-      <!-- only rendered on mobile -->
-      <MobileSections v-bind:course="course" />
-
-      <!-- only rendered on desktop -->
-      <DesktopSections v-bind:course="course" />
+      <Sections v-bind:course="course" v-on:open-prerequisite-modal="emitCrn" />
     </div>
   </div>
 </template>
@@ -36,13 +32,11 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
 
-import DesktopSections from "./sections/DesktopSections.vue";
-import MobileSections from "./sections/MobileSections.vue";
+import Sections from "./sections/Sections.vue";
 
 @Component({
   components: {
-    MobileSections,
-    DesktopSections
+    Sections
   }
 })
 export default class CourseCard extends Vue {
@@ -78,6 +72,10 @@ export default class CourseCard extends Vue {
 
   toggleExpanded() {
     this.expanded = !this.expanded;
+  }
+
+  emitCrn(crn: string) {
+    this.$emit("open-prerequisite-modal", crn);
   }
 }
 </script>
