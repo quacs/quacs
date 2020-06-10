@@ -10,16 +10,17 @@
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-            <autocomplete
-              aria-label="Search"
-              placeholder="Search Courses"
-              :search="filterResults"
-              :get-result-value="displayResult"
-              @submit="search"
-              :debounce-time="200"
-            ></autocomplete>
-          </b-navbar-nav>
+          <b-input-group prepend="?">
+            <input
+              placeholder="Search"
+              v-on:input="search($event.target.value)"
+            />
+            <b-spinner
+              label="Loading"
+              v-if="searching"
+              class="search-spinner"
+            ></b-spinner>
+          </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <b-nav-item
@@ -72,16 +73,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Course } from "@/typings";
-
 import Settings from "@/components/Settings.vue";
-
-import { fuseSearch } from "@/searchUtilities";
-
-// @ts-expect-error: Typescript doesn't know the types for this
-import Autocomplete from "@trevoreyre/autocomplete-vue";
-import "@trevoreyre/autocomplete-vue/dist/style.css";
-Vue.use(Autocomplete);
 
 @Component({
   components: {
@@ -89,24 +81,24 @@ Vue.use(Autocomplete);
   },
 })
 export default class App extends Vue {
-  searchString = "";
+  searchCallback: number | null = null;
+  searching = false;
 
-  filterResults(input: string) {
-    this.searchString = input;
-    return fuseSearch(input);
-  }
+  search(input: string) {
+    this.searching = true;
 
-  displayResult(result: { item: Course; refIndex: number }) {
-    return result.item.subj + "-" + result.item.crse + " " + result.item.title;
-  }
-
-  search(result: { item: Course; refIndex: number }) {
-    if (result) {
-      this.searchString = this.displayResult(result);
+    if (this.searchCallback !== null) {
+      clearTimeout(this.searchCallback as number);
     }
-    this.$router.push("/search/" + this.searchString).catch(() => {
-      return;
-    });
+
+    this.searchCallback = setTimeout(() => {
+      if (input.length > 0) {
+        this.$router.push("/search?" + input).catch(() => {
+          return;
+        });
+      }
+      this.searching = false;
+    }, 250);
   }
 }
 </script>
@@ -136,5 +128,18 @@ footer > a:hover {
 
 .nav-text {
   font-size: 1.5rem;
+}
+
+.search-spinner {
+  display: block;
+  position: fixed;
+  z-index: 1031; /* High z-index so it is on top of the page */
+  top: 50%;
+  right: 50%; /* or: left: 50%; */
+  margin-top: -5rem; /* half of the elements height */
+  margin-right: -5rem; /* half of the elements widht */
+
+  width: 10rem;
+  height: 10rem;
 }
 </style>

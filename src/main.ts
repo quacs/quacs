@@ -7,6 +7,9 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
 
+import AsyncComputedPlugin from "vue-async-computed";
+Vue.use(AsyncComputedPlugin);
+
 import "@/assets/styles/global.css";
 
 // Import theme css files here

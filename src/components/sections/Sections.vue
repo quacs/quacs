@@ -1,10 +1,9 @@
 <template>
-  <table class="table table-bordered" style="margin-bottom: 0px;">
+  <table class="desktop-only table table-bordered" style="margin-bottom: 0px;">
     <thead>
       <tr>
-        <th v-on:click="toggleAll()" class="select-section">All</th>
         <th style="width: 100%;">Section Info</th>
-        <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
+        <th v-for="day in days" v-bind:key="day" class="week-day">
           {{ day }}
         </th>
       </tr>
