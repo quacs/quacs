@@ -35,8 +35,8 @@ import PrerequisiteModal from "@/components/PrerequisiteModal.vue";
   components: {
     Calendar,
     CourseCard,
-    PrerequisiteModal
-  }
+    PrerequisiteModal,
+  },
 })
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];

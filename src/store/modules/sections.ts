@@ -9,7 +9,7 @@ const BG_COLORS = [
   "#dcf7da",
   "#f7e2f7",
   "#ede6df",
-  "#ffe9cf"
+  "#ffe9cf",
 ];
 const TEXT_COLORS = [
   "#000000",
@@ -18,7 +18,7 @@ const TEXT_COLORS = [
   "#000000",
   "#000000",
   "#000000",
-  "#000000"
+  "#000000",
   /*
   "#d1265d",
   "#1577aa",
@@ -36,7 +36,7 @@ const BORDER_COLORS = [
   "#48da58",
   "#d373da",
   "#a48363",
-  "#ff9332"
+  "#ff9332",
 ];
 const NUM_COLORS = 7;
 
@@ -137,7 +137,7 @@ export default class Sections extends VuexModule {
       return {
         bg: BG_COLORS[idx % NUM_COLORS],
         text: TEXT_COLORS[idx % NUM_COLORS],
-        border: BORDER_COLORS[idx % NUM_COLORS]
+        border: BORDER_COLORS[idx % NUM_COLORS],
       };
     };
   }

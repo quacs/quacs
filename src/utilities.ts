@@ -4,24 +4,24 @@ import store from "@/store";
 export const DAYS: Day[] = [
   {
     name: "Monday",
-    short: ShortDay.Monday
+    short: ShortDay.Monday,
   },
   {
     name: "Tuesday",
-    short: ShortDay.Tuesday
+    short: ShortDay.Tuesday,
   },
   {
     name: "Wednesday",
-    short: ShortDay.Wednesday
+    short: ShortDay.Wednesday,
   },
   {
     name: "Thursday",
-    short: ShortDay.Thursday
+    short: ShortDay.Thursday,
   },
   {
     name: "Friday",
-    short: ShortDay.Friday
-  }
+    short: ShortDay.Friday,
+  },
 ];
 
 export function getSessions() {
@@ -79,7 +79,7 @@ export function formatTimeslot() {
 }
 
 export function formatCourseSize() {
-  return function(crn: string): string {
+  return function (crn: string): string {
     if (crn in store.state.courseSizes) {
       return (
         store.state.courseSizes[crn].avail +

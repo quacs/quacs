@@ -33,19 +33,19 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   watch: {
-    timePreference: function(val) {
+    timePreference: function (val) {
       this.$store.commit("settings/setTimePreference", val);
     },
-    colorTheme: function(val) {
+    colorTheme: function (val) {
       this.$store.commit("settings/setColorTheme", val);
-    }
-  }
+    },
+  },
 })
 export default class Settings extends Vue {
   timePreference = this.$store.state.settings.timePreference;
   timeOptions: { value: string; text: string }[] = [
     { value: "S", text: "12 Hour" },
-    { value: "M", text: "24 Hour" }
+    { value: "M", text: "24 Hour" },
   ];
 
   colorTheme = this.$store.state.settings.colorTheme;
@@ -54,7 +54,7 @@ export default class Settings extends Vue {
     { value: "system", text: "Follow Device Theme" },
     { value: "light", text: "Light" },
     { value: "dark", text: "Dark" },
-    { value: "dark black", text: "Black" }
+    { value: "dark black", text: "Black" },
   ];
 }
 </script>

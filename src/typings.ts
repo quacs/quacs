@@ -3,7 +3,7 @@ export enum ShortDay {
   Tuesday = "T",
   Wednesday = "W",
   Thursday = "R",
-  Friday = "F"
+  Friday = "F",
 }
 
 export interface Day {
@@ -87,7 +87,7 @@ export interface CalendarColor {
 
 export enum TimePreference {
   Military = "M",
-  Standard = "S"
+  Standard = "S",
 }
 
 export interface PrerequisiteJSON {

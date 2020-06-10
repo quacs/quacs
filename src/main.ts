@@ -24,12 +24,12 @@ Vue.use(BootstrapVue);
 new Vue({
   router,
   store,
-  render: h => h(App),
+  render: (h) => h(App),
   beforeCreate() {
     this.$store.commit("sections/initializeStore");
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);
     this.$store.dispatch("loadCourseSizes");
-  }
+  },
 }).$mount("#app");

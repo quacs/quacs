@@ -22,8 +22,8 @@ import PrerequisiteModal from "@/components/PrerequisiteModal.vue";
 @Component({
   components: {
     CourseCard,
-    PrerequisiteModal
-  }
+    PrerequisiteModal,
+  },
 })
 export default class Department extends Vue {
   @Prop() code!: string;

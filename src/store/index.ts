@@ -2,7 +2,7 @@ import {
   CatalogCourse,
   CourseSize,
   Department,
-  PrerequisiteJSON
+  PrerequisiteJSON,
 } from "@/typings";
 
 import axios from "axios";
@@ -29,12 +29,12 @@ export default new Vuex.Store({
     catalog: CATALOG_JSON as { [id: string]: CatalogCourse },
     schools: SCHOOLS_JSON as { [id: string]: string[] },
     prerequisites: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
-    courseSizes: {} as { [id: string]: CourseSize }
+    courseSizes: {} as { [id: string]: CourseSize },
   },
   mutations: {
     SET_COURSE_SIZES(state, courseSizes) {
       state.courseSizes = courseSizes;
-    }
+    },
   },
   actions: {
     loadCourseSizes({ commit }) {
@@ -43,8 +43,8 @@ export default new Vuex.Store({
         .get(
           "https://vast-waters-42287.herokuapp.com/https://sis.rpi.edu/reg/rocs/YACS_202009.xml"
         )
-        .then(r => r.data)
-        .then(data => {
+        .then((r) => r.data)
+        .then((data) => {
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(data, "text/xml");
 
@@ -63,11 +63,11 @@ export default new Vuex.Store({
           }
           commit("SET_COURSE_SIZES", liveData);
         });
-    }
+    },
   },
   modules: {
     sections,
-    settings
+    settings,
   },
   plugins: [
     createPersistedState({
@@ -75,12 +75,12 @@ export default new Vuex.Store({
         "sections.selectedSections",
         "sections.storedVersion",
         "settings.timePreference",
-        "settings.colorTheme"
+        "settings.colorTheme",
       ],
-      rehydrated: store => {
+      rehydrated: (store) => {
         // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
         store.commit("sections/populateConflicts", store.state.departments);
-      }
-    })
-  ]
+      },
+    }),
+  ],
 });

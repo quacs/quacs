@@ -1,9 +1,9 @@
 <template>
-  <table class="table table-bordered" style="margin-bottom: 0px">
+  <table class="table table-bordered" style="margin-bottom: 0px;">
     <thead>
       <tr>
         <th v-on:click="toggleAll()" class="select-section">All</th>
-        <th style="width:100%">Section Info</th>
+        <th style="width: 100%;">Section Info</th>
         <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
           {{ day }}
         </th>
@@ -17,7 +17,7 @@
         class="course-row"
         v-bind:class="{
           selected: isSelected(section.crn),
-          conflict: isInConflict(section.crn)
+          conflict: isInConflict(section.crn),
         }"
       >
         <td
@@ -29,7 +29,7 @@
           <i
             class="fas fa-check"
             :class="{
-              invisible: !isSelected(section.crn)
+              invisible: !isSelected(section.crn),
             }"
             title="Section selected"
           ></i>
@@ -61,8 +61,8 @@
             class="padding-left"
             :title="
               'There are ' +
-                formatCourseSize(section.crn, courseSizes) +
-                ' available. Check SIS for more up to data information.'
+              formatCourseSize(section.crn, courseSizes) +
+              ' available. Check SIS for more up to data information.'
             "
             >{{ formatCourseSize(section.crn) }}</span
           >
@@ -74,11 +74,11 @@
                 v-for="session in getSessions(section, day)"
                 v-bind:key="
                   'mobile' +
-                    day +
-                    session.timeStart +
-                    section.crn +
-                    session.instrutor +
-                    session.location
+                  day +
+                  session.timeStart +
+                  section.crn +
+                  session.instrutor +
+                  session.location
                 "
               >
                 <span class="font-weight-bold">{{ day }}:</span>
@@ -98,11 +98,11 @@
             )"
             v-bind:key="
               'desktop' +
-                day +
-                timeslot.timeStart +
-                section.crn +
-                timeslot.instructor +
-                timeslot.location
+              day +
+              timeslot.timeStart +
+              section.crn +
+              timeslot.instructor +
+              timeslot.location
             "
           >
             {{ formatTimeslot(timeslot, isMilitaryTime()) }}
@@ -128,8 +128,8 @@ import { formatCourseSize, formatTimeslot, getSessions } from "@/utilities";
     getSessions,
     ...mapGetters("settings", ["isMilitaryTime"]),
     ...mapGetters("sections", ["isSelected", "isInConflict"]),
-    ...mapState(["courseSizes"])
-  }
+    ...mapState(["courseSizes"]),
+  },
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
@@ -148,11 +148,11 @@ export default class Section extends Vue {
 
     this.$store.commit("sections/setSelected", {
       crn: section.crn,
-      state: selected
+      state: selected,
     });
     this.$store.commit("sections/updateConflicts", {
       crn: section.crn,
-      conflicts: section.conflicts
+      conflicts: section.conflicts,
     });
   }
 
@@ -244,7 +244,7 @@ export default class Section extends Vue {
           instructor: "",
           dateStart: "",
           dateEnd: "",
-          location: ""
+          location: "",
         });
       }
 

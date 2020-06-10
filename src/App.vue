@@ -6,7 +6,7 @@
           ><img
             src="@/assets/images/quacs_logo_white_duck.svg"
             alt="QuACS Home"
-            style="height:40px"
+            style="height: 40px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -36,7 +36,7 @@
                   class="fas fa-cog"
                   tabindex="-1"
                   title="Settings"
-                  style="font-size:1.9rem"
+                  style="font-size: 1.9rem;"
                 ></i
               ></b-nav-item>
             </b-navbar-nav>
@@ -63,7 +63,7 @@
       <img
         src="@/assets/images/quacs_white.svg"
         alt="QuACS"
-        style="height:40px"
+        style="height: 40px;"
       />
       <a
         href="https://discord.gg/EyGZTAP"
@@ -90,8 +90,8 @@ Vue.use(Autocomplete);
 
 @Component({
   components: {
-    Settings
-  }
+    Settings,
+  },
 })
 export default class App extends Vue {
   searchString = "";

@@ -20,8 +20,8 @@ const fuseOptions = {
     "id",
     "sections.crn",
     "sections.timeslots.instructor",
-    "sections.timeslots.location"
-  ]
+    "sections.timeslots.location",
+  ],
 };
 
 let fuseCourses: Course[] = [];
@@ -53,7 +53,7 @@ export function instantFuseSearch(
 export function fuseSearch(
   searchString: string
 ): Promise<{ refIndex: number; item: Course[] }[]> | [] {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(instantFuseSearch(searchString));
     }, 1);

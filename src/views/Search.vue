@@ -25,8 +25,8 @@ import { instantFuseSearch } from "@/searchUtilities";
 @Component({
   components: {
     CourseCard,
-    PrerequisiteModal
-  }
+    PrerequisiteModal,
+  },
 })
 export default class Search extends Vue {
   @Prop() searchString!: string;

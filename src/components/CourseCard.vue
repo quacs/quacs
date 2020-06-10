@@ -36,8 +36,8 @@ import Sections from "./sections/Sections.vue";
 
 @Component({
   components: {
-    Sections
-  }
+    Sections,
+  },
 })
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;

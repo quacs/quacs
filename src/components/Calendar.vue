@@ -26,10 +26,10 @@
           v-for="session in sessionsOnDay(day)"
           v-bind:key="
             day.short +
-              session.timeslot.timeStart +
-              session.section.crn +
-              session.timeslot.instrutor +
-              session.timeslot.location
+            session.timeslot.timeStart +
+            session.section.crn +
+            session.timeslot.instrutor +
+            session.timeslot.location
           "
           :style="{
             'margin-top': eventPosition(session.timeslot) + 'px',
@@ -37,7 +37,7 @@
             width: dayWidth + '%',
             backgroundColor: colors(session.section.crn).bg,
             borderColor: colors(session.section.crn).border,
-            color: colors(session.section.crn).text
+            color: colors(session.section.crn).text,
           }"
         >
           <div class="event-text">
@@ -74,8 +74,8 @@ import { mapGetters } from "vuex";
 @Component({
   computed: {
     days: () => DAYS,
-    ...mapGetters("settings", ["isMilitaryTime"])
-  }
+    ...mapGetters("settings", ["isMilitaryTime"]),
+  },
 })
 export default class Calendar extends Vue {
   @Prop() selectedCourses!: Course[];
@@ -117,7 +117,7 @@ export default class Calendar extends Vue {
           if (timeslot.days.includes(day.short)) {
             ret.push({
               section: section,
-              timeslot: timeslot
+              timeslot: timeslot,
             });
           }
         }
