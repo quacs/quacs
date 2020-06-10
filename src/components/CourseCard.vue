@@ -16,18 +16,13 @@
         <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>
         {{ course.title }}</span
       >
-      <!--TODO format credit nicely using min and max only showing what is needed -->
-      {{ credMin }} credit<template v-if="credMin != 1">s</template>
+      {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
       <br />
 
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
-    <div
-      class="card-body course-card-body"
-      :class="{ expanded: expanded }"
-      v-show="expanded"
-    >
+    <div class="card-body" :class="{ expanded: expanded }" v-if="expanded">
       <!-- only rendered on mobile -->
       <MobileSections v-bind:course="course" />
 
@@ -56,7 +51,12 @@ export default class CourseCard extends Vue {
   expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin() {
-    return this.course.sections[0].credMin;
+    return (
+      this.course.sections[0].credMin +
+      (this.course.sections[0].credMin !== this.course.sections[0].credMax
+        ? "-" + this.course.sections[0].credMax
+        : "")
+    );
   }
 
   getDescription(subject: string, code: string): string {
@@ -89,12 +89,6 @@ export default class CourseCard extends Vue {
 
 .opened_icon {
   transform: rotate(90deg);
-}
-
-.course-card-body {
-  max-height: 0px;
-  overflow: hidden;
-  transition: max-height 0.5s ease-in;
 }
 
 .card-body {

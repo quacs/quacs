@@ -42,7 +42,7 @@
             :title="
               'There are ' +
                 formatCourseSize(section.crn, courseSizes) +
-                ' seats currently available'
+                ' available. Check SIS for more up to data information.'
             "
             >{{ formatCourseSize(section.crn) }}</span
           >
