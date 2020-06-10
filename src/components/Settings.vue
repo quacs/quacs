@@ -54,7 +54,8 @@ export default class Settings extends Vue {
     { value: "system", text: "Follow Device Theme" },
     { value: "light", text: "Light" },
     { value: "dark", text: "Dark" },
-    { value: "dark black", text: "Black" }
+    { value: "dark black", text: "Black" },
+    { value: "true-dark", text: "True Dark" }
   ];
 }
 </script>

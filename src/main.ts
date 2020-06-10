@@ -11,6 +11,7 @@ import "@/assets/styles/global.css";
 import "@/assets/styles/colors.css";
 import "@/assets/styles/themes/dark.css";
 import "@/assets/styles/themes/black.css";
+import "@/assets/styles/themes/true-dark.css";
 
 import "./registerServiceWorker";
 import router from "./router";
