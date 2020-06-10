@@ -1,5 +1,5 @@
 <template>
-  <table class="desktop-only table table-bordered" style="margin-bottom: 0px;">
+  <table class="table table-bordered" style="margin-bottom: 0px;">
     <thead>
       <tr>
         <th
@@ -10,7 +10,7 @@
           All
         </th>
         <th style="width: 100%;">Section Info</th>
-        <th v-for="day in days" v-bind:key="day" class="week-day">
+        <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
           {{ day }}
         </th>
       </tr>
@@ -309,11 +309,10 @@ export default class Section extends Vue {
   padding-left: 0.6rem;
 }
 
-.select-section > i {
+.select-section > svg {
   width: 100%;
   text-align: center;
-  height: 100%;
-  vertical-align: bottom;
+  vertical-align: top;
   font-size: 2rem;
 }
 </style>

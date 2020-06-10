@@ -10,9 +10,10 @@
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
-          <b-input-group prepend="?">
+          <b-input-group>
             <input
-              placeholder="Search"
+              id="search-bar"
+              placeholder="Search Courses"
               v-on:input="search($event.target.value)"
             />
             <b-spinner
@@ -29,9 +30,9 @@
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
               >
-              <b-nav-item to="#" class="nav-text" disabled
+              <!-- <b-nav-item to="#" class="nav-text" disabled
                 >Fall 2020</b-nav-item
-              >
+              > -->
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
                 <font-awesome-icon :icon="['fas', 'cog']"></font-awesome-icon>
               </b-nav-item>
@@ -141,5 +142,28 @@ footer > a:hover {
 
   width: 10rem;
   height: 10rem;
+}
+
+#search-bar {
+  width: 400px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 12px 12px 12px 48px;
+  box-sizing: border-box;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.5;
+  /* flex: 1; */
+  background-color: #eee;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iOCIvPjxwYXRoIGQ9Ik0yMSAyMWwtNC00Ii8+PC9zdmc+");
+  background-repeat: no-repeat;
+  background-position: 12px;
+}
+
+#search-bar:focus {
+  border-color: rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.16);
 }
 </style>
