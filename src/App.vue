@@ -6,7 +6,7 @@
           ><img
             src="@/assets/images/quacs_logo_white.svg"
             alt="QuACS Home"
-            style="height:40px"
+            style="height: 40px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -15,6 +15,11 @@
               placeholder="Search"
               v-on:input="search($event.target.value)"
             />
+            <b-spinner
+              label="Loading"
+              v-if="searching"
+              class="search-spinner"
+            ></b-spinner>
           </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
@@ -32,7 +37,7 @@
                   class="fas fa-cog"
                   tabindex="-1"
                   title="Settings"
-                  style="font-size:1.9rem"
+                  style="font-size: 1.9rem;"
                 ></i
               ></b-nav-item>
             </b-navbar-nav>
@@ -59,7 +64,7 @@
       <img
         src="@/assets/images/quacs_white.svg"
         alt="QuACS"
-        style="height:40px"
+        style="height: 40px;"
       />
       <a
         href="https://discord.gg/EyGZTAP"
@@ -73,7 +78,6 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-
 import Settings from "@/components/Settings.vue";
 
 @Component({
@@ -82,15 +86,24 @@ import Settings from "@/components/Settings.vue";
   }
 })
 export default class App extends Vue {
-  searchString = "";
+  searchCallback: number | null = null;
+  searching = false;
 
   search(input: string) {
-    this.searchString = input;
-    if (input.length > 0) {
-      this.$router.push("/search?" + input).catch(() => {
-        return;
-      });
+    this.searching = true;
+
+    if (this.searchCallback !== null) {
+      clearTimeout(this.searchCallback as number);
     }
+
+    this.searchCallback = setTimeout(() => {
+      if (input.length > 0) {
+        this.$router.push("/search?" + input).catch(() => {
+          return;
+        });
+      }
+      this.searching = false;
+    }, 250);
   }
 }
 </script>
@@ -120,5 +133,18 @@ footer > a:hover {
 
 .nav-text {
   font-size: 1.5rem;
+}
+
+.search-spinner {
+  display: block;
+  position: fixed;
+  z-index: 1031; /* High z-index so it is on top of the page */
+  top: 50%;
+  right: 50%; /* or: left: 50%; */
+  margin-top: -5rem; /* half of the elements height */
+  margin-right: -5rem; /* half of the elements widht */
+
+  width: 10rem;
+  height: 10rem;
 }
 </style>
