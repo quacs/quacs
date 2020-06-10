@@ -2,7 +2,13 @@
   <table class="table table-bordered" style="margin-bottom: 0px;">
     <thead>
       <tr>
-        <th v-on:click="toggleAll()" class="select-section">All</th>
+        <th
+          v-on:click="toggleAll()"
+          class="select-section"
+          title="Click to select all sections"
+        >
+          All
+        </th>
         <th style="width: 100%;">Section Info</th>
         <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
           {{ day }}
@@ -150,10 +156,10 @@ export default class Section extends Vue {
       crn: section.crn,
       state: selected,
     });
-    this.$store.commit("sections/updateConflicts", {
-      crn: section.crn,
-      conflicts: section.conflicts,
-    });
+    this.$store.commit(
+      "sections/populateConflicts",
+      this.$store.state.departments
+    );
   }
 
   toggleAll() {

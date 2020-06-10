@@ -40,6 +40,10 @@ new Vue({
   render: (h) => h(App),
   beforeCreate() {
     this.$store.commit("sections/initializeStore");
+    this.$store.commit(
+      "sections/initializeCrnToSection",
+      this.$store.state.departments
+    );
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);
