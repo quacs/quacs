@@ -5,6 +5,8 @@ import { BootstrapVue } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
+Vue.use(BootstrapVue);
+
 import "@/assets/styles/global.css";
 
 // Import theme css files here
@@ -12,14 +14,25 @@ import "@/assets/styles/colors.css";
 import "@/assets/styles/themes/dark.css";
 import "@/assets/styles/themes/black.css";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import {
+  faCaretRight,
+  faCheck,
+  faCog,
+} from "@fortawesome/free-solid-svg-icons";
+import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
+
+library.add(faCog, faCaretRight, faCheck, faGithub, faDiscord);
+
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+Vue.component("font-awesome-icon", FontAwesomeIcon);
+
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import { setColorTheme } from "./utilities";
 
 Vue.config.productionTip = false;
-
-Vue.use(BootstrapVue);
 
 new Vue({
   router,

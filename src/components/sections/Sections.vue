@@ -26,13 +26,13 @@
           tabindex="0"
           v-on:keyup.enter="toggleSelection(section)"
         >
-          <i
-            class="fas fa-check"
+          <font-awesome-icon
+            :icon="['fas', 'check']"
             :class="{
               invisible: !isSelected(section.crn),
             }"
             title="Section selected"
-          ></i>
+          ></font-awesome-icon>
         </td>
         <td class="info-cell">
           <!-- <i

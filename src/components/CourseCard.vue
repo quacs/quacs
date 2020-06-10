@@ -7,10 +7,11 @@
       v-on:keyup.enter="toggleExpanded()"
       tabindex="0"
     >
-      <i
-        class="fas fa-caret-right open_close_icon"
+      <font-awesome-icon
+        :icon="['fas', 'caret-right']"
+        class="open_close_icon"
         :class="{ opened_icon: expanded }"
-      ></i>
+      ></font-awesome-icon>
 
       <span class="font-weight-bold">
         <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>

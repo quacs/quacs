@@ -32,13 +32,8 @@
                 >Fall 2020</b-nav-item
               >
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
-                <i
-                  class="fas fa-cog"
-                  tabindex="-1"
-                  title="Settings"
-                  style="font-size: 1.9rem;"
-                ></i
-              ></b-nav-item>
+                <font-awesome-icon :icon="['fas', 'cog']"></font-awesome-icon>
+              </b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>
         </b-collapse>
@@ -58,8 +53,8 @@
         href="https://github.com/quacs/quacs"
         title="Visit our GitHub"
         aria-label="Visit our GitHub"
-        ><i class="fab fa-github"></i
-      ></a>
+        ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
+      </a>
       <img
         src="@/assets/images/quacs_white.svg"
         alt="QuACS"
@@ -69,8 +64,8 @@
         href="https://discord.gg/EyGZTAP"
         title="Join our development Discord server"
         aria-label="Join our development Discord server"
-        ><i class="fab fa-discord"></i
-      ></a>
+        ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
+      </a>
     </footer>
   </div>
 </template>
