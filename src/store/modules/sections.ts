@@ -40,46 +40,46 @@ const BORDER_COLORS = [
 ];
 const NUM_COLORS = 7;
 
-function genSchedule(
-  index: number,
-  sections: CourseSection[][],
-  conflicts: { [crn: string]: number },
-  usedSections: number[],
-  schedules: { conflicts: { [crn: string]: number }; crns: number[] }[]
-): boolean {
-  if (index >= sections.length) {
-    schedules.push({
-      conflicts: { ...conflicts },
-      crns: [...usedSections],
-    });
-    return true;
+function genSchedules(
+  index: number, // which course you're working on
+  courses: CourseSection[][],
+  currScheduleConflicts: { [crn: string]: number },
+  usedSections: number[]
+): { conflicts: { [crn: string]: number }; crns: number[] }[] {
+  let ret: { conflicts: { [crn: string]: number }; crns: number[] }[] = [];
+  if (index >= courses.length) {
+    return [
+      {
+        conflicts: { ...currScheduleConflicts },
+        crns: [...usedSections],
+      },
+    ];
   }
-  let scheduleFound = false;
-  for (const section of sections[index]) {
-    if (conflicts[section.crn] > 0) {
+
+  for (const section of courses[index]) {
+    if (currScheduleConflicts[section.crn] > 0) {
+      // Something in the schedule conflicts with this section, so we can't include it
       continue;
     }
+
     for (const conflict in section.conflicts) {
-      conflicts[conflict] = conflicts[conflict] + 1 || 1;
+      currScheduleConflicts[conflict] =
+        currScheduleConflicts[conflict] + 1 || 1;
     }
+
     usedSections.push(section.crn);
-    const retVal = genSchedule(
-      index + 1,
-      sections,
-      conflicts,
-      usedSections,
-      schedules
+    ret = ret.concat(
+      genSchedules(index + 1, courses, currScheduleConflicts, usedSections)
     );
-    if (retVal) {
-      scheduleFound = true;
-    }
+
     usedSections.pop();
     for (const conflict in section.conflicts) {
-      conflicts[conflict] = conflicts[conflict] - 1 || 0;
+      currScheduleConflicts[conflict] =
+        currScheduleConflicts[conflict] - 1 || 0;
     }
   }
 
-  return scheduleFound;
+  return ret;
 }
 
 @Module({ namespaced: true, name: "sections" })
@@ -206,8 +206,7 @@ export default class Sections extends VuexModule {
     const schedules: {
       conflicts: { [crn: string]: number };
       crns: number[];
-    }[] = [];
-    genSchedule(0, sectionsArr, conflicts, usedSections, schedules);
+    }[] = genSchedules(0, sectionsArr, conflicts, usedSections);
 
     // eslint-disable-next-line
     console.log(schedules);
