@@ -1,19 +1,19 @@
 <template>
   <div>
-    <template v-if="courses.length == 0">
+    <template v-if="selectedCourses.length == 0">
       <h3>It looks like you have not selected any courses yet :(</h3>
       <router-link class="navbar-brand" to="/"
         >Click to select a course</router-link
       >
     </template>
 
-    <Calendar />
+    <Calendar v-bind:selectedCourses="selectedCourses" />
 
     <br />
 
     <div class="card-columns">
       <CourseCard
-        v-for="course in courses"
+        v-for="course in selectedCourses"
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
       />
@@ -36,11 +36,22 @@ import CourseCard from "@/components/CourseCard.vue";
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];
 
-  get courses(): Course[] {
+  get selectedCourses(): Course[] {
     if (this.keepSelected.length > 0) {
       return this.keepSelected;
     }
-    this.keepSelected = [...this.$store.getters["sections/selectedCourses"]];
+
+    for (const dept of this.$store.state.departments) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          if (this.$store.getters["sections/isSelected"](section.crn)) {
+            this.keepSelected.push(course);
+            break;
+          }
+        }
+      }
+    }
+
     return this.keepSelected;
   }
 }
