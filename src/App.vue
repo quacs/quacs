@@ -51,23 +51,28 @@
     </div>
     <Settings></Settings>
     <footer class="footer">
-      <a
-        href="https://github.com/quacs/quacs"
-        title="Visit our GitHub"
-        aria-label="Visit our GitHub"
-        ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
-      </a>
-      <img
-        src="@/assets/images/quacs_white.svg"
-        alt="QuACS"
-        style="height: 40px;"
-      />
-      <a
-        href="https://discord.gg/EyGZTAP"
-        title="Join our development Discord server"
-        aria-label="Join our development Discord server"
-        ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
-      </a>
+      <div class="footer-links">
+        <a
+          href="https://github.com/quacs/quacs"
+          title="Visit our GitHub"
+          aria-label="Visit our GitHub"
+          ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
+        </a>
+        <img
+          src="@/assets/images/quacs_white.svg"
+          alt="QuACS"
+          style="height: 40px;"
+        />
+        <a
+          href="https://discord.gg/EyGZTAP"
+          title="Join our development Discord server"
+          aria-label="Join our development Discord server"
+          ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
+        </a>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2020 - Questionably Accurate Course Scheduler
+      </div>
     </footer>
   </div>
 </template>
@@ -109,6 +114,7 @@ export default class App extends Vue {
 
 footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
@@ -117,14 +123,27 @@ footer {
   background: var(--footer-background);
 }
 
-footer > * {
+.footer-links > * {
   color: black;
   font-size: 2.4rem;
   padding: 0rem 1rem;
 }
 
-footer > a:hover {
+.footer-links > a:hover {
   color: DimGrey;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.footer-copyright {
+  color: var(--global-text);
+  font-size: 1.2rem;
+  padding: 0rem 1rem;
 }
 
 .nav-text {
