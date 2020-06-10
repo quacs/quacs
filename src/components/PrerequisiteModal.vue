@@ -1,9 +1,8 @@
 <template>
   <div>
-    <b-modal id="prerequisite-modal" title="Settings">
+    <!--b-modal id="prerequisite-modal" title="Settings">
       test
       {{ crn }}
-      <!-- {{$store.state.prerequisites[crn]}} -->
 
       {{ data }}
 
@@ -12,7 +11,7 @@
           Close
         </b-button>
       </template>
-    </b-modal>
+    </b-modal-->
   </div>
 </template>
 
