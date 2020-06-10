@@ -9,7 +9,6 @@
     "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
   },
   "dependencies": {
-    "@trevoreyre/autocomplete-vue": "^2.2.0",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
@@ -17,6 +16,7 @@
     "register-service-worker": "^1.7.1",
     "simple-web-worker": "^1.2.0",
     "vue": "^2.6.11",
+    "vue-async-computed": "^3.8.2",
     "vue-axios": "^2.1.5",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",

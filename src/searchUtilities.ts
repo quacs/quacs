@@ -40,19 +40,15 @@ function getFuseCourses(): Course[] {
   return courses;
 }
 
-export function instantFuseSearch(
-  searchString: string
-): { refIndex: number; item: Course[] }[] {
+export function instantFuseSearch(searchString: string): Course[] {
   if (searchString.length === 0) {
     return [];
   }
   const fuse = new Fuse(getFuseCourses(), fuseOptions);
-  return fuse.search(searchString);
+  return fuse.search(searchString).map(res => res.item);
 }
 
-export function fuseSearch(
-  searchString: string
-): Promise<{ refIndex: number; item: Course[] }[]> | [] {
+export function fuseSearch(searchString: string): Promise<Course[]> {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(instantFuseSearch(searchString));

@@ -21,9 +21,8 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/Schedule.vue")
   },
   {
-    path: "/search/:searchString",
-    component: Search,
-    props: true
+    path: "/search",
+    component: Search
   }
 ];
 

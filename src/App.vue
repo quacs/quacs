@@ -10,16 +10,12 @@
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-            <autocomplete
-              aria-label="Search"
-              placeholder="Search Courses"
-              :search="filterResults"
-              :get-result-value="displayResult"
-              @submit="search"
-              :debounce-time="200"
-            ></autocomplete>
-          </b-navbar-nav>
+          <b-input-group prepend="?">
+            <input
+              placeholder="Search"
+              v-on:input="search($event.target.value)"
+            />
+          </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <b-nav-item
@@ -77,16 +73,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Course } from "@/typings";
 
 import Settings from "@/components/Settings.vue";
-
-import { fuseSearch } from "@/searchUtilities";
-
-// @ts-expect-error: Typescript doesn't know the types for this
-import Autocomplete from "@trevoreyre/autocomplete-vue";
-import "@trevoreyre/autocomplete-vue/dist/style.css";
-Vue.use(Autocomplete);
 
 @Component({
   components: {
@@ -96,22 +84,13 @@ Vue.use(Autocomplete);
 export default class App extends Vue {
   searchString = "";
 
-  filterResults(input: string) {
+  search(input: string) {
     this.searchString = input;
-    return fuseSearch(input);
-  }
-
-  displayResult(result: { item: Course; refIndex: number }) {
-    return result.item.subj + "-" + result.item.crse + " " + result.item.title;
-  }
-
-  search(result: { item: Course; refIndex: number }) {
-    if (result) {
-      this.searchString = this.displayResult(result);
+    if (input.length > 0) {
+      this.$router.push("/search?" + input).catch(() => {
+        return;
+      });
     }
-    this.$router.push("/search/" + this.searchString).catch(() => {
-      return;
-    });
   }
 }
 </script>

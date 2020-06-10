@@ -135,11 +135,6 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.1.tgz#f4afffcb36e069a801d5339c90499601c47a2516"
   integrity sha512-zeOomWIE52M9JpYXlsR3iOf7TXTTmNQHnSbqjMsQZ5phzfAenHzL/1+vQ0ZoJfagocK11LNf8vnn2JG0ufRMUQ==
 
-"@trevoreyre/autocomplete-vue@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@trevoreyre/autocomplete-vue/-/autocomplete-vue-2.2.0.tgz#db1fd94bc001ccba296cdd370fdae122117b311e"
-  integrity sha512-A5j986nM6htTbCpEW9BbwlqCobIMD4+uicAYGCSI8DM1ojK8meCyVI23jK+gAxi+vjhraCBneKI+vbwB8sL0ig==
-
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -7657,6 +7652,11 @@ vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
+
+vue-async-computed@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.8.2.tgz#d5dff221b62f95ad2f98ce9e7bbea5a067ec8b9a"
+  integrity sha512-If5roOhp/x0WWd0TWRD77YsuFoiIw3MbkcRlIB/FE3TqQCPje52eQp5CV5NN/7B0VAyPuGX5JQa+rc9AOcGAYw==
 
 vue-axios@^2.1.5:
   version "2.1.5"
