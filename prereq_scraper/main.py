@@ -4,7 +4,7 @@ import json
 from tqdm import tqdm
 import re
 
-regex_list = ['\s*Undergraduate level\s*', '\s*Minimum Grade of [ABCDF]\s*', '\s*Prerequisite Override 100\s*(or|and)', '(or|and)\s*Prerequisite Override 100\s*']
+regex_list = ['\s*Undergraduate level\s*', '\s*Graduate level\s*', '\s*Minimum Grade of [ABCDF]\s*', '\s*Prerequisite Override 100\s*(or|and)', '(or|and)\s*Prerequisite Override 100\s*']
 course_regex = re.compile("[a-zA-Z]{4}(?:-| )\d{4}")
 def parse_prerequisites(prerequisites):
     clean = []
@@ -18,12 +18,9 @@ def parse_prerequisites(prerequisites):
         if(new_text):
             clean.append(new_text)
 
-    # print(clean)
+    print(clean)
 
-    # output = {}
     (output, _, _) = recursive_parse(clean)
-    # print(json.dumps(output, indent=4))
-    # print()
 
     return output
 
@@ -55,7 +52,6 @@ def recursive_parse(prerequisites):
                     output['nested'].append(new_output)
                     pass
                 elif(char == ")"):
-                    print("going out", index, " ", char_ind)
                     return (output, index, char_ind)
                     pass
                 elif(char=='o'):
@@ -63,63 +59,9 @@ def recursive_parse(prerequisites):
                 elif(char=='a'):
                     output['type']="and"
                 else:
-                    print(part, char)
                     print("ERROR: Should not be here")
                     exit(1)
     return (output, index, char_ind)
-
-    # clean = {
-    #     "type":"",
-    #     "solo":[],
-    #     "nested:"[]
-    # }
-    # level=0
-    # for (level,part) in enumerate(prerequisites):
-    #     if(level%2==0):
-    #         for (index,char) in enumerate(part):
-    #             if(char == "("):
-    #                 level+=1
-    #                 clean['nested'] = {
-    #                     "type":"",
-    #                     "solo":[],
-    #                     "nested:"[]
-    #                 }
-    #             elif(char == ")"):
-    #                 level-=1
-    #             elif(char=='o' and part[index+1] == 'r'):
-    #                 print("OR!!!")
-    #                 pass
-    #             elif(char=='a' and part[index+1] == 'n' and part[index+2] == 'd'):
-    #                 print("and!!!")
-    #                 pass
-    #
-    #     else:
-    #         # literal
-    #         pass
-
-
-
-    # clean = {'items'=[], 'type'='solo'}
-    # level = 1
-    # split_data = []
-    # for part in prerequisites:
-    #     # if(part == "")
-    #     for (index,char) in enumerate(part):
-    #         if(char == "("):
-    #             level+=1
-    #             level_item = clean
-    #             for i in range(level):
-    #                 level_item['items'].append({'items'=[], 'type'='solo'})
-    #                 level_item=level_item['items'][-1]
-    #         elif(char == ")"):
-    #             level-=1
-    #         elif(char=='o' and part[index+1] == 'r'):
-    #             print("OR!!!")
-    #             pass
-    #         elif(char=='a' and part[index+1] == 'n' and part[index+2] == 'd'):
-    #             print("and!!!")
-    #             pass
-    # print(clean)
 
 
 def get_prereq_string(term, crn):
@@ -209,7 +151,7 @@ def get_prereq_string(term, crn):
 prerequs = {}
 
 # For testing
-# get_prereq_string(202009, 25715)
+# get_prereq_string(202009, 28329)
 # exit()
 
 crns = []
@@ -221,8 +163,8 @@ with open('courses.json') as json_file:
                 crns.append(section['crn'])
 
 for crn in tqdm(crns):
-    prerequs[crn] = get_prereq_string(202009, crn)
     print(crn)
+    prerequs[crn] = get_prereq_string(202009, crn)
 
 with open('prerequs.json', 'w') as outfile:
     json.dump(prerequs, outfile, indent=4)
