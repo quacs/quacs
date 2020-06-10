@@ -18,8 +18,6 @@ def parse_prerequisites(prerequisites):
         if(new_text):
             clean.append(new_text)
 
-    print(clean)
-
     (output, _, _) = recursive_parse(clean)
 
     return output
@@ -113,7 +111,7 @@ def get_prereq_string(term, crn):
             elif(part.endswith('Classifications:')):
                 section = "classification"
                 data['restrictions_clean'][section] = {}
-            elif(part.endswith('Fields of Study (Major, Minor, or Concentration):')):
+            elif(part.endswith('or Concentration):')):
                 section = "field_of_study"
                 data['restrictions_clean'][section] = {}
             elif(part.endswith('Degrees:')):
@@ -134,8 +132,6 @@ def get_prereq_string(term, crn):
                 subsection = "may_not_be"
                 data['restrictions_clean'][section]['may_not_be'] = []
                 continue
-
-
 
 
             if(section):
