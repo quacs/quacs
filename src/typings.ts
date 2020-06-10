@@ -8,7 +8,7 @@ export enum ShortDay {
 
 export interface Day {
   name: string;
-  short: string;
+  short: ShortDay;
 }
 
 export interface Timeslot {
@@ -70,12 +70,14 @@ export interface CourseSize {
   students: number;
 }
 
+/*
 export interface SelectedSection {
   section: CourseSection;
   course: Course;
   dept?: Department;
   selected: boolean;
 }
+*/
 
 export interface CalendarColor {
   bg: string;

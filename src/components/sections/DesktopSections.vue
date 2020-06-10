@@ -100,13 +100,10 @@ export default class Section extends Vue {
       selected = !this.$store.getters["sections/isSelected"](section.crn);
     }
 
-    const selectedSection = {
-      course: this.course,
-      section,
-      selected
-    };
-
-    this.$store.commit("sections/setSelected", selectedSection);
+    this.$store.commit("sections/setSelected", {
+      crn: section.crn,
+      state: selected
+    });
     this.$store.commit("sections/updateConflicts", {
       crn: section.crn,
       conflicts: section.conflicts

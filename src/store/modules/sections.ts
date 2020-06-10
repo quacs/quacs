@@ -1,5 +1,5 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
-import { CalendarColor, Course, Department, SelectedSection } from "@/typings";
+import { CalendarColor, Department } from "@/typings";
 import Vue from "vue";
 
 const BG_COLORS = [
@@ -33,15 +33,14 @@ const NUM_COLORS = 7;
 
 @Module({ namespaced: true, name: "sections" })
 export default class Sections extends VuexModule {
-  selectedSections: { [crn: number]: SelectedSection } = {};
+  selectedSections: { [crn: number]: boolean } = {};
   conflictingSectionCounts: { [crn: number]: number } = {};
 
-  CURRENT_STORAGE_VERSION = "0.0.2";
+  CURRENT_STORAGE_VERSION = "0.0.1";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
 
   get isSelected(): (crn: number) => boolean {
-    return (crn: number) =>
-      this.isInitialized(crn) && this.selectedSections[crn].selected;
+    return (crn: number) => this.selectedSections[crn] === true;
   }
 
   get isInitialized(): (crn: number) => boolean {
@@ -52,26 +51,15 @@ export default class Sections extends VuexModule {
     return (crn: number) => this.conflictingSectionCounts[crn] > 0;
   }
 
-  get selected(): readonly SelectedSection[] {
-    return Object.keys(this.selectedSections)
-      .map((k: string) => this.selectedSections[(k as unknown) as number])
-      .filter((selected: SelectedSection) => selected.selected);
-  }
-
-  get selectedCourses(): readonly Course[] {
-    return this.selected
-      .map((s: SelectedSection) => s.course)
-      .filter(
-        (course: Course, idx: number, self) =>
-          self.findIndex(
-            (c: Course) => c.subj + c.crse === course.subj + course.crse
-          ) === idx
-      );
+  get selectedCRNs(): readonly string[] {
+    return Object.keys(this.selectedSections).filter(
+      (crn: string) => this.selectedSections[(crn as unknown) as number]
+    );
   }
 
   @Mutation
-  setSelected(p: SelectedSection): void {
-    Vue.set(this.selectedSections, p.section.crn, p);
+  setSelected(p: { crn: number; state: boolean }): void {
+    Vue.set(this.selectedSections, p.crn, p.state);
   }
 
   @Mutation
