@@ -31,10 +31,10 @@ export default new Vuex.Store({
   },
   actions: {
     loadCourseSizes({ commit }) {
-      //TODO switch heroku to our own proxy because this one has a rate limit
+      //TODO switch to better server for this over a free herokuapp instance
       axios
         .get(
-          "https://cors-anywhere.herokuapp.com/https://sis.rpi.edu/reg/rocs/YACS_202009.xml"
+          "https://vast-waters-42287.herokuapp.com/https://sis.rpi.edu/reg/rocs/YACS_202009.xml"
         )
         .then(r => r.data)
         .then(data => {

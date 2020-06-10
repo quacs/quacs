@@ -99,7 +99,7 @@ export function minuteTimeToHour(
 ): string {
   const hour = Math.floor(minuteTime / 60);
   if (isMilitaryTime) {
-    return hour.toString();
+    return ("0" + hour).slice(-2).toString() + ":00";
   }
   if (hour < 12) {
     return hour + " AM";

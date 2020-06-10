@@ -164,7 +164,7 @@ export default class Calendar extends Vue {
 </script>
 
 <style scoped lang="scss">
-$labelOffset: 0.35em;
+$labelOffset: 0em;
 $hourFontSize: 0.7em;
 $dayFontSize: 0.8em;
 
@@ -183,7 +183,7 @@ $dayFontSize: 0.8em;
 }
 
 .hour-label {
-  color: #757575;
+  color: var(--calendar-label);
   font-size: $hourFontSize;
   text-align: right;
   font-variant: small-caps;
@@ -191,7 +191,7 @@ $dayFontSize: 0.8em;
 
 .hour_label_military {
   position: relative;
-  left: 1rem;
+  left: 0.15rem;
 }
 
 .calendar-grid {
@@ -202,7 +202,7 @@ $dayFontSize: 0.8em;
 }
 
 .day-label {
-  color: #757575;
+  color: var(--calendar-label);
   display: block;
   margin: 0 auto;
   text-align: center;

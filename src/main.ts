@@ -27,7 +27,6 @@ new Vue({
   render: h => h(App),
   beforeCreate() {
     this.$store.commit("sections/initializeStore");
-    this.$store.commit("sections/initializeSettings");
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);

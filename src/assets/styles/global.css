@@ -78,3 +78,7 @@ body{
 .table {
   color: var(--table-text);
 }
+
+.list-group-item{
+  background: var(--list-group-item-background)
+}
