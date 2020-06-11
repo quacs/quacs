@@ -15,6 +15,7 @@
               id="search-bar"
               placeholder="Search Courses"
               v-on:input="search($event.target.value)"
+              v-on:keyup.enter="search($event.target.value, 0)"
             />
             <b-spinner
               label="Loading"
@@ -90,21 +91,27 @@ export default class App extends Vue {
   searchCallback: number | null = null;
   searching = false;
 
-  search(input: string) {
+  search(input: string, searchTimeout = 250) {
     this.searching = true;
 
     if (this.searchCallback !== null) {
       clearTimeout(this.searchCallback as number);
     }
 
-    this.searchCallback = setTimeout(() => {
-      if (input.length > 0) {
+    if (input.length === 0) {
+      this.searching = false;
+      this.$router.push("/").catch(() => {
+        return;
+      });
+    } else {
+      this.searchCallback = setTimeout(() => {
         this.$router.push("/search?" + input).catch(() => {
+          this.searching = false;
           return;
         });
-      }
-      this.searching = false;
-    }, 250);
+        this.searching = false;
+      }, searchTimeout);
+    }
   }
 }
 </script>
