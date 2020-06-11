@@ -1,13 +1,9 @@
 <template>
   <table class="table table-bordered" style="margin-bottom: 0px;">
     <thead>
-      <tr>
-        <th
-          v-on:click="toggleAll()"
-          class="select-section"
-          title="Click to select all sections"
-        >
-          All
+      <tr v-on:click="toggleAll()" class="select-section">
+        <th title="Click to select all sections">
+          <span style="visibility: hidden;">All</span>
         </th>
         <th style="width: 100%;">Section Info</th>
         <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
@@ -20,18 +16,16 @@
       <tr
         v-for="section in course.sections"
         v-bind:key="section.crn"
-        class="course-row"
+        class="course-row select-section"
         v-bind:class="{
           selected: isSelected(section.crn),
           conflict: isInConflict(section.crn),
         }"
+        v-on:click="toggleSelection(section)"
+        tabindex="0"
+        v-on:keyup.enter="toggleSelection(section)"
       >
-        <td
-          v-on:click="toggleSelection(section)"
-          class="select-section"
-          tabindex="0"
-          v-on:keyup.enter="toggleSelection(section)"
-        >
+        <td>
           <font-awesome-icon
             :icon="['fas', 'check']"
             :class="{
@@ -309,7 +303,7 @@ export default class Section extends Vue {
   padding-left: 0.6rem;
 }
 
-.select-section > svg {
+.select-section > * > svg {
   width: 100%;
   text-align: center;
   vertical-align: top;

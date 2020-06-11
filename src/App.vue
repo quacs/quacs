@@ -28,7 +28,14 @@
                 to="/schedule"
                 class="nav-text"
                 :active="this.$route.path == '/schedule'"
-                >Schedule</b-nav-item
+                ><span style="white-space: nowrap;"
+                  ><font-awesome-icon
+                    :icon="['fas', 'calendar']"
+                    class="open_close_icon"
+                    style="padding-right: 0.25rem;"
+                  ></font-awesome-icon
+                  >Calendar</span
+                ></b-nav-item
               >
               <!-- <b-nav-item to="#" class="nav-text" disabled
                 >Fall 2020</b-nav-item
@@ -142,7 +149,7 @@ footer {
 
 .footer-copyright {
   color: var(--global-text);
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: 0rem 1rem;
 }
 

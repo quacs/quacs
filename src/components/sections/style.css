@@ -16,7 +16,7 @@
         background: var(--conflict-row);
 }
 
-.conflict > .select-section:hover {
+.conflict:hover {
         background: var(--conflict-row-hover);
 }
 
@@ -24,7 +24,7 @@
         background: var(--selected-row);
 }
 
-.selected >.select-section:hover {
+.selected:hover {
         background: var(--selected-row-hover);
 }
 
