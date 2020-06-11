@@ -79,12 +79,6 @@ export interface SelectedSection {
 }
 */
 
-export interface CalendarColor {
-  bg: string;
-  text: string;
-  border: string;
-}
-
 export enum TimePreference {
   Military = "M",
   Standard = "S",

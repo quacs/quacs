@@ -31,7 +31,9 @@ const router = new VueRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    } else {
+    } else if (to.path !== "/schedule" && from.path !== "/schedule") {
+      // Don't move around on the schedule since we change the page
+      // around if you switch sections or schedules
       return { x: 0, y: 0 };
     }
   },
