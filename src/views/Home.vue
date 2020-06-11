@@ -2,19 +2,16 @@
   <div class="home">
     <b-card-group columns class="department-cards">
       <b-card
-        v-for="(departmentCodes, school) in schools"
+        v-for="(departments, school) in schools"
         v-bind:key="school"
         :header="school"
       >
-        <div
-          v-for="departmentCode in departmentCodes"
-          v-bind:key="departmentCode"
-        >
+        <div v-for="department in departments" v-bind:key="department.code">
           <router-link
             class="nav-link department-link"
-            :to="'/department/' + departmentCode"
-            ><span class="department-code">{{ departmentCode }}</span>
-            {{ getDepartment(departmentCode).name }}</router-link
+            :to="'/department/' + department.code"
+            ><span class="department-code">{{ department.code }}</span>
+            {{ department.name }}</router-link
           >
         </div>
       </b-card>
@@ -29,19 +26,7 @@ import { mapState } from "vuex";
 @Component({
   computed: mapState(["departments", "schools"]),
 })
-export default class Home extends Vue {
-  get getDepartment() {
-    return (code: string) => {
-      for (const dept of this.$store.state.departments) {
-        if (dept.code === code) {
-          return dept;
-        }
-      }
-
-      return {};
-    };
-  }
-}
+export default class Home extends Vue {}
 </script>
 
 <style scoped>
