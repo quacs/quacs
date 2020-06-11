@@ -1,44 +1,6 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
-import { CalendarColor, CourseSection, Department } from "@/typings";
+import { CourseSection, Department } from "@/typings";
 import Vue from "vue";
-
-const BG_COLORS = [
-  "#ffd4df",
-  "#ceeffc",
-  "#fff4d0",
-  "#dcf7da",
-  "#f7e2f7",
-  "#ede6df",
-  "#ffe9cf",
-];
-const TEXT_COLORS = [
-  "#000000",
-  "#000000",
-  "#000000",
-  "#000000",
-  "#000000",
-  "#000000",
-  "#000000",
-  /*
-  "#d1265d",
-  "#1577aa",
-  "#bf8a2e",
-  "#008a2e",
-  "#853d80",
-  "#9d5733",
-  "#d9652b"
-  */
-];
-const BORDER_COLORS = [
-  "#ff2066",
-  "#00aff2",
-  "#ffcb45",
-  "#48da58",
-  "#d373da",
-  "#a48363",
-  "#ff9332",
-];
-const NUM_COLORS = 7;
 
 function genSchedules(
   index: number, // which course you're working on
@@ -214,16 +176,5 @@ export default class Sections extends VuexModule {
     const end = new Date().getTime();
     // eslint-disable-next-line
     console.log("Conflict generation complete, took " + (end - start) + " ms");
-  }
-
-  // COLORS!!!
-  get colors(): (idx: number) => CalendarColor {
-    return (idx: number) => {
-      return {
-        bg: BG_COLORS[idx % NUM_COLORS],
-        text: TEXT_COLORS[idx % NUM_COLORS],
-        border: BORDER_COLORS[idx % NUM_COLORS],
-      };
-    };
   }
 }

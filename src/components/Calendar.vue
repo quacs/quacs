@@ -154,10 +154,27 @@ export default class Calendar extends Vue {
 
   get colors() {
     return (crn: number) => {
-      const colorIdx = this.selected.findIndex(
-        (section: CourseSection) => section.crn === crn
+      const numCalColors = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--num-calendar-colors"
+        )
       );
-      return this.$store.getters["sections/colors"](colorIdx);
+      const colorIdx =
+        this.selected.findIndex(
+          (section: CourseSection) => section.crn === crn
+        ) % numCalColors;
+
+      return {
+        bg: getComputedStyle(document.documentElement).getPropertyValue(
+          "--calendar-bg-color-" + colorIdx
+        ),
+        border: getComputedStyle(document.documentElement).getPropertyValue(
+          "--calendar-border-color-" + colorIdx
+        ),
+        text: getComputedStyle(document.documentElement).getPropertyValue(
+          "--calendar-text-color-" + colorIdx
+        ),
+      };
     };
   }
 }
