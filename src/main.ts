@@ -20,13 +20,23 @@ import "@/assets/styles/themes/black.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
+  faCalendar,
   faCaretRight,
   faCheck,
   faCog,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
-library.add(faCog, faCaretRight, faCheck, faGithub, faDiscord);
+library.add(
+  faCog,
+  faCaretRight,
+  faCheck,
+  faGithub,
+  faDiscord,
+  faInfoCircle,
+  faCalendar
+);
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 Vue.component("font-awesome-icon", FontAwesomeIcon);
