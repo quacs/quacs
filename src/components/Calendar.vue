@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { CourseSection, Day, Timeslot } from "@/typings";
 import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
 import { mapGetters } from "vuex";
@@ -78,16 +78,17 @@ import { mapGetters } from "vuex";
   },
 })
 export default class Calendar extends Vue {
+  @Prop() readonly crns!: string[];
   readonly startTime = 480;
   readonly endTime = 1320;
   readonly totalHeight = 600;
 
-  get crns() {
-    if (this.$route.query.crns === undefined) {
-      return [];
-    }
-    return (this.$route.query.crns as string).split(",");
-  }
+  // get crns() {
+  //   if (this.$route.query.crns === undefined) {
+  //     return [];
+  //   }
+  //   return (this.$route.query.crns as string).split(",");
+  // }
 
   get numMinutes() {
     return this.endTime - this.startTime;

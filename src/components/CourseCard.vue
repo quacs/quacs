@@ -24,11 +24,7 @@
     </div>
 
     <div class="card-body" :class="{ expanded: expanded }" v-if="expanded">
-      <Sections
-        v-bind:course="course"
-        v-on:open-prerequisite-modal="emitCrn"
-        v-on:toggledSection="reEmit('toggledSection')"
-      />
+      <Sections v-bind:course="course" v-on:open-prerequisite-modal="emitCrn" />
     </div>
   </div>
 </template>
@@ -81,10 +77,6 @@ export default class CourseCard extends Vue {
 
   emitCrn(crn: string) {
     this.$emit("open-prerequisite-modal", crn);
-  }
-
-  reEmit(str: string) {
-    this.$emit(str);
   }
 }
 </script>

@@ -7,12 +7,12 @@
       >
     </div>
 
-    <div class="warning-message" v-else-if="totalNumSchedules == 0">
+    <!-- <div class="warning-message" v-else-if="totalNumSchedules == 0">
       <h3>
         Uh oh! All possible schedules have conflicts! Try choosing more
         sections.
       </h3>
-    </div>
+    </div> -->
 
     <div style="padding-bottom: 2rem;" v-else>
       <div class="schedule-select">
@@ -21,7 +21,7 @@
           v-on:click="decrementSchedule()"
         ></b-icon-chevron-left>
         <span class="schedule-num">
-          {{ currentScheduleNumber + 1 }} / {{ totalNumSchedules }}
+          {{ visibleCurrentScheduleNumber }} / {{ totalNumSchedules }}
         </span>
         <b-icon-chevron-right
           class="schedule-select-button"
@@ -29,7 +29,7 @@
         ></b-icon-chevron-right>
       </div>
 
-      <Calendar :key="loadedWithCRNs" />
+      <Calendar :crns="currentScheduleCRNs" />
 
       <div class="crn-list">
         CRNs:
@@ -49,7 +49,6 @@
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
         v-on:open-prerequisite-modal="setPrerequisiteModalCrn"
-        v-on:toggledSection="reloadCalendar"
       />
     </div>
   </div>
@@ -77,7 +76,7 @@ export default class Schedule extends Vue {
   keepSelected: Course[] = [];
   prerequisiteModalCrn = "";
   currentScheduleNumber = 0;
-  loadedWithCRNs = true;
+  // loadedWithCRNs = true;
 
   get selectedCourses(): Course[] {
     if (this.keepSelected.length > 0) {
@@ -99,16 +98,12 @@ export default class Schedule extends Vue {
   }
 
   mounted() {
-    this.reloadCalendar();
-  }
-
-  reloadCalendar() {
-    if (this.$route.query.crns === undefined && this.totalNumSchedules > 0) {
-      this.$router.replace(
-        "/schedule?crns=" + this.currentScheduleCRNs.join(",")
-      );
-      this.loadedWithCRNs = false; // set to false to force Vue to re-render calendar
-    }
+    // if (this.$route.query.crns === undefined && this.totalNumSchedules > 0) {
+    //   this.$router.replace(
+    //     "/schedule?crns=" + this.currentScheduleCRNs.join(",")
+    //   );
+    //   this.loadedWithCRNs = false; // set to false to force Vue to re-render calendar
+    // }
   }
 
   setPrerequisiteModalCrn(crn: string) {
@@ -119,9 +114,30 @@ export default class Schedule extends Vue {
     return this.$store.getters["sections/schedules"].length;
   }
 
+  get visibleCurrentScheduleNumber() {
+    if (this.$store.getters["sections/schedules"].length === 0) {
+      this.currentScheduleNumber = 0;
+      return 0;
+    }
+    return this.currentScheduleNumber + 1;
+  }
+
   get currentScheduleCRNs() {
-    return this.$store.getters["sections/schedules"][this.currentScheduleNumber]
-      .crns;
+    if (this.$store.getters["sections/schedules"].length === 0) {
+      this.$router.replace("/schedule").catch(() => {
+        return;
+      });
+      return [];
+    }
+
+    const crns = this.$store.getters["sections/schedules"][
+      this.currentScheduleNumber
+    ].crns;
+
+    this.$router.replace("/schedule?crns=" + crns.join(",")).catch(() => {
+      return;
+    });
+    return crns;
   }
 
   incrementSchedule() {
@@ -129,7 +145,6 @@ export default class Schedule extends Vue {
       this.currentScheduleNumber + 1,
       this.totalNumSchedules
     );
-    this.$router.push("/schedule?crns=" + this.currentScheduleCRNs.join(","));
   }
 
   decrementSchedule() {
@@ -137,7 +152,6 @@ export default class Schedule extends Vue {
       this.currentScheduleNumber - 1,
       this.totalNumSchedules
     );
-    this.$router.push("/schedule?crns=" + this.currentScheduleCRNs.join(","));
   }
 
   copyToClipboard(val: string) {

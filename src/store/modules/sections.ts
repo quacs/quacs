@@ -143,6 +143,8 @@ export default class Sections extends VuexModule {
       this.crnToSections
     );
 
+    // console.log(this.currentSchedules);
+
     this.conflictingSections = {};
     calculateConflicts(this.currentSchedules).forEach(
       (crn) => (this.conflictingSections[crn] = true)
