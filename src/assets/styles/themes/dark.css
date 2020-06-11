@@ -36,6 +36,8 @@
         --calendar-label: #8A8A8A;
         --toast-background: #111111;
         --toast-text: #eeeeee;
+        --trash-btn: #ffffff;
+        --trash-btn-hover: #ff0000;
 }
 
 [data-theme="dark"] .navbar-toggler-icon {

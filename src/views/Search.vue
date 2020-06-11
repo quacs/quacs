@@ -1,5 +1,8 @@
 <template>
   <div class="card-column">
+    <h1 v-if="courses.length === 0">
+      No results found for "{{ Object.keys(this.$route.query)[0] }}"
+    </h1>
     <CourseCard
       v-for="course in courses"
       v-bind:key="course.subj + course.crse + course.title"

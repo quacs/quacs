@@ -172,7 +172,7 @@ export default class Sections extends VuexModule {
 
   @Mutation
   populateConflicts(departments: readonly Department[]): void {
-    //Figure out why we even have to run this and why initializeCrnToSection is not working
+    //Figure out why we even have to run this and why initializeCrnToSection() is not working on page load
     if (Object.keys(this.crnToSections).length === 0) {
       for (const dept of departments) {
         for (const course of dept.courses) {

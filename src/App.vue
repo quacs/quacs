@@ -25,6 +25,12 @@
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <b-nav-item
+                to="/prerequisites"
+                class="nav-text"
+                :active="this.$route.path == '/prerequisites'"
+                >Prerequisites</b-nav-item
+              >
+              <b-nav-item
                 to="/schedule"
                 class="nav-text"
                 :active="this.$route.path == '/schedule'"

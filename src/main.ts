@@ -26,6 +26,7 @@ import {
   faCheck,
   faCog,
   faInfoCircle,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
@@ -36,7 +37,8 @@ library.add(
   faGithub,
   faDiscord,
   faInfoCircle,
-  faCalendar
+  faCalendar,
+  faTrash
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

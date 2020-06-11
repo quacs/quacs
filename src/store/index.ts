@@ -19,6 +19,7 @@ import PREREQUISITES_JSON from "./data/prerequisites.json";
 
 import sections from "./modules/sections";
 import settings from "./modules/settings";
+import prerequisites from "./modules/prerequisites";
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios);
@@ -68,6 +69,7 @@ export default new Vuex.Store({
   modules: {
     sections,
     settings,
+    prerequisites,
   },
   plugins: [
     createPersistedState({
@@ -76,6 +78,7 @@ export default new Vuex.Store({
         "sections.storedVersion",
         "settings.timePreference",
         "settings.colorTheme",
+        "prerequisites.priorCourses",
       ],
       rehydrated: (store) => {
         // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
