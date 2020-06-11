@@ -14,7 +14,7 @@
       </h3>
     </div>
 
-    <template v-else>
+    <div style="padding-bottom: 2rem;" v-else>
       <div class="schedule-select">
         <b-icon-chevron-left
           class="schedule-select-button"
@@ -31,8 +31,17 @@
 
       <Calendar :key="loadedWithCRNs" />
 
-      <br />
-    </template>
+      <div class="crn-list">
+        CRNs:
+        <template v-for="(crn, idx) in currentScheduleCRNs">
+          <template v-if="idx !== 0">, </template>
+          <span class="crn" :key="crn" v-on:click="copyToClipboard(crn)">{{
+            crn
+          }}</span></template
+        >
+        <div id="crn-copy-indicator">Copied!</div>
+      </div>
+    </div>
 
     <div class="card-columns">
       <CourseCard
@@ -125,6 +134,22 @@ export default class Schedule extends Vue {
     );
     this.$router.push("/schedule?crns=" + this.currentScheduleCRNs.join(","));
   }
+
+  copyToClipboard(val: string) {
+    const tempInput = document.createElement("input");
+    tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+    tempInput.value = val;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+
+    const copyIndicator = document.getElementById("crn-copy-indicator");
+    copyIndicator.className = "show";
+    setTimeout(function () {
+      copyIndicator.className = copyIndicator.className.replace("show", "");
+    }, 2000);
+  }
 }
 </script>
 
@@ -161,5 +186,79 @@ export default class Schedule extends Vue {
   padding-right: 15px;
   padding-left: 15px;
   font-size: 1.2rem;
+}
+
+.crn-list {
+  color: var(--global-text);
+}
+
+.crn:hover {
+  color: var(--global-text-hover);
+  cursor: pointer;
+}
+
+#crn-copy-indicator {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: var(--toast-background);
+  color: var(--toast-text);
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#crn-copy-indicator.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 1.5s;
+  animation: fadein 0.5s, fadeout 0.5s 1.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }
 </style>

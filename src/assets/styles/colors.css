@@ -2,6 +2,7 @@
         --card-header-text: #000000;
         --background: #ffffff;
         --global-text: #000000;
+        --global-text-hover: #505050;
         --card-body-background: #ffffff;
         --card-body-text: #000000;
         --card-header-background: #f7f7f7;
@@ -33,6 +34,8 @@
         --selected-row-hover: #acb2ff;
         --list-group-item-background: #ffffff;
         --calendar-label: #757575;
+        --toast-background: #111111;
+        --toast-text: #ffffff;
 
         --num-calendar-colors: 7;
 
