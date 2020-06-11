@@ -1,4 +1,9 @@
-import { CatalogCourse, CourseSize, Department } from "@/typings";
+import {
+  CatalogCourse,
+  CourseSize,
+  Department,
+  PrerequisiteJSON,
+} from "@/typings";
 
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
@@ -10,6 +15,7 @@ import Vuex from "vuex";
 import CATALOG_JSON from "./data/catalog.json";
 import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
+import PREREQUISITES_JSON from "./data/prerequisites.json";
 
 import sections from "./modules/sections";
 import settings from "./modules/settings";
@@ -22,22 +28,23 @@ export default new Vuex.Store({
     departments: COURSES_JSON as Department[],
     catalog: CATALOG_JSON as { [id: string]: CatalogCourse },
     schools: SCHOOLS_JSON as { [id: string]: string[] },
-    courseSizes: {} as { [id: string]: CourseSize }
+    prerequisites: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
+    courseSizes: {} as { [id: string]: CourseSize },
   },
   mutations: {
     SET_COURSE_SIZES(state, courseSizes) {
       state.courseSizes = courseSizes;
-    }
+    },
   },
   actions: {
     loadCourseSizes({ commit }) {
-      //TODO switch heroku to our own proxy because this one has a rate limit
+      //TODO switch to better server for this over a free herokuapp instance
       axios
         .get(
-          "https://cors-anywhere.herokuapp.com/https://sis.rpi.edu/reg/rocs/YACS_202009.xml"
+          "https://vast-waters-42287.herokuapp.com/https://sis.rpi.edu/reg/rocs/YACS_202009.xml"
         )
-        .then(r => r.data)
-        .then(data => {
+        .then((r) => r.data)
+        .then((data) => {
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(data, "text/xml");
 
@@ -56,11 +63,11 @@ export default new Vuex.Store({
           }
           commit("SET_COURSE_SIZES", liveData);
         });
-    }
+    },
   },
   modules: {
     sections,
-    settings
+    settings,
   },
   plugins: [
     createPersistedState({
@@ -68,12 +75,12 @@ export default new Vuex.Store({
         "sections.selectedSections",
         "sections.storedVersion",
         "settings.timePreference",
-        "settings.colorTheme"
+        "settings.colorTheme",
       ],
-      rehydrated: store => {
+      rehydrated: (store) => {
         // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
         store.commit("sections/populateConflicts", store.state.departments);
-      }
-    })
-  ]
+      },
+    }),
+  ],
 });

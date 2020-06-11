@@ -9,22 +9,21 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    component: Home
+    component: Home,
   },
   {
     path: "/department/:code",
     component: Department,
-    props: true
+    props: true,
   },
   {
     path: "/schedule",
-    component: () => import("../views/Schedule.vue")
+    component: () => import("../views/Schedule.vue"),
   },
   {
-    path: "/search/:searchString",
+    path: "/search",
     component: Search,
-    props: true
-  }
+  },
 ];
 
 const router = new VueRouter({
@@ -35,7 +34,7 @@ const router = new VueRouter({
     } else {
       return { x: 0, y: 0 };
     }
-  }
+  },
 });
 
 export default router;

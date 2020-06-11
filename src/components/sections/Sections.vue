@@ -1,9 +1,16 @@
 <template>
-  <table class="desktop-only table table-bordered" style="margin-bottom: 0px">
+  <table class="table table-bordered" style="margin-bottom: 0px;">
     <thead>
       <tr>
-        <th style="width:100%">Section Info</th>
-        <th v-for="day in days" v-bind:key="day" class="week-day">
+        <th
+          v-on:click="toggleAll()"
+          class="select-section"
+          title="Click to select all sections"
+        >
+          All
+        </th>
+        <th style="width: 100%;">Section Info</th>
+        <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
           {{ day }}
         </th>
       </tr>
@@ -13,16 +20,35 @@
       <tr
         v-for="section in course.sections"
         v-bind:key="section.crn"
-        v-on:click="toggleSelection(section)"
-        v-on:keyup.enter="toggleSelection(section)"
-        tabindex="0"
         class="course-row"
         v-bind:class="{
           selected: isSelected(section.crn),
-          conflict: isInConflict(section.crn)
+          conflict: isInConflict(section.crn),
         }"
       >
+        <td
+          v-on:click="toggleSelection(section)"
+          class="select-section"
+          tabindex="0"
+          v-on:keyup.enter="toggleSelection(section)"
+        >
+          <font-awesome-icon
+            :icon="['fas', 'check']"
+            :class="{
+              invisible: !isSelected(section.crn),
+            }"
+            title="Section selected"
+          ></font-awesome-icon>
+        </td>
         <td class="info-cell">
+          <!-- <i
+            class="fas fa-cog"
+            tabindex="-1"
+            title="Settings"
+            style="font-size:1.9rem"
+            v-b-modal.prerequisite-modal
+            v-on:click="$emit('open-prerequisite-modal', section.crn)"
+          ></i> -->
           <span class="font-weight-bold" title="Section number">{{
             section.sec
           }}</span
@@ -41,14 +67,35 @@
             class="padding-left"
             :title="
               'There are ' +
-                formatCourseSize(section.crn, courseSizes) +
-                ' available. Check SIS for more up to data information.'
+              formatCourseSize(section.crn, courseSizes) +
+              ' available. Check SIS for more up to data information.'
             "
             >{{ formatCourseSize(section.crn) }}</span
           >
+          <!-- Mobile times -->
+          <div class="mobile-only">
+            <template v-for="day in days">
+              <!-- TODO: fix different instructors for same timeslot -->
+              <span
+                v-for="session in getSessions(section, day)"
+                v-bind:key="
+                  'mobile' +
+                  day +
+                  session.timeStart +
+                  section.crn +
+                  session.instrutor +
+                  session.location
+                "
+              >
+                <span class="font-weight-bold">{{ day }}:</span>
+                {{ formatTimeslot(session, isMilitaryTime()) }}
+              </span>
+            </template>
+          </div>
         </td>
-
-        <td v-for="day in days" v-bind:key="day" class="time-cell">
+        <!-- End mobile times -->
+        <!-- Desktop times -->
+        <td v-for="day in days" v-bind:key="day" class="time-cell desktop-only">
           <!-- TODO: fix different instructors for same timeslot -->
           <span
             v-for="timeslot in spaceOutTimeslots(
@@ -57,17 +104,18 @@
             )"
             v-bind:key="
               'desktop' +
-                day +
-                timeslot.timeStart +
-                section.crn +
-                timeslot.instructor +
-                timeslot.location
+              day +
+              timeslot.timeStart +
+              section.crn +
+              timeslot.instructor +
+              timeslot.location
             "
           >
             {{ formatTimeslot(timeslot, isMilitaryTime()) }}
             <br />
           </span>
         </td>
+        <!-- End Desktop times -->
       </tr>
     </tbody>
   </table>
@@ -86,28 +134,47 @@ import { formatCourseSize, formatTimeslot, getSessions } from "@/utilities";
     getSessions,
     ...mapGetters("settings", ["isMilitaryTime"]),
     ...mapGetters("sections", ["isSelected", "isInConflict"]),
-    ...mapState(["courseSizes"])
-  }
+    ...mapState(["courseSizes"]),
+  },
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
 
-  toggleSelection(section: CourseSection) {
+  toggleSelection(section: CourseSection, newState: boolean | null = null) {
     let selected = true;
 
     if (section.crn in this.$store.state.sections.selectedSections) {
       selected = !this.$store.getters["sections/isSelected"](section.crn);
     }
 
+    if (newState !== null) {
+      selected = newState;
+    }
+
     this.$store.commit("sections/setSelected", {
       crn: section.crn,
-      state: selected
+      state: selected,
     });
     this.$store.commit("sections/updateConflicts", {
       crn: section.crn,
-      conflicts: section.conflicts
+      conflicts: section.conflicts,
     });
+  }
+
+  toggleAll() {
+    let turnedOnAnySection = false;
+    for (const section of this.course.sections) {
+      if (!this.$store.getters["sections/isSelected"](section.crn)) {
+        this.toggleSelection(section, true);
+        turnedOnAnySection = true;
+      }
+    }
+    if (!turnedOnAnySection) {
+      for (const section of this.course.sections) {
+        this.toggleSelection(section, false);
+      }
+    }
   }
 
   // Calculates the order of the timeslots for each section
@@ -183,7 +250,7 @@ export default class Section extends Vue {
           instructor: "",
           dateStart: "",
           dateEnd: "",
-          location: ""
+          location: "",
         });
       }
 
@@ -216,6 +283,22 @@ export default class Section extends Vue {
   .desktop-only {
     display: block;
   }
+
+  td.desktop-only,
+  th.desktop-only {
+    display: table-cell;
+  }
+}
+
+.mobile-only {
+  display: block;
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .mobile-only {
+    display: none;
+  }
 }
 
 .location {
@@ -224,5 +307,12 @@ export default class Section extends Vue {
 
 .padding-left {
   padding-left: 0.6rem;
+}
+
+.select-section > svg {
+  width: 100%;
+  text-align: center;
+  vertical-align: top;
+  font-size: 2rem;
 }
 </style>

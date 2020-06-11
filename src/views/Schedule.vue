@@ -16,8 +16,11 @@
         v-for="course in selectedCourses"
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
+        v-on:open-prerequisite-modal="setPrerequisiteModalCrn"
       />
     </div>
+
+    <PrerequisiteModal :crn="prerequisiteModalCrn"></PrerequisiteModal>
   </div>
 </template>
 
@@ -26,15 +29,18 @@ import { Component, Vue } from "vue-property-decorator";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
+import PrerequisiteModal from "@/components/PrerequisiteModal.vue";
 
 @Component({
   components: {
     Calendar,
-    CourseCard
-  }
+    CourseCard,
+    PrerequisiteModal,
+  },
 })
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];
+  prerequisiteModalCrn = "";
 
   get selectedCourses(): Course[] {
     if (this.keepSelected.length > 0) {
@@ -53,6 +59,10 @@ export default class Schedule extends Vue {
     }
 
     return this.keepSelected;
+  }
+
+  setPrerequisiteModalCrn(crn: string) {
+    this.prerequisiteModalCrn = crn;
   }
 }
 </script>

@@ -1,9 +1,9 @@
 :root {
   --card-header-text: #000000;
-  --card-body-text: #000000;
   --background: #ffffff;
   --global-text: #000000;
   --card-body-background: #ffffff;
+  --card-body-text: #000000;
   --card-header-background: #f7f7f7;
   --footer-background: #d3d3d3;
   --navbar-background: #f8f9fa;
@@ -31,4 +31,6 @@
   --conflict-row-hover: #ff7b7b;
   --selected-row: #9198f9;
   --selected-row-hover: #acb2ff;
+  --list-group-item-background: #ffffff;
+  --calendar-label: #757575;
 }

@@ -1,9 +1,9 @@
 [data-theme="dark"] {
   --card-header-text: #ffffff;
-  --card-body-text: #ffffff;
   --background: #202225;
   --global-text: #dcddde;
   --card-body-background: #36393f;
+  --card-body-text: #ffffff;
   --card-header-background: #2b2e33;
   --footer-background: #5b5b5b;
   --navbar-background: #36393f;
@@ -31,4 +31,10 @@
   --conflict-row-hover: #920b0b;
   --selected-row: #383d84;
   --selected-row-hover: #3f459c;
+  --list-group-item-background: #36393f;
+  --calendar-label: #8A8A8A;
+}
+
+[data-theme="dark"] .navbar-toggler-icon {
+  filter: invert(100%);
 }

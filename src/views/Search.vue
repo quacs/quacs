@@ -1,46 +1,31 @@
 <template>
-  <div>
-    <div class="card-columns">
-      <template v-for="course in fuseCourses">
-        <CourseCard
-          :course="course.item"
-          :startExpanded="false"
-          :key="course.item.id"
-        />
-      </template>
-    </div>
+  <div class="card-column">
+    <CourseCard
+      v-for="course in courses"
+      v-bind:key="course.subj + course.crse + course.title"
+      v-bind:course="course"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { fuseSearch } from "@/searchUtilities";
+import { Course } from "@/typings";
+import CourseCard from "../components/CourseCard.vue";
 
-import CourseCard from "@/components/CourseCard.vue";
-
-import { instantFuseSearch } from "@/searchUtilities";
-
-@Component({
+// There isn't a functional decorator library for asyncComputed, so we need to go old school
+export default {
   components: {
-    CourseCard
-  }
-})
-export default class Search extends Vue {
-  @Prop() searchString!: string;
-
-  get fuseCourses() {
-    if (this.searchString.match(/[A-Z]{4}[-\w]\d{4}/)) {
-      const result = instantFuseSearch(this.searchString.slice(0, 9));
-      if (result.length !== 0) {
-        return result;
-      }
-    }
-    return instantFuseSearch(this.searchString);
-  }
-}
+    CourseCard,
+  },
+  asyncComputed: {
+    courses: {
+      get(): Promise<Course[]> {
+        // @ts-expect-error: We're not in a real class so Typescript is confused
+        const query = Object.keys(this.$route.query)[0];
+        return fuseSearch(query);
+      },
+    },
+  },
+};
 </script>
-
-<style scoped>
-.card-columns {
-  column-count: 1;
-}
-</style>

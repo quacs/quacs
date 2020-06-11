@@ -4,22 +4,24 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
-            src="@/assets/images/quacs_logo.svg"
+            src="@/assets/images/quacs_logo_white_duck.svg"
             alt="QuACS Home"
-            style="height:40px"
+            style="height: 40px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-            <autocomplete
-              aria-label="Search"
+          <b-input-group>
+            <input
+              id="search-bar"
               placeholder="Search Courses"
-              :search="filterResults"
-              :get-result-value="displayResult"
-              @submit="search"
-              :debounce-time="200"
-            ></autocomplete>
-          </b-navbar-nav>
+              v-on:input="search($event.target.value)"
+            />
+            <b-spinner
+              label="Loading"
+              v-if="searching"
+              class="search-spinner"
+            ></b-spinner>
+          </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <b-nav-item
@@ -28,17 +30,12 @@
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
               >
-              <b-nav-item to="#" class="nav-text" disabled
+              <!-- <b-nav-item to="#" class="nav-text" disabled
                 >Fall 2020</b-nav-item
-              >
+              > -->
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
-                <i
-                  class="fas fa-cog"
-                  tabindex="-1"
-                  title="Settings"
-                  style="font-size:1.9rem"
-                ></i
-              ></b-nav-item>
+                <font-awesome-icon :icon="['fas', 'cog']"></font-awesome-icon>
+              </b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>
         </b-collapse>
@@ -54,64 +51,60 @@
     </div>
     <Settings></Settings>
     <footer class="footer">
-      <a
-        href="https://github.com/quacs/quacs"
-        title="Visit our GitHub"
-        aria-label="Visit our GitHub"
-        ><i class="fab fa-github"></i
-      ></a>
-      <img
-        src="@/assets/images/quacs_white.svg"
-        alt="QuACS"
-        style="height:40px"
-      />
-      <a
-        href="https://discord.gg/EyGZTAP"
-        title="Join our development Discord server"
-        aria-label="Join our development Discord server"
-        ><i class="fab fa-discord"></i
-      ></a>
+      <div class="footer-links">
+        <a
+          href="https://github.com/quacs/quacs"
+          title="Visit our GitHub"
+          aria-label="Visit our GitHub"
+          ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
+        </a>
+        <img
+          src="@/assets/images/quacs_white.svg"
+          alt="QuACS"
+          style="height: 40px;"
+        />
+        <a
+          href="https://discord.gg/EyGZTAP"
+          title="Join our development Discord server"
+          aria-label="Join our development Discord server"
+          ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
+        </a>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2020 - Questionably Accurate Course Scheduler
+      </div>
     </footer>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Course } from "@/typings";
-
 import Settings from "@/components/Settings.vue";
-
-import { fuseSearch } from "@/searchUtilities";
-
-// @ts-expect-error: Typescript doesn't know the types for this
-import Autocomplete from "@trevoreyre/autocomplete-vue";
-import "@trevoreyre/autocomplete-vue/dist/style.css";
-Vue.use(Autocomplete);
 
 @Component({
   components: {
-    Settings
-  }
+    Settings,
+  },
 })
 export default class App extends Vue {
-  searchString = "";
+  searchCallback: number | null = null;
+  searching = false;
 
-  filterResults(input: string) {
-    this.searchString = input;
-    return fuseSearch(input);
-  }
+  search(input: string) {
+    this.searching = true;
 
-  displayResult(result: { item: Course; refIndex: number }) {
-    return result.item.subj + "-" + result.item.crse + " " + result.item.title;
-  }
-
-  search(result: { item: Course; refIndex: number }) {
-    if (result) {
-      this.searchString = this.displayResult(result);
+    if (this.searchCallback !== null) {
+      clearTimeout(this.searchCallback as number);
     }
-    this.$router.push("/search/" + this.searchString).catch(() => {
-      return;
-    });
+
+    this.searchCallback = setTimeout(() => {
+      if (input.length > 0) {
+        this.$router.push("/search?" + input).catch(() => {
+          return;
+        });
+      }
+      this.searching = false;
+    }, 250);
   }
 }
 </script>
@@ -121,6 +114,7 @@ export default class App extends Vue {
 
 footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
@@ -129,17 +123,66 @@ footer {
   background: var(--footer-background);
 }
 
-footer > * {
+.footer-links > * {
   color: black;
   font-size: 2.4rem;
   padding: 0rem 1rem;
 }
 
-footer > a:hover {
+.footer-links > a:hover {
   color: DimGrey;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.footer-copyright {
+  color: var(--global-text);
+  font-size: 1.2rem;
+  padding: 0rem 1rem;
 }
 
 .nav-text {
   font-size: 1.5rem;
+}
+
+.search-spinner {
+  display: block;
+  position: fixed;
+  z-index: 1031; /* High z-index so it is on top of the page */
+  top: 50%;
+  right: 50%; /* or: left: 50%; */
+  margin-top: -5rem; /* half of the elements height */
+  margin-right: -5rem; /* half of the elements widht */
+
+  width: 10rem;
+  height: 10rem;
+}
+
+#search-bar {
+  width: 400px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 12px 12px 12px 48px;
+  box-sizing: border-box;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.5;
+  /* flex: 1; */
+  background-color: #eee;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iOCIvPjxwYXRoIGQ9Ik0yMSAyMWwtNC00Ii8+PC9zdmc+");
+  background-repeat: no-repeat;
+  background-position: 12px;
+}
+
+#search-bar:focus {
+  border-color: rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.16);
 }
 </style>
