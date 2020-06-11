@@ -83,6 +83,9 @@ export default class Calendar extends Vue {
   readonly totalHeight = 600;
 
   get crns() {
+    if (this.$route.query.crns === undefined) {
+      return [];
+    }
     return (this.$route.query.crns as string).split(",");
   }
 
