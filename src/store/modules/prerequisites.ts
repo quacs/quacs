@@ -11,7 +11,9 @@ export default class Settings extends VuexModule {
 
   @Mutation
   addPriorCourse(courseId: string): void {
-    Vue.set(this.priorCourses, courseId, true);
+    if (courseId.match("^[a-zA-Z]{4}[-_\\s]\\d{4}$") !== null) {
+      Vue.set(this.priorCourses, courseId, true);
+    }
   }
 
   @Mutation

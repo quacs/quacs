@@ -18,7 +18,7 @@
     <div>
       <b-card no-body>
         <b-tabs card v-model="tabNumber">
-          <b-tab title="Manual" active>
+          <b-tab title="Manual Upload" active>
             <b-row class="my-1">
               <b-col>
                 <b-form-input
@@ -67,13 +67,13 @@
               >
             </p>
             <p>2) Log in and navigate to the Student Menu tab</p>
-            <p>3) Click View Transcript</p>
+            <p>3) Click "View Transcript"</p>
             <p>
-              4) Press the Submit button (leave the options as they are "All
+              4) Press the Submit button (Leave the options as they are: "All
               Levels" and "Unofficial Web Transcript")
             </p>
             <p>
-              5) Press ctrl+s on your keyboard (or right click and press "Save
+              5) Press CTRL+S on your keyboard (or right click and press "Save
               As") and save the page somewhere
             </p>
             <p>
@@ -82,11 +82,16 @@
             </p>
             <p></p>
             <form onsubmit="return false;" method="post">
-              <input type="file" id="transcriptFile" required />
+              <input
+                type="file"
+                id="transcriptFile"
+                accept=".html,.htm"
+                required
+              />
               <input
                 class="submit"
                 type="submit"
-                value="Scrape Transcript"
+                value="Import Transcript"
                 v-on:click="importTranscript()"
               />
             </form>
@@ -94,6 +99,29 @@
         </b-tabs>
       </b-card>
     </div>
+    <b-modal id="transcriptImportModal" title="Import Error">
+      <p>
+        There was an issue importing from your transcript. Theses issues are
+        hard to debug because we dont have access to many test transcript files
+      </p>
+      <p>For now you will have to add your courses by hand, sorry</p>
+
+      <p>
+        If you would like to help us fix this issue, join our discord so we can
+        talk
+      </p>
+      <a
+        href="https://discord.gg/EyGZTAP"
+        title="Join our development Discord server"
+        aria-label="Join our development Discord server"
+        >https://discord.gg/EyGZTAP
+      </a>
+      <template v-slot:modal-footer="{ ok }">
+        <b-button variant="primary" @click="ok()">
+          Close
+        </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -140,19 +168,26 @@ export default class Prerequisites extends Vue {
   }
 
   importTranscript() {
-    const importedTranscript = scrapeTranscript("transcriptFile");
     const store = this.$store;
-    // @ts-expect-error
-    importedTranscript.then(function (transcript) {
-      for (const term of transcript.terms) {
-        for (const course of term.courses) {
-          store.commit(
-            "prerequisites/addPriorCourse",
-            course.subject.toUpperCase() + "-" + course.course
-          );
+    const bvModal = this.$bvModal;
+    const importedTranscript = scrapeTranscript("transcriptFile");
+    importedTranscript
+      .catch(function (err: string) {
+        //eslint-disable-next-line
+        console.log(err);
+        bvModal.show("transcriptImportModal");
+      })
+      // @ts-expect-error
+      .then(function (transcript) {
+        for (const term of transcript.terms) {
+          for (const course of term.courses) {
+            store.commit(
+              "prerequisites/addPriorCourse",
+              course.subject.toUpperCase() + "-" + course.course
+            );
+          }
         }
-      }
-    });
+      });
     this.tabNumber = 0;
   }
 }
