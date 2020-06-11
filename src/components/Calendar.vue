@@ -66,8 +66,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Course, CourseSection, Day, Timeslot } from "@/typings";
+import { Component, Vue } from "vue-property-decorator";
+import { CourseSection, Day, Timeslot } from "@/typings";
 import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
 import { mapGetters } from "vuex";
 
@@ -78,10 +78,13 @@ import { mapGetters } from "vuex";
   },
 })
 export default class Calendar extends Vue {
-  @Prop() selectedCourses!: Course[];
   readonly startTime = 480;
   readonly endTime = 1320;
   readonly totalHeight = 600;
+
+  get crns() {
+    return (this.$route.query.crns as string).split(",");
+  }
 
   get numMinutes() {
     return this.endTime - this.startTime;
@@ -96,16 +99,10 @@ export default class Calendar extends Vue {
   }
 
   get selected() {
-    const selectedSections = [];
-    for (const course of this.selectedCourses) {
-      for (const sec of course.sections) {
-        if (this.$store.getters["sections/isSelected"](sec.crn)) {
-          selectedSections.push(sec);
-        }
-      }
-    }
-
-    return selectedSections;
+    return this.crns.map(
+      (crn: string) =>
+        this.$store.getters["sections/crnToCourseAndSection"](crn).sec
+    );
   }
 
   get sessionsOnDay() {
@@ -154,10 +151,27 @@ export default class Calendar extends Vue {
 
   get colors() {
     return (crn: number) => {
-      const colorIdx = this.selected.findIndex(
-        (section: CourseSection) => section.crn === crn
+      const numCalColors = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--num-calendar-colors"
+        )
       );
-      return this.$store.getters["sections/colors"](colorIdx);
+      const colorIdx =
+        this.selected.findIndex(
+          (section: CourseSection) => section.crn === crn
+        ) % numCalColors;
+
+      return {
+        bg: getComputedStyle(document.documentElement).getPropertyValue(
+          "--calendar-bg-color-" + colorIdx
+        ),
+        border: getComputedStyle(document.documentElement).getPropertyValue(
+          "--calendar-border-color-" + colorIdx
+        ),
+        text: getComputedStyle(document.documentElement).getPropertyValue(
+          "--calendar-text-color-" + colorIdx
+        ),
+      };
     };
   }
 }

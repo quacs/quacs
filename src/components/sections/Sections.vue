@@ -35,14 +35,6 @@
           ></font-awesome-icon>
         </td>
         <td class="info-cell">
-          <!-- <i
-            class="fas fa-cog"
-            tabindex="-1"
-            title="Settings"
-            style="font-size:1.9rem"
-            v-b-modal.prerequisite-modal
-            v-on:click="$emit('open-prerequisite-modal', section.crn)"
-          ></i> -->
           <span class="font-weight-bold" title="Section number">{{
             section.sec
           }}</span
@@ -150,10 +142,10 @@ export default class Section extends Vue {
       crn: section.crn,
       state: selected,
     });
-    this.$store.commit("sections/updateConflicts", {
-      crn: section.crn,
-      conflicts: section.conflicts,
-    });
+    this.$store.commit(
+      "sections/populateConflicts",
+      this.$store.state.departments
+    );
   }
 
   toggleAll() {
@@ -256,7 +248,10 @@ export default class Section extends Vue {
 </script>
 
 <style scoped>
-@import "./style.css";
+.week-day {
+  width: fit-content;
+  text-align: center;
+}
 
 .time-cell {
   font-size: 10pt;
@@ -303,10 +298,39 @@ export default class Section extends Vue {
   padding-left: 0.6rem;
 }
 
+.select-section {
+  cursor: pointer;
+}
+
+.select-section:hover {
+  background: var(--course-row-hover);
+}
+
 .select-section > * > svg {
   width: 100%;
   text-align: center;
   vertical-align: top;
   font-size: 2rem;
+}
+
+.conflict {
+  text-decoration: line-through;
+  background: var(--conflict-row);
+}
+
+.conflict:hover {
+  background: var(--conflict-row-hover);
+}
+
+.selected {
+  background: var(--selected-row);
+}
+
+.selected:hover {
+  background: var(--selected-row-hover);
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>

@@ -1,11 +1,12 @@
 import Vue from "vue";
 import App from "./App.vue";
 
-import { BootstrapVue } from "bootstrap-vue";
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 
 import AsyncComputedPlugin from "vue-async-computed";
 Vue.use(AsyncComputedPlugin);
@@ -53,6 +54,10 @@ new Vue({
   render: (h) => h(App),
   beforeCreate() {
     this.$store.commit("sections/initializeStore");
+    this.$store.commit(
+      "sections/initializeCrnToSection",
+      this.$store.state.departments
+    );
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);
