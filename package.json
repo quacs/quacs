@@ -118,9 +118,9 @@
     "not dead"
   ],
   "gitHooks": {
-    "post-checkout": "yarn install",
-    "post-merge": "yarn install",
-    "pre-commit": "yarn install && lint-staged"
+    "post-checkout": "",
+    "post-merge": "",
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [

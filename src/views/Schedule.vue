@@ -156,6 +156,7 @@ export default class Schedule extends Vue {
 
   copyToClipboard(val: string) {
     const tempInput = document.createElement("input");
+    // @ts-expect-error: This works so ts is just being dumb
     tempInput.style = "position: absolute; left: -1000px; top: -1000px";
     tempInput.value = val;
     document.body.appendChild(tempInput);
@@ -164,8 +165,10 @@ export default class Schedule extends Vue {
     document.body.removeChild(tempInput);
 
     const copyIndicator = document.getElementById("crn-copy-indicator");
+    // @ts-expect-error: I know it might be null but the element exists so stop complaining
     copyIndicator.className = "show";
     setTimeout(function () {
+      // @ts-expect-error: I know it might be null but the element exists so stop complaining
       copyIndicator.className = copyIndicator.className.replace("show", "");
     }, 2000);
   }
