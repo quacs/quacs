@@ -124,7 +124,7 @@ footer {
 }
 
 .footer-links > * {
-  color: black;
+  color: var(--global-text);
   font-size: 2.4rem;
   padding: 0rem 1rem;
 }
