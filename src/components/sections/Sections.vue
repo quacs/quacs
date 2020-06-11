@@ -127,7 +127,11 @@ export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
 
-  toggleSelection(section: CourseSection, newState: boolean | null = null) {
+  toggleSelection(
+    section: CourseSection,
+    newState: boolean | null = null,
+    rePopulateConflicts = true
+  ) {
     let selected = true;
 
     if (section.crn in this.$store.state.sections.selectedSections) {
@@ -142,25 +146,32 @@ export default class Section extends Vue {
       crn: section.crn,
       state: selected,
     });
-    this.$store.commit(
-      "sections/populateConflicts",
-      this.$store.state.departments
-    );
+    if (rePopulateConflicts) {
+      this.$store.commit(
+        "sections/populateConflicts",
+        this.$store.state.departments
+      );
+    }
   }
 
   toggleAll() {
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
       if (!this.$store.getters["sections/isSelected"](section.crn)) {
-        this.toggleSelection(section, true);
+        this.toggleSelection(section, true, false);
         turnedOnAnySection = true;
       }
     }
     if (!turnedOnAnySection) {
       for (const section of this.course.sections) {
-        this.toggleSelection(section, false);
+        this.toggleSelection(section, false, false);
       }
     }
+
+    this.$store.commit(
+      "sections/populateConflicts",
+      this.$store.state.departments
+    );
   }
 
   // Calculates the order of the timeslots for each section

@@ -67,6 +67,9 @@ function generateCurrentSchedules(
 
   //Converts the above object into nested arrays
   const sectionsArr = Object.values(sections);
+  sectionsArr.sort(function compareNumbers(a, b) {
+    return a.length - b.length;
+  });
   const conflicts = {};
   return genSchedules(0, sectionsArr, conflicts);
 }
@@ -138,28 +141,19 @@ export default class Sections extends VuexModule {
   @Mutation
   setSelected(p: { crn: number; state: boolean }): void {
     Vue.set(this.selectedSections, p.crn, p.state);
-    this.currentSchedules = generateCurrentSchedules(
-      this.selectedSections,
-      this.crnToSections
-    );
-
-    // console.log(this.currentSchedules);
-
-    this.conflictingSections = {};
-    calculateConflicts(this.currentSchedules).forEach(
-      (crn) => (this.conflictingSections[crn] = true)
-    );
   }
 
   @Mutation
   initializeCrnToSection(departments: readonly Department[]): void {
-    for (const dept of departments) {
-      for (const course of dept.courses) {
-        for (const section of course.sections) {
-          Vue.set(this.crnToSections, section.crn, {
-            course,
-            sec: section,
-          });
+    if (Object.keys(this.crnToSections).length === 0) {
+      for (const dept of departments) {
+        for (const course of dept.courses) {
+          for (const section of course.sections) {
+            Vue.set(this.crnToSections, section.crn, {
+              course,
+              sec: section,
+            });
+          }
         }
       }
     }
@@ -178,10 +172,13 @@ export default class Sections extends VuexModule {
 
   @Mutation
   populateConflicts(departments: readonly Department[]): void {
-    for (const dept of departments) {
-      for (const course of dept.courses) {
-        for (const section of course.sections) {
-          Vue.set(this.crnToSections, section.crn, { course, sec: section });
+    //Figure out why we even have to run this and why initializeCrnToSection is not working
+    if (Object.keys(this.crnToSections).length === 0) {
+      for (const dept of departments) {
+        for (const course of dept.courses) {
+          for (const section of course.sections) {
+            Vue.set(this.crnToSections, section.crn, { course, sec: section });
+          }
         }
       }
     }

@@ -161,6 +161,7 @@ footer {
 
   width: 10rem;
   height: 10rem;
+  font-size: 3rem;
 }
 
 #search-bar {
