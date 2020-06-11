@@ -146,6 +146,7 @@ export default class Section extends Vue {
       "sections/populateConflicts",
       this.$store.state.departments
     );
+    this.$emit("toggledSection");
   }
 
   toggleAll() {

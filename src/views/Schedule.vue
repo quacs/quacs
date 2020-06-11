@@ -49,6 +49,7 @@
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
         v-on:open-prerequisite-modal="setPrerequisiteModalCrn"
+        v-on:toggledSection="reloadCalendar"
       />
     </div>
   </div>
@@ -98,6 +99,10 @@ export default class Schedule extends Vue {
   }
 
   mounted() {
+    this.reloadCalendar();
+  }
+
+  reloadCalendar() {
     if (this.$route.query.crns === undefined && this.totalNumSchedules > 0) {
       this.$router.replace(
         "/schedule?crns=" + this.currentScheduleCRNs.join(",")

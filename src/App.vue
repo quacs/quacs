@@ -28,7 +28,7 @@
                 to="/schedule"
                 class="nav-text"
                 :active="this.$route.path == '/schedule'"
-                ><span style="white-space: nowrap;">Schedule</span></b-nav-item
+                >Schedule</b-nav-item
               >
               <!-- <b-nav-item to="#" class="nav-text" disabled
                 >Fall 2020</b-nav-item
