@@ -10,18 +10,14 @@ Want to help with development? Join the development [discord](https://discord.gg
 # What are people saying?
 
 > quacs do be lookin pretty fresh tho
->
-> -- Former YACS Project Manager
+> — *Former YACS Project Manager*
 
 > "Best thing since sliced bread"
->
-> -- Chris Jerrett
+> — *Chris Jerrett*
 
 > > plz dont quote me
-> >
-> > -- @quacs duck
->
-> -- @quacs duck
+> > — *@quacs duck*
+> — *@quacs duck*
 
 # QuACS Philosophy
 
