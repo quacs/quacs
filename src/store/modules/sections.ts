@@ -1,12 +1,12 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
-import { CourseSection, Department } from "@/typings";
+import { Course, CourseSection, Department } from "@/typings";
 import Vue from "vue";
 
 function genSchedules(
   index: number, // which course you're working on
   courses: CourseSection[][],
   currScheduleConflicts: { [crn: string]: number },
-  usedSections: number[]
+  usedSections: number[] = []
 ): { conflicts: { [crn: string]: number }; crns: number[] }[] {
   let ret: { conflicts: { [crn: string]: number }; crns: number[] }[] = [];
   if (index >= courses.length) {
@@ -44,25 +44,79 @@ function genSchedules(
   return ret;
 }
 
+function generateCurrentSchedules(
+  selectedSections: { [crn: string]: boolean },
+  crnToSections: { [crn: string]: { course: Course; sec: CourseSection } }
+) {
+  //Fills a object mapping course to an array of sections
+  const sections: { [courseCode: string]: CourseSection[] } = {};
+  for (const crn in selectedSections) {
+    if (!selectedSections[crn]) {
+      continue;
+    }
+
+    const courseCode =
+      crnToSections[crn].sec.subj + "-" + crnToSections[crn].sec.crse;
+
+    if (!sections[courseCode]) {
+      sections[courseCode] = [];
+    }
+
+    sections[courseCode].push(crnToSections[crn].sec);
+  }
+
+  //Converts the above object into nested arrays
+  const sectionsArr = Object.values(sections);
+  const conflicts = {};
+  return genSchedules(0, sectionsArr, conflicts);
+}
+
+function calculateConflicts(
+  currentSchedules: {
+    conflicts: { [crn: string]: number };
+    crns: number[];
+  }[]
+): string[] {
+  if (currentSchedules.length === 0) {
+    return [];
+  }
+
+  let conflictingSecArr = Object.keys(currentSchedules[0].conflicts).filter(
+    (crn) => currentSchedules[0].conflicts[crn] > 0
+  );
+
+  for (const schedule of currentSchedules) {
+    conflictingSecArr = conflictingSecArr.filter(
+      (crn) => schedule.conflicts[crn] > 0
+    );
+  }
+
+  return conflictingSecArr;
+}
+
 @Module({ namespaced: true, name: "sections" })
 export default class Sections extends VuexModule {
-  selectedSections: { [crn: number]: boolean } = {};
-  conflictingSectionCounts: { [crn: number]: number } = {};
-  crnToSection: { [crn: string]: CourseSection } = {};
+  selectedSections: { [crn: string]: boolean } = {};
+  conflictingSections: { [crn: string]: boolean } = {};
+  crnToSections: { [crn: string]: { course: Course; sec: CourseSection } } = {};
+  currentSchedules: {
+    conflicts: { [crn: string]: number };
+    crns: number[];
+  }[] = [];
 
   CURRENT_STORAGE_VERSION = "0.0.1";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
 
-  get isSelected(): (crn: number) => boolean {
-    return (crn: number) => this.selectedSections[crn] === true;
+  get isSelected(): (crn: string) => boolean {
+    return (crn: string) => this.selectedSections[crn] === true;
   }
 
-  get isInitialized(): (crn: number) => boolean {
-    return (crn: number) => crn in this.selectedSections;
+  get isInitialized(): (crn: string) => boolean {
+    return (crn: string) => crn in this.selectedSections;
   }
 
-  get isInConflict(): (crn: number) => boolean {
-    return (crn: number) => this.conflictingSectionCounts[crn] > 0;
+  get isInConflict(): (crn: string) => boolean {
+    return (crn: string) => this.conflictingSections[crn];
   }
 
   get selectedCRNs(): readonly string[] {
@@ -71,36 +125,39 @@ export default class Sections extends VuexModule {
     );
   }
 
+  get schedules() {
+    return this.currentSchedules;
+  }
+
+  get crnToCourseAndSection(): (
+    crn: string
+  ) => { course: Course; sec: CourseSection } {
+    return (crn: string) => this.crnToSections[crn];
+  }
+
   @Mutation
   setSelected(p: { crn: number; state: boolean }): void {
     Vue.set(this.selectedSections, p.crn, p.state);
-  }
+    this.currentSchedules = generateCurrentSchedules(
+      this.selectedSections,
+      this.crnToSections
+    );
 
-  // @Mutation
-  // updateConflicts(p: { crn: number; conflicts: readonly number[] }): void {
-  //   for (const conflict in p.conflicts) {
-  //     if (this.selectedSections[p.crn]) {
-  //       Vue.set(
-  //         this.conflictingSectionCounts,
-  //         conflict,
-  //         this.conflictingSectionCounts[conflict] + 1 || 1
-  //       );
-  //     } else {
-  //       Vue.set(
-  //         this.conflictingSectionCounts,
-  //         conflict,
-  //         this.conflictingSectionCounts[conflict] - 1 || 0
-  //       );
-  //     }
-  //   }
-  // }
+    this.conflictingSections = {};
+    calculateConflicts(this.currentSchedules).forEach(
+      (crn) => (this.conflictingSections[crn] = true)
+    );
+  }
 
   @Mutation
   initializeCrnToSection(departments: readonly Department[]): void {
     for (const dept of departments) {
       for (const course of dept.courses) {
         for (const section of course.sections) {
-          Vue.set(this.crnToSection, section.crn, section);
+          Vue.set(this.crnToSections, section.crn, {
+            course,
+            sec: section,
+          });
         }
       }
     }
@@ -117,64 +174,40 @@ export default class Sections extends VuexModule {
     }
   }
 
-  //  selectedSections: { [crn: number]: boolean } = {};
   @Mutation
   populateConflicts(departments: readonly Department[]): void {
     for (const dept of departments) {
       for (const course of dept.courses) {
         for (const section of course.sections) {
-          Vue.set(this.crnToSection, section.crn, section);
+          Vue.set(this.crnToSections, section.crn, { course, sec: section });
         }
       }
     }
 
-    const start = new Date().getTime();
+    let start = new Date().getTime();
     // eslint-disable-next-line
-    console.log("Generating conflicts..");
+    console.log("Generating schedules..");
 
-    //Fills a object maping course to an array of sections
-    const sections: { [course: string]: CourseSection[] } = {};
-    for (const crn in this.selectedSections) {
-      if (!this.selectedSections[crn]) {
-        continue;
-      }
+    this.currentSchedules = generateCurrentSchedules(
+      this.selectedSections,
+      this.crnToSections
+    );
 
-      if (
-        !sections[
-          this.crnToSection[crn].subj + "-" + this.crnToSection[crn].crse
-        ]
-      ) {
-        sections[
-          this.crnToSection[crn].subj + "-" + this.crnToSection[crn].crse
-        ] = [];
-      }
-      sections[
-        this.crnToSection[crn].subj + "-" + this.crnToSection[crn].crse
-      ].push(this.crnToSection[crn]);
-    }
-
-    //Converts the above object into nested arrays
-    const sectionsArr = [];
-    for (const course in sections) {
-      const courseSections = [];
-      for (const section of sections[course]) {
-        courseSections.push(section);
-      }
-      sectionsArr.push(courseSections);
-    }
-
-    const conflicts = {};
-    const usedSections: number[] = [];
-    const schedules: {
-      conflicts: { [crn: string]: number };
-      crns: number[];
-    }[] = genSchedules(0, sectionsArr, conflicts, usedSections);
-
+    let end = new Date().getTime();
     // eslint-disable-next-line
-    console.log(schedules);
+    console.log("Schedule generation complete, took " + (end - start) + " ms");
 
-    const end = new Date().getTime();
+    start = new Date().getTime();
     // eslint-disable-next-line
-    console.log("Conflict generation complete, took " + (end - start) + " ms");
+    console.log("Calculating conflicts..");
+
+    this.conflictingSections = {};
+    calculateConflicts(this.currentSchedules).forEach(
+      (crn) => (this.conflictingSections[crn] = true)
+    );
+
+    end = new Date().getTime();
+    // eslint-disable-next-line
+    console.log("Conflict calculation complete, took " + (end - start) + " ms");
   }
 }

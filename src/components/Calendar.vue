@@ -66,8 +66,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Course, CourseSection, Day, Timeslot } from "@/typings";
+import { Component, Vue } from "vue-property-decorator";
+import { CourseSection, Day, Timeslot } from "@/typings";
 import { DAYS, getDuration, minuteTimeToHour, toMinutes } from "@/utilities";
 import { mapGetters } from "vuex";
 
@@ -78,10 +78,13 @@ import { mapGetters } from "vuex";
   },
 })
 export default class Calendar extends Vue {
-  @Prop() selectedCourses!: Course[];
   readonly startTime = 480;
   readonly endTime = 1320;
   readonly totalHeight = 600;
+
+  get crns() {
+    return this.$route.query.crns.split(",");
+  }
 
   get numMinutes() {
     return this.endTime - this.startTime;
@@ -96,16 +99,9 @@ export default class Calendar extends Vue {
   }
 
   get selected() {
-    const selectedSections = [];
-    for (const course of this.selectedCourses) {
-      for (const sec of course.sections) {
-        if (this.$store.getters["sections/isSelected"](sec.crn)) {
-          selectedSections.push(sec);
-        }
-      }
-    }
-
-    return selectedSections;
+    return this.crns.map(
+      (crn) => this.$store.getters["sections/crnToCourseAndSection"](crn).sec
+    );
   }
 
   get sessionsOnDay() {

@@ -96,7 +96,6 @@
       "no-shadow": "warn",
       "no-template-curly-in-string": "warn",
       "no-undef-init": "warn",
-      "no-undefined": "warn",
       "no-unused-expressions": "warn",
       "no-use-before-define": "warn",
       "no-useless-computed-key": "warn",

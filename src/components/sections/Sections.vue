@@ -20,18 +20,14 @@
       <tr
         v-for="section in course.sections"
         v-bind:key="section.crn"
-        class="course-row"
+        class="course-row select-section"
+        v-on:click="toggleSelection(section)"
         v-bind:class="{
           selected: isSelected(section.crn),
           conflict: isInConflict(section.crn),
         }"
       >
-        <td
-          v-on:click="toggleSelection(section)"
-          class="select-section"
-          tabindex="0"
-          v-on:keyup.enter="toggleSelection(section)"
-        >
+        <td tabindex="0" v-on:keyup.enter="toggleSelection(section)">
           <font-awesome-icon
             :icon="['fas', 'check']"
             :class="{
@@ -41,14 +37,6 @@
           ></font-awesome-icon>
         </td>
         <td class="info-cell">
-          <!-- <i
-            class="fas fa-cog"
-            tabindex="-1"
-            title="Settings"
-            style="font-size:1.9rem"
-            v-b-modal.prerequisite-modal
-            v-on:click="$emit('open-prerequisite-modal', section.crn)"
-          ></i> -->
           <span class="font-weight-bold" title="Section number">{{
             section.sec
           }}</span
@@ -262,7 +250,10 @@ export default class Section extends Vue {
 </script>
 
 <style scoped>
-@import "./style.css";
+.week-day {
+  width: fit-content;
+  text-align: center;
+}
 
 .time-cell {
   font-size: 10pt;
@@ -309,11 +300,40 @@ export default class Section extends Vue {
   padding-left: 0.6rem;
 }
 
+.select-section {
+  cursor: pointer;
+}
+
+.select-section:hover {
+  background: var(--course-row-hover);
+}
+
 .select-section > i {
   width: 100%;
   text-align: center;
   height: 100%;
   vertical-align: bottom;
   font-size: 2rem;
+}
+
+.conflict {
+  text-decoration: line-through;
+  background: var(--conflict-row);
+}
+
+.conflict:hover {
+  background: var(--conflict-row-hover);
+}
+
+.selected {
+  background: var(--selected-row);
+}
+
+.selected:hover {
+  background: var(--selected-row-hover);
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>
