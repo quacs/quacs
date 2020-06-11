@@ -104,7 +104,7 @@ export default class Sections extends VuexModule {
     crns: number[];
   }[] = [];
 
-  CURRENT_STORAGE_VERSION = "0.0.1";
+  CURRENT_STORAGE_VERSION = "0.0.2";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
 
   get isSelected(): (crn: string) => boolean {
