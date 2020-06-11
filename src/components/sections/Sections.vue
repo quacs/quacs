@@ -1,7 +1,12 @@
 <template>
   <table class="table table-bordered" style="margin-bottom: 0px;">
     <thead>
-      <tr v-on:click="toggleAll()" class="select-section">
+      <tr
+        v-on:click="toggleAll()"
+        class="select-section"
+        tabindex="0"
+        v-on:keyup.enter="toggleAll()"
+      >
         <th title="Click to select all sections">
           <span style="visibility: hidden;">All</span>
         </th>

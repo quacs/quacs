@@ -55,6 +55,7 @@ export default class Settings extends Vue {
     { value: "light", text: "Light" },
     { value: "dark", text: "Dark" },
     { value: "dark black", text: "Black" },
+    { value: "yacs", text: "YACS" },
   ];
 }
 </script>

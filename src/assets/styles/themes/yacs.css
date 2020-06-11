@@ -1,0 +1,69 @@
+[data-theme="yacs"] {
+        --card-header-text: #000000;
+        --background: #ffffff;
+        --global-text: #000000;
+        --global-text-hover: #505050;
+        --card-body-background: #ffffff;
+        --card-body-text: #000000;
+        --card-header-background: #f7f7f7;
+        --footer-background: #d3d3d3;
+        --navbar-background: #c65353;
+        --navbar-unselected-text: #ffffff;
+        --navbar-unselected-text-hover: #ffffff;
+        --navbar-text-focus: #ffffff;
+        --navbar-text-disabled: #ffffff;
+        --navbar-text-active: #ffffff;
+        --modal-header-background: #ffffff;
+        --modal-header-text: rgb(33, 37, 41);
+        --modal-body-background: #ffffff;
+        --modal-body-text: rgb(33, 37, 41);
+        --modal-footer-background: #ffffff;
+        --modal-footer-text: rgb(33, 37, 41);
+        --btn-primary-background: #007bff;
+        --btn-primary-text: #ffffff;
+        --department-link-hover: #d3d3d3;
+        --select-background: #ffffff;
+        --select-text: #495057;
+        --modal-close-x-hover: #000000;
+        --card-header-hover: #eaeaea;
+        --table-text: #212529;
+        --course-row-hover: #d57f7f;
+        --conflict-row: #ffffff;
+        --conflict-row-hover: #d57f7f;
+        --selected-row: #c65353;
+        --selected-row-hover: #d57f7f;
+        --list-group-item-background: #ffffff;
+        --calendar-label: #757575;
+        --toast-background: #111111;
+        --toast-text: #ffffff;
+
+        --num-calendar-colors: 7;
+
+        --calendar-bg-color-0: #ffe9cf;
+        --calendar-border-color-0: #ff9332;
+        --calendar-text-color-0: #d9652b;
+
+        --calendar-bg-color-1: #ffd4df;
+        --calendar-border-color-1: #ff2066;
+        --calendar-text-color-1: #d1265d;
+
+        --calendar-bg-color-2: #ceeffc;
+        --calendar-border-color-2: #00aff2;
+        --calendar-text-color-2: #1577aa;
+
+        --calendar-bg-color-3: #fff4d0;
+        --calendar-border-color-3: #ffcb45;
+        --calendar-text-color-3: #bf8a2e;
+
+        --calendar-bg-color-4: #dcf7da;
+        --calendar-border-color-4: #48da58;
+        --calendar-text-color-4: #008a2e;
+
+        --calendar-bg-color-5: #f7e2f7;
+        --calendar-border-color-5: #d373da;
+        --calendar-text-color-5: #853d80;
+
+        --calendar-bg-color-6: #ede6df;
+        --calendar-border-color-6: #a48363;
+        --calendar-text-color-6: #9d5733;
+}
