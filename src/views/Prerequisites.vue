@@ -7,8 +7,8 @@
         lead="Add courses you have already taken to QuACS to perform prerequisite checking"
       >
         <p>
-          Once you have added courses you have already taken to the website,
-          sections will warn you if you dont meet the prerequisites.
+          Once you have added courses you've already taken to the website,
+          sections will warn you if you don't meet the requirements.
           <br />
           (You may still be able to be signed into theses courses. Contact the
           professor and ask!)
@@ -55,10 +55,10 @@
             <h3>Instructions</h3>
             <p>
               In order to import your courses you will need to upload your
-              transcript. Dont worry, QuACS is 100% client side which means that
-              all the data in your transcript stays on your computer and there
-              is literally no way for anyone including the QuACS developers to
-              view the data
+              transcript. Don't worry, QuACS is 100% client-side which means
+              that all the data in your transcript stays on your computer and
+              there is literally no way for anyone - including the QuACS
+              developers - to view the data.
             </p>
             <p>
               1) Go to
@@ -69,12 +69,12 @@
             <p>2) Log in and navigate to the Student Menu tab</p>
             <p>3) Click "View Transcript"</p>
             <p>
-              4) Press the Submit button (Leave the options as they are: "All
-              Levels" and "Unofficial Web Transcript")
+              4) Press the Submit button (leave the options as "All Levels" and
+              "Unofficial Web Transcript")
             </p>
             <p>
               5) Press CTRL+S on your keyboard (or right click and press "Save
-              As") and save the page somewhere
+              As") and save the page as a .html file.
             </p>
             <p>
               6) Upload the .html file here on QuACS and click "Import
