@@ -97,6 +97,16 @@ def timeToMilitary(time, useStartTime):
         offset = 1200
     return int("".join(time.strip().split(":"))[:4])+offset
 
+def toTitle(text):
+    text = text.title()
+    regex = r"\b[iI]+\b"
+    matches = re.finditer(regex, text)
+    for matchNum, match in enumerate(matches, start=1):
+        text = text[:match.start()] + text[match.start():match.end()].upper() + text[match.end():]
+
+    text = text.replace("'S","'s")
+
+    return text
 
 payload = f'sid={os.getenv("RIN")}&PIN={os.getenv("PASSWORD")}'
 headers = {
@@ -140,7 +150,7 @@ with requests.Session() as s:
             if 'ddtitle' in th[0].attrs['class']:
                 # if(current_department):
                 data.append({
-                    "name": getContent(th[0]).title(),
+                    "name": toTitle(getContent(th[0])),
                     "code": "",
                     "courses": []
                 })
@@ -186,7 +196,7 @@ with requests.Session() as s:
                 # "cmp":getContent(td[5]),
                 "credMin":credit_min,
                 "credMax":credit_max,
-                "title":getContent(td[7]).title(),
+                "title":toTitle(getContent(td[7])),
                 "cap":int(getContent(td[10])),
                 # "act":int(getContent(td[11])),
                 "rem":int(getContent(td[12])),
@@ -207,7 +217,7 @@ with requests.Session() as s:
             last_subject = getContent(td[2])
             last_course_code = int(getContent(td[3]))
             data[-1]['courses'].append({
-                "title":getContent(td[7]).title(),
+                "title":toTitle(getContent(td[7])),
                 "subj":getContent(td[2]),
                 "crse":int(getContent(td[3])),
                 "id":getContent(td[2])+"-"+getContent(td[3]),
@@ -220,4 +230,6 @@ with requests.Session() as s:
     addConflicts(data)
     # data = reformatJson(data)
 
-    print(json.dumps(data,sort_keys=False,indent=2))
+    # print(json.dumps(data,sort_keys=False,indent=2))
+    with open(f'courses.json', 'w') as outfile:#-{os.getenv("CURRENT_TERM")}
+        json.dump(data, outfile, sort_keys=False, indent=2)
