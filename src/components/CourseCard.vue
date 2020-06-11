@@ -17,7 +17,7 @@
         <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>
         {{ course.title }}</span
       >
-      {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
+      ꞏ {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
       <br />
 
       {{ getDescription(course.subj, course.crse) }}

@@ -7,6 +7,22 @@ You can view QuACS at [https://quacs.org](https://quacs.org)
 
 Want to help with development? Join the development [discord](https://discord.gg/EyGZTAP)!
 
+# What are people saying?
+
+> quacs do be lookin pretty fresh tho
+>
+> -- Former YACS Project Manager
+
+> "Best thing since sliced bread"
+>
+> -- Chris Jerrett
+
+> > plz dont quote me
+> >
+> > -- @quacs duck
+>
+> -- @quacs duck
+
 # QuACS Philosophy
 
 - Course Scheduling is not that complex and can be done in the user's browser.  QuACS will always be a simple static website on GitHub pages.
