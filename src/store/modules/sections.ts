@@ -24,10 +24,10 @@ function genSchedules(
       continue;
     }
 
-    for (const conflict in section.conflicts) {
-      currScheduleConflicts[conflict] =
-        currScheduleConflicts[conflict] + 1 || 1;
-    }
+    // for (const conflict in section.conflicts) {
+    //   currScheduleConflicts[conflict] =
+    //     currScheduleConflicts[conflict] + 1 || 1;
+    // }
 
     usedSections.push(section.crn);
     ret = ret.concat(
@@ -35,10 +35,10 @@ function genSchedules(
     );
 
     usedSections.pop();
-    for (const conflict in section.conflicts) {
-      currScheduleConflicts[conflict] =
-        currScheduleConflicts[conflict] - 1 || 0;
-    }
+    // for (const conflict in section.conflicts) {
+    //   currScheduleConflicts[conflict] =
+    //     currScheduleConflicts[conflict] - 1 || 0;
+    // }
   }
 
   return ret;
@@ -102,6 +102,7 @@ export default class Sections extends VuexModule {
   selectedSections: { [crn: string]: boolean } = {};
   conflictingSections: { [crn: string]: boolean } = {};
   crnToSections: { [crn: string]: { course: Course; sec: CourseSection } } = {};
+  courseIdToCourse: { [id: string]: { course: Course } } = {};
   currentSchedules: {
     conflicts: { [crn: string]: number };
     crns: number[];
@@ -144,10 +145,11 @@ export default class Sections extends VuexModule {
   }
 
   @Mutation
-  initializeCrnToSection(departments: readonly Department[]): void {
+  initializeDataMappings(departments: readonly Department[]): void {
     if (Object.keys(this.crnToSections).length === 0) {
       for (const dept of departments) {
         for (const course of dept.courses) {
+          Vue.set(this.courseIdToCourse, course.id, course);
           for (const section of course.sections) {
             Vue.set(this.crnToSections, section.crn, {
               course,

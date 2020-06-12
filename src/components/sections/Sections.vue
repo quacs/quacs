@@ -25,6 +25,7 @@
         v-bind:class="{
           selected: isSelected(section.crn),
           conflict: isInConflict(section.crn),
+          prerequisiteConflict: !hasPrerequisite(section.crn),
         }"
         v-on:click="toggleSelection(section)"
         tabindex="0"
@@ -113,7 +114,7 @@
 </template>
 
 <script lang="ts">
-import { Course, CourseSection, Timeslot } from "@/typings";
+import { Course, CourseSection, Prerequisite, Timeslot } from "@/typings";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
 import { formatCourseSize, formatTimeslot, getSessions } from "@/utilities";
@@ -260,6 +261,47 @@ export default class Section extends Vue {
     }
     return spacedTimeslots;
   }
+
+  hasPrerequisite(crn: string) {
+    if ("prerequisites" in this.$store.state.prerequisitesData[crn]) {
+      return this.verifyPrerequisite(
+        this.$store.state.prerequisites.priorCourses,
+        this.$store.state.prerequisitesData[crn].prerequisites
+      );
+    }
+    //Return true because this section has no prerequisites
+    return true;
+  }
+
+  verifyPrerequisite(
+    priorCourses: { [crn: string]: boolean },
+    prerequisiteData: Prerequisite
+  ) {
+    let hasAll = true;
+    let hasOne = false;
+    for (const course of prerequisiteData.solo) {
+      if (course.split(" ").join("-") in priorCourses) {
+        hasOne = true;
+      } else {
+        hasAll = false;
+      }
+    }
+    for (const nested of prerequisiteData.nested) {
+      if (this.verifyPrerequisite(priorCourses, nested)) {
+        hasOne = true;
+      } else {
+        hasAll = false;
+      }
+    }
+    if (prerequisiteData.type === "and") {
+      return hasAll;
+    } else if (prerequisiteData.type === "or") {
+      return hasOne;
+    } else if (prerequisiteData.type === "solo") {
+      //should not matter which
+      return hasAll;
+    }
+  }
 }
 </script>
 
@@ -349,4 +391,8 @@ export default class Section extends Vue {
 .invisible {
   visibility: hidden;
 }
+
+/* .prerequisiteConflict {
+  background: yellow !important;
+} */
 </style>

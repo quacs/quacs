@@ -29,7 +29,7 @@ export default new Vuex.Store({
     departments: COURSES_JSON as Department[],
     catalog: CATALOG_JSON as { [id: string]: CatalogCourse },
     schools: SCHOOLS_JSON as { [id: string]: { code: string; name: string }[] },
-    prerequisites: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
+    prerequisitesData: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
     courseSizes: {} as { [id: string]: CourseSize },
   },
   mutations: {

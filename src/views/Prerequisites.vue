@@ -31,9 +31,14 @@
                   :formatter="formatCourse"
                   @keyup.enter="addCourse"
                 ></b-form-input>
-                <b-form-invalid-feedback id="input-live-feedback">
+                <b-form-invalid-feedback>
                   Format "ABCD-1234"
                 </b-form-invalid-feedback>
+                <!-- I dont actually show any form valid feedback, but having this here keeps
+                     The page nicely spaced out and not bouncing-->
+                <b-form-valid-feedback id="valid-feedback">
+                  Format "ABCD-1234"
+                </b-form-valid-feedback>
               </b-col>
               <b-col>
                 <b-button @click="addCourse" :disabled="!verifyNewCourse"
@@ -50,6 +55,7 @@
               ></font-awesome-icon>
               {{ course }}
             </div>
+            <!-- {{ $store.state }} -->
           </b-tab>
           <b-tab title="Import Courses">
             <h3>Instructions</h3>
@@ -129,7 +135,7 @@
 import { Component, Vue } from "vue-property-decorator";
 // @ts-expect-error: ¯\_(ツ)_/¯ I dont feel like making this work with typescript. TODO make this work with typescript
 import { scrapeTranscript } from "@/components/scrapeTranscript.js";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 @Component({
   computed: {
@@ -142,6 +148,7 @@ import { mapGetters } from "vuex";
       return Object.keys(this.getPriorCourses()).sort();
     },
     ...mapGetters("prerequisites", ["getPriorCourses"]),
+    ...mapState(["courseIdToCourse"]),
   },
 })
 export default class Prerequisites extends Vue {
@@ -194,6 +201,10 @@ export default class Prerequisites extends Vue {
 </script>
 
 <style>
+#valid-feedback {
+  visibility: hidden;
+}
+
 .trash-btn {
   color: var(--trash-btn);
   cursor: pointer;
