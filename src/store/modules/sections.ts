@@ -24,10 +24,10 @@ function genSchedules(
       continue;
     }
 
-    // for (const conflict in section.conflicts) {
-    //   currScheduleConflicts[conflict] =
-    //     currScheduleConflicts[conflict] + 1 || 1;
-    // }
+    for (const conflict in section.conflicts) {
+      currScheduleConflicts[conflict] =
+        currScheduleConflicts[conflict] + 1 || 1;
+    }
 
     usedSections.push(section.crn);
     ret = ret.concat(
@@ -35,10 +35,10 @@ function genSchedules(
     );
 
     usedSections.pop();
-    // for (const conflict in section.conflicts) {
-    //   currScheduleConflicts[conflict] =
-    //     currScheduleConflicts[conflict] - 1 || 0;
-    // }
+    for (const conflict in section.conflicts) {
+      currScheduleConflicts[conflict] =
+        currScheduleConflicts[conflict] - 1 || 0;
+    }
   }
 
   return ret;
