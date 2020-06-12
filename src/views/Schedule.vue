@@ -132,7 +132,7 @@ export default class Schedule extends Vue {
 
     const crns = this.$store.getters["sections/schedules"][
       this.currentScheduleNumber
-    ].crns;
+    ];
 
     this.$router.replace("/schedule?crns=" + crns.join(",")).catch(() => {
       return;
