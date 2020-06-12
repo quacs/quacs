@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="warning-message" v-if="selectedCourses.length == 0">
+    <div class="warning-message" v-if="selectedCourses.length === 0">
       <h3>It looks like you have not selected any courses yet :(</h3>
       <router-link class="navbar-brand" to="/"
         >Click to select a course</router-link
       >
     </div>
 
-    <!-- <div class="warning-message" v-else-if="totalNumSchedules == 0">
+    <!-- <div class="warning-message" v-else-if="totalNumSchedules === 0">
       <h3>
         Uh oh! All possible schedules have conflicts! Try choosing more
         sections.
@@ -16,19 +16,25 @@
 
     <div style="padding-bottom: 2rem;" v-else>
       <div class="schedule-select">
-        <b-icon-chevron-left
-          class="schedule-select-button"
-          v-on:click="decrementSchedule()"
-        ></b-icon-chevron-left>
-        <span class="schedule-num">
-          {{ visibleCurrentScheduleNumber }} / {{ totalNumSchedules }}
-        </span>
-        <b-icon-chevron-right
-          class="schedule-select-button"
-          v-on:click="incrementSchedule()"
-        ></b-icon-chevron-right>
+        <div v-if="totalNumSchedules !== 0">
+          <b-icon-chevron-left
+            class="schedule-select-button"
+            v-on:click="decrementSchedule()"
+          ></b-icon-chevron-left>
+          <span class="schedule-num">
+            {{ visibleCurrentScheduleNumber }} / {{ totalNumSchedules }}
+          </span>
+          <b-icon-chevron-right
+            class="schedule-select-button"
+            v-on:click="incrementSchedule()"
+          ></b-icon-chevron-right>
+        </div>
+        <div v-else>
+          No valid schedules,
+          <span v-if="selectedCourses.length > 0">there are conflicts</span>
+          <span v-else>please select at least one course</span>
+        </div>
       </div>
-
       <Calendar :crns="currentScheduleCRNs" />
 
       <div class="crn-list">
