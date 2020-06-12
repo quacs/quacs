@@ -46,8 +46,14 @@
                 >
               </b-col>
             </b-row>
+            <br />
+            <h3>Courses you have already taken:</h3>
 
-            <div v-for="course in priorCourses" :key="course">
+            <div
+              v-for="course in priorCourses"
+              :key="course"
+              style="margin-left: 2rem; margin-bottom: 0.5rem;"
+            >
               <font-awesome-icon
                 :icon="['fas', 'trash']"
                 class="open_close_icon, trash-btn"
@@ -88,18 +94,18 @@
             </p>
             <p></p>
             <form onsubmit="return false;" method="post">
-              <input
+              <b-form-file
+                id="transcriptFileUpload"
+                v-model="file"
                 type="file"
-                id="transcriptFile"
+                name="file upload"
                 accept=".html,.htm"
+                :state="Boolean(file)"
+                placeholder="Click to upload your transcript or drop it here..."
+                drop-placeholder="Drop transcript here..."
                 required
-              />
-              <input
-                class="submit"
-                type="submit"
-                value="Import Transcript"
-                v-on:click="importTranscript()"
-              />
+                @change="importTranscript()"
+              ></b-form-file>
             </form>
           </b-tab>
         </b-tabs>
@@ -154,6 +160,7 @@ import { mapGetters, mapState } from "vuex";
 export default class Prerequisites extends Vue {
   newCourse = "";
   tabNumber = 0;
+  file = null;
 
   formatCourse(value: string) {
     return value
@@ -177,7 +184,7 @@ export default class Prerequisites extends Vue {
   importTranscript() {
     const store = this.$store;
     const bvModal = this.$bvModal;
-    const importedTranscript = scrapeTranscript("transcriptFile");
+    const importedTranscript = scrapeTranscript("transcriptFileUpload");
     importedTranscript
       .catch(function (err: string) {
         //eslint-disable-next-line
@@ -212,5 +219,9 @@ export default class Prerequisites extends Vue {
 
 .trash-btn:hover {
   color: var(--trash-btn-hover);
+}
+
+.jumbotron {
+  background: var(--prerequisite-jumbotron);
 }
 </style>

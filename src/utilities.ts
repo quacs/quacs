@@ -1,4 +1,10 @@
-import { CourseSection, Day, ShortDay, Timeslot } from "@/typings";
+import {
+  CourseSection,
+  Day,
+  Prerequisite,
+  ShortDay,
+  Timeslot,
+} from "@/typings";
 import store from "@/store";
 
 export const DAYS: Day[] = [
@@ -141,4 +147,46 @@ export function setColorTheme(colorTheme: string): void {
     "data-theme-accent",
     newColorTheme.split(" ")[1]
   );
+}
+
+function verifyPrerequisite(
+  priorCourses: { [crn: string]: boolean },
+  prerequisiteData: Prerequisite
+): boolean {
+  let hasAll = true;
+  let hasOne = false;
+  for (const course of prerequisiteData.solo) {
+    if (course.split(" ").join("-") in priorCourses) {
+      hasOne = true;
+    } else {
+      hasAll = false;
+    }
+  }
+  for (const nested of prerequisiteData.nested) {
+    if (verifyPrerequisite(priorCourses, nested)) {
+      hasOne = true;
+    } else {
+      hasAll = false;
+    }
+  }
+  if (prerequisiteData.type === "and") {
+    return hasAll;
+  } else if (prerequisiteData.type === "or") {
+    return hasOne;
+  } // else if (prerequisiteData.type === "solo") {
+  return hasAll; //should not matter which
+}
+
+export function hasMetAllPrerequisites() {
+  return function (crn: string): boolean {
+    if ("prerequisites" in store.state.prerequisitesData[crn]) {
+      return verifyPrerequisite(
+        store.getters["prerequisites/getPriorCourses"],
+        // @ts-expect-error: I check that this exists already so we can ignore typescript
+        store.state.prerequisitesData[crn].prerequisites
+      );
+    }
+    //Return true because this section has no prerequisites
+    return true;
+  };
 }

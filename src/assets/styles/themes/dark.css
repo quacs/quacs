@@ -38,6 +38,7 @@
         --toast-text: #eeeeee;
         --trash-btn: #ffffff;
         --trash-btn-hover: #ff0000;
+        --prerequisite-jumbotron: #4e4e4e;
 }
 
 [data-theme="dark"] .navbar-toggler-icon {
