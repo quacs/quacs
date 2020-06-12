@@ -1,0 +1,16 @@
+[package]
+name = "quacs-rs"
+version = "0.1.0"
+authors = ["Benjamin Sherman <benjamin@bensherman.io>"]
+edition = "2018"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1.0.111"
+serde_derive = "1.0.111"
+
+[dependencies.wasm-bindgen]
+version = "^0.2"
+features = ["serde-serialize"]
