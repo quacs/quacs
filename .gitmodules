@@ -1,0 +1,3 @@
+[submodule "src/store/data"]
+	path = src/store/data
+	url = git@github.com:quacs/quacs-data.git
