@@ -1,2 +1,6 @@
 /target
 Cargo.lock
+package.json
+*.ts
+*.js
+*.wasm

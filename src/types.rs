@@ -1,11 +1,12 @@
+/*
 #![allow(non_snake_case)]
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
 pub struct Timeslot {
     pub days: Vec<char>,
-    pub timeStart: u16, // [0, 2400)
-    pub timeEnd: u16,   // [0, 2400)
+    pub timeStart: i32,
+    pub timeEnd: i32,
     pub instructor: String,
     pub dateStart: String,
     pub dateEnd: String,
@@ -20,11 +21,11 @@ pub struct CourseSection {
     pub sec: String,
     pub crn: u32,
 
-    pub credMin: u8,
-    pub credMax: u8,
+    pub credMin: u32,
+    pub credMax: u32,
 
-    pub cap: u16,
-    pub rem: u16,
+    pub cap: u32,
+    pub rem: i32,
 
     pub timeslots: Vec<Timeslot>,
 
@@ -35,13 +36,22 @@ pub struct CourseSection {
 pub struct Course {
     pub title: String,
     pub subj: String,
-    pub crse: u16, // 4 digits
+    pub crse: u32,
     pub id: String,
     pub sections: Vec<CourseSection>,
 }
+*/
 
+#[derive(Serialize, Deserialize)]
+pub struct CrnToSec {
+    pub course: String,
+    pub conflicts: Vec<u32>,
+}
+
+/*
 #[derive(Serialize, Deserialize)]
 pub struct CourseSecPair {
     pub course: Course,
     pub sec: CourseSection,
 }
+*/

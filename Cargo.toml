@@ -1,17 +1,37 @@
 [package]
 name = "quacs-rs"
+description = "WebAssembly core for the Questionably Accurate Course Scheduler"
 version = "0.1.0"
 authors = ["Benjamin Sherman <benjamin@bensherman.io>"]
+repository = "https://github.com/quacs/quacs-rs"
 edition = "2018"
 license = "MIT"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[features]
+debug = ["console_error_panic_hook"]
+benchmark = []
+
 [dependencies]
 serde = "1.0.111"
 serde_derive = "1.0.111"
 
+console_error_panic_hook = { version = "0.1.6", optional = true }
+
 [dependencies.wasm-bindgen]
 version = "^0.2"
 features = ["serde-serialize"]
+
+[dependencies.web-sys]
+version = "0.3"
+features = ["console"]
+
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = true
+panic = "abort"
