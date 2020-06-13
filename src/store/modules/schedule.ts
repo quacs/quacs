@@ -1,17 +1,19 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import {
-  getInConflict,
-  getSchedule,
-  init,
-  setSelected,
+  generateCurrentSchedulesAndConflicts as workerGenerateCurrentSchedulesAndConflicts,
+  getInConflict as workerGetInConflict,
+  getSchedule as workerGetSchedule,
+  init as workerInit,
+  setSelected as workerSetSelected,
 } from "@/workers/schedule.worker";
 import Vue from "vue";
 import store from "..";
 
-@Module({ namespaced: true, name: "schedule" })
+@Module({ namespaced: true })
 export default class Schedule extends VuexModule {
   selectedSections: { [crn: string]: boolean } = {};
+  numCurrentSchedules = 0;
   CURRENT_STORAGE_VERSION = "0.0.3";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
   lastNewSchedule = 0; //Keeps track of the time the last new schedule was generated
@@ -29,33 +31,51 @@ export default class Schedule extends VuexModule {
   @Mutation
   setSelected(p: { crn: string; selected: boolean }): void {
     Vue.set(this.selectedSections, p.crn, p.selected);
-    setSelected(p.crn, p.selected);
+    workerSetSelected(p.crn, p.selected);
   }
 
   //does not need to be mutation
   @Mutation
   init(): void {
-    init(store.state.departments);
+    workerInit(store.state.departments);
   }
 
   //does not need to be mutation
   @Mutation
   initSelectedSetions() {
     for (const section in this.selectedSections) {
-      setSelected(section, this.selectedSections[section]);
+      workerSetSelected(section, this.selectedSections[section]);
     }
   }
 
   get getInConflict(): (crn: number) => Promise<boolean> {
-    return async (crn: number) => await getInConflict(crn);
+    return (crn: number) => workerGetInConflict(crn);
   }
 
   get isSelected(): (crn: string) => boolean {
     return (crn: string) => this.selectedSections[crn] === true;
   }
 
-  @Action
-  async getSchedule(idx: number): Promise<number[]> {
-    return await getSchedule(idx);
+  @Action({ rawError: true })
+  getSchedule(idx: number): Promise<number[]> {
+    return workerGetSchedule(idx);
+  }
+
+  get numSchedules() {
+    return this.numCurrentSchedules;
+  }
+
+  @Mutation
+  setNumSchedules(num: number) {
+    this.numCurrentSchedules = num;
+    this.lastNewSchedule = Date.now();
+  }
+
+  @Action({ rawError: true })
+  async generateCurrentSchedulesAndConflicts(): Promise<void> {
+    this.context.commit(
+      "setNumSchedules",
+      await workerGenerateCurrentSchedulesAndConflicts()
+    );
   }
 }

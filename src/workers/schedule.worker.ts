@@ -128,7 +128,7 @@ export const generateCurrentSchedulesAndConflicts = async () => {
   end = new Date().getTime();
   // eslint-disable-next-line
   console.log("Conflict calculation complete, took " + (end - start) + " ms");
-  return new Date().getTime();
+  return currentSchedules.length;
 };
 
 export const setSelected = async (crn: string, selected: boolean) => {

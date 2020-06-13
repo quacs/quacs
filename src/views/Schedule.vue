@@ -16,13 +16,13 @@
 
     <div style="padding-bottom: 2rem;" v-else>
       <div class="schedule-select">
-        <div v-if="totalNumSchedules !== 0">
+        <div v-if="numSchedules !== 0">
           <b-icon-chevron-left
             class="schedule-select-button"
             v-on:click="decrementSchedule()"
           ></b-icon-chevron-left>
           <span class="schedule-num">
-            {{ visibleCurrentScheduleNumber }} / {{ totalNumSchedules }}
+            {{ visibleCurrentScheduleNumber }} / {{ numSchedules }}
           </span>
           <b-icon-chevron-right
             class="schedule-select-button"
@@ -62,6 +62,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
@@ -72,6 +73,7 @@ function mod(n: number, m: number) {
 }
 
 @Component({
+  computed: mapGetters("schedule", ["numSchedules"]),
   components: {
     Calendar,
     CourseCard,
@@ -116,12 +118,9 @@ export default class Schedule extends Vue {
     this.prerequisiteModalCrn = crn;
   }
 
-  get totalNumSchedules() {
-    return this.$store.getters["sections/schedules"].length;
-  }
-
   get visibleCurrentScheduleNumber() {
-    if (this.$store.getters["sections/schedules"].length === 0) {
+    // @ts-expect-error: This is mapped in the @Component decorator
+    if (this.numSchedules === 0) {
       this.currentScheduleNumber = 0;
       return 0;
     }
@@ -129,34 +128,29 @@ export default class Schedule extends Vue {
   }
 
   get currentScheduleCRNs() {
-    if (this.$store.getters["sections/schedules"].length === 0) {
-      this.$router.replace("/schedule").catch(() => {
-        return;
-      });
+    // @ts-expect-error: This is mapped in the @Component decorator
+    if (this.numSchedules === 0) {
       return [];
     }
 
-    const crns = this.$store.getters["sections/schedules"][
+    return this.$store.getters["schedule/getSchedule"](
       this.currentScheduleNumber
-    ];
-
-    this.$router.replace("/schedule?crns=" + crns.join(",")).catch(() => {
-      return;
-    });
-    return crns;
+    );
   }
 
   incrementSchedule() {
     this.currentScheduleNumber = mod(
       this.currentScheduleNumber + 1,
-      this.totalNumSchedules
+      // @ts-expect-error: This is mapped in the @Component decorator
+      this.numSchedules
     );
   }
 
   decrementSchedule() {
     this.currentScheduleNumber = mod(
       this.currentScheduleNumber - 1,
-      this.totalNumSchedules
+      // @ts-expect-error: This is mapped in the @Component decorator
+      this.numSchedules
     );
   }
 

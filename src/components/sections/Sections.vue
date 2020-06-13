@@ -112,7 +112,7 @@
 <script lang="ts">
 import { Course, CourseSection, Timeslot } from "@/typings";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import {
   formatCourseSize,
   formatTimeslot,
@@ -127,21 +127,22 @@ import {
     getSessions,
     hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime"]),
-    ...mapGetters("schedule", ["isSelected", "getInConflict"]),
+    ...mapGetters("schedule", ["isSelected"]),
     ...mapState(["courseSizes"]),
-    ...mapActions(["generateCurrentSchedulesAndConflicts"]),
   },
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
-  conflicts = {};
+  conflicts: { [crn: number]: boolean } = {};
 
   mounted() {
-    for (let i = 0; i < this.course.sections.length; i++) {
-      this.getInConflict({ crn: this.course.sections[i].crn }).then((data) => {
-        Vue.set(this.conflicts, this.course.sections[i].crn, data);
-      });
+    for (const section of this.course.sections) {
+      this.$store.getters["schedule/getInConflict"](section.crn).then(
+        (isInConflict: number) => {
+          Vue.set(this.conflicts, section.crn, isInConflict);
+        }
+      );
     }
   }
 
@@ -153,6 +154,7 @@ export default class Section extends Vue {
     let selected = true;
 
     if (section.crn in this.$store.state.schedule.selectedSections) {
+      // @ts-expect-error: This is mapped in the custom computed section
       selected = !this.isSelected(section.crn);
     }
 
@@ -161,10 +163,10 @@ export default class Section extends Vue {
     }
     this.$store.commit("schedule/setSelected", {
       crn: section.crn,
-      selected: selected,
+      selected,
     });
     if (rePopulateConflicts) {
-      this.generateCurrentSchedulesAndConflicts;
+      this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
     }
   }
 
@@ -182,7 +184,7 @@ export default class Section extends Vue {
       }
     }
 
-    this.generateCurrentSchedulesAndConflicts;
+    this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
   }
 
   // Calculates the order of the timeslots for each section
