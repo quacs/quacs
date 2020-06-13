@@ -15,7 +15,7 @@ module.exports = {
   configureWebpack: (config) => {
     config.module.rules = [
       {
-        test: /\.worker\.js$/i,
+        test: /\.worker\.ts$/i,
         use: [
           {
             loader: "comlink-loader",

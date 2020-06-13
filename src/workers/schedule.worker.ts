@@ -106,17 +106,17 @@ function generateCurrentSchedules() {
 }
 
 export const generateCurrentSchedulesAndConflicts = async () => {
-  let start = new Date().getTime();
+  let start = Date.now();
   // eslint-disable-next-line
   console.log("Generating schedules..");
 
   currentSchedules = generateCurrentSchedules();
 
-  let end = new Date().getTime();
+  let end = Date.now();
   // eslint-disable-next-line
   console.log("Schedule generation complete, took " + (end - start) + " ms");
 
-  start = new Date().getTime();
+  start = Date.now();
   // eslint-disable-next-line
   console.log("Calculating conflicts..");
 
@@ -125,7 +125,7 @@ export const generateCurrentSchedulesAndConflicts = async () => {
     (crn: string | number) => (conflictingSections[crn] = true)
   );
 
-  end = new Date().getTime();
+  end = Date.now();
   // eslint-disable-next-line
   console.log("Conflict calculation complete, took " + (end - start) + " ms");
   return currentSchedules.length;
