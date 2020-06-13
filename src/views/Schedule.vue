@@ -92,7 +92,7 @@ export default class Schedule extends Vue {
     for (const dept of this.$store.state.departments) {
       for (const course of dept.courses) {
         for (const section of course.sections) {
-          if (this.$store.getters["sections/isSelected"](section.crn)) {
+          if (this.$store.getters["schedule/isSelected"](section.crn)) {
             this.keepSelected.push(course);
             break;
           }

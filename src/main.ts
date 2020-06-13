@@ -56,11 +56,8 @@ new Vue({
   store,
   render: (h) => h(App),
   beforeCreate() {
-    this.$store.commit("sections/initializeStore");
-    this.$store.commit(
-      "sections/initializeDataMappings",
-      this.$store.state.departments
-    );
+    this.$store.commit("schedule/initializeStore");
+    this.$store.commit("schedule/init");
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);

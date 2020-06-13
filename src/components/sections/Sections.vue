@@ -21,7 +21,7 @@
         class="course-row select-section"
         v-bind:class="{
           selected: isSelected(section.crn),
-          conflict: isInConflict(section.crn),
+          conflict: conflicts[section.crn],
           prerequisiteConflict: !hasMetAllPrerequisites(section.crn),
         }"
         v-on:click="toggleSelection(section)"
@@ -112,7 +112,7 @@
 <script lang="ts">
 import { Course, CourseSection, Timeslot } from "@/typings";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import {
   formatCourseSize,
   formatTimeslot,
@@ -127,13 +127,23 @@ import {
     getSessions,
     hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime"]),
-    ...mapGetters("sections", ["isSelected", "isInConflict"]),
+    ...mapGetters("schedule", ["isSelected", "getInConflict"]),
     ...mapState(["courseSizes"]),
+    ...mapActions(["generateCurrentSchedulesAndConflicts"]),
   },
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
+  conflicts = {};
+
+  mounted() {
+    for (let i = 0; i < this.course.sections.length; i++) {
+      this.getInConflict({ crn: this.course.sections[i].crn }).then((data) => {
+        Vue.set(this.conflicts, this.course.sections[i].crn, data);
+      });
+    }
+  }
 
   toggleSelection(
     section: CourseSection,
@@ -142,30 +152,26 @@ export default class Section extends Vue {
   ) {
     let selected = true;
 
-    if (section.crn in this.$store.state.sections.selectedSections) {
-      selected = !this.$store.getters["sections/isSelected"](section.crn);
+    if (section.crn in this.$store.state.schedule.selectedSections) {
+      selected = !this.isSelected(section.crn);
     }
 
     if (newState !== null) {
       selected = newState;
     }
-
-    this.$store.commit("sections/setSelected", {
+    this.$store.commit("schedule/setSelected", {
       crn: section.crn,
-      state: selected,
+      selected: selected,
     });
     if (rePopulateConflicts) {
-      this.$store.commit(
-        "sections/populateConflicts",
-        this.$store.state.departments
-      );
+      this.generateCurrentSchedulesAndConflicts;
     }
   }
 
   toggleAll() {
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
-      if (!this.$store.getters["sections/isSelected"](section.crn)) {
+      if (!this.$store.getters["schedule/isSelected"](section.crn)) {
         this.toggleSelection(section, true, false);
         turnedOnAnySection = true;
       }
@@ -176,10 +182,7 @@ export default class Section extends Vue {
       }
     }
 
-    this.$store.commit(
-      "sections/populateConflicts",
-      this.$store.state.departments
-    );
+    this.generateCurrentSchedulesAndConflicts;
   }
 
   // Calculates the order of the timeslots for each section

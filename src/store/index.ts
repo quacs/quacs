@@ -17,10 +17,10 @@ import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
 import PREREQUISITES_JSON from "./data/prerequisites.json";
 
-import sections from "./modules/sections";
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
 import schedule from "./modules/schedule";
+import { generateCurrentSchedulesAndConflicts } from "@/workers/schedule.worker";
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios);
@@ -32,10 +32,14 @@ export default new Vuex.Store({
     schools: SCHOOLS_JSON as { [id: string]: { code: string; name: string }[] },
     prerequisitesData: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
     courseSizes: {} as { [id: string]: CourseSize },
+    lastNewSchedule: 0,
   },
   mutations: {
     SET_COURSE_SIZES(state, courseSizes) {
       state.courseSizes = courseSizes;
+    },
+    updateScheduleTime(state, newTime: number) {
+      state.schedule.lastNewSchedule = newTime;
     },
   },
   actions: {
@@ -66,9 +70,13 @@ export default new Vuex.Store({
           commit("SET_COURSE_SIZES", liveData);
         });
     },
+    generateCurrentSchedulesAndConflicts({ commit }) {
+      generateCurrentSchedulesAndConflicts().then((newTime: number) => {
+        commit("updateScheduleTime", newTime);
+      });
+    },
   },
   modules: {
-    sections,
     settings,
     prerequisites,
     schedule,
@@ -76,16 +84,15 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       paths: [
-        "sections.selectedSections",
-        "sections.storedVersion",
+        "schedule.selectedSections",
+        "schedule.storedVersion",
         "settings.timePreference",
         "settings.colorTheme",
         "prerequisites.priorCourses",
-        "schedule.selectedSections",
       ],
       rehydrated: (store) => {
         // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
-        store.commit("sections/populateConflicts", store.state.departments);
+        store.commit("schedule/initSelectedSetions");
       },
     }),
   ],

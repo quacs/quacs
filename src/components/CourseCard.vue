@@ -23,7 +23,12 @@
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
-    <div class="card-body" :class="{ expanded: expanded }" v-if="expanded">
+    <div
+      class="card-body"
+      :class="{ expanded: expanded }"
+      v-if="expanded"
+      :key="course.id + $store.state.schedule.lastNewSchedule"
+    >
       <Sections v-bind:course="course" v-on:open-prerequisite-modal="emitCrn" />
     </div>
   </div>
