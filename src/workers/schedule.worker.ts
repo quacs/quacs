@@ -106,6 +106,9 @@ function generateCurrentSchedules() {
 }
 
 export const generateCurrentSchedulesAndConflicts = async () => {
+  if (Object.keys(crnToSections).length === 0) {
+    return;
+  }
   let start = Date.now();
   // eslint-disable-next-line
   console.log("Generating schedules..");

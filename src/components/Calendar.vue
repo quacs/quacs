@@ -103,10 +103,17 @@ export default class Calendar extends Vue {
   }
 
   get selected() {
-    return this.crns.map(
-      (crn: string) =>
-        this.$store.getters["sections/crnToCourseAndSection"](crn).sec
-    );
+    //TODO refactor page so we dont have to do this every time
+    const crnToSections: { [crn: string]: CourseSection } = {};
+    for (const dept of this.$store.state.departments) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          crnToSections[section.crn] = section;
+        }
+      }
+    }
+
+    return this.crns.map((crn: string) => crnToSections[crn]);
   }
 
   get sessionsOnDay() {

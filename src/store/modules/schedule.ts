@@ -56,9 +56,8 @@ export default class Schedule extends VuexModule {
     return (crn: string) => this.selectedSections[crn] === true;
   }
 
-  @Action({ rawError: true })
-  getSchedule(idx: number): Promise<number[]> {
-    return workerGetSchedule(idx);
+  get getSchedule() {
+    return (idx: number) => workerGetSchedule(idx);
   }
 
   get numSchedules() {

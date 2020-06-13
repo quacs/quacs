@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapGetters } from "vuex";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
@@ -84,7 +84,14 @@ export default class Schedule extends Vue {
   keepSelected: Course[] = [];
   prerequisiteModalCrn = "";
   currentScheduleNumber = 0;
+  currentScheduleCRNs = [];
   // loadedWithCRNs = true;
+
+  @Watch("lastNewSchedule")
+  onPropertyChanged() {
+    this.currentScheduleNumber = 0;
+    this.getSchedule(this.currentScheduleNumber);
+  }
 
   get selectedCourses(): Course[] {
     if (this.keepSelected.length > 0) {
@@ -112,6 +119,11 @@ export default class Schedule extends Vue {
     //   );
     //   this.loadedWithCRNs = false; // set to false to force Vue to re-render calendar
     // }
+    this.getSchedule(this.currentScheduleNumber);
+  }
+
+  get lastNewSchedule() {
+    return this.$store.state.schedule.lastNewSchedule;
   }
 
   setPrerequisiteModalCrn(crn: string) {
@@ -127,15 +139,15 @@ export default class Schedule extends Vue {
     return this.currentScheduleNumber + 1;
   }
 
-  get currentScheduleCRNs() {
+  async getSchedule(idx: number) {
     // @ts-expect-error: This is mapped in the @Component decorator
     if (this.numSchedules === 0) {
       return [];
     }
 
-    return this.$store.getters["schedule/getSchedule"](
-      this.currentScheduleNumber
-    );
+    this.currentScheduleCRNs = await this.$store.getters[
+      "schedule/getSchedule"
+    ](idx);
   }
 
   incrementSchedule() {
@@ -144,6 +156,7 @@ export default class Schedule extends Vue {
       // @ts-expect-error: This is mapped in the @Component decorator
       this.numSchedules
     );
+    this.getSchedule(this.currentScheduleNumber);
   }
 
   decrementSchedule() {
@@ -152,6 +165,7 @@ export default class Schedule extends Vue {
       // @ts-expect-error: This is mapped in the @Component decorator
       this.numSchedules
     );
+    this.getSchedule(this.currentScheduleNumber);
   }
 
   copyToClipboard(val: string) {
