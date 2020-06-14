@@ -227,9 +227,47 @@ with requests.Session() as s:
             if len(getContent(td[2])) > 0:
                 data[-1]['code'] = getContent(td[2])
 
-    addConflicts(data)
+    # This is for the old conflict method that has a list for each class that it conflicts with
+    # addConflicts(data)
+
     # data = reformatJson(data)
 
     # print(json.dumps(data,sort_keys=False,indent=2))
     with open(f'courses.json', 'w') as outfile:#-{os.getenv("CURRENT_TERM")}
         json.dump(data, outfile, sort_keys=False, indent=2)
+
+
+
+    # Generate binary conflict output
+    # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
+    day_offsets = {
+        "M":0*19*2,
+        "T":1*19*2,
+        "W":2*19*2,
+        "R":3*19*2,
+        "F":4*19*2
+    }
+
+    conflicts = {}
+    for dept in data:
+        for course in dept['courses']:
+            for section in course['sections']:
+                conflict = [0]*(64*3)
+                for time in section['timeslots']:
+                    for day in time['days']:
+                        for i in range(500,2400,100):
+                            if(time['timeStart'] <=i and time['timeEnd']>i):
+                                conflict[day_offsets[day]+(int)(2*i/100)-5] = 1
+                            if(time['timeStart'] <=i+30 and time['timeEnd']>i+30):
+                                conflict[day_offsets[day]+1+(int)(2*i/100)-5] = 1
+
+                conflicts[section['crn']] = ''.join(str(e) for e in conflict)
+
+
+    output = "//This file was automatically generated. Please do not modify it directly\n"
+    output += "use ::phf::{phf_map, Map};\npub static TIMES: Map<u32, [u64; 3]> = phf_map! {\n"
+    for crn,conflict in conflicts.items():
+        output+=f"\t{crn}u32 => [{int(conflict[:64], 2)}, {int(conflict[64:128], 2)}, {int(conflict[128:], 2)}],\n"
+    output+="};"
+    print(output)
+    # print(json.dumps(conflicts,sort_keys=False,indent=2))

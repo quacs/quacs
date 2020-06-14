@@ -1,3 +1,6 @@
+// This file is no longer being maintained. For the updated file go to the main quacs repo under src/components/scrapeTranscript.ts
+//I may have moved it though and forgot to update this, look around it should be there
+
 'use strict';
 
 async function scrape_transcript(file_id) {
