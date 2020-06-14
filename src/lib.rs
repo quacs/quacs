@@ -1,19 +1,40 @@
 #[macro_use]
 mod utils;
+use utils::*;
+
 mod parsed;
-use parsed::TIMES;
+use parsed::{CRN_COURSES, CRN_TIMES};
+
+use lazy_static::lazy_static;
+use std::sync::RwLock;
+
+use std::collections::{HashMap, HashSet};
 
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen(js_name = "generateSchedulesAndConflicts")]
-pub fn generate_schedules_and_conflicts(selected_courses: &JsValue) -> Box<[u64]> {
-    let mut selected_courses: Vec<Vec<u32>> = selected_courses.into_serde().unwrap();
-    selected_courses.sort_by_key(|vec| vec.len());
+lazy_static! {
+    static ref CURR_TIMES: RwLock<[u64; 3]> = RwLock::new([0; 3]);
+    static ref SCHEDULES: RwLock<Vec<Vec<u32>>> = RwLock::new(Vec::new());
+    static ref SELECTED_COURSES: RwLock<HashMap<&'static str, HashSet<u32>>> =
+        RwLock::new(HashMap::new());
+}
 
-    console_log!("Selected courses: {:#?}", selected_courses);
+#[wasm_bindgen]
+pub fn init() {
+    #[cfg(feature = "console_error_panic_hook")]
+    console_error_panic_hook::set_once();
+}
+
+#[wasm_bindgen(js_name = "generateSchedulesAndConflicts")]
+pub fn generate_schedules_and_conflicts() -> usize {
+    let selected_courses_map = SELECTED_COURSES.read().unwrap();
+    let mut selected_courses: Vec<&HashSet<u32>> = selected_courses_map.values().collect();
+    selected_courses.sort_by_key(|set| set.len());
 
     bm_start!("generate schedules");
-    let mut times = [0; 3];
+    #[allow(unused_assignments)]
+    let mut times = CURR_TIMES.write().unwrap();
+    *times = [u64::MAX; 3];
     let schedules = generate_schedules(
         0,
         &selected_courses,
@@ -23,47 +44,33 @@ pub fn generate_schedules_and_conflicts(selected_courses: &JsValue) -> Box<[u64]
     );
     bm_end!("generate schedules");
 
-    console_log!("Generated {} schedules", schedules.len());
+    let schedules_len = schedules.len();
 
-    let total_size = schedules.len() * selected_courses.len() + 3;
+    *SCHEDULES.write().unwrap() = schedules;
 
-    let mut ret = Vec::with_capacity(total_size);
+    console_log!("Generated {} schedules", schedules_len);
+    console_log!("Conflicting times: {:?}", *times);
 
-    for time in &times {
-        ret.push(*time);
-    }
-
-    for schedule in &schedules {
-        for crn in schedule {
-            ret.push(*crn as u64);
-        }
-    }
-
-    console_log!("Output array size: {}", ret.len());
-
-    ret.into_boxed_slice()
+    schedules_len
 }
 
 fn generate_schedules(
     idx: usize,
-    courses: &Vec<Vec<u32>>,
+    courses: &Vec<&HashSet<u32>>,
     current_courses: &mut Vec<u32>,
     current_times: &mut [u64; 3],
     overall_times: &mut [u64; 3],
 ) -> Vec<Vec<u32>> {
     if idx >= courses.len() {
-        for i in 0..3 {
-            overall_times[i] |= current_times[i];
-        }
-
+        bitwise_and_mut(overall_times, current_times);
         return vec![current_courses.clone()];
     }
 
     let mut ret = Vec::new();
 
-    for section in &courses[idx] {
-        let curr_sec_times = TIMES.get(section).unwrap();
-        let section_conflicts = bitwise_and(TIMES.get(section).unwrap(), current_times);
+    for section in courses[idx] {
+        let curr_sec_times = CRN_TIMES.get(section).unwrap();
+        let section_conflicts = bitwise_and(CRN_TIMES.get(section).unwrap(), current_times);
         if section_conflicts.iter().any(|cnf| cnf != &0) {
             continue;
         }
@@ -86,16 +93,47 @@ fn generate_schedules(
     ret
 }
 
-fn bitwise_and(t1: &[u64; 3], t2: &[u64; 3]) -> [u64; 3] {
-    let mut ret = [0; 3];
-    for i in 0..3 {
-        ret[i] = t1[i] & t2[i];
+#[wasm_bindgen(js_name = "setSelected")]
+pub fn set_selected(crn: String, selected: bool) {
+    let crn: u32 = crn.parse().unwrap();
+    let mut selected_courses_map = SELECTED_COURSES.write().unwrap();
+
+    let course_name = CRN_COURSES.get(&crn).unwrap();
+    if selected {
+        if !selected_courses_map.contains_key(course_name) {
+            selected_courses_map.insert(course_name, HashSet::new());
+        }
+
+        selected_courses_map
+            .get_mut(course_name)
+            .unwrap()
+            .insert(crn);
+    } else if selected_courses_map.contains_key(course_name) {
+        selected_courses_map
+            .get_mut(course_name)
+            .unwrap()
+            .remove(&crn);
     }
-    ret
 }
 
-fn bitwise_xor_mut(t1: &mut [u64; 3], t2: &[u64; 3]) {
-    for i in 0..3 {
-        t1[i] ^= t2[i];
-    }
+#[wasm_bindgen(js_name = "isInConflict")]
+pub fn is_in_conflict(crn: u32) -> bool {
+    let crn_times = CRN_TIMES.get(&crn).unwrap();
+    let curr_times = CURR_TIMES.read().unwrap();
+
+    console_log!(
+        "Checking if crn {} ({:?}) conflicts with global schedule of {:?}",
+        crn,
+        crn_times,
+        *curr_times
+    );
+
+    bitwise_and(crn_times, &curr_times)
+        .iter()
+        .any(|conf| conf != &0)
+}
+
+#[wasm_bindgen(js_name = "getSchedule")]
+pub fn get_schedule(idx: usize) -> Box<[u32]> {
+    SCHEDULES.read().unwrap()[idx].clone().into_boxed_slice()
 }

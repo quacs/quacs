@@ -20,3 +20,23 @@ macro_rules! bm_end {
         web_sys::console::time_end_with_label($name);
     };
 }
+
+pub fn bitwise_and(t1: &[u64; 3], t2: &[u64; 3]) -> [u64; 3] {
+    let mut ret = [0; 3];
+    for i in 0..3 {
+        ret[i] = t1[i] & t2[i];
+    }
+    ret
+}
+
+pub fn bitwise_xor_mut(t1: &mut [u64; 3], t2: &[u64; 3]) {
+    for i in 0..3 {
+        t1[i] ^= t2[i];
+    }
+}
+
+pub fn bitwise_and_mut(t1: &mut [u64; 3], t2: &[u64; 3]) {
+    for i in 0..3 {
+        t1[i] &= t2[i];
+    }
+}
