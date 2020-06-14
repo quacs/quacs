@@ -51,7 +51,16 @@
       <div class="container-fluid" style="margin-top: 1rem;">
         <div class="row">
           <div class="col-lg-1"></div>
-          <div class="col-lg"><router-view /></div>
+          <div class="col-lg">
+            <b-alert
+              variant="warning"
+              show
+              class="sticky-top"
+              :class="{ invisible: false }"
+              >Calculating conflicts <b-spinner label="Spinning"></b-spinner
+            ></b-alert>
+            <router-view />
+          </div>
           <div class="col-lg-1"></div>
         </div>
       </div>
@@ -198,5 +207,9 @@ footer {
   background-color: #fff;
   outline: none;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.16);
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>
