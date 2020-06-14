@@ -1,14 +1,10 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
-import {
-  generateCurrentSchedulesAndConflicts as workerGenerateCurrentSchedulesAndConflicts,
-  getInConflict as workerGetInConflict,
-  getSchedule as workerGetSchedule,
-  init as workerInit,
-  setSelected as workerSetSelected,
-} from "@/workers/schedule.worker";
+import * as quacsWorker from "@/workers/schedule.worker";
 import Vue from "vue";
-import store from "..";
+
+// yay typescript fun
+const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
@@ -31,25 +27,39 @@ export default class Schedule extends VuexModule {
   @Mutation
   setSelected(p: { crn: string; selected: boolean }): void {
     Vue.set(this.selectedSections, p.crn, p.selected);
-    workerSetSelected(p.crn, p.selected);
+    worker.setSelected(p.crn, p.selected);
   }
 
-  //does not need to be mutation
-  @Mutation
-  init(): void {
-    workerInit(store.state.departments);
+  @Action({ rawError: true })
+  async init(): Promise<void> {
+    // eslint-disable-next-line
+    console.log("initializing worker");
+    await worker.init();
+    // eslint-disable-next-line
+    console.log("worker initialized");
+
+    for (const sec in this.selectedSections) {
+      if (this.selectedSections[sec]) {
+        await worker.setSelected(sec, true);
+      }
+    }
+
+    this.context.commit(
+      "setNumSchedules",
+      await worker.generateCurrentSchedulesAndConflicts()
+    );
   }
 
   //does not need to be mutation
   @Mutation
   initSelectedSetions() {
     for (const section in this.selectedSections) {
-      workerSetSelected(section, this.selectedSections[section]);
+      worker.setSelected(section, this.selectedSections[section]);
     }
   }
 
   get getInConflict(): (crn: number) => Promise<boolean> {
-    return (crn: number) => workerGetInConflict(crn);
+    return (crn: number) => worker.getInConflict(crn);
   }
 
   get isSelected(): (crn: string) => boolean {
@@ -57,7 +67,7 @@ export default class Schedule extends VuexModule {
   }
 
   get getSchedule() {
-    return (idx: number) => workerGetSchedule(idx);
+    return (idx: number) => worker.getSchedule(idx);
   }
 
   get numSchedules() {
@@ -74,7 +84,7 @@ export default class Schedule extends VuexModule {
   async generateCurrentSchedulesAndConflicts(): Promise<void> {
     this.context.commit(
       "setNumSchedules",
-      await workerGenerateCurrentSchedulesAndConflicts()
+      await worker.generateCurrentSchedulesAndConflicts()
     );
   }
 }

@@ -18,10 +18,7 @@ module.exports = {
         test: /\.worker\.ts$/i,
         use: [
           {
-            loader: "comlink-loader",
-            options: {
-              singleton: true,
-            },
+            loader: "workerize-loader",
           },
         ],
       },

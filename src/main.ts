@@ -57,8 +57,7 @@ new Vue({
   render: (h) => h(App),
   beforeCreate() {
     this.$store.commit("schedule/initializeStore");
-    this.$store.commit("schedule/init");
-    this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+    this.$store.dispatch("schedule/init");
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);
