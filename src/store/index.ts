@@ -17,9 +17,9 @@ import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
 import PREREQUISITES_JSON from "./data/prerequisites.json";
 
-import sections from "./modules/sections";
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
+import schedule from "./modules/schedule";
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios);
@@ -31,10 +31,25 @@ export default new Vuex.Store({
     schools: SCHOOLS_JSON as { [id: string]: { code: string; name: string }[] },
     prerequisitesData: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
     courseSizes: {} as { [id: string]: CourseSize },
+    lastNewSchedule: 0,
+    warningMessage: "",
+  },
+  getters: {
+    shouldShowAlert: (state) => {
+      return state.warningMessage !== "";
+    },
+
+    warningMessage: (state) => {
+      return state.warningMessage;
+    },
   },
   mutations: {
     SET_COURSE_SIZES(state, courseSizes) {
       state.courseSizes = courseSizes;
+    },
+
+    setWarningMessage(state, message) {
+      state.warningMessage = message;
     },
   },
   actions: {
@@ -67,22 +82,24 @@ export default new Vuex.Store({
     },
   },
   modules: {
-    sections,
     settings,
     prerequisites,
+    schedule,
   },
   plugins: [
     createPersistedState({
       paths: [
-        "sections.selectedSections",
-        "sections.storedVersion",
+        "schedule.selectedSections",
+        "schedule.storedVersion",
         "settings.timePreference",
         "settings.colorTheme",
         "prerequisites.priorCourses",
       ],
       rehydrated: (store) => {
-        // @ts-expect-error: Typescript doesn't know that `store` has commit and state attributes
-        store.commit("sections/populateConflicts", store.state.departments);
+        // @ts-expect-error: Typescript doesn't know that `store` can commit
+        store.commit("schedule/initSelectedSetions");
+        // @ts-expect-error: Typescript doesn't know that `store` can dispatch
+        store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
       },
     }),
   ],

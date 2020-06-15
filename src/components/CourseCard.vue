@@ -23,7 +23,12 @@
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
-    <div class="card-body" :class="{ expanded: expanded }" v-if="expanded">
+    <div
+      class="card-body"
+      :class="{ expanded: expanded }"
+      v-if="expanded"
+      :key="course.id + lastNewSchedule"
+    >
       <Sections v-bind:course="course" v-on:open-prerequisite-modal="emitCrn" />
     </div>
   </div>
@@ -77,6 +82,10 @@ export default class CourseCard extends Vue {
 
   emitCrn(crn: string) {
     this.$emit("open-prerequisite-modal", crn);
+  }
+
+  get lastNewSchedule() {
+    return this.$store.state.schedule.lastNewSchedule;
   }
 }
 </script>

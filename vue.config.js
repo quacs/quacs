@@ -12,4 +12,17 @@ module.exports = {
       skipWaiting: true,
     },
   },
+  configureWebpack: (config) => {
+    config.module.rules = [
+      {
+        test: /\.worker\.ts$/i,
+        use: [
+          {
+            loader: "workerize-loader",
+          },
+        ],
+      },
+      ...config.module.rules,
+    ];
+  },
 };
