@@ -47,13 +47,7 @@ pub fn generate_schedules_and_conflicts() -> usize {
         #[allow(unused_assignments)]
         let mut times = CURR_TIMES.write().unwrap();
         *times = [u64::MAX; 3];
-        let schedules = generate_schedules(
-            0,
-            &selected_courses,
-            &mut Vec::with_capacity(selected_courses.len()),
-            &mut [0; 3],
-            &mut times,
-        );
+        let schedules = generate_schedules_driver(&mut selected_courses, &mut times);
         bm_end!("generate schedules");
 
         let schedules_len = schedules.len();
@@ -69,9 +63,67 @@ pub fn generate_schedules_and_conflicts() -> usize {
     schedules_len
 }
 
+fn generate_schedules_driver(
+    courses: &mut Vec<&HashSet<u32>>,
+    global_times: &mut [u64; 3],
+) -> Vec<Vec<u32>> {
+    courses.sort_by_cached_key(|set| set.len());
+
+    let (required_times, conflict) = courses
+        .iter()
+        .take_while(|set| set.len() == 1)
+        .map(|set| set.iter().next().unwrap())
+        .fold(([0u64; 3], false), |(conf, internal_conf), crn| {
+            let crn_times = CRN_TIMES.get(crn).unwrap();
+
+            let conflict_with_prev = bitwise_and(&conf, crn_times).iter().any(|cnf| *cnf != 0);
+
+            (
+                bitwise_or(&conf, crn_times),
+                internal_conf || conflict_with_prev,
+            )
+        });
+
+    if conflict {
+        // There's a conflict inside the 1 section conflict, so abort early
+        return Vec::new();
+    } else if required_times.iter().all(|cnf| *cnf == 0) {
+        // There are no 1 section courses, so we can skip all of the below
+        let courses = courses.iter().map(|set| (*set).clone()).collect();
+        return generate_schedules(0, &courses, &mut Vec::new(), &mut [0; 3], global_times);
+    }
+
+    let mut courses: Vec<HashSet<u32>> = courses
+        .iter()
+        .map(|set| {
+            if set.len() == 1 {
+                (*set).clone()
+            } else {
+                set.iter()
+                    .filter(|crn| {
+                        let crn_times = CRN_TIMES.get(crn).unwrap();
+                        bitwise_and(crn_times, &required_times)
+                            .iter()
+                            .all(|cnf| cnf == &0)
+                    })
+                    .cloned()
+                    .collect()
+            }
+        })
+        .collect();
+
+    courses.sort_by_cached_key(|set| set.len());
+
+    if courses[0].len() == 0 {
+        Vec::new()
+    } else {
+        generate_schedules(0, &courses, &mut Vec::new(), &mut [0; 3], global_times)
+    }
+}
+
 fn generate_schedules(
     idx: usize,
-    courses: &Vec<&HashSet<u32>>,
+    courses: &Vec<HashSet<u32>>,
     current_courses: &mut Vec<u32>,
     current_times: &mut [u64; 3],
     overall_times: &mut [u64; 3],
@@ -83,7 +135,7 @@ fn generate_schedules(
 
     let mut ret = Vec::new();
 
-    for section in courses[idx] {
+    for section in &courses[idx] {
         let curr_sec_times = CRN_TIMES.get(section).unwrap();
         let section_conflicts = bitwise_and(CRN_TIMES.get(section).unwrap(), current_times);
         if section_conflicts.iter().any(|cnf| cnf != &0) {
@@ -133,31 +185,59 @@ pub fn set_selected(crn: u32, selected: bool) {
     console_log!("Selected courses: {:?}", *selected_courses_map);
 }
 
+#[wasm_bindgen(js_name = "everythingConflicts")]
+pub fn everything_conflicts() -> bool {
+    CURR_TIMES
+        .read()
+        .unwrap()
+        .iter()
+        .all(|cnf| cnf == &u64::MAX)
+}
+
 #[wasm_bindgen(js_name = "isInConflict")]
 pub fn is_in_conflict(crn: u32) -> bool {
-    let selected_courses_map = SELECTED_COURSES.read().unwrap();
-    let course_name = CRN_COURSES.get(&crn).unwrap();
-    if selected_courses_map
-        .get(course_name)
-        .unwrap_or(&HashSet::new())
-        .contains(&crn)
-    {
-        return false; // don't mark currently selected courses as conflicting
+    if everything_conflicts() {
+        return true;
     }
 
-    let crn_times = CRN_TIMES.get(&crn).unwrap();
-    let curr_times = CURR_TIMES.read().unwrap();
+    let selected_courses_map = SELECTED_COURSES.read().unwrap();
+    let course_name = CRN_COURSES.get(&crn).unwrap();
 
-    console_log!(
-        "Checking if crn {} ({:?}) conflicts with global schedule of {:?}",
-        crn,
-        crn_times,
-        *curr_times
-    );
+    if let Some(selected) = selected_courses_map.get(course_name) {
+        if selected.contains(&crn) {
+            // We've selected the current section as conflicting - assume it's fine
+            false
+        } else {
+            // Assuming we didn't have other sections from this course selected, do we conflict?
+            // This check stops us from saying that every section of a course conflicts if we've
+            // just selected one, since courses usually have a common timeslot (e.g. test slots)
+            let mut course_vec: Vec<&HashSet<u32>> = selected_courses_map
+                .iter()
+                .filter(|(name, _)| name != &course_name)
+                .map(|(_, sections)| sections)
+                .collect();
+            let mut tmp_set = HashSet::new();
+            tmp_set.insert(crn);
+            course_vec.push(&tmp_set);
 
-    bitwise_and(crn_times, &curr_times)
-        .iter()
-        .any(|conf| conf != &0)
+            generate_schedules_driver(&mut course_vec, &mut [0; 3]).is_empty()
+        }
+    } else {
+        // This is a normal section, so we can just check if the timeslots overlap
+        let crn_times = CRN_TIMES.get(&crn).unwrap();
+        let curr_times = CURR_TIMES.read().unwrap();
+
+        console_log!(
+            "Checking if crn {} ({:?}) conflicts with global schedule of {:?}",
+            crn,
+            crn_times,
+            *curr_times
+        );
+
+        bitwise_and(crn_times, &curr_times)
+            .iter()
+            .any(|conf| conf != &0)
+    }
 }
 
 #[wasm_bindgen(js_name = "getSchedule")]
