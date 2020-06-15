@@ -13,6 +13,8 @@ export default class Schedule extends VuexModule {
   CURRENT_STORAGE_VERSION = "0.0.3";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
   lastNewSchedule = 0; //Keeps track of the time the last new schedule was generated
+  currentlyGeneratingSchedules = false;
+  needToGenerateSchedules = false;
 
   @Mutation
   initializeStore(): void {
@@ -50,7 +52,6 @@ export default class Schedule extends VuexModule {
     );
   }
 
-  //does not need to be mutation
   @Mutation
   initSelectedSetions() {
     for (const section in this.selectedSections) {
@@ -80,11 +81,58 @@ export default class Schedule extends VuexModule {
     this.lastNewSchedule = Date.now();
   }
 
+  @Mutation
+  setNeedToGenerateSchedules(state: boolean) {
+    this.needToGenerateSchedules = state;
+  }
+
+  @Mutation
+  setCurrentlyGeneratingSchedules(state: boolean) {
+    this.currentlyGeneratingSchedules = state;
+  }
+
+  get getNeedToGenerateSchedules() {
+    return this.needToGenerateSchedules;
+  }
+
+  get getCurrentlyGeneratingSchedules() {
+    return this.currentlyGeneratingSchedules;
+  }
+
   @Action({ rawError: true })
   async generateCurrentSchedulesAndConflicts(): Promise<void> {
-    this.context.commit(
-      "setNumSchedules",
-      await worker.generateCurrentSchedulesAndConflicts()
-    );
+    this.context.commit("setNeedToGenerateSchedules", true);
+
+    if (this.context.getters.currentlyGeneratingSchedules) {
+      // We've marked that we need to generate the schedule again,
+      // so the function call currently running will take it from here
+      return;
+    }
+
+    this.context.commit("setCurrentlyGeneratingSchedules", true);
+    this.context.commit("setWarningMessage", "Generating schedules...", {
+      root: true,
+    });
+
+    while (this.context.getters.getNeedToGenerateSchedules) {
+      this.context.commit("setNeedToGenerateSchedules", false);
+
+      this.context.commit(
+        "setNumSchedules",
+        await worker.generateCurrentSchedulesAndConflicts()
+      );
+    }
+
+    /*
+    setTimeout(() => {
+      this.context.commit("setWarningMessage", "", {
+        root: true,
+      });
+
+      this.context.commit("schedule/setCurrentlyGeneratingSchedules", false, {
+        root: true,
+      });
+    }, 10000);
+    */
   }
 }

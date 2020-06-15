@@ -32,10 +32,24 @@ export default new Vuex.Store({
     prerequisitesData: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
     courseSizes: {} as { [id: string]: CourseSize },
     lastNewSchedule: 0,
+    warningMessage: "",
+  },
+  getters: {
+    shouldShowAlert: (state) => {
+      return state.warningMessage !== "";
+    },
+
+    warningMessage: (state) => {
+      return state.warningMessage;
+    },
   },
   mutations: {
     SET_COURSE_SIZES(state, courseSizes) {
       state.courseSizes = courseSizes;
+    },
+
+    setWarningMessage(state, message) {
+      state.warningMessage = message;
     },
   },
   actions: {

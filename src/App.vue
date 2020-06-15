@@ -56,9 +56,15 @@
               variant="warning"
               show
               class="sticky-top"
-              :class="{ invisible: false }"
-              >Calculating conflicts <b-spinner label="Spinning"></b-spinner
-            ></b-alert>
+              :class="{ invisible: shouldShowAlert }"
+              ><b-spinner
+                style="width: 1.5rem; height: 1.5rem;"
+                label="Spinning"
+              ></b-spinner
+              ><span class="warning-message">{{
+                warningMessage
+              }}</span></b-alert
+            >
             <router-view />
           </div>
           <div class="col-lg-1"></div>
@@ -95,11 +101,15 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 import Settings from "@/components/Settings.vue";
 
 @Component({
   components: {
     Settings,
+  },
+  computed: {
+    ...mapGetters(["shouldShowAlert", "warningMessage"]),
   },
 })
 export default class App extends Vue {
@@ -207,6 +217,11 @@ footer {
   background-color: #fff;
   outline: none;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.16);
+}
+
+.warning-message {
+  font-size: 1.5rem;
+  margin-left: 1.5rem;
 }
 
 .invisible {

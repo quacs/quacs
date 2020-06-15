@@ -161,6 +161,7 @@ export default class Section extends Vue {
     if (newState !== null) {
       selected = newState;
     }
+
     this.$store.commit("schedule/setSelected", {
       crn: section.crn,
       selected,

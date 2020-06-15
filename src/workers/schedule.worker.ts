@@ -1,7 +1,4 @@
-// wasm is only null until we call init().  Since that's the first thing we call and this
-// is a single threaded worker, for all practical purposes it's always going to be non-null.
-// below typescript fuckery stops us from needing to check if it's null in each member function.
-let wasm: typeof import("@/quacs-rs") = (null as unknown) as typeof import("@/quacs-rs");
+let wasm: typeof import("@/quacs-rs") | null = null;
 
 export const init = async () => {
   const start = Date.now();
@@ -15,17 +12,37 @@ export const init = async () => {
 };
 
 export const generateCurrentSchedulesAndConflicts = async () => {
+  while (wasm === null) {
+    await new Promise((resolve: (value?: unknown) => void) =>
+      setTimeout(resolve, 0)
+    );
+  }
   wasm.generateSchedulesAndConflicts();
 };
 
 export const setSelected = async (crn: string, selected: boolean) => {
-  return wasm.setSelected(crn, selected);
+  while (wasm === null) {
+    await new Promise((resolve: (value?: unknown) => void) =>
+      setTimeout(resolve, 0)
+    );
+  }
+  return wasm.setSelected(parseInt(crn), selected);
 };
 
 export const getInConflict = async (crn: number) => {
+  while (wasm === null) {
+    await new Promise((resolve: (value?: unknown) => void) =>
+      setTimeout(resolve, 0)
+    );
+  }
   return wasm.isInConflict(crn);
 };
 
 export const getSchedule = async (idx: number) => {
+  while (wasm === null) {
+    await new Promise((resolve: (value?: unknown) => void) =>
+      setTimeout(resolve, 0)
+    );
+  }
   return wasm.getSchedule(idx);
 };
