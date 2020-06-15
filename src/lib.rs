@@ -135,6 +135,16 @@ pub fn set_selected(crn: u32, selected: bool) {
 
 #[wasm_bindgen(js_name = "isInConflict")]
 pub fn is_in_conflict(crn: u32) -> bool {
+    let selected_courses_map = SELECTED_COURSES.read().unwrap();
+    let course_name = CRN_COURSES.get(&crn).unwrap();
+    if selected_courses_map
+        .get(course_name)
+        .unwrap_or(&HashSet::new())
+        .contains(&crn)
+    {
+        return false; // don't mark currently selected courses as conflicting
+    }
+
     let crn_times = CRN_TIMES.get(&crn).unwrap();
     let curr_times = CURR_TIMES.read().unwrap();
 
