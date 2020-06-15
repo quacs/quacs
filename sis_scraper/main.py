@@ -297,7 +297,7 @@ with requests.Session() as s:
 
                 conflicts[section["crn"]] = "".join(str(e) for e in conflict)
 
-    with open("parsed.rs", "w") as f:
+    with open("parsed.rs", "w") as f:  # -{os.getenv("CURRENT_TERM")}
         f.write(
             """\
 //This file was automatically generated. Please do not modify it directly

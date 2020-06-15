@@ -6,6 +6,7 @@ transcript_scraper/*_files/*
 
 *.json
 *.msgpack
+*.rs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
