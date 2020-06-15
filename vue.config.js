@@ -24,5 +24,9 @@ module.exports = {
       },
       ...config.module.rules,
     ];
+    config.output = {
+      globalObject: "self",
+      ...config.output,
+    };
   },
 };
