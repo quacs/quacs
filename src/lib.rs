@@ -94,8 +94,8 @@ fn generate_schedules(
 }
 
 #[wasm_bindgen(js_name = "setSelected")]
-pub fn set_selected(crn: String, selected: bool) {
-    let crn: u32 = crn.parse().unwrap();
+pub fn set_selected(crn: u32, selected: bool) {
+    console_log!("Setting crn {} to {}", crn, selected);
     let mut selected_courses_map = SELECTED_COURSES.write().unwrap();
 
     let course_name = CRN_COURSES.get(&crn).unwrap();
@@ -135,5 +135,6 @@ pub fn is_in_conflict(crn: u32) -> bool {
 
 #[wasm_bindgen(js_name = "getSchedule")]
 pub fn get_schedule(idx: usize) -> Box<[u32]> {
+    console_log!("Getting schedule #{}", idx);
     SCHEDULES.read().unwrap()[idx].clone().into_boxed_slice()
 }
