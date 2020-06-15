@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - staging
 jobs:
   gh-pages-deploy:
     name: Deploying to gh-pages
