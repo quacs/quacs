@@ -7,7 +7,7 @@
         tabindex="0"
         v-on:keyup.enter="toggleAll()"
       >
-        <th style="width: 100%;">Section Info</th>
+        <th style="width: 100%;">Toggle all sections</th>
         <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
           {{ day }}
         </th>
@@ -29,28 +29,33 @@
         v-on:keyup.enter="toggleSelection(section)"
       >
         <td class="info-cell">
-          <!-- <span>  <font-awesome-icon
-            :icon="['fas', 'info-circle']"
-            title="Missing Prerequisites"
-            class="prerequisiteError"
-            :class="{
-              hidden: hasMetAllPrerequisites(section.crn),
-            }"
-          ></font-awesome-icon></span> -->
+          <SectionInfo class="more-info" :section="section"></SectionInfo>
           <span class="font-weight-bold" title="Section number">{{
             section.sec
           }}</span
           >-<span title="CRN: the unique id given to each section in sis">{{
             section.crn
           }}</span>
-          <span class="padding-left" title="Professor(s)">{{
-            section.timeslots[0].instructor
-          }}</span>
-          <span class="padding-left"
+          <span
+            class="padding-left prerequisiteError"
+            :class="{
+              hidden: hasMetAllPrerequisites(section.crn),
+            }"
+            title="Click the more info button for details"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'exclamation-triangle']"
+            ></font-awesome-icon>
+            Missing Prerequisites</span
+          >
+          <span title="Professor(s)">
+            {{ section.timeslots[0].instructor }}
+          </span>
+          <template v-if="section.timeslots[0].dateStart"
             >({{ section.timeslots[0].dateStart }}-{{
               section.timeslots[0].dateEnd
-            }})</span
-          >
+            }})
+          </template>
           <span
             class="padding-left"
             :title="
@@ -80,8 +85,8 @@
               </span>
             </template>
           </div>
+          <!-- End mobile times -->
         </td>
-        <!-- End mobile times -->
         <!-- Desktop times -->
         <td v-for="day in days" v-bind:key="day" class="time-cell desktop-only">
           <!-- TODO: fix different instructors for same timeslot -->
@@ -113,6 +118,7 @@
 import { Course, CourseSection, Timeslot } from "@/typings";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
+import SectionInfo from "@/components/sections/SectionInfo.vue";
 import {
   formatCourseSize,
   formatTimeslot,
@@ -121,6 +127,9 @@ import {
 } from "@/utilities";
 
 @Component({
+  components: {
+    SectionInfo,
+  },
   computed: {
     formatTimeslot,
     formatCourseSize,
@@ -320,7 +329,7 @@ export default class Section extends Vue {
 }
 
 .padding-left {
-  padding-left: 0.6rem;
+  padding-left: 0.2rem;
 }
 
 .select-section {
@@ -360,11 +369,17 @@ export default class Section extends Vue {
 }
 
 .prerequisiteError {
-  color: black;
-  margin-right: 0.2rem;
+  background: var(--prerequisite-error-icon);
+  color: var(--prerequisite-text);
+  margin: 0px 0.3rem;
+  padding: 0.2rem 0.4rem;
 }
 
 .hidden {
   display: none;
+}
+
+.more-info {
+  width: auto;
 }
 </style>

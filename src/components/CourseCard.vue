@@ -7,19 +7,29 @@
       v-on:keyup.enter="toggleExpanded()"
       tabindex="0"
     >
-      <font-awesome-icon
-        :icon="['fas', 'caret-right']"
-        class="open_close_icon"
-        :class="{ opened_icon: expanded }"
-      ></font-awesome-icon>
+      <div style="display: flex;">
+        <span style="float: left; flex-grow: 2;">
+          <font-awesome-icon
+            :icon="['fas', 'caret-right']"
+            class="open_close_icon"
+            :class="{ opened_icon: expanded }"
+          ></font-awesome-icon>
 
-      <span class="font-weight-bold">
-        <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>
-        {{ course.title }}</span
-      >
-      ꞏ {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
-      <br />
-
+          <span class="font-weight-bold">
+            <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>
+            {{ course.title }}</span
+          >
+          ꞏ {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
+        </span>
+        <!--
+        This code should be left here in case we ever need to add a more info button to a course
+        <font-awesome-icon
+          :icon="['fas', 'info-circle']"
+          class="open_close_icon info-icon"
+          title="More info"
+        ></font-awesome-icon> -->
+      </div>
+      <!-- <br> -->
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
@@ -29,7 +39,7 @@
       v-if="expanded"
       :key="course.id + lastNewSchedule"
     >
-      <Sections v-bind:course="course" v-on:open-prerequisite-modal="emitCrn" />
+      <Sections v-bind:course="course" />
     </div>
   </div>
 </template>
@@ -80,10 +90,6 @@ export default class CourseCard extends Vue {
     this.expanded = !this.expanded;
   }
 
-  emitCrn(crn: string) {
-    this.$emit("open-prerequisite-modal", crn);
-  }
-
   get lastNewSchedule() {
     return this.$store.state.schedule.lastNewSchedule;
   }
@@ -123,5 +129,20 @@ export default class CourseCard extends Vue {
   font-family: monospace;
   font-size: 1.5rem;
   margin-left: 0.3rem;
+}
+
+.info-icon {
+  transition: all 0.2s ease-in-out;
+  float: right;
+  font-size: 3rem;
+}
+.info-icon:hover {
+  transform: scale(1.5);
+}
+
+@media (min-width: 992px) {
+  .info-icon {
+    font-size: 2rem;
+  }
 }
 </style>

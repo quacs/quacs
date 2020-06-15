@@ -54,7 +54,6 @@
         v-for="course in selectedCourses"
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
-        v-on:open-prerequisite-modal="setPrerequisiteModalCrn"
       />
     </div>
   </div>
@@ -66,7 +65,6 @@ import { mapGetters } from "vuex";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
-import PrerequisiteModal from "@/components/PrerequisiteModal.vue";
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -77,12 +75,10 @@ function mod(n: number, m: number) {
   components: {
     Calendar,
     CourseCard,
-    PrerequisiteModal,
   },
 })
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];
-  prerequisiteModalCrn = "";
   currentScheduleNumber = 0;
   currentScheduleCRNs = [];
   // loadedWithCRNs = true;
@@ -124,10 +120,6 @@ export default class Schedule extends Vue {
 
   get lastNewSchedule() {
     return this.$store.state.schedule.lastNewSchedule;
-  }
-
-  setPrerequisiteModalCrn(crn: string) {
-    this.prerequisiteModalCrn = crn;
   }
 
   get visibleCurrentScheduleNumber() {

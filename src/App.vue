@@ -14,6 +14,7 @@
             <input
               id="search-bar"
               placeholder="Search Courses"
+              aria-label="Search Courses"
               v-on:input="search($event.target.value)"
               v-on:keyup.enter="search($event.target.value, 0)"
             />
@@ -25,12 +26,12 @@
           </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
-              <!-- <b-nav-item
+              <b-nav-item
                 to="/prerequisites"
                 class="nav-text"
                 :active="this.$route.path == '/prerequisites'"
                 >Prerequisites</b-nav-item
-              > -->
+              >
               <b-nav-item
                 to="/schedule"
                 class="nav-text"
@@ -52,10 +53,11 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
+            <router-view />
             <b-alert
               variant="warning"
               show
-              class="sticky-top"
+              class="fixed-bottom sticky-top"
               :class="{ invisible: shouldShowAlert }"
               ><b-spinner
                 style="width: 1.5rem; height: 1.5rem;"
@@ -65,7 +67,6 @@
                 warningMessage
               }}</span></b-alert
             >
-            <router-view />
           </div>
           <div class="col-lg-1"></div>
         </div>
@@ -78,6 +79,7 @@
           href="https://github.com/quacs/quacs"
           title="Visit our GitHub"
           aria-label="Visit our GitHub"
+          target="_blank"
           ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
         </a>
         <img
@@ -89,6 +91,7 @@
           href="https://discord.gg/EyGZTAP"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
+          target="_blank"
           ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
         </a>
       </div>

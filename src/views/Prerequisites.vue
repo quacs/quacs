@@ -126,6 +126,7 @@
         href="https://discord.gg/EyGZTAP"
         title="Join our development Discord server"
         aria-label="Join our development Discord server"
+        target="_blank"
         >https://discord.gg/EyGZTAP
       </a>
       <template v-slot:modal-footer="{ ok }">
