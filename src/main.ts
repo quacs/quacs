@@ -28,6 +28,7 @@ import {
   faExclamationTriangle,
   faInfoCircle,
   faTrash,
+  faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
@@ -40,7 +41,8 @@ library.add(
   faInfoCircle,
   faCalendar,
   faTrash,
-  faExclamationTriangle
+  faExclamationTriangle,
+  faUserSlash
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

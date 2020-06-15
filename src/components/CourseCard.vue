@@ -29,6 +29,33 @@
           title="More info"
         ></font-awesome-icon> -->
       </div>
+      <div>
+        <span v-if="missingPrerequisites">
+          <span
+            class="padding-left prerequisiteError"
+            title="Click the more info button for details"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'exclamation-triangle']"
+            ></font-awesome-icon>
+            Missing prerequisites<template v-if="missingPrerequisites === 1">
+              for some sections</template
+            ></span
+          >
+        </span>
+        <span v-if="fullSections()">
+          <span
+            class="padding-left prerequisiteError"
+            title="Click the more info button for details"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'user-slash']"
+            ></font-awesome-icon>
+            <template v-if="fullSections() === 2">Full Course</template>
+            <template v-else>Full Sections</template></span
+          >
+        </span>
+      </div>
       <!-- <br> -->
       {{ getDescription(course.subj, course.crse) }}
     </div>
@@ -47,12 +74,48 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
+import { hasMetAllPrerequisites } from "@/utilities";
 
 import Sections from "./sections/Sections.vue";
 
 @Component({
   components: {
     Sections,
+  },
+  computed: {
+    hasMetAllPrerequisites,
+    missingPrerequisites: function (): number {
+      let missingCount = 0;
+      // @ts-expect-error: no u typescript, this does exist
+      for (const section of this.course.sections) {
+        // @ts-expect-error: no u typescript, this does exist
+        if (!this.hasMetAllPrerequisites(section.crn)) {
+          missingCount++;
+        }
+      }
+      //2==missing all section prerequisites, 1==missing some sections, 0==not missing any prerequisites
+      return (
+        // @ts-expect-error: no u typescript, this does exist
+        (missingCount === this.course.sections.length) + (missingCount > 0)
+      );
+    },
+    fullSections: function () {
+      return (): number => {
+        let emptyCount = 0;
+        // @ts-expect-error: no u typescript, this does exist
+        for (const section of this.course.sections) {
+          if (
+            this.$store.state.courseSizes[section.crn] &&
+            this.$store.state.courseSizes[section.crn].avail === 0
+          ) {
+            emptyCount++;
+          }
+        }
+        //2==missing all section prerequisites, 1==missing some sections, 0==not missing any prerequisites
+        // @ts-expect-error: no u typescript, this does exist
+        return (emptyCount === this.course.sections.length) + (emptyCount > 0);
+      };
+    },
   },
 })
 export default class CourseCard extends Vue {
@@ -144,5 +207,12 @@ export default class CourseCard extends Vue {
   .info-icon {
     font-size: 2rem;
   }
+}
+
+.prerequisiteError {
+  background: var(--prerequisite-error-icon);
+  color: var(--prerequisite-text);
+  margin: 0px 0.3rem;
+  padding: 0.2rem 0.4rem;
 }
 </style>
