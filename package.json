@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "./build_wasm.sh debug && vue-cli-service serve",
     "build": "./build_wasm.sh && vue-cli-service build",
+    "debug-build": "./build_wasm.sh debug && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
   },
