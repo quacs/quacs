@@ -30,10 +30,10 @@
         ></font-awesome-icon> -->
       </div>
       <div>
-        <span v-if="missingPrerequisites">
+        <span v-if="prerequisiteCheckingState && missingPrerequisites">
           <span
             class="padding-left prerequisiteError"
-            title="Click the more info button for details"
+            title="Expand sections for more details"
           >
             <font-awesome-icon
               :icon="['fas', 'exclamation-triangle']"
@@ -46,7 +46,7 @@
         <span v-if="fullSections()">
           <span
             class="padding-left prerequisiteError"
-            title="Click the more info button for details"
+            title="Expand sections for more details"
           >
             <font-awesome-icon
               :icon="['fas', 'user-slash']"
@@ -75,6 +75,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
 import { hasMetAllPrerequisites } from "@/utilities";
+import { mapGetters } from "vuex";
 
 import Sections from "./sections/Sections.vue";
 
@@ -84,6 +85,7 @@ import Sections from "./sections/Sections.vue";
   },
   computed: {
     hasMetAllPrerequisites,
+    ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     missingPrerequisites: function (): number {
       let missingCount = 0;
       // @ts-expect-error: no u typescript, this does exist

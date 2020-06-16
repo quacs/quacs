@@ -94,6 +94,7 @@ export default new Vuex.Store({
         "settings.timePreference",
         "settings.colorTheme",
         "prerequisites.priorCourses",
+        "prerequisites.enableChecking",
       ],
       rehydrated: (store) => {
         // @ts-expect-error: Typescript doesn't know that `store` can commit

@@ -41,6 +41,8 @@
         --prerequisite-jumbotron: #e9ecef;
         --prerequisite-error-icon: #ffc107;
         --prerequisite-text: #000000;
+        --taken-course: #228C3A;
+        --not-taken-course: #dc3545;
 
         --num-calendar-colors: 7;
 

@@ -13,6 +13,21 @@
     <b-modal :id="'section-info' + section.crn" title="Section Info">
       <div class="font-weight-bold">Prerequisites:</div>
       <span v-html="formatPrerequisites(section.crn) || 'None'"></span>
+      <template v-if="prerequisiteData.cross_list_courses">
+        <div class="font-weight-bold">Cross listed with:</div>
+        <span
+          v-for="course in prerequisiteData.cross_list_courses"
+          :key="course"
+          class="course"
+          :class="{
+            takenCourse:
+              course.split(' ').join('-') in
+              $store.getters['prerequisites/getPriorCourses'](),
+          }"
+          >{{ course }}
+        </span>
+        <!-- :class="{green:course.split(" ").join("-") in $store.getters["prerequisites/getPriorCourses"]()}" -->
+      </template>
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
           Close
@@ -30,6 +45,10 @@ import { formatPrerequisites } from "@/utilities";
 @Component({
   computed: {
     formatPrerequisites,
+    prerequisiteData: function () {
+      // @ts-expect-error: ts does not understand that sections exists on 'this'
+      return this.$store.state.prerequisitesData[this.section.crn];
+    },
   },
 })
 export default class SectionInfo extends Vue {
@@ -46,8 +65,7 @@ export default class SectionInfo extends Vue {
   width: auto !important;
 }
 .info-icon:hover,
-.info-icon:focus,
-.info-icon:active {
+.info-icon:focus {
   transform: scale(1.5);
 }
 
@@ -55,5 +73,13 @@ export default class SectionInfo extends Vue {
   .info-icon {
     font-size: 1.7rem !important;
   }
+}
+
+.course {
+  color: var(--not-taken-course);
+}
+
+.course.takenCourse {
+  color: var(--taken-course);
 }
 </style>

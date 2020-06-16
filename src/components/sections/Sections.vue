@@ -37,6 +37,7 @@
             section.crn
           }}</span>
           <span
+            v-if="prerequisiteCheckingState"
             class="padding-left prerequisiteError"
             :class="{
               hidden: hasMetAllPrerequisites(section.crn),
@@ -47,6 +48,21 @@
               :icon="['fas', 'exclamation-triangle']"
             ></font-awesome-icon>
             Missing Prerequisites</span
+          >
+          <span
+            class="padding-left prerequisiteError"
+            :class="{
+              hidden: !(
+                $store.state.courseSizes[section.crn] &&
+                $store.state.courseSizes[section.crn].avail === 0
+              ),
+            }"
+            title="Click the more info button for details"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'user-slash']"
+            ></font-awesome-icon>
+            Full Section</span
           >
           <span title="Professor(s)">
             {{ section.timeslots[0].instructor }}
@@ -137,6 +153,7 @@ import {
     hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime"]),
     ...mapGetters("schedule", ["isSelected"]),
+    ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapState(["courseSizes"]),
   },
 })

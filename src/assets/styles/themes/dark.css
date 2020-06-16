@@ -37,10 +37,12 @@
         --toast-background: #111111;
         --toast-text: #eeeeee;
         --trash-btn: #ffffff;
-        --trash-btn-hover: #ff0000;
+        --trash-btn-hover: #EA8591;
         --prerequisite-jumbotron: #4e4e4e;
         --prerequisite-error-icon: #8A6700;
         --prerequisite-text: #ffffff;
+        --taken-course: #2EBD4F;
+        --not-taken-course: #EA8591;
 }
 
 [data-theme="dark"] .navbar-toggler-icon {

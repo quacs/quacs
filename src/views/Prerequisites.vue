@@ -13,6 +13,9 @@
           (You may still be able to be signed into theses courses. Contact the
           professor and ask!)
         </p>
+        <b-form-checkbox switch size="lg" v-model="prerequisiteChecking"
+          >Enable prerequisite checking</b-form-checkbox
+        >
       </b-jumbotron>
     </div>
     <div>
@@ -156,6 +159,17 @@ import { mapGetters, mapState } from "vuex";
     },
     ...mapGetters("prerequisites", ["getPriorCourses"]),
     ...mapState(["courseIdToCourse"]),
+    prerequisiteChecking: {
+      get() {
+        return this.$store.state.prerequisites.enableChecking;
+      },
+      set() {
+        this.$store.commit(
+          "prerequisites/togglePrerequisiteChecking",
+          !this.$store.state.prerequisites.enableChecking
+        );
+      },
+    },
   },
 })
 export default class Prerequisites extends Vue {

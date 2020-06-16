@@ -201,9 +201,9 @@ function getPrerequisiteFormatHtml(
   for (const course of prerequisiteData.solo) {
     output += '<span  style="';
     if (course.split(" ").join("-") in priorCourses) {
-      output += "color: green;";
+      output += "color: var(--taken-course);";
     } else {
-      output += "color: red;";
+      output += "color: var(--not-taken-course);";
     }
     output += '">';
     output += course.split(" ").join("-");
@@ -213,6 +213,9 @@ function getPrerequisiteFormatHtml(
     }
   }
   iterations = prerequisiteData.nested.length;
+  if (prerequisiteData.solo.length > 0 && prerequisiteData.nested.length > 0) {
+    output += " " + prerequisiteData.type + " ";
+  }
   for (const nested of prerequisiteData.nested) {
     output += "(" + getPrerequisiteFormatHtml(priorCourses, nested) + ")";
     if (--iterations) {

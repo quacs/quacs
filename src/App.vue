@@ -42,7 +42,10 @@
                 >Fall 2020</b-nav-item
               > -->
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
-                <font-awesome-icon :icon="['fas', 'cog']"></font-awesome-icon>
+                <font-awesome-icon
+                  title="Settings"
+                  :icon="['fas', 'cog']"
+                ></font-awesome-icon>
               </b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>

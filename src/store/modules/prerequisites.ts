@@ -1,9 +1,10 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 import Vue from "vue";
 
-@Module({ namespaced: true, name: "settings" })
+@Module({ namespaced: true, name: "prerequisites" })
 export default class Settings extends VuexModule {
   priorCourses: { [courseId: string]: boolean } = {};
+  enableChecking = false;
 
   get getPriorCourses(): () => { [courseId: string]: boolean } {
     return () => this.priorCourses;
@@ -19,5 +20,15 @@ export default class Settings extends VuexModule {
   @Mutation
   removePriorCourse(courseId: string): void {
     Vue.delete(this.priorCourses, courseId);
+  }
+
+  @Mutation
+  togglePrerequisiteChecking(state: boolean): boolean {
+    this.enableChecking = state;
+    return this.enableChecking;
+  }
+
+  get prerequisiteCheckingState(): boolean {
+    return this.enableChecking;
   }
 }
