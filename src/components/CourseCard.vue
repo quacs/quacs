@@ -5,6 +5,7 @@
       hidden:
         areThereMissingPrerequisites === 2 &&
         hidePrerequisitesState &&
+        prerequisiteCheckingState &&
         areThereSelectedSections === 0,
     }"
   >

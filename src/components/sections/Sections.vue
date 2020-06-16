@@ -25,6 +25,7 @@
           hidden:
             !hasMetAllPrerequisites(section.crn) &&
             hidePrerequisitesState &&
+            prerequisiteCheckingState &&
             !isSelected(section.crn),
         }"
         v-on:click="toggleSelection(section)"
