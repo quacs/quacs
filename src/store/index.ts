@@ -33,6 +33,7 @@ export default new Vuex.Store({
     courseSizes: {} as { [id: string]: CourseSize },
     lastNewSchedule: 0,
     warningMessage: "",
+    updateAvailable: false,
   },
   getters: {
     shouldShowAlert: (state) => {
@@ -44,16 +45,20 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    SET_COURSE_SIZES(state, courseSizes) {
+    SET_COURSE_SIZES(state, courseSizes): void {
       state.courseSizes = courseSizes;
     },
 
-    setWarningMessage(state, message) {
+    setWarningMessage(state, message): void {
       state.warningMessage = message;
+    },
+
+    toggleUpdateNotice(state, newValue: boolean): void {
+      state.updateAvailable = newValue;
     },
   },
   actions: {
-    loadCourseSizes({ commit }) {
+    loadCourseSizes({ commit }): void {
       //TODO switch to better server for this over a free herokuapp instance
       axios
         .get(

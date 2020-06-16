@@ -64,9 +64,8 @@
             <router-view :key="wasmLoaded" />
             <b-alert
               variant="warning"
-              show
               class="fixed-bottom sticky-top"
-              :class="{ invisible: !shouldShowAlert }"
+              :show="shouldShowAlert"
               ><b-spinner
                 style="width: 1.5rem; height: 1.5rem;"
                 label="Spinning"
@@ -75,6 +74,16 @@
                 warningMessage
               }}</span></b-alert
             >
+            <b-alert
+              class="fixed-bottom sticky-top"
+              :show="updateAvailable"
+              dismissible
+            >
+              Updates available! Click to refresh and update.
+              <b-button variant="success" @click="reloadPage()"
+                >Update</b-button
+              >
+            </b-alert>
           </div>
           <div class="col-lg-1"></div>
         </div>
@@ -122,6 +131,14 @@ import Settings from "@/components/Settings.vue";
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
     ...mapState("schedule", ["wasmLoaded"]),
+    updateAvailable: {
+      get() {
+        return this.$store.state.updateAvailable;
+      },
+      set() {
+        this.$store.commit("toggleUpdateNotice", false);
+      },
+    },
   },
 })
 export default class App extends Vue {
@@ -149,6 +166,10 @@ export default class App extends Vue {
         this.searching = false;
       }, searchTimeout);
     }
+  }
+
+  reloadPage() {
+    window.location.reload(true);
   }
 }
 </script>
@@ -234,9 +255,5 @@ footer {
 .warning-message {
   font-size: 1.5rem;
   margin-left: 1.5rem;
-}
-
-.invisible {
-  visibility: hidden;
 }
 </style>
