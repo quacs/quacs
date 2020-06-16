@@ -34,12 +34,26 @@ export default class Department extends Vue {
     return {};
   }
 
+  get formattedDept() {
+    for (const schoolName in this.$store.state.schools) {
+      const school = this.$store.state.schools[schoolName];
+
+      for (const dept of school) {
+        if (dept.code === this.code) {
+          return dept;
+        }
+      }
+    }
+
+    return {};
+  }
+
   get courses() {
     return this.department.courses;
   }
 
   get name() {
-    return this.department.name;
+    return this.formattedDept.name;
   }
 }
 </script>
