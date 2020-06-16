@@ -242,6 +242,14 @@ pub fn is_in_conflict(crn: u32) -> bool {
 
 #[wasm_bindgen(js_name = "getSchedule")]
 pub fn get_schedule(idx: usize) -> Box<[u32]> {
-    console_log!("Getting schedule #{}", idx);
-    SCHEDULES.read().unwrap()[idx].clone().into_boxed_slice()
+    if SCHEDULES.read().unwrap().is_empty() {
+        console_log!(
+            "Requested schedule #{}, but no schedules selected... Returning empty schedule",
+            idx
+        );
+        Box::new([])
+    } else {
+        console_log!("Getting schedule #{}", idx);
+        SCHEDULES.read().unwrap()[idx].clone().into_boxed_slice()
+    }
 }
