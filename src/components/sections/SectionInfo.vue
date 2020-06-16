@@ -28,6 +28,13 @@
         </span>
         <!-- :class="{green:course.split(" ").join("-") in $store.getters["prerequisites/getPriorCourses"]()}" -->
       </template>
+      <br />
+      <br />
+      <div class="font-weight-bold">Seats:</div>
+      <div>
+        There are {{ formatCourseSize(section.crn, courseSizes) }} available.
+        Check SIS for more up to data information.
+      </div>
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
           Close
@@ -40,11 +47,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Section } from "@/typings";
-import { formatPrerequisites } from "@/utilities";
+import { formatCourseSize, formatPrerequisites } from "@/utilities";
 
 @Component({
   computed: {
     formatPrerequisites,
+    formatCourseSize,
     prerequisiteData: function () {
       // @ts-expect-error: ts does not understand that sections exists on 'this'
       return this.$store.state.prerequisitesData[this.section.crn];

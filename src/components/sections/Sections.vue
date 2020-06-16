@@ -66,6 +66,10 @@
                 $store.state.courseSizes[section.crn].avail === 0
               ),
             }"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            @click="$bvModal.show('section-info' + section.crn)"
+            @keyup.enter="$bvModal.show('section-info' + section.crn)"
           >
             <font-awesome-icon
               :icon="['fas', 'user-slash']"
