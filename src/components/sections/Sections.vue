@@ -46,7 +46,12 @@
             :class="{
               hidden: hasMetAllPrerequisites(section.crn),
             }"
-            title="Click the more info button for details"
+            title="Click for more info"
+            tabindex="0"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            @click="$bvModal.show('section-info' + section.crn)"
+            @keyup.enter="$bvModal.show('section-info' + section.crn)"
           >
             <font-awesome-icon
               :icon="['fas', 'exclamation-triangle']"
@@ -61,7 +66,6 @@
                 $store.state.courseSizes[section.crn].avail === 0
               ),
             }"
-            title="Click the more info button for details"
           >
             <font-awesome-icon
               :icon="['fas', 'user-slash']"
