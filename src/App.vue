@@ -27,6 +27,19 @@
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <b-nav-item
+                to="#"
+                class="nav-text text-nowrap"
+                v-b-tooltip.hover
+                title="Multiple semester support coming soon!"
+                >Fall 2020</b-nav-item
+              >
+              <b-nav-item
+                class="nav-text desktop-only"
+                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                target="_blank"
+                >|</b-nav-item
+              >
+              <b-nav-item
                 to="/prerequisites"
                 class="nav-text"
                 :active="this.$route.path == '/prerequisites'"
@@ -38,9 +51,6 @@
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
               >
-              <!-- <b-nav-item to="#" class="nav-text" disabled
-                >Fall 2020</b-nav-item
-              > -->
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
                 <font-awesome-icon
                   title="Settings"

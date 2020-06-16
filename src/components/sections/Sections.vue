@@ -314,33 +314,6 @@ export default class Section extends Vue {
   font-size: 13pt;
 }
 
-.desktop-only {
-  display: none;
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-  .desktop-only {
-    display: block;
-  }
-
-  td.desktop-only,
-  th.desktop-only {
-    display: table-cell;
-  }
-}
-
-.mobile-only {
-  display: block;
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-  .mobile-only {
-    display: none;
-  }
-}
-
 .location {
   font-style: italic;
 }
