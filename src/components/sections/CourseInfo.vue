@@ -49,6 +49,7 @@ import { formatCourseSize, formatPrerequisites } from "@/utilities";
     },
     matchingData: function () {
       const sectionPrerequisiteData = JSON.stringify(
+        // @ts-expect-error: ts does not understand that sections exists on 'this'
         this.prerequisiteData.prerequisites
       );
       // @ts-expect-error: ts does not understand that sections exists on 'this'
