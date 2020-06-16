@@ -33,7 +33,7 @@
                 title="Multiple semester support coming soon!"
                 >Fall 2020</b-nav-item
               >
-              <b-nav-item class="nav-text noselect">|</b-nav-item>
+              <b-nav-item class="nav-text desktop-only">|</b-nav-item>
               <b-nav-item
                 to="/prerequisites"
                 class="nav-text"
