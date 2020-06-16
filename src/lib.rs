@@ -176,10 +176,11 @@ pub fn set_selected(crn: u32, selected: bool) {
             .unwrap()
             .insert(crn);
     } else if selected_courses_map.contains_key(course_name) {
-        selected_courses_map
-            .get_mut(course_name)
-            .unwrap()
-            .remove(&crn);
+        let crn_set = selected_courses_map.get_mut(course_name).unwrap();
+        crn_set.remove(&crn);
+        if crn_set.is_empty() {
+            selected_courses_map.remove(course_name);
+        }
     }
 
     console_log!("Selected courses: {:?}", *selected_courses_map);
@@ -203,25 +204,21 @@ pub fn is_in_conflict(crn: u32) -> bool {
     let selected_courses_map = SELECTED_COURSES.read().unwrap();
     let course_name = CRN_COURSES.get(&crn).unwrap();
 
-    if let Some(selected) = selected_courses_map.get(course_name) {
-        if selected.contains(&crn) {
-            // We've selected the current section as conflicting - assume it's fine
-            false
-        } else {
-            // Assuming we didn't have other sections from this course selected, do we conflict?
-            // This check stops us from saying that every section of a course conflicts if we've
-            // just selected one, since courses usually have a common timeslot (e.g. test slots)
-            let mut course_vec: Vec<&HashSet<u32>> = selected_courses_map
-                .iter()
-                .filter(|(name, _)| name != &course_name)
-                .map(|(_, sections)| sections)
-                .collect();
-            let mut tmp_set = HashSet::new();
-            tmp_set.insert(crn);
-            course_vec.push(&tmp_set);
+    if selected_courses_map.get(course_name).is_some() {
+        // Assuming we didn't have other sections from this course selected, do we conflict?
+        // This check stops us from saying that every section of a course conflicts if we've
+        // just selected one, since courses usually have a common timeslot (e.g. test slots).
+        // It also lets users see which sections they selected conflict with stuff.
+        let mut course_vec: Vec<&HashSet<u32>> = selected_courses_map
+            .iter()
+            .filter(|(name, _)| name != &course_name)
+            .map(|(_, sections)| sections)
+            .collect();
+        let mut tmp_set = HashSet::new();
+        tmp_set.insert(crn);
+        course_vec.push(&tmp_set);
 
-            generate_schedules_driver(&mut course_vec, &mut [0; 3]).is_empty()
-        }
+        generate_schedules_driver(&mut course_vec, &mut [0; 3]).is_empty()
     } else {
         // This is a normal section, so we can just check if the timeslots overlap
         let crn_times = CRN_TIMES.get(&crn).unwrap();
