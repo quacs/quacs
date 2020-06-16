@@ -28,8 +28,6 @@
             class="schedule-select-button"
             v-on:click="incrementSchedule()"
           ></b-icon-chevron-right>
-
-          <Calendar :crns="currentScheduleCRNs" />
         </div>
         <div v-else>
           No valid schedules,
@@ -37,6 +35,8 @@
           <span v-else>please select at least one course</span>
         </div>
       </div>
+
+      <Calendar v-if="numSchedules !== 0" :crns="currentScheduleCRNs" />
 
       <div class="crn-list">
         CRNs:
