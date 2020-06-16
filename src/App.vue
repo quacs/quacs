@@ -61,7 +61,7 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <router-view />
+            <router-view :key="wasmLoaded" />
             <b-alert
               variant="warning"
               show
@@ -112,7 +112,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Settings from "@/components/Settings.vue";
 
 @Component({
@@ -121,6 +121,7 @@ import Settings from "@/components/Settings.vue";
   },
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
+    ...mapState("schedule", ["wasmLoaded"]),
   },
 })
 export default class App extends Vue {
