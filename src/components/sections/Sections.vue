@@ -7,7 +7,7 @@
         tabindex="0"
         v-on:keyup.enter="toggleAll()"
       >
-        <th style="width: 100%;">Section Info</th>
+        <th style="width: 100%;">Toggle all sections</th>
         <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
           {{ day }}
         </th>
@@ -21,36 +21,79 @@
         class="course-row select-section"
         v-bind:class="{
           selected: isSelected(section.crn),
-          conflict: isInConflict(section.crn),
-          prerequisiteConflict: !hasMetAllPrerequisites(section.crn),
+          conflict: conflicts[section.crn],
+          hidden:
+            !hasMetAllPrerequisites(section.crn) &&
+            hidePrerequisitesState &&
+            prerequisiteCheckingState &&
+            !isSelected(section.crn),
         }"
         v-on:click="toggleSelection(section)"
         tabindex="0"
         v-on:keyup.enter="toggleSelection(section)"
       >
         <td class="info-cell">
-          <!-- <span>  <font-awesome-icon
+          <SectionInfo class="more-info" :section="section"></SectionInfo>
+          <font-awesome-icon
             :icon="['fas', 'info-circle']"
-            title="Missing Prerequisites"
-            class="prerequisiteError"
-            :class="{
-              hidden: hasMetAllPrerequisites(section.crn),
-            }"
-          ></font-awesome-icon></span> -->
+            class="open_close_icon info-icon"
+            title="More info"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            tabindex="0"
+            @click="$bvModal.show('section-info' + section.crn)"
+            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+          ></font-awesome-icon>
           <span class="font-weight-bold" title="Section number">{{
             section.sec
           }}</span
           >-<span title="CRN: the unique id given to each section in sis">{{
             section.crn
           }}</span>
-          <span class="padding-left" title="Professor(s)">{{
-            section.timeslots[0].instructor
-          }}</span>
-          <span class="padding-left"
+          <span
+            v-if="prerequisiteCheckingState"
+            class="padding-left prerequisiteError"
+            :class="{
+              hidden: hasMetAllPrerequisites(section.crn),
+            }"
+            title="Click for more info"
+            tabindex="0"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            @click="$bvModal.show('section-info' + section.crn)"
+            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'exclamation-triangle']"
+            ></font-awesome-icon>
+            Missing Prerequisites</span
+          >
+          <span
+            class="padding-left prerequisiteError"
+            :class="{
+              hidden: !(
+                $store.state.courseSizes[section.crn] &&
+                $store.state.courseSizes[section.crn].avail === 0
+              ),
+            }"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            @click="$bvModal.show('section-info' + section.crn)"
+            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'user-slash']"
+            ></font-awesome-icon>
+            Full Section</span
+          >
+          <span title="Professor(s)">
+            {{ section.timeslots[0].instructor }}
+          </span>
+          <template v-if="section.timeslots[0].dateStart"
             >({{ section.timeslots[0].dateStart }}-{{
               section.timeslots[0].dateEnd
-            }})</span
-          >
+            }})
+          </template>
           <span
             class="padding-left"
             :title="
@@ -80,8 +123,8 @@
               </span>
             </template>
           </div>
+          <!-- End mobile times -->
         </td>
-        <!-- End mobile times -->
         <!-- Desktop times -->
         <td v-for="day in days" v-bind:key="day" class="time-cell desktop-only">
           <!-- TODO: fix different instructors for same timeslot -->
@@ -113,6 +156,7 @@
 import { Course, CourseSection, Timeslot } from "@/typings";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
+import SectionInfo from "@/components/sections/SectionInfo.vue";
 import {
   formatCourseSize,
   formatTimeslot,
@@ -121,19 +165,34 @@ import {
 } from "@/utilities";
 
 @Component({
+  components: {
+    SectionInfo,
+  },
   computed: {
     formatTimeslot,
     formatCourseSize,
     getSessions,
     hasMetAllPrerequisites,
-    ...mapGetters("settings", ["isMilitaryTime"]),
-    ...mapGetters("sections", ["isSelected", "isInConflict"]),
+    ...mapGetters("settings", ["isMilitaryTime", "hidePrerequisitesState"]),
+    ...mapGetters("schedule", ["isSelected"]),
+    ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapState(["courseSizes"]),
   },
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
   days = ["M", "T", "W", "R", "F"];
+  conflicts: { [crn: number]: boolean } = {};
+
+  mounted() {
+    for (const section of this.course.sections) {
+      this.$store.getters["schedule/getInConflict"](section.crn).then(
+        (isInConflict: number) => {
+          Vue.set(this.conflicts, section.crn, isInConflict);
+        }
+      );
+    }
+  }
 
   toggleSelection(
     section: CourseSection,
@@ -142,30 +201,28 @@ export default class Section extends Vue {
   ) {
     let selected = true;
 
-    if (section.crn in this.$store.state.sections.selectedSections) {
-      selected = !this.$store.getters["sections/isSelected"](section.crn);
+    if (section.crn in this.$store.state.schedule.selectedSections) {
+      // @ts-expect-error: This is mapped in the custom computed section
+      selected = !this.isSelected(section.crn);
     }
 
     if (newState !== null) {
       selected = newState;
     }
 
-    this.$store.commit("sections/setSelected", {
+    this.$store.commit("schedule/setSelected", {
       crn: section.crn,
-      state: selected,
+      selected,
     });
     if (rePopulateConflicts) {
-      this.$store.commit(
-        "sections/populateConflicts",
-        this.$store.state.departments
-      );
+      this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
     }
   }
 
   toggleAll() {
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
-      if (!this.$store.getters["sections/isSelected"](section.crn)) {
+      if (!this.$store.getters["schedule/isSelected"](section.crn)) {
         this.toggleSelection(section, true, false);
         turnedOnAnySection = true;
       }
@@ -176,10 +233,7 @@ export default class Section extends Vue {
       }
     }
 
-    this.$store.commit(
-      "sections/populateConflicts",
-      this.$store.state.departments
-    );
+    this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
   }
 
   // Calculates the order of the timeslots for each section
@@ -282,39 +336,12 @@ export default class Section extends Vue {
   font-size: 13pt;
 }
 
-.desktop-only {
-  display: none;
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-  .desktop-only {
-    display: block;
-  }
-
-  td.desktop-only,
-  th.desktop-only {
-    display: table-cell;
-  }
-}
-
-.mobile-only {
-  display: block;
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-  .mobile-only {
-    display: none;
-  }
-}
-
 .location {
   font-style: italic;
 }
 
 .padding-left {
-  padding-left: 0.6rem;
+  padding-left: 0.2rem;
 }
 
 .select-section {
@@ -354,11 +381,35 @@ export default class Section extends Vue {
 }
 
 .prerequisiteError {
-  color: black;
-  margin-right: 0.2rem;
+  background: var(--prerequisite-error-icon);
+  color: var(--prerequisite-text);
+  margin: 0px 0.3rem;
+  padding: 0.2rem 0.4rem;
 }
 
 .hidden {
   display: none;
+}
+
+.more-info {
+  width: auto;
+}
+
+.info-icon {
+  transition: all 0.2s ease-in-out;
+  float: left;
+  margin-right: 0.5rem;
+  font-size: 3rem !important;
+  width: auto !important;
+}
+.info-icon:hover,
+.info-icon:focus {
+  transform: scale(1.5);
+}
+
+@media (min-width: 992px) {
+  .info-icon {
+    font-size: 1.7rem !important;
+  }
 }
 </style>

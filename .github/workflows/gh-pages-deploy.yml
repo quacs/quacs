@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - staging
 jobs:
   gh-pages-deploy:
     name: Deploying to gh-pages
@@ -21,7 +22,10 @@ jobs:
       - name: Clean install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
       - name: Run deploy script
         run: |
-          git config user.name "elihschiff" && git config user.email "eli@elischiff.org"
+          git config user.name "QuACS" && git config user.email "eli@elischiff.org"
           yarn gh-pages-deploy

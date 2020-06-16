@@ -14,6 +14,7 @@
             <input
               id="search-bar"
               placeholder="Search Courses"
+              aria-label="Search Courses"
               v-on:input="search($event.target.value)"
               v-on:keyup.enter="search($event.target.value, 0)"
             />
@@ -25,23 +26,31 @@
           </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
-              <!-- <b-nav-item
+              <b-nav-item
+                to="#"
+                class="nav-text text-nowrap"
+                v-b-tooltip.hover
+                title="Multiple semester support coming soon!"
+                >Fall 2020</b-nav-item
+              >
+              <b-nav-item class="nav-text desktop-only" disabled>|</b-nav-item>
+              <b-nav-item
                 to="/prerequisites"
                 class="nav-text"
                 :active="this.$route.path == '/prerequisites'"
                 >Prerequisites</b-nav-item
-              > -->
+              >
               <b-nav-item
                 to="/schedule"
                 class="nav-text"
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
               >
-              <!-- <b-nav-item to="#" class="nav-text" disabled
-                >Fall 2020</b-nav-item
-              > -->
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
-                <font-awesome-icon :icon="['fas', 'cog']"></font-awesome-icon>
+                <font-awesome-icon
+                  title="Settings"
+                  :icon="['fas', 'cog']"
+                ></font-awesome-icon>
               </b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>
@@ -51,7 +60,22 @@
       <div class="container-fluid" style="margin-top: 1rem;">
         <div class="row">
           <div class="col-lg-1"></div>
-          <div class="col-lg"><router-view /></div>
+          <div class="col-lg">
+            <router-view :key="wasmLoaded" />
+            <b-alert
+              variant="warning"
+              show
+              class="fixed-bottom sticky-top"
+              :class="{ invisible: !shouldShowAlert }"
+              ><b-spinner
+                style="width: 1.5rem; height: 1.5rem;"
+                label="Spinning"
+              ></b-spinner
+              ><span class="warning-message">{{
+                warningMessage
+              }}</span></b-alert
+            >
+          </div>
           <div class="col-lg-1"></div>
         </div>
       </div>
@@ -63,6 +87,7 @@
           href="https://github.com/quacs/quacs"
           title="Visit our GitHub"
           aria-label="Visit our GitHub"
+          target="_blank"
           ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
         </a>
         <img
@@ -74,6 +99,7 @@
           href="https://discord.gg/EyGZTAP"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
+          target="_blank"
           ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
         </a>
       </div>
@@ -86,11 +112,16 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { mapGetters, mapState } from "vuex";
 import Settings from "@/components/Settings.vue";
 
 @Component({
   components: {
     Settings,
+  },
+  computed: {
+    ...mapGetters(["shouldShowAlert", "warningMessage"]),
+    ...mapState("schedule", ["wasmLoaded"]),
   },
 })
 export default class App extends Vue {
@@ -198,5 +229,14 @@ footer {
   background-color: #fff;
   outline: none;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.16);
+}
+
+.warning-message {
+  font-size: 1.5rem;
+  margin-left: 1.5rem;
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>

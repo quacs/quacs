@@ -10,9 +10,23 @@
           Once you have added courses you've already taken to the website,
           sections will warn you if you don't meet the requirements.
           <br />
-          (You may still be able to be signed into theses courses. Contact the
+          (You may still be able to be signed into these courses. Contact the
           professor and ask!)
+
+          <br />
+          <br />
+
+          <span class="font-weight-bold">
+            This prerequisite information comes from SIS. If SIS only checks
+            prerequisites for some sections of a course, the other sections will
+            not show a warning. This also means that our prerequisite
+            information may disagree with the course catalog, but it will be
+            accurate for course registration.</span
+          >
         </p>
+        <b-form-checkbox switch size="lg" v-model="prerequisiteChecking"
+          >Enable prerequisite checking</b-form-checkbox
+        >
       </b-jumbotron>
     </div>
     <div>
@@ -25,9 +39,11 @@
                   id="input-live"
                   v-model="newCourse"
                   :state="verifyNewCourse"
-                  aria-describedby="input-live-help input-live-feedback"
                   placeholder="Course Code"
+                  aria-lable="Course Code"
                   trim
+                  :disabled="!prerequisiteChecking"
+                  :title="prerequisiteChecking ? '' : 'Disabled'"
                   :formatter="formatCourse"
                   @keyup.enter="addCourse"
                 ></b-form-input>
@@ -41,7 +57,10 @@
                 </b-form-valid-feedback>
               </b-col>
               <b-col>
-                <b-button @click="addCourse" :disabled="!verifyNewCourse"
+                <b-button
+                  @click="addCourse"
+                  :disabled="!verifyNewCourse || !prerequisiteChecking"
+                  :title="prerequisiteChecking ? '' : 'Disabled'"
                   >Add Course</b-button
                 >
               </b-col>
@@ -104,6 +123,8 @@
                 placeholder="Click to upload your transcript or drop it here..."
                 drop-placeholder="Drop transcript here..."
                 required
+                :title="prerequisiteChecking ? '' : 'Disabled'"
+                :disabled="!prerequisiteChecking"
                 @change="importTranscript()"
               ></b-form-file>
             </form>
@@ -126,6 +147,7 @@
         href="https://discord.gg/EyGZTAP"
         title="Join our development Discord server"
         aria-label="Join our development Discord server"
+        target="_blank"
         >https://discord.gg/EyGZTAP
       </a>
       <template v-slot:modal-footer="{ ok }">
@@ -155,6 +177,17 @@ import { mapGetters, mapState } from "vuex";
     },
     ...mapGetters("prerequisites", ["getPriorCourses"]),
     ...mapState(["courseIdToCourse"]),
+    prerequisiteChecking: {
+      get() {
+        return this.$store.state.prerequisites.enableChecking;
+      },
+      set() {
+        this.$store.commit(
+          "prerequisites/togglePrerequisiteChecking",
+          !this.$store.state.prerequisites.enableChecking
+        );
+      },
+    },
   },
 })
 export default class Prerequisites extends Vue {

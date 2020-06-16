@@ -108,3 +108,8 @@ export interface Restriction {
   college: { must_be: string[]; may_not_be: string[] };
   campus: { must_be: string[]; may_not_be: string[] };
 }
+
+export interface Section {
+  crn: number;
+  conflicts: number[];
+}

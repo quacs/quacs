@@ -25,8 +25,10 @@ import {
   faCaretRight,
   faCheck,
   faCog,
+  faExclamationTriangle,
   faInfoCircle,
   faTrash,
+  faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
@@ -38,7 +40,9 @@ library.add(
   faDiscord,
   faInfoCircle,
   faCalendar,
-  faTrash
+  faTrash,
+  faExclamationTriangle,
+  faUserSlash
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -56,11 +60,8 @@ new Vue({
   store,
   render: (h) => h(App),
   beforeCreate() {
-    this.$store.commit("sections/initializeStore");
-    this.$store.commit(
-      "sections/initializeDataMappings",
-      this.$store.state.departments
-    );
+    this.$store.commit("schedule/initializeStore");
+    this.$store.dispatch("schedule/init");
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);

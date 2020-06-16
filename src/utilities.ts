@@ -181,12 +181,60 @@ export function hasMetAllPrerequisites() {
   return function (crn: string): boolean {
     if ("prerequisites" in store.state.prerequisitesData[crn]) {
       return verifyPrerequisite(
-        store.getters["prerequisites/getPriorCourses"],
+        store.getters["prerequisites/getPriorCourses"](),
         // @ts-expect-error: I check that this exists already so we can ignore typescript
         store.state.prerequisitesData[crn].prerequisites
       );
     }
     //Return true because this section has no prerequisites
     return true;
+  };
+}
+
+function getPrerequisiteFormatHtml(
+  priorCourses: { [crn: string]: boolean },
+  prerequisiteData: Prerequisite
+): string {
+  let output = "";
+
+  let iterations = prerequisiteData.solo.length;
+  for (const course of prerequisiteData.solo) {
+    output += '<span  style="';
+    if (course.split(" ").join("-") in priorCourses) {
+      output += "color: var(--taken-course);";
+    } else {
+      output += "color: var(--not-taken-course);";
+    }
+    output += '">';
+    output += course.split(" ").join("-");
+    output += "</span>";
+    if (--iterations) {
+      output += " " + prerequisiteData.type + " ";
+    }
+  }
+  iterations = prerequisiteData.nested.length;
+  if (prerequisiteData.solo.length > 0 && prerequisiteData.nested.length > 0) {
+    output += " " + prerequisiteData.type + " ";
+  }
+  for (const nested of prerequisiteData.nested) {
+    output += "(" + getPrerequisiteFormatHtml(priorCourses, nested) + ")";
+    if (--iterations) {
+      output += " " + prerequisiteData.type + " ";
+    }
+  }
+  return output; //should not matter which
+}
+
+export function formatPrerequisites() {
+  return function (crn: string): string {
+    if ("prerequisites" in store.state.prerequisitesData[crn]) {
+      return getPrerequisiteFormatHtml(
+        store.getters["prerequisites/getPriorCourses"](),
+        // @ts-expect-error: I check that this exists already so we can ignore typescript
+        store.state.prerequisitesData[crn].prerequisites
+      );
+    }
+    //Return '' because this section has no prerequisites
+    return "";
   };
 }

@@ -6,9 +6,7 @@
         v-for="course in courses"
         v-bind:key="course.subj + course.crse + course.title"
         v-bind:course="course"
-        v-on:open-prerequisite-modal="setPrerequisiteModalCrn"
       />
-      <PrerequisiteModal :crn="prerequisiteModalCrn"></PrerequisiteModal>
     </div>
   </div>
 </template>
@@ -17,22 +15,14 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 import CourseCard from "../components/CourseCard.vue";
-import PrerequisiteModal from "@/components/PrerequisiteModal.vue";
 
 @Component({
   components: {
     CourseCard,
-    PrerequisiteModal,
   },
 })
 export default class Department extends Vue {
   @Prop() code!: string;
-
-  prerequisiteModalCrn = "";
-
-  setPrerequisiteModalCrn(crn: string) {
-    this.prerequisiteModalCrn = crn;
-  }
 
   get department() {
     for (const dept of this.$store.state.departments) {
@@ -44,12 +34,26 @@ export default class Department extends Vue {
     return {};
   }
 
+  get formattedDept() {
+    for (const schoolName in this.$store.state.schools) {
+      const school = this.$store.state.schools[schoolName];
+
+      for (const dept of school) {
+        if (dept.code === this.code) {
+          return dept;
+        }
+      }
+    }
+
+    return {};
+  }
+
   get courses() {
     return this.department.courses;
   }
 
   get name() {
-    return this.department.name;
+    return this.formattedDept.name;
   }
 }
 </script>

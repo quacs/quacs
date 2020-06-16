@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "./build_wasm.sh debug && vue-cli-service serve",
+    "build": "./build_wasm.sh && vue-cli-service build",
+    "debug-build": "./build_wasm.sh debug && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
   },
@@ -49,13 +50,17 @@
     "sass-loader": "^8.0.2",
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11",
-    "vuex-module-decorators": "^0.17.0"
+    "vuex-module-decorators": "^0.17.0",
+    "workerize-loader": "^1.2.1"
   },
   "eslintConfig": {
     "root": true,
     "env": {
       "node": true
     },
+    "ignorePatterns": [
+      "src/quacs-rs/**"
+    ],
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended",
