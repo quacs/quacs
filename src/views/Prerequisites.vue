@@ -39,9 +39,11 @@
                   id="input-live"
                   v-model="newCourse"
                   :state="verifyNewCourse"
-                  aria-describedby="input-live-help input-live-feedback"
                   placeholder="Course Code"
+                  aria-lable="Course Code"
                   trim
+                  :disabled="!prerequisiteChecking"
+                  :title="prerequisiteChecking ? '' : 'Disabled'"
                   :formatter="formatCourse"
                   @keyup.enter="addCourse"
                 ></b-form-input>
@@ -55,7 +57,10 @@
                 </b-form-valid-feedback>
               </b-col>
               <b-col>
-                <b-button @click="addCourse" :disabled="!verifyNewCourse"
+                <b-button
+                  @click="addCourse"
+                  :disabled="!verifyNewCourse || !prerequisiteChecking"
+                  :title="prerequisiteChecking ? '' : 'Disabled'"
                   >Add Course</b-button
                 >
               </b-col>
@@ -118,6 +123,8 @@
                 placeholder="Click to upload your transcript or drop it here..."
                 drop-placeholder="Drop transcript here..."
                 required
+                :title="prerequisiteChecking ? '' : 'Disabled'"
+                :disabled="!prerequisiteChecking"
                 @change="importTranscript()"
               ></b-form-file>
             </form>
