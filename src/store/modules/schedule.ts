@@ -15,6 +15,9 @@ export default class Schedule extends VuexModule {
   currentlyGeneratingSchedules = false;
   needToGenerateSchedules = false;
 
+  wasmLoaded = false;
+  lastNewSchedule = Date.now();
+
   @Mutation
   initializeStore(): void {
     if (this.storedVersion !== this.CURRENT_STORAGE_VERSION) {
@@ -31,13 +34,25 @@ export default class Schedule extends VuexModule {
     worker.setSelected(p.crn, p.selected);
   }
 
+  @Mutation
+  setWasmLoaded(state: boolean): void {
+    this.wasmLoaded = state;
+  }
+
+  @Mutation
+  setLastNewSchedule(time: number): void {
+    this.lastNewSchedule = time;
+  }
+
   @Action({ rawError: true })
-  async init(): Promise<void> {
-    // eslint-disable-next-line
-    console.log("initializing worker");
-    await worker.init();
-    // eslint-disable-next-line
-    console.log("worker initialized");
+  async init(initWasm = true): Promise<void> {
+    if (initWasm) {
+      // eslint-disable-next-line
+      console.log("initializing worker");
+      await worker.init();
+      // eslint-disable-next-line
+      console.log("worker initialized");
+    }
 
     for (const sec in this.selectedSections) {
       if (this.selectedSections[sec]) {
@@ -45,10 +60,25 @@ export default class Schedule extends VuexModule {
       }
     }
 
+    const shouldSetWarningMessage = !this.context.rootState.shouldShowAlert;
+    if (shouldSetWarningMessage) {
+      this.context.commit("setWarningMessage", "Generating schedules...", {
+        root: true,
+      });
+    }
+
     this.context.commit(
       "setNumSchedules",
       await worker.generateCurrentSchedulesAndConflicts()
     );
+
+    this.context.commit("setWasmLoaded", true);
+
+    if (shouldSetWarningMessage) {
+      this.context.commit("setWarningMessage", "", {
+        root: true,
+      });
+    }
   }
 
   @Mutation
@@ -107,9 +137,12 @@ export default class Schedule extends VuexModule {
       return;
     }
 
-    this.context.commit("setWarningMessage", "Generating schedules...", {
-      root: true,
-    });
+    const shouldSetWarningMessage = !this.context.rootState.shouldShowAlert;
+    if (shouldSetWarningMessage) {
+      this.context.commit("setWarningMessage", "Generating schedules...", {
+        root: true,
+      });
+    }
 
     while (this.context.getters.getNeedToGenerateSchedules) {
       this.context.commit("setNeedToGenerateSchedules", false);
@@ -118,10 +151,14 @@ export default class Schedule extends VuexModule {
         "setNumSchedules",
         await worker.generateCurrentSchedulesAndConflicts()
       );
+
+      this.context.commit("setLastNewSchedule", Date.now());
     }
 
-    this.context.commit("setWarningMessage", "", {
-      root: true,
-    });
+    if (shouldSetWarningMessage) {
+      this.context.commit("setWarningMessage", "", {
+        root: true,
+      });
+    }
   }
 }

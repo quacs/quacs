@@ -14,7 +14,7 @@
       </h3>
     </div> -->
 
-    <div style="padding-bottom: 2rem;" v-else>
+    <div style="padding-bottom: 2rem;" v-else :key="lastNewSchedule">
       <div class="schedule-select">
         <div v-if="numSchedules !== 0">
           <b-icon-chevron-left
@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
@@ -72,7 +72,10 @@ function mod(n: number, m: number) {
 }
 
 @Component({
-  computed: mapGetters("schedule", ["numSchedules"]),
+  computed: {
+    ...mapGetters("schedule", ["numSchedules"]),
+    ...mapState("schedule", ["lastNewSchedule"]),
+  },
   components: {
     Calendar,
     CourseCard,
