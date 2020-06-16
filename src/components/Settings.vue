@@ -23,8 +23,14 @@
       <br />
       <b-form-checkbox
         switch
-        v-model="hidePrerequisites"
-        :disabled="!this.$store.state.prerequisites.enableChecking"
+        disabled
+        v-if="!this.$store.state.prerequisites.enableChecking"
+        v-b-tooltip.hover.left
+        title="Enable prerequisite checking to access this option"
+        >Hide courses/sections you are missing the prerequisites
+        for?</b-form-checkbox
+      >
+      <b-form-checkbox v-else switch v-model="hidePrerequisites"
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >
