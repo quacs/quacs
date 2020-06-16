@@ -66,7 +66,7 @@
               variant="warning"
               show
               class="fixed-bottom sticky-top"
-              :class="{ invisible: shouldShowAlert }"
+              :class="{ invisible: !shouldShowAlert }"
               ><b-spinner
                 style="width: 1.5rem; height: 1.5rem;"
                 label="Spinning"

@@ -12,7 +12,6 @@ export default class Schedule extends VuexModule {
   numCurrentSchedules = 0;
   CURRENT_STORAGE_VERSION = "0.0.3";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
-  lastNewSchedule = 0; //Keeps track of the time the last new schedule was generated
   currentlyGeneratingSchedules = false;
   needToGenerateSchedules = false;
 
@@ -78,7 +77,6 @@ export default class Schedule extends VuexModule {
   @Mutation
   setNumSchedules(num: number) {
     this.numCurrentSchedules = num;
-    this.lastNewSchedule = Date.now();
   }
 
   @Mutation
@@ -109,7 +107,6 @@ export default class Schedule extends VuexModule {
       return;
     }
 
-    this.context.commit("setCurrentlyGeneratingSchedules", true);
     this.context.commit("setWarningMessage", "Generating schedules...", {
       root: true,
     });
@@ -123,16 +120,8 @@ export default class Schedule extends VuexModule {
       );
     }
 
-    /*
-    setTimeout(() => {
-      this.context.commit("setWarningMessage", "", {
-        root: true,
-      });
-
-      this.context.commit("schedule/setCurrentlyGeneratingSchedules", false, {
-        root: true,
-      });
-    }, 10000);
-    */
+    this.context.commit("setWarningMessage", "", {
+      root: true,
+    });
   }
 }

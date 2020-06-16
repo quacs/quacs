@@ -17,7 +17,7 @@ export const generateCurrentSchedulesAndConflicts = async () => {
       setTimeout(resolve, 0)
     );
   }
-  wasm.generateSchedulesAndConflicts();
+  return wasm.generateSchedulesAndConflicts();
 };
 
 export const setSelected = async (crn: string, selected: boolean) => {
