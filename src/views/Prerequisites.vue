@@ -10,7 +10,7 @@
           Once you have added courses you've already taken to the website,
           sections will warn you if you don't meet the requirements.
           <br />
-          (You may still be able to be signed into theses courses. Contact the
+          (You may still be able to be signed into these courses. Contact the
           professor and ask!)
         </p>
         <b-form-checkbox switch size="lg" v-model="prerequisiteChecking"
