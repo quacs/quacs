@@ -6,6 +6,7 @@ import { setColorTheme } from "@/utilities";
 export default class Settings extends VuexModule {
   timePreference: TimePreference = TimePreference.Standard; // If a value is in localstorage, this will be set to that on load
   colorTheme = "system";
+  hidePrerequisites = false;
 
   get isMilitaryTime(): () => boolean {
     return () => this.timePreference === "M";
@@ -24,5 +25,14 @@ export default class Settings extends VuexModule {
   setColorTheme(newVal: string): void {
     this.colorTheme = newVal;
     setColorTheme(this.colorTheme);
+  }
+
+  @Mutation
+  toggleHiddenPrerequisites(state: boolean): void {
+    this.hidePrerequisites = state;
+  }
+
+  get hidePrerequisitesState(): boolean {
+    return this.hidePrerequisites;
   }
 }

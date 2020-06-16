@@ -19,6 +19,15 @@
         v-model="colorTheme"
         :options="themeOptions"
       ></b-form-select>
+      <br />
+      <br />
+      <b-form-checkbox
+        switch
+        v-model="hidePrerequisites"
+        :disabled="!this.$store.state.prerequisites.enableChecking"
+        >Hide courses/sections you are missing the prerequisites
+        for?</b-form-checkbox
+      >
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
           Close
@@ -38,6 +47,19 @@ import { Component, Vue } from "vue-property-decorator";
     },
     colorTheme: function (val) {
       this.$store.commit("settings/setColorTheme", val);
+    },
+  },
+  computed: {
+    hidePrerequisites: {
+      get() {
+        return this.$store.state.settings.hidePrerequisites;
+      },
+      set() {
+        this.$store.commit(
+          "settings/toggleHiddenPrerequisites",
+          !this.$store.state.settings.hidePrerequisites
+        );
+      },
     },
   },
 })

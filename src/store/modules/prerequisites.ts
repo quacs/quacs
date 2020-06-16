@@ -23,9 +23,8 @@ export default class Settings extends VuexModule {
   }
 
   @Mutation
-  togglePrerequisiteChecking(state: boolean): boolean {
+  togglePrerequisiteChecking(state: boolean): void {
     this.enableChecking = state;
-    return this.enableChecking;
   }
 
   get prerequisiteCheckingState(): boolean {

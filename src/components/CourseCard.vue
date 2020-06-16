@@ -1,5 +1,13 @@
 <template>
-  <div class="card course-card">
+  <div
+    class="card course-card"
+    :class="{
+      hidden:
+        areThereMissingPrerequisites === 2 &&
+        hidePrerequisitesState &&
+        areThereSelectedSections === 0,
+    }"
+  >
     <!-- header -->
     <div
       class="card-header course-card-header"
@@ -30,7 +38,7 @@
         ></font-awesome-icon> -->
       </div>
       <div>
-        <span v-if="prerequisiteCheckingState && missingPrerequisites">
+        <span v-if="prerequisiteCheckingState && areThereMissingPrerequisites">
           <span
             class="padding-left prerequisiteError"
             title="Expand sections for more details"
@@ -38,12 +46,14 @@
             <font-awesome-icon
               :icon="['fas', 'exclamation-triangle']"
             ></font-awesome-icon>
-            Missing prerequisites<template v-if="missingPrerequisites === 1">
+            Missing prerequisites<template
+              v-if="areThereMissingPrerequisites === 1"
+            >
               for some sections</template
             ></span
           >
         </span>
-        <span v-if="fullSections()">
+        <span v-if="fullSections">
           <span
             class="padding-left prerequisiteError"
             title="Expand sections for more details"
@@ -51,7 +61,7 @@
             <font-awesome-icon
               :icon="['fas', 'user-slash']"
             ></font-awesome-icon>
-            <template v-if="fullSections() === 2">Full Course</template>
+            <template v-if="fullSections === 2">Full Course</template>
             <template v-else>Full Sections</template></span
           >
         </span>
@@ -86,7 +96,8 @@ import Sections from "./sections/Sections.vue";
   computed: {
     hasMetAllPrerequisites,
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
-    missingPrerequisites: function (): number {
+    ...mapGetters("settings", ["hidePrerequisitesState"]),
+    areThereMissingPrerequisites: function (): number {
       let missingCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
@@ -102,21 +113,33 @@ import Sections from "./sections/Sections.vue";
       );
     },
     fullSections: function () {
-      return (): number => {
-        let emptyCount = 0;
-        // @ts-expect-error: no u typescript, this does exist
-        for (const section of this.course.sections) {
-          if (
-            this.$store.state.courseSizes[section.crn] &&
-            this.$store.state.courseSizes[section.crn].avail === 0
-          ) {
-            emptyCount++;
-          }
+      let emptyCount = 0;
+      // @ts-expect-error: no u typescript, this does exist
+      for (const section of this.course.sections) {
+        if (
+          this.$store.state.courseSizes[section.crn] &&
+          this.$store.state.courseSizes[section.crn].avail === 0
+        ) {
+          emptyCount++;
         }
-        //2==missing all section prerequisites, 1==missing some sections, 0==not missing any prerequisites
+      }
+      //2==all sections full, 1==some sections full, 0==not sections full
+      // @ts-expect-error: no u typescript, this does exist
+      return (emptyCount === this.course.sections.length) + (emptyCount > 0);
+    },
+    areThereSelectedSections: function () {
+      let selectedCount = 0;
+      // @ts-expect-error: no u typescript, this does exist
+      for (const section of this.course.sections) {
+        if (this.$store.state.schedule.selectedSections[section.crn]) {
+          selectedCount++;
+        }
+      }
+      //2==all sections selected, 1==some sections selected, 0==no sections selected
+      return (
         // @ts-expect-error: no u typescript, this does exist
-        return (emptyCount === this.course.sections.length) + (emptyCount > 0);
-      };
+        (selectedCount === this.course.sections.length) + (selectedCount > 0)
+      );
     },
   },
 })
@@ -216,5 +239,9 @@ export default class CourseCard extends Vue {
   color: var(--prerequisite-text);
   margin: 0px 0.3rem;
   padding: 0.2rem 0.4rem;
+}
+
+.hidden {
+  display: none;
 }
 </style>

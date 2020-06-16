@@ -22,7 +22,10 @@
         v-bind:class="{
           selected: isSelected(section.crn),
           conflict: conflicts[section.crn],
-          prerequisiteConflict: !hasMetAllPrerequisites(section.crn),
+          hidden:
+            !hasMetAllPrerequisites(section.crn) &&
+            hidePrerequisitesState &&
+            !isSelected(section.crn),
         }"
         v-on:click="toggleSelection(section)"
         tabindex="0"
@@ -151,7 +154,7 @@ import {
     formatCourseSize,
     getSessions,
     hasMetAllPrerequisites,
-    ...mapGetters("settings", ["isMilitaryTime"]),
+    ...mapGetters("settings", ["isMilitaryTime", "hidePrerequisitesState"]),
     ...mapGetters("schedule", ["isSelected"]),
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapState(["courseSizes"]),

@@ -93,6 +93,7 @@ export default new Vuex.Store({
         "schedule.storedVersion",
         "settings.timePreference",
         "settings.colorTheme",
+        "settings.hidePrerequisites",
         "prerequisites.priorCourses",
         "prerequisites.enableChecking",
       ],
