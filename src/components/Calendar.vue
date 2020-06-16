@@ -79,9 +79,9 @@ import { mapGetters } from "vuex";
 })
 export default class Calendar extends Vue {
   @Prop() readonly crns!: string[];
-  readonly startTime = 480;
+  readonly startTime = 420;
   readonly endTime = 1320;
-  readonly totalHeight = 600;
+  readonly totalHeight = 650;
 
   // get crns() {
   //   if (this.$route.query.crns === undefined) {
