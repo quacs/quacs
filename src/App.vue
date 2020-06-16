@@ -33,7 +33,12 @@
                 title="Multiple semester support coming soon!"
                 >Fall 2020</b-nav-item
               >
-              <b-nav-item class="nav-text desktop-only">|</b-nav-item>
+              <b-nav-item
+                class="nav-text desktop-only"
+                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                target="_blank"
+                >|</b-nav-item
+              >
               <b-nav-item
                 to="/prerequisites"
                 class="nav-text"
