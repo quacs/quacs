@@ -12,6 +12,17 @@
           <br />
           (You may still be able to be signed into these courses. Contact the
           professor and ask!)
+
+          <br />
+          <br />
+
+          <span class="font-weight-bold">
+            This prerequisite information comes from SIS. If SIS only checks
+            prerequisites for some sections of a course, the other sections will
+            not show a warning. This also means that our prerequisite
+            information may disagree with the course catalog, but it will be
+            accurate for course registration.</span
+          >
         </p>
         <b-form-checkbox switch size="lg" v-model="prerequisiteChecking"
           >Enable prerequisite checking</b-form-checkbox
