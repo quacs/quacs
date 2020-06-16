@@ -34,6 +34,16 @@
       >
         <td class="info-cell">
           <SectionInfo class="more-info" :section="section"></SectionInfo>
+          <font-awesome-icon
+            :icon="['fas', 'info-circle']"
+            class="open_close_icon info-icon"
+            title="More info"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            tabindex="0"
+            @click="$bvModal.show('section-info' + section.crn)"
+            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+          ></font-awesome-icon>
           <span class="font-weight-bold" title="Section number">{{
             section.sec
           }}</span
@@ -383,5 +393,23 @@ export default class Section extends Vue {
 
 .more-info {
   width: auto;
+}
+
+.info-icon {
+  transition: all 0.2s ease-in-out;
+  float: left;
+  margin-right: 0.5rem;
+  font-size: 3rem !important;
+  width: auto !important;
+}
+.info-icon:hover,
+.info-icon:focus {
+  transform: scale(1.5);
+}
+
+@media (min-width: 992px) {
+  .info-icon {
+    font-size: 1.7rem !important;
+  }
 }
 </style>

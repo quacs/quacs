@@ -39,7 +39,15 @@
         ></font-awesome-icon> -->
       </div>
       <div>
-        <span v-if="prerequisiteCheckingState && areThereMissingPrerequisites">
+        <span
+          v-if="prerequisiteCheckingState && areThereMissingPrerequisites"
+          v-on:click.stop.prevent
+          v-on:keyup.enter.stop.prevent
+          tabindex="0"
+          @click="$bvModal.show('course-info' + course.sections[0].crn)"
+          @keyup.enter="$bvModal.show('course-info' + course.sections[0].crn)"
+        >
+          <CourseInfo class="more-info" :course="course"></CourseInfo>
           <span
             class="padding-left prerequisiteError"
             title="Expand sections for more details"
@@ -87,12 +95,14 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Course } from "@/typings";
 import { hasMetAllPrerequisites } from "@/utilities";
 import { mapGetters } from "vuex";
+import CourseInfo from "@/components/sections/CourseInfo.vue";
 
 import Sections from "./sections/Sections.vue";
 
 @Component({
   components: {
     Sections,
+    CourseInfo,
   },
   computed: {
     hasMetAllPrerequisites,
