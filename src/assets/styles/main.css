@@ -15,8 +15,8 @@
         margin-right: -4rem;
         /* half of the elements widht */
 
-        width: 8rem;
-        height: 8rem;
+        width: 8rem !important;
+        height: 8rem !important;
         font-size: 3rem;
 }
 
