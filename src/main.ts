@@ -60,6 +60,7 @@ new Vue({
   store,
   render: (h) => h(App),
   beforeCreate() {
+    this.$store.dispatch("init");
     this.$store.commit("schedule/initializeStore");
     this.$store.dispatch("schedule/init");
   },

@@ -12,10 +12,7 @@ import Vue from "vue";
 import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
-import CATALOG_JSON from "./data/catalog.json";
-import COURSES_JSON from "./data/courses.json";
 import SCHOOLS_JSON from "./data/schools.json";
-import PREREQUISITES_JSON from "./data/prerequisites.json";
 
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
@@ -26,10 +23,10 @@ Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
-    departments: COURSES_JSON as Department[],
-    catalog: CATALOG_JSON as { [id: string]: CatalogCourse },
     schools: SCHOOLS_JSON as { [id: string]: { code: string; name: string }[] },
-    prerequisitesData: PREREQUISITES_JSON as { [id: string]: PrerequisiteJSON },
+    departments: [] as Department[], // asynchronously loaded
+    catalog: {} as { [id: string]: CatalogCourse }, // asynchronously loaded
+    prerequisitesData: {} as { [id: string]: PrerequisiteJSON }, // asynchronously loaded
     courseSizes: {} as { [id: string]: CourseSize },
     lastNewSchedule: 0,
     warningMessage: "",
@@ -43,10 +40,34 @@ export default new Vuex.Store({
     warningMessage: (state) => {
       return state.warningMessage;
     },
+
+    departmentsInitialized: (state) => {
+      return state.departments.length > 0;
+    },
+
+    catalogInitialized: (state) => {
+      return state.catalog !== [];
+    },
+
+    prerequisitesDataInitialized: (state) => {
+      return state.prerequisitesData !== {};
+    },
   },
   mutations: {
     SET_COURSE_SIZES(state, courseSizes): void {
       state.courseSizes = courseSizes;
+    },
+
+    SET_DEPARTMENTS(state, departments): void {
+      state.departments = departments;
+    },
+
+    SET_CATALOG(state, catalog): void {
+      state.catalog = catalog;
+    },
+
+    SET_PREREQUISITES_DATA(state, data): void {
+      state.prerequisitesData = data;
     },
 
     setWarningMessage(state, message): void {
@@ -84,6 +105,21 @@ export default new Vuex.Store({
           }
           commit("SET_COURSE_SIZES", liveData);
         });
+    },
+
+    init({ commit }): void {
+      import("./data/catalog.json").then((catalog) =>
+        commit("SET_CATALOG", catalog)
+      );
+
+      import("./data/courses.json").then((departments) =>
+        // Apparently dynamic imports import objects, so we have to cast to an array here
+        commit("SET_DEPARTMENTS", Object.values(departments))
+      );
+
+      import("./data/prerequisites.json").then((prereqs) =>
+        commit("SET_PREREQUISITES_DATA", prereqs)
+      );
     },
   },
   modules: {

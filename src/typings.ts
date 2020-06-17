@@ -1,18 +1,10 @@
-export enum ShortDay {
-  Monday = "M",
-  Tuesday = "T",
-  Wednesday = "W",
-  Thursday = "R",
-  Friday = "F",
-}
-
 export interface Day {
   name: string;
-  short: ShortDay;
+  short: string;
 }
 
 export interface Timeslot {
-  days: ShortDay[];
+  days: string[];
   timeStart: number;
   timeEnd: number;
   instructor: string;
@@ -35,8 +27,6 @@ export interface CourseSection {
   rem: number;
 
   timeslots: Timeslot[];
-
-  conflicts: { [id: string]: boolean };
 }
 
 export interface Course {

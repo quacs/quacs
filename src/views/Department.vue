@@ -1,18 +1,29 @@
 <template>
   <div>
-    <h1>{{ code }}: {{ name }}</h1>
-    <div class="card-column">
-      <CourseCard
-        v-for="course in courses"
-        v-bind:key="course.subj + course.crse + course.title"
-        v-bind:course="course"
-      />
+    <div
+      v-if="
+        departmentsInitialized &&
+        catalogInitialized &&
+        prerequisitesDataInitialized
+      "
+    >
+      <h1>{{ code }}: {{ name }}</h1>
+      <div class="card-column">
+        <CourseCard
+          v-for="course in courses"
+          v-bind:key="course.subj + course.crse + course.title"
+          v-bind:course="course"
+        />
+      </div>
     </div>
+
+    <b-spinner v-else label="Loading" class="loading-spinner"></b-spinner>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 
 import CourseCard from "../components/CourseCard.vue";
 
@@ -20,11 +31,23 @@ import CourseCard from "../components/CourseCard.vue";
   components: {
     CourseCard,
   },
+  computed: {
+    ...mapGetters([
+      "departmentsInitialized",
+      "catalogInitialized",
+      "prerequisitesDataInitialized",
+    ]),
+  },
 })
 export default class Department extends Vue {
   @Prop() code!: string;
 
   get department() {
+    // @ts-expect-error
+    if (!this.departmentsInitialized) {
+      return {};
+    }
+
     for (const dept of this.$store.state.departments) {
       if (dept.code === this.code) {
         return dept;

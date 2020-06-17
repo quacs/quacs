@@ -21,7 +21,7 @@
             <b-spinner
               label="Loading"
               v-if="searching"
-              class="search-spinner"
+              class="loading-spinner"
             ></b-spinner>
           </b-input-group>
           <b-navbar-nav class="ml-auto">
@@ -213,20 +213,6 @@ footer {
 
 .nav-text {
   font-size: 1.5rem;
-}
-
-.search-spinner {
-  display: block;
-  position: fixed;
-  z-index: 1031; /* High z-index so it is on top of the page */
-  top: 50%;
-  right: 50%; /* or: left: 50%; */
-  margin-top: -5rem; /* half of the elements height */
-  margin-right: -5rem; /* half of the elements widht */
-
-  width: 10rem;
-  height: 10rem;
-  font-size: 3rem;
 }
 
 #search-bar {
