@@ -94,6 +94,7 @@
       <div class="footer-links">
         <a
           href="https://github.com/quacs/quacs"
+          rel="noopener"
           title="Visit our GitHub"
           aria-label="Visit our GitHub"
           target="_blank"
@@ -106,6 +107,7 @@
         />
         <a
           href="https://discord.gg/EyGZTAP"
+          rel="noopener"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
           target="_blank"
