@@ -91,6 +91,13 @@
               there is literally no way for anyone - including the QuACS
               developers - to view the data.
             </p>
+            <h3 class="mobile-only">
+              NOTE: Transcript importing does not work on mobile because there
+              is no way to get your transcript as an html file. We recommend you
+              use a computer for checking prerequisites, or type out your
+              courses by hand if you wish to stay on mobile.
+              <br /><br />
+            </h3>
             <h3 v-if="safari">
               ALERT: Importing your transcript is known to have bugs on Safari.
               Please input the data by hand, or use Firefox/Chrome.
