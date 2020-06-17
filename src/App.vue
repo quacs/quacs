@@ -202,8 +202,7 @@ export default class App extends Vue {
 
 <style>
 @import "./assets/styles/main.css";
-
-footer {
+<style > <style scoped > footer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -268,4 +267,25 @@ footer {
   font-size: 1.5rem;
   margin-left: 1.5rem;
 }
+
+/* For sticky footer */
+html,
+body,
+#app {
+  height: 100%;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+#wrapper {
+  flex: 1 0 auto;
+}
+
+.footer {
+  flex-shrink: 0;
+}
+/* End for sticky footer */
 </style>
