@@ -280,7 +280,9 @@ export default class Prerequisites extends Vue {
       })
       // @ts-expect-error
       .then(function (transcript) {
-        for (const term of transcript.terms) {
+        for (const term of transcript.terms.concat(
+          transcript.inProgressTerms
+        )) {
           for (const course of term.courses) {
             store.commit(
               "prerequisites/addPriorCourse",

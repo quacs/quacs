@@ -43,44 +43,45 @@ export async function scrapeTranscript(fileId) {
   }
 
   data.terms = [];
-
-  //TRANSFER CREDIT ACCEPTED BY INSTITUTION
   rowNum += 4;
-  if (
-    rows[rowNum].children[0].innerText.includes(
-      "TRANSFER CREDIT ACCEPTED BY INSTITUTION"
-    )
-  ) {
-    rowNum += 3;
-    const courses = [];
-    for (; rowNum < rows.length; rowNum++) {
-      const columns = rows[rowNum].getElementsByTagName("td");
-      if (!columns[0].innerText.trim()) {
-        break;
+  //TRANSFER CREDIT ACCEPTED BY INSTITUTION
+  if (!rows[rowNum].children[0].innerText.startsWith("INSTITUTION CREDIT")) {
+    rowNum += 1;
+
+    while (
+      !rows[rowNum].children[0].innerText.startsWith("INSTITUTION CREDIT")
+    ) {
+      rowNum += 2;
+      const courses = [];
+      for (; rowNum < rows.length; rowNum++) {
+        const columns = rows[rowNum].getElementsByTagName("td");
+        if (!columns[0].innerText.trim()) {
+          break;
+        }
+        courses.push({
+          subject: columns[0].innerText.trim(),
+          course: columns[1].innerText.trim(),
+          title: columns[2].innerText.trim(),
+          grade: columns[3].innerText.trim(),
+          creditHours: columns[4].innerText.trim(),
+          qualityPoints: columns[5].innerText.trim(),
+          repeatStatus: columns[6].innerText.trim(),
+        });
       }
-      courses.push({
-        subject: columns[0].innerText.trim(),
-        course: columns[1].innerText.trim(),
-        title: columns[2].innerText.trim(),
-        grade: columns[3].innerText.trim(),
-        creditHours: columns[4].innerText.trim(),
-        qualityPoints: columns[5].innerText.trim(),
-        repeatStatus: columns[6].innerText.trim(),
+      rowNum++;
+      const columns = rows[rowNum].getElementsByTagName("td");
+      data.terms.push({
+        term: "ap",
+        courses: courses,
+        attemptHours: columns[0].innerText.trim(),
+        passedHours: columns[1].innerText.trim(),
+        earnedHours: columns[2].innerText.trim(),
+        gpaHours: columns[3].innerText.trim(),
+        qualityPoints: columns[4].innerText.trim(),
+        gpa: columns[5].innerText.trim(),
       });
+      rowNum += 4;
     }
-    rowNum++;
-    const columns = rows[rowNum].getElementsByTagName("td");
-    data.terms.push({
-      term: "ap",
-      courses: courses,
-      attemptHours: columns[0].innerText.trim(),
-      passedHours: columns[1].innerText.trim(),
-      earnedHours: columns[2].innerText.trim(),
-      gpaHours: columns[3].innerText.trim(),
-      qualityPoints: columns[4].innerText.trim(),
-      gpa: columns[5].innerText.trim(),
-    });
-    rowNum += 4;
   }
 
   rowNum += 1;
