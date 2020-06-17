@@ -21,6 +21,5 @@ echo ${CNAME} > dist/CNAME
 git --work-tree dist add --all || exit 1
 git --work-tree dist commit -m "$(date -u)" || exit 1
 git push origin HEAD:${PAGESBRANCH} --force || exit 1
-rm -r dist
 git checkout -f ${BRANCH} || exit 1
 git branch -D ${PAGESBRANCH} || exit 1
