@@ -1,68 +1,76 @@
 <template>
   <div>
-    <div class="warning-message" v-if="selectedCourses.length === 0">
-      <h3>It looks like you have not selected any courses yet :(</h3>
-      <router-link class="navbar-brand" to="/"
-        >Click to select a course</router-link
-      >
-    </div>
+    <!-- We don't care if the prerequisite info isn't loaded yet (that can fill in later) -->
+    <div v-if="departmentsInitialized && catalogInitialized">
+      <div class="warning-message" v-if="selectedCourses.length === 0">
+        <h3>It looks like you have not selected any courses yet :(</h3>
+        <router-link class="navbar-brand" to="/"
+          >Click to select a course</router-link
+        >
+      </div>
 
-    <!-- <div class="warning-message" v-else-if="totalNumSchedules === 0">
+      <!-- <div class="warning-message" v-else-if="totalNumSchedules === 0">
       <h3>
         Uh oh! All possible schedules have conflicts! Try choosing more
         sections.
       </h3>
     </div> -->
 
-    <div style="padding-bottom: 2rem;" v-else :key="lastNewSchedule">
-      <div class="schedule-select">
-        <div v-if="numSchedules !== 0">
-          <b-icon-chevron-left
-            class="schedule-select-button"
-            v-on:click="decrementSchedule()"
-          ></b-icon-chevron-left>
-          <span class="schedule-num">
-            {{ visibleCurrentScheduleNumber }} / {{ numSchedules }}
-          </span>
-          <b-icon-chevron-right
-            class="schedule-select-button"
-            v-on:click="incrementSchedule()"
-          ></b-icon-chevron-right>
+      <div style="padding-bottom: 2rem;" v-else :key="lastNewSchedule">
+        <div class="schedule-select">
+          <div v-if="numSchedules !== 0">
+            <b-icon-chevron-left
+              class="schedule-select-button"
+              v-on:click="decrementSchedule()"
+            ></b-icon-chevron-left>
+            <span class="schedule-num">
+              {{ visibleCurrentScheduleNumber }} / {{ numSchedules }}
+            </span>
+            <b-icon-chevron-right
+              class="schedule-select-button"
+              v-on:click="incrementSchedule()"
+            ></b-icon-chevron-right>
+          </div>
+          <div v-else>
+            No valid schedules,
+            <span v-if="filteredKeepSelected.length > 0"
+              >there are conflicts</span
+            >
+            <span v-else>please select at least one course</span>
+          </div>
         </div>
-        <div v-else>
-          No valid schedules,
-          <span v-if="selectedCourses.length > 0">there are conflicts</span>
-          <span v-else>please select at least one course</span>
+
+        <Calendar v-if="numSchedules !== 0" :crns="currentScheduleCRNs" />
+
+        <div class="crn-list">
+          CRNs:
+          <template v-for="(crn, idx) in currentScheduleCRNs">
+            <template v-if="idx !== 0">, </template>
+            <span class="crn" :key="crn" v-on:click="copyToClipboard(crn)">{{
+              crn
+            }}</span></template
+          >
+          <div id="crn-copy-indicator">Copied!</div>
         </div>
       </div>
 
-      <Calendar v-if="numSchedules !== 0" :crns="currentScheduleCRNs" />
-
-      <div class="crn-list">
-        CRNs:
-        <template v-for="(crn, idx) in currentScheduleCRNs">
-          <template v-if="idx !== 0">, </template>
-          <span class="crn" :key="crn" v-on:click="copyToClipboard(crn)">{{
-            crn
-          }}</span></template
-        >
-        <div id="crn-copy-indicator">Copied!</div>
+      <div class="card-columns">
+        <CourseCard
+          v-for="course in selectedCourses"
+          v-bind:key="course.subj + course.crse + course.title"
+          v-bind:course="course"
+        />
       </div>
     </div>
 
-    <div class="card-columns">
-      <CourseCard
-        v-for="course in selectedCourses"
-        v-bind:key="course.subj + course.crse + course.title"
-        v-bind:course="course"
-      />
-    </div>
+    <b-spinner v-else label="Loading" class="loading-spinner"></b-spinner>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
+import { BIconChevronLeft, BIconChevronRight, BSpinner } from "bootstrap-vue";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
@@ -73,12 +81,16 @@ function mod(n: number, m: number) {
 
 @Component({
   computed: {
+    ...mapGetters(["departmentsInitialized", "catalogInitialized"]),
     ...mapGetters("schedule", ["numSchedules"]),
     ...mapState("schedule", ["lastNewSchedule"]),
   },
   components: {
     Calendar,
     CourseCard,
+    "b-icon-chevron-left": BIconChevronLeft,
+    "b-icon-chevron-right": BIconChevronRight,
+    "b-spinner": BSpinner,
   },
 })
 export default class Schedule extends Vue {
@@ -110,6 +122,14 @@ export default class Schedule extends Vue {
     }
 
     return this.keepSelected;
+  }
+
+  get filteredKeepSelected(): Course[] {
+    return this.keepSelected.filter((course) =>
+      course.sections.some((sec) =>
+        this.$store.getters["schedule/isSelected"](sec.crn)
+      )
+    );
   }
 
   mounted() {

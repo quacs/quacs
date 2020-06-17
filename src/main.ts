@@ -1,12 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 
-import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
-
-Vue.use(BootstrapVue);
-Vue.use(BootstrapVueIcons);
 
 import AsyncComputedPlugin from "vue-async-computed";
 Vue.use(AsyncComputedPlugin);
@@ -60,6 +56,7 @@ new Vue({
   store,
   render: (h) => h(App),
   beforeCreate() {
+    this.$store.dispatch("init");
     this.$store.commit("schedule/initializeStore");
     this.$store.dispatch("schedule/init");
   },

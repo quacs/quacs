@@ -21,7 +21,7 @@
             <b-spinner
               label="Loading"
               v-if="searching"
-              class="search-spinner"
+              class="loading-spinner"
             ></b-spinner>
           </b-input-group>
           <b-navbar-nav class="ml-auto">
@@ -94,6 +94,7 @@
       <div class="footer-links">
         <a
           href="https://github.com/quacs/quacs"
+          rel="noopener"
           title="Visit our GitHub"
           aria-label="Visit our GitHub"
           target="_blank"
@@ -106,6 +107,7 @@
         />
         <a
           href="https://discord.gg/EyGZTAP"
+          rel="noopener"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
           target="_blank"
@@ -122,11 +124,37 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
+import {
+  BAlert,
+  BButton,
+  BCollapse,
+  BInputGroup,
+  BNavItem,
+  BNavbar,
+  BNavbarNav,
+  BNavbarToggle,
+  BSpinner,
+  VBModal,
+  VBTooltip,
+} from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 
 @Component({
   components: {
     Settings,
+    "b-alert": BAlert,
+    "b-button": BButton,
+    "b-collapse": BCollapse,
+    "b-input-group": BInputGroup,
+    "b-navbar": BNavbar,
+    "b-nav-item": BNavItem,
+    "b-navbar-nav": BNavbarNav,
+    "b-navbar-toggle": BNavbarToggle,
+    "b-spinner": BSpinner,
+  },
+  directives: {
+    "b-modal": VBModal,
+    "b-tooltip": VBTooltip,
   },
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
@@ -174,10 +202,9 @@ export default class App extends Vue {
 }
 </script>
 
-<style scoped>
+<style>
 @import "./assets/styles/main.css";
-
-footer {
+<style > <style scoped > footer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -215,20 +242,6 @@ footer {
   font-size: 1.5rem;
 }
 
-.search-spinner {
-  display: block;
-  position: fixed;
-  z-index: 1031; /* High z-index so it is on top of the page */
-  top: 50%;
-  right: 50%; /* or: left: 50%; */
-  margin-top: -5rem; /* half of the elements height */
-  margin-right: -5rem; /* half of the elements widht */
-
-  width: 10rem;
-  height: 10rem;
-  font-size: 3rem;
-}
-
 #search-bar {
   width: 400px;
   border: 1px solid #eee;
@@ -256,4 +269,25 @@ footer {
   font-size: 1.5rem;
   margin-left: 1.5rem;
 }
+
+/* For sticky footer */
+html,
+body,
+#app {
+  height: 100%;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+#wrapper {
+  flex: 1 0 auto;
+}
+
+.footer {
+  flex-shrink: 0;
+}
+/* End for sticky footer */
 </style>

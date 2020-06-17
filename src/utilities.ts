@@ -1,37 +1,31 @@
-import {
-  CourseSection,
-  Day,
-  Prerequisite,
-  ShortDay,
-  Timeslot,
-} from "@/typings";
+import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
 
 export const DAYS: Day[] = [
   {
     name: "Monday",
-    short: ShortDay.Monday,
+    short: "M",
   },
   {
     name: "Tuesday",
-    short: ShortDay.Tuesday,
+    short: "T",
   },
   {
     name: "Wednesday",
-    short: ShortDay.Wednesday,
+    short: "W",
   },
   {
     name: "Thursday",
-    short: ShortDay.Thursday,
+    short: "R",
   },
   {
     name: "Friday",
-    short: ShortDay.Friday,
+    short: "F",
   },
 ];
 
 export function getSessions() {
-  return (section: CourseSection, day: ShortDay): Timeslot[] => {
+  return (section: CourseSection, day: string): Timeslot[] => {
     const sessions = [];
 
     for (const timeslot of section.timeslots) {
@@ -179,6 +173,11 @@ function verifyPrerequisite(
 
 export function hasMetAllPrerequisites() {
   return function (crn: string): boolean {
+    if (!store.getters.prerequisitesDataInitialized) {
+      // Not initialized yet, don't warn them
+      return true;
+    }
+
     if ("prerequisites" in store.state.prerequisitesData[crn]) {
       return verifyPrerequisite(
         store.getters["prerequisites/getPriorCourses"](),
@@ -227,6 +226,11 @@ function getPrerequisiteFormatHtml(
 
 export function formatPrerequisites() {
   return function (crn: string): string {
+    if (!store.getters.prerequisitesDataInitialized) {
+      // Not initialized yet, don't give any info
+      return "";
+    }
+
     if ("prerequisites" in store.state.prerequisitesData[crn]) {
       return getPrerequisiteFormatHtml(
         store.getters["prerequisites/getPriorCourses"](),

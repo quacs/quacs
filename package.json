@@ -123,9 +123,9 @@
     "not dead"
   ],
   "gitHooks": {
-    "post-checkout": "git submodule update --init --recursive && yarn install",
-    "post-merge": "git submodule update --init --recursive && yarn install",
-    "pre-commit": "git submodule update --init --recursive && yarn install && lint-staged"
+    "post-checkout": "git submodule update --init --remote --recursive && yarn install",
+    "post-merge": "git submodule update --init --remote --recursive && yarn install",
+    "pre-commit": "git submodule update --init --remote --recursive && yarn install && lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [

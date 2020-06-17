@@ -164,8 +164,36 @@ import { Component, Vue } from "vue-property-decorator";
 // @ts-expect-error: ¯\_(ツ)_/¯ I dont feel like making this work with typescript. TODO make this work with typescript
 import { scrapeTranscript } from "@/components/scrapeTranscript.js";
 import { mapGetters, mapState } from "vuex";
+import {
+  BButton,
+  BCard,
+  BCol,
+  BFormCheckbox,
+  BFormFile,
+  BFormInput,
+  BFormInvalidFeedback,
+  BFormValidFeedback,
+  BJumbotron,
+  BRow,
+  BTab,
+  BTabs,
+} from "bootstrap-vue";
 
 @Component({
+  components: {
+    "b-button": BButton,
+    "b-card": BCard,
+    "b-col": BCol,
+    "b-form-checkbox": BFormCheckbox,
+    "b-form-file": BFormFile,
+    "b-form-input": BFormInput,
+    "b-form-invalid-feedback": BFormInvalidFeedback,
+    "b-form-valid-feedback": BFormValidFeedback,
+    "b-jumbotron": BJumbotron,
+    "b-row": BRow,
+    "b-tab": BTab,
+    "b-tabs": BTabs,
+  },
   computed: {
     verifyNewCourse(): boolean {
       // @ts-expect-error: no u typescript, this does exist

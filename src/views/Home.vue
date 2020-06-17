@@ -22,8 +22,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { mapState } from "vuex";
+import { BCard, BCardGroup } from "bootstrap-vue";
 
 @Component({
+  components: {
+    "b-card": BCard,
+    "b-card-group": BCardGroup,
+  },
   computed: mapState(["departments", "schools"]),
 })
 export default class Home extends Vue {}

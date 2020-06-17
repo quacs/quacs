@@ -41,10 +41,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { BButton } from "bootstrap-vue";
 import { Section } from "@/typings";
 import { formatCourseSize, formatPrerequisites } from "@/utilities";
 
 @Component({
+  components: {
+    "b-button": BButton,
+  },
   computed: {
     formatPrerequisites,
     formatCourseSize,

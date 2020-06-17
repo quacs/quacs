@@ -1,9 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
-import Department from "../views/Department.vue";
 import Search from "../views/Search.vue";
-import Prerequisites from "../views/Prerequisites.vue";
 
 Vue.use(VueRouter);
 
@@ -14,7 +12,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/department/:code",
-    component: Department,
+    component: () => import("../views/Department.vue"),
     props: true,
   },
   {
@@ -27,7 +25,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/prerequisites",
-    component: Prerequisites,
+    component: () => import("../views/Prerequisites.vue"),
   },
 ];
 

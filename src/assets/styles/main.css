@@ -2,6 +2,24 @@
         display: none;
 }
 
+.loading-spinner {
+        display: block;
+        position: fixed;
+        z-index: 1031;
+        /* High z-index so it is on top of the page */
+        top: 40%;
+        right: 50%;
+        /* or: left: 50%; */
+        margin-top: -4rem;
+        /* half of the elements height */
+        margin-right: -4rem;
+        /* half of the elements widht */
+
+        width: 8rem !important;
+        height: 8rem !important;
+        font-size: 3rem;
+}
+
 #loading-icon {
         position: absolute;
         margin: auto;
@@ -34,29 +52,6 @@
                 width: 500px;
         }
 }
-
-
-/* For sticky footer */
-html,
-body,
-#app {
-        height: 100%;
-}
-
-#app {
-        display: flex;
-        flex-direction: column;
-}
-
-#wrapper {
-        flex: 1 0 auto;
-}
-
-.footer {
-        flex-shrink: 0;
-}
-
-/* End for sticky footer */
 
 .desktop-only {
         display: none;
