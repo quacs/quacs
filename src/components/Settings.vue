@@ -45,8 +45,17 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
 
 @Component({
+  components: {
+    "b-button": BButton,
+    "b-form-select": BFormSelect,
+    "b-form-checkbox": BFormCheckbox,
+  },
+  directives: {
+    "b-tooltip": VBTooltip,
+  },
   watch: {
     timePreference: function (val) {
       this.$store.commit("settings/setTimePreference", val);

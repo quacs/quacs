@@ -124,11 +124,35 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
+import {
+  BAlert,
+  BCollapse,
+  BInputGroup,
+  BNavItem,
+  BNavbar,
+  BNavbarNav,
+  BNavbarToggle,
+  BSpinner,
+  VBModal,
+  VBTooltip,
+} from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 
 @Component({
   components: {
     Settings,
+    "b-alert": BAlert,
+    "b-collapse": BCollapse,
+    "b-input-group": BInputGroup,
+    "b-navbar": BNavbar,
+    "b-nav-item": BNavItem,
+    "b-navbar-nav": BNavbarNav,
+    "b-navbar-toggle": BNavbarToggle,
+    "b-spinner": BSpinner,
+  },
+  directives: {
+    "b-modal": VBModal,
+    "b-tooltip": VBTooltip,
   },
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),

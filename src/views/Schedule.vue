@@ -70,6 +70,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
+import { BIconChevronLeft, BIconChevronRight, BSpinner } from "bootstrap-vue";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
@@ -87,6 +88,9 @@ function mod(n: number, m: number) {
   components: {
     Calendar,
     CourseCard,
+    "b-icon-chevron-left": BIconChevronLeft,
+    "b-icon-chevron-right": BIconChevronRight,
+    "b-spinner": BSpinner,
   },
 })
 export default class Schedule extends Vue {

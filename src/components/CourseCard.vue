@@ -92,12 +92,15 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { mapGetters } from "vuex";
+import { ModalPlugin } from "bootstrap-vue";
 import { Course } from "@/typings";
 import { hasMetAllPrerequisites } from "@/utilities";
-import { mapGetters } from "vuex";
 import CourseInfo from "@/components/sections/CourseInfo.vue";
 
 import Sections from "./sections/Sections.vue";
+
+Vue.use(ModalPlugin);
 
 @Component({
   components: {

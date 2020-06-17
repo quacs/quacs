@@ -19,12 +19,14 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters } from "vuex";
+import { BSpinner } from "bootstrap-vue";
 
 import CourseCard from "../components/CourseCard.vue";
 
 @Component({
   components: {
     CourseCard,
+    "b-spinner": BSpinner,
   },
   computed: {
     ...mapGetters(["departmentsInitialized", "catalogInitialized"]),
