@@ -46,7 +46,7 @@ export default new Vuex.Store({
     },
 
     catalogInitialized: (state) => {
-      return state.catalog !== {};
+      return Object.keys(state.catalog).length !== 0;
     },
 
     prerequisitesDataInitialized: (state) => {
@@ -113,8 +113,7 @@ export default new Vuex.Store({
       );
 
       import("./data/courses.json").then((departments) =>
-        // Apparently dynamic imports import objects, so we have to cast to an array here
-        commit("SET_DEPARTMENTS", Object.values(departments))
+        commit("SET_DEPARTMENTS", departments.default)
       );
 
       import("./data/prerequisites.json").then((prereqs) =>
