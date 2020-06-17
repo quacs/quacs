@@ -1,12 +1,7 @@
 <template>
   <div>
-    <div
-      v-if="
-        departmentsInitialized &&
-        catalogInitialized &&
-        prerequisitesDataInitialized
-      "
-    >
+    <!-- We don't care if the prerequisite info isn't loaded yet (that can fill in later) -->
+    <div v-if="departmentsInitialized && catalogInitialized">
       <div class="warning-message" v-if="selectedCourses.length === 0">
         <h3>It looks like you have not selected any courses yet :(</h3>
         <router-link class="navbar-brand" to="/"

@@ -1,12 +1,7 @@
 <template>
   <div>
-    <div
-      v-if="
-        departmentsInitialized &&
-        catalogInitialized &&
-        prerequisitesDataInitialized
-      "
-    >
+    <!-- We don't care if the prerequisite info isn't loaded yet (that can fill in later) -->
+    <div v-if="departmentsInitialized && catalogInitialized">
       <h1>{{ code }}: {{ name }}</h1>
       <div class="card-column">
         <CourseCard
@@ -32,11 +27,7 @@ import CourseCard from "../components/CourseCard.vue";
     CourseCard,
   },
   computed: {
-    ...mapGetters([
-      "departmentsInitialized",
-      "catalogInitialized",
-      "prerequisitesDataInitialized",
-    ]),
+    ...mapGetters(["departmentsInitialized", "catalogInitialized"]),
   },
 })
 export default class Department extends Vue {

@@ -46,7 +46,7 @@ export default new Vuex.Store({
     },
 
     catalogInitialized: (state) => {
-      return state.catalog !== [];
+      return state.catalog !== {};
     },
 
     prerequisitesDataInitialized: (state) => {
