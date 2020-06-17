@@ -99,7 +99,7 @@
             :title="
               'There are ' +
               formatCourseSize(section.crn, courseSizes) +
-              ' available. Check SIS for more up to data information.'
+              ' available. Check SIS for more up to date information.'
             "
             >{{ formatCourseSize(section.crn) }}</span
           >
