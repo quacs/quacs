@@ -7,16 +7,16 @@
         position: fixed;
         z-index: 1031;
         /* High z-index so it is on top of the page */
-        top: 50%;
+        top: 40%;
         right: 50%;
         /* or: left: 50%; */
-        margin-top: -5rem;
+        margin-top: -4rem;
         /* half of the elements height */
-        margin-right: -5rem;
+        margin-right: -4rem;
         /* half of the elements widht */
 
-        width: 10rem;
-        height: 10rem;
+        width: 8rem;
+        height: 8rem;
         font-size: 3rem;
 }
 
