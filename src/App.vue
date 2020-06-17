@@ -126,6 +126,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
 import {
   BAlert,
+  BButton,
   BCollapse,
   BInputGroup,
   BNavItem,
@@ -142,6 +143,7 @@ import Settings from "@/components/Settings.vue";
   components: {
     Settings,
     "b-alert": BAlert,
+    "b-button": BButton,
     "b-collapse": BCollapse,
     "b-input-group": BInputGroup,
     "b-navbar": BNavbar,
