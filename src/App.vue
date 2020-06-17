@@ -242,4 +242,9 @@ footer {
   font-size: 1.5rem;
   margin-left: 1.5rem;
 }
+
+.loading-spinner {
+  height: 8rem !important;
+  width: 8rem !important;
+}
 </style>
