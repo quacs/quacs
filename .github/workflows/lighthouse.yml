@@ -1,12 +1,8 @@
-name: Deploy to github pages
-on:
-  push:
-    branches:
-      - master
-      - staging
+name: Evaluate site performance
+on: push
 jobs:
-  gh-pages-deploy:
-    name: Deploying to gh-pages
+  lighthouse:
+    name: Evaluating site performance with Lighthouse
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js for use with actions
@@ -19,13 +15,17 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Clean install dependencies
-        run: yarn install --frozen-lockfile
-
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Run deploy script
+      - name: Build site
         run: |
-          git config user.name "QuACS" && git config user.email "eli@elischiff.org"
-          yarn gh-pages-deploy
+          yarn install --frozen-lockfile
+          yarn build
+
+      - name: Run Lighthouse CI
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        run: |
+          npm install -g @lhci/cli@0.4.x
+          lhci autorun
