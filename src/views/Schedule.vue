@@ -33,7 +33,9 @@
           </div>
           <div v-else>
             No valid schedules,
-            <span v-if="selectedCourses.length > 0">there are conflicts</span>
+            <span v-if="filteredKeepSelected.length > 0"
+              >there are conflicts</span
+            >
             <span v-else>please select at least one course</span>
           </div>
         </div>
@@ -116,6 +118,14 @@ export default class Schedule extends Vue {
     }
 
     return this.keepSelected;
+  }
+
+  get filteredKeepSelected(): Course[] {
+    return this.keepSelected.filter((course) =>
+      course.sections.some((sec) =>
+        this.$store.getters["schedule/isSelected"](sec.crn)
+      )
+    );
   }
 
   mounted() {
