@@ -89,11 +89,6 @@
           <span title="Professor(s)">
             {{ section.timeslots[0].instructor }}
           </span>
-          <template v-if="section.timeslots[0].dateStart"
-            >({{ section.timeslots[0].dateStart }}-{{
-              section.timeslots[0].dateEnd
-            }})
-          </template>
           <span
             class="padding-left"
             :title="
