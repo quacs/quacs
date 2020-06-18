@@ -173,7 +173,10 @@ function verifyPrerequisite(
 
 export function hasMetAllPrerequisites() {
   return function (crn: string): boolean {
-    if (!store.getters.prerequisitesDataInitialized) {
+    if (
+      !store.getters.prerequisitesDataInitialized ||
+      !(crn in store.state.prerequisitesData)
+    ) {
       // Not initialized yet, don't warn them
       return true;
     }
