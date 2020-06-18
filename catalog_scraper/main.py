@@ -29,8 +29,8 @@ def scrapePage(url, data):
         data[key]['subj'] = course_code[0].strip()
         data[key]['crse'] = course_code[1].strip()
         data[key]['name'] = course[1].strip()
-        data[key]['url'] = data_url
-        data[key]['coid'] = data_url_end.split('=')[-1]
+        # data[key]['url'] = data_url
+        # data[key]['coid'] = data_url_end.split('=')[-1]
 
         description = data_soup.find('hr')
         if description:
@@ -76,3 +76,5 @@ while True:
     next_url = scrapePage(base_url+next_url, data)
 
 print(json.dumps(data, indent=4, sort_keys=True))
+with open(f"catalog.json", "w") as outfile:  # -{os.getenv("CURRENT_TERM")}
+    json.dump(data, outfile, sort_keys=False, indent=2)
