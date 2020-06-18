@@ -41,6 +41,8 @@ We are also not affiliated with YACS. The work they have done has been invaluabl
 yarn install
 ```
 
+You'll also need to install Rust and `wasm-pack` to build the WebAssembly components of the website.  Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).
+
 ### Compiles and hot-reloads for development
 ```
 yarn serve
