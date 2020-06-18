@@ -1,4 +1,4 @@
 beautifulsoup4
 tqdm
 requests
-dotenv
+python-dotenv
