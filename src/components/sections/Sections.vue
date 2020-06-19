@@ -169,7 +169,7 @@ import {
     getSessions,
     hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime", "hidePrerequisitesState"]),
-    ...mapGetters("schedule", ["isSelected"]),
+    ...mapGetters("schedule", ["isSelected", "selectedSections"]),
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapState(["courseSizes"]),
   },
@@ -196,7 +196,8 @@ export default class Section extends Vue {
   ) {
     let selected = true;
 
-    if (section.crn in this.$store.state.schedule.selectedSections) {
+    // @ts-expect-error: This is mapped in the custom computed section
+    if (section.crn in this.selectedSections) {
       // @ts-expect-error: This is mapped in the custom computed section
       selected = !this.isSelected(section.crn);
     }

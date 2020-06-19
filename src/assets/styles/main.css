@@ -79,3 +79,12 @@
                 display: none;
         }
 }
+
+.trash-btn {
+  color: var(--trash-btn);
+  cursor: pointer;
+}
+
+.trash-btn:hover {
+  color: var(--trash-btn-hover);
+}

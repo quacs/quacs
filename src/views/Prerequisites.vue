@@ -36,7 +36,6 @@
             <b-row class="my-1">
               <b-col>
                 <b-form-input
-                  id="input-live"
                   v-model="newCourse"
                   :state="verifyNewCourse"
                   placeholder="Course Code"
@@ -306,15 +305,6 @@ export default class Prerequisites extends Vue {
 <style>
 #valid-feedback {
   visibility: hidden;
-}
-
-.trash-btn {
-  color: var(--trash-btn);
-  cursor: pointer;
-}
-
-.trash-btn:hover {
-  color: var(--trash-btn-hover);
 }
 
 .jumbotron {

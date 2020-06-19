@@ -21,8 +21,10 @@ import {
   faCaretRight,
   faCheck,
   faCog,
+  faEdit,
   faExclamationTriangle,
   faInfoCircle,
+  faPlus,
   faTrash,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -38,7 +40,9 @@ library.add(
   faCalendar,
   faTrash,
   faExclamationTriangle,
-  faUserSlash
+  faUserSlash,
+  faPlus,
+  faEdit
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

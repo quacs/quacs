@@ -6,7 +6,7 @@
           ><img
             src="@/assets/images/quacs_logo_white_duck.svg"
             alt="QuACS Home"
-            style="height: 40px;"
+            style="height: 27px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -26,6 +26,7 @@
           </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
+              <PresetEdit></PresetEdit>
               <b-nav-item
                 to="#"
                 class="nav-text text-nowrap"
@@ -61,7 +62,7 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <router-view :key="wasmLoaded" />
+            <router-view :key="wasmLoaded + currentPreset" />
             <b-alert
               variant="warning"
               class="fixed-bottom sticky-top"
@@ -128,8 +129,10 @@ import {
   BAlert,
   BButton,
   BCollapse,
+  BDropdownItem,
   BInputGroup,
   BNavItem,
+  BNavItemDropdown,
   BNavbar,
   BNavbarNav,
   BNavbarToggle,
@@ -138,10 +141,12 @@ import {
   VBTooltip,
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
+import PresetEdit from "@/components/PresetEdit.vue";
 
 @Component({
   components: {
     Settings,
+    PresetEdit,
     "b-alert": BAlert,
     "b-button": BButton,
     "b-collapse": BCollapse,
@@ -151,6 +156,8 @@ import Settings from "@/components/Settings.vue";
     "b-navbar-nav": BNavbarNav,
     "b-navbar-toggle": BNavbarToggle,
     "b-spinner": BSpinner,
+    "b-nav-item-dropdown": BNavItemDropdown,
+    "b-dropdown-item": BDropdownItem,
   },
   directives: {
     "b-modal": VBModal,
@@ -158,7 +165,8 @@ import Settings from "@/components/Settings.vue";
   },
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
-    ...mapState("schedule", ["wasmLoaded"]),
+    ...mapGetters("schedule", ["getPresets"]),
+    ...mapState("schedule", ["wasmLoaded", "currentPreset", "presets"]),
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
@@ -204,7 +212,8 @@ export default class App extends Vue {
 
 <style>
 @import "./assets/styles/main.css";
-<style > <style scoped > footer {
+
+.footer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -236,17 +245,18 @@ export default class App extends Vue {
   color: var(--global-text);
   font-size: 1rem;
   padding: 0rem 1rem;
+  text-align: center;
 }
 
 .nav-text {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 #search-bar {
-  width: 400px;
+  width: 100%;
   border: 1px solid #eee;
   border-radius: 8px;
-  padding: 12px 12px 12px 48px;
+  padding: 6px 6px 6px 42px;
   box-sizing: border-box;
   position: relative;
   font-size: 16px;
@@ -290,4 +300,10 @@ body,
   flex-shrink: 0;
 }
 /* End for sticky footer */
+
+@media (min-width: 992px) {
+  #search-bar {
+    width: 300px;
+  }
+}
 </style>

@@ -8,12 +8,16 @@ const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeo
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
-  selectedSections: { [crn: string]: boolean } = {};
   numCurrentSchedules = 0;
   CURRENT_STORAGE_VERSION = "0.0.3";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
   currentlyGeneratingSchedules = false;
   needToGenerateSchedules = false;
+  currentTerm = 202009;
+  currentPreset = "Schedule 1";
+  presets: {
+    [term: number]: { [preset: string]: { [crn: string]: boolean } };
+  } = {};
 
   wasmLoaded = false;
   lastNewSchedule = Date.now();
@@ -26,11 +30,56 @@ export default class Schedule extends VuexModule {
 
       this.storedVersion = this.CURRENT_STORAGE_VERSION;
     }
+
+    //initialize presets if they are empty. There should never be an empty preset
+    if (Object.keys(this.presets).length === 0) {
+      Vue.set(this.presets, this.currentTerm, {});
+    }
+    if (Object.keys(this.presets[this.currentTerm]).length === 0) {
+      Vue.set(this.presets, this.currentTerm, { "Schedule 1": {} });
+    }
+  }
+
+  get getPresets() {
+    return this.presets[this.currentTerm];
+  }
+
+  @Mutation
+  switchCurrentPreset(p: { name: string }): void {
+    this.currentPreset = p.name;
+  }
+
+  @Mutation
+  addPreset(p: { name: string }): boolean {
+    //Cannot add a preset with a name of one that exists
+    if (this.presets[this.currentTerm][p.name]) {
+      return false;
+    }
+    Vue.set(this.presets[this.currentTerm], p.name, {});
+
+    this.currentPreset = p.name;
+    return true;
+  }
+
+  @Mutation
+  removePreset(p: { name: string }): boolean {
+    if (Object.keys(this.presets[this.currentTerm]).length <= 1) {
+      return false;
+    }
+    Vue.delete(this.presets[this.currentTerm], p.name);
+    if (this.currentPreset === p.name) {
+      this.currentPreset = Object.keys(this.presets[this.currentTerm])[0];
+    }
+    return true;
   }
 
   @Mutation
   setSelected(p: { crn: string; selected: boolean }): void {
-    Vue.set(this.selectedSections, p.crn, p.selected);
+    Vue.set(
+      this.presets[this.currentTerm][this.currentPreset],
+      p.crn,
+      p.selected
+    );
     worker.setSelected(p.crn, p.selected);
   }
 
@@ -94,6 +143,10 @@ export default class Schedule extends VuexModule {
 
   get isSelected(): (crn: string) => boolean {
     return (crn: string) => this.selectedSections[crn] === true;
+  }
+
+  get selectedSections(): { [crn: string]: boolean } {
+    return this.presets[this.currentTerm][this.currentPreset];
   }
 
   get getSchedule() {
