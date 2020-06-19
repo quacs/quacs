@@ -19,6 +19,9 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Update submodules
+        run: git submodule update --remote --recursive
+
       - name: Clean install dependencies
         run: yarn install --frozen-lockfile
 
