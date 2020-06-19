@@ -26,7 +26,7 @@
           </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
-              <PresetEdit></PresetEdit>
+              <CourseSetEdit></CourseSetEdit>
               <b-nav-item
                 to="#"
                 class="nav-text text-nowrap"
@@ -62,7 +62,7 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <router-view :key="wasmLoaded + currentPreset" />
+            <router-view :key="wasmLoaded + currentCourseSet" />
             <b-alert
               variant="warning"
               class="fixed-bottom sticky-top"
@@ -141,12 +141,12 @@ import {
   VBTooltip,
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
-import PresetEdit from "@/components/PresetEdit.vue";
+import CourseSetEdit from "@/components/CourseSetEdit.vue";
 
 @Component({
   components: {
     Settings,
-    PresetEdit,
+    CourseSetEdit,
     "b-alert": BAlert,
     "b-button": BButton,
     "b-collapse": BCollapse,
@@ -165,8 +165,8 @@ import PresetEdit from "@/components/PresetEdit.vue";
   },
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
-    ...mapGetters("schedule", ["getPresets"]),
-    ...mapState("schedule", ["wasmLoaded", "currentPreset", "presets"]),
+    ...mapGetters("schedule", ["getCourseSets"]),
+    ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;

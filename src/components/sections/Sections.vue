@@ -91,6 +91,7 @@
           </span>
           <span
             class="padding-left"
+            v-b-tooltip.hover
             :title="
               'There are ' +
               formatCourseSize(section.crn, courseSizes) +
@@ -158,10 +159,14 @@ import {
   getSessions,
   hasMetAllPrerequisites,
 } from "@/utilities";
+import { VBTooltip } from "bootstrap-vue";
 
 @Component({
   components: {
     SectionInfo,
+  },
+  directives: {
+    "b-tooltip": VBTooltip,
   },
   computed: {
     formatTimeslot,

@@ -131,8 +131,8 @@ export default new Vuex.Store({
       paths: [
         "schedule.storedVersion",
         "schedule.currentTerm",
-        "schedule.currentPreset",
-        "schedule.presets",
+        "schedule.currentCourseSet",
+        "schedule.courseSets",
         "settings.timePreference",
         "settings.colorTheme",
         "settings.hidePrerequisites",

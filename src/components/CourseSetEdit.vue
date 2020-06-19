@@ -1,16 +1,18 @@
 <template>
   <div>
-    <b-nav-item-dropdown left title="Switch between saved presets">
+    <b-nav-item-dropdown left title="Switch between saved courseSets">
       <template v-slot:button-content>
-        <em class="nav-text">{{ currentPreset }}</em>
+        <em class="nav-text" style="font-style: normal;">{{
+          currentCourseSet
+        }}</em>
       </template>
       <b-dropdown-item
-        v-for="preset in Object.keys(getPresets)"
-        :key="preset"
-        @click="switchCurrentPreset(preset)"
-        >{{ preset }}</b-dropdown-item
+        v-for="courseSet in Object.keys(getCourseSets)"
+        :key="courseSet"
+        @click="switchCurrentCourseSet(courseSet)"
+        >{{ courseSet }}</b-dropdown-item
       >
-      <b-dropdown-item v-b-modal.preset-modal>
+      <b-dropdown-item v-b-modal.courseSet-modal>
         <font-awesome-icon
           title="Settings"
           :icon="['fas', 'plus']"
@@ -24,26 +26,27 @@
       >
     </b-nav-item-dropdown>
 
-    <b-modal id="preset-modal" title="Preset Schedule Settings">
+    <b-modal id="courseSet-modal" title="Course Set Settings">
+      <p></p>
       <b-input-group>
         <b-form-input
-          v-model="newPresetName"
-          :state="verifyNewPreset"
-          placeholder="Preset Name"
-          aria-lable="Preset Name"
+          v-model="newCourseSetName"
+          :state="verifyNewCourseSet"
+          placeholder="CourseSet Name"
+          aria-lable="CourseSet Name"
           trim
-          @keyup.enter="newPreset"
+          @keyup.enter="newCourseSet"
         ></b-form-input>
         <b-input-group-append>
           <b-button
-            @click="newPreset"
+            @click="newCourseSet"
             style="
               border-top-right-radius: 0.25rem;
               border-bottom-right-radius: 0.25rem;
             "
-            :disabled="!verifyNewPreset"
-            :title="verifyNewPreset ? '' : 'Disabled'"
-            >Add Preset</b-button
+            :disabled="!verifyNewCourseSet"
+            :title="verifyNewCourseSet ? '' : 'Disabled'"
+            >Add Course Set</b-button
           ></b-input-group-append
         >
         <b-form-invalid-feedback>
@@ -56,18 +59,19 @@
         </b-form-valid-feedback>
       </b-input-group>
 
-      <h3 style="margin: 0px;">Current presets:</h3>
-      <p style="font-size: 80%;" v-if="Object.keys(getPresets).length <= 1">
-        There must always be 1 preset, add another to remove the current preset
+      <h3 style="margin: 0px;">Current courseSets:</h3>
+      <p style="font-size: 80%;" v-if="Object.keys(getCourseSets).length <= 1">
+        There must always be 1 course set, add another to remove the current
+        courseSet
       </p>
-      <div v-for="preset in Object.keys(getPresets)" :key="preset">
+      <div v-for="courseSet in Object.keys(getCourseSets)" :key="courseSet">
         <font-awesome-icon
-          v-if="Object.keys(getPresets).length > 1"
+          v-if="Object.keys(getCourseSets).length > 1"
           :icon="['fas', 'trash']"
           class="open_close_icon, trash-btn"
-          @click="removePreset(preset)"
+          @click="removeCourseSet(courseSet)"
         ></font-awesome-icon>
-        {{ preset }}
+        {{ courseSet }}
       </div>
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
@@ -111,41 +115,41 @@ import { mapGetters, mapState } from "vuex";
     "b-modal": VBModal,
   },
   computed: {
-    ...mapGetters("schedule", ["getPresets"]),
-    ...mapState("schedule", ["currentPreset", "presets"]),
-    verifyNewPreset(): boolean {
+    ...mapGetters("schedule", ["getCourseSets"]),
+    ...mapState("schedule", ["currentCourseSet", "courseSets"]),
+    verifyNewCourseSet(): boolean {
       // @ts-expect-error: this is in code below
-      if (this.newPresetName.length === 0) {
+      if (this.newCourseSetName.length === 0) {
         return false;
       }
       // @ts-expect-error: no u typescript, this does exist
-      return this.getPresets[this.newPresetName] === undefined;
+      return this.getCourseSets[this.newCourseSetName] === undefined;
     },
   },
 })
-export default class PresetEdit extends Vue {
-  newPresetName = "";
+export default class CourseSetEdit extends Vue {
+  newCourseSetName = "";
 
-  newPreset() {
+  newCourseSet() {
     // @ts-expect-error: this is in the computed section above
-    if (!this.verifyNewPreset) {
+    if (!this.verifyNewCourseSet) {
       return;
     }
-    this.$store.commit("schedule/addPreset", {
-      name: this.newPresetName,
+    this.$store.commit("schedule/addCourseSet", {
+      name: this.newCourseSetName,
     });
     this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
-    this.newPresetName = "";
+    this.newCourseSetName = "";
   }
 
-  removePreset(name: string) {
-    this.$store.commit("schedule/removePreset", {
+  removeCourseSet(name: string) {
+    this.$store.commit("schedule/removeCourseSet", {
       name: name,
     });
   }
 
-  switchCurrentPreset(name: string) {
-    this.$store.commit("schedule/switchCurrentPreset", {
+  switchCurrentCourseSet(name: string) {
+    this.$store.commit("schedule/switchCurrentCourseSet", {
       name: name,
     });
     this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
