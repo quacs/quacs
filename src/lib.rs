@@ -2,8 +2,8 @@
 mod utils;
 use utils::*;
 
-mod parsed;
-use parsed::{CRN_COURSES, CRN_TIMES};
+mod data;
+use data::{CRN_COURSES, CRN_TIMES};
 
 use lazy_static::lazy_static;
 use std::sync::RwLock;
