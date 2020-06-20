@@ -41,6 +41,10 @@ body{
   color: var(--navbar-text-focus);
 }
 
+.navbar-light .navbar-nav .show > .nav-link{
+  color: var(--navbar-text-show);
+}
+
 .modal-header, .close{
     background: var(--modal-header-background);
     color: var(--modal-header-text);

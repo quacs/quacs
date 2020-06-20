@@ -13,6 +13,7 @@
         --navbar-text-focus: rgba(0, 0, 0, 0.7);
         --navbar-text-disabled: rgba(0, 0, 0, 0.3);
         --navbar-text-active: rgba(0, 0, 0, 0.9);
+        --navbar-text-show: rgba(0, 0, 0, 0.9);
         --modal-header-background: #ffffff;
         --modal-header-text: rgb(33, 37, 41);
         --modal-body-background: #ffffff;
