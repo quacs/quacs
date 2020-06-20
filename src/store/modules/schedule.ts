@@ -175,10 +175,6 @@ export default class Schedule extends VuexModule {
       this.courseSets[this.currentTerm][this.currentCourseSet][crn] === true;
   }
 
-  getSelectedSections(): { [crn: string]: boolean } {
-    return this.courseSets[this.currentTerm][this.currentCourseSet];
-  }
-
   get getSchedule() {
     return (idx: number) => worker.getSchedule(idx);
   }
