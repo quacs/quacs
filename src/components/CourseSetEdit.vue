@@ -59,7 +59,7 @@
         </b-form-valid-feedback>
       </b-input-group>
 
-      <h3 style="margin: 0px;">Current courseSets:</h3>
+      <h3 style="margin: 0px;">Current course sets:</h3>
       <p style="font-size: 80%;" v-if="Object.keys(getCourseSets).length <= 1">
         There must always be 1 course set, add another to remove the current
         courseSet
@@ -135,7 +135,7 @@ export default class CourseSetEdit extends Vue {
     if (!this.verifyNewCourseSet) {
       return;
     }
-    this.$store.commit("schedule/addCourseSet", {
+    this.$store.dispatch("schedule/addCourseSet", {
       name: this.newCourseSetName,
     });
     this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
@@ -143,7 +143,7 @@ export default class CourseSetEdit extends Vue {
   }
 
   removeCourseSet(name: string) {
-    this.$store.commit("schedule/removeCourseSet", {
+    this.$store.dispatch("schedule/removeCourseSet", {
       name: name,
     });
   }

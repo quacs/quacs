@@ -92,7 +92,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import { ModalPlugin } from "bootstrap-vue";
 import { Course } from "@/typings";
 import { hasMetAllPrerequisites } from "@/utilities";
@@ -111,6 +111,7 @@ Vue.use(ModalPlugin);
     hasMetAllPrerequisites,
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapGetters("settings", ["hidePrerequisitesState"]),
+    ...mapMutations("schedule", ["getSelectedSections"]),
     areThereMissingPrerequisites: function (): number {
       let missingCount = 0;
       // @ts-expect-error: no u typescript, this does exist
@@ -145,7 +146,8 @@ Vue.use(ModalPlugin);
       let selectedCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
-        if (this.$store.state.schedule.selectedSections[section.crn]) {
+        // @ts-expect-error: no u typescript, this does exist
+        if (this.getSelectedSections[section.crn]) {
           selectedCount++;
         }
       }

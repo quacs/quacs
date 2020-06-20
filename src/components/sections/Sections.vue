@@ -151,7 +151,7 @@
 <script lang="ts">
 import { Course, CourseSection, Timeslot } from "@/typings";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState } from "vuex";
 import SectionInfo from "@/components/sections/SectionInfo.vue";
 import {
   formatCourseSize,
@@ -174,7 +174,8 @@ import { VBTooltip } from "bootstrap-vue";
     getSessions,
     hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime", "hidePrerequisitesState"]),
-    ...mapGetters("schedule", ["isSelected", "selectedSections"]),
+    ...mapGetters("schedule", ["isSelected"]),
+    ...mapMutations("schedule", ["getSelectedSections"]),
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapState(["courseSizes"]),
   },
@@ -202,7 +203,7 @@ export default class Section extends Vue {
     let selected = true;
 
     // @ts-expect-error: This is mapped in the custom computed section
-    if (section.crn in this.selectedSections) {
+    if (section.crn in this.getSelectedSections()) {
       // @ts-expect-error: This is mapped in the custom computed section
       selected = !this.isSelected(section.crn);
     }

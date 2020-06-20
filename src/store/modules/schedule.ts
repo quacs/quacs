@@ -30,14 +30,6 @@ export default class Schedule extends VuexModule {
 
       this.storedVersion = this.CURRENT_STORAGE_VERSION;
     }
-
-    //initialize courseSets if they are empty. There should never be an empty courseSet
-    if (Object.keys(this.courseSets).length === 0) {
-      Vue.set(this.courseSets, this.currentTerm, {});
-    }
-    if (Object.keys(this.courseSets[this.currentTerm]).length === 0) {
-      Vue.set(this.courseSets, this.currentTerm, { "Course Set 1": {} });
-    }
   }
 
   get getCourseSets() {
@@ -142,10 +134,7 @@ export default class Schedule extends VuexModule {
       });
     }
 
-    this.context.commit(
-      "setNumSchedules",
-      await worker.generateCurrentSchedulesAndConflicts()
-    );
+    this.context.dispatch("generateCurrentSchedulesAndConflicts");
 
     this.context.commit("setWasmLoaded", true);
 
@@ -158,6 +147,15 @@ export default class Schedule extends VuexModule {
 
   @Mutation
   initSelectedSetions() {
+    //initialize courseSets if they are empty. There should never be an empty courseSet
+    if (Object.keys(this.courseSets).length === 0) {
+      Vue.set(this.courseSets, this.currentTerm, {});
+    }
+    if (Object.keys(this.courseSets[this.currentTerm]).length === 0) {
+      Vue.set(this.courseSets, this.currentTerm, {});
+      Vue.set(this.courseSets[this.currentTerm], this.currentCourseSet, {});
+    }
+
     for (const section in this.courseSets[this.currentTerm][
       this.currentCourseSet
     ]) {
@@ -177,7 +175,7 @@ export default class Schedule extends VuexModule {
       this.courseSets[this.currentTerm][this.currentCourseSet][crn] === true;
   }
 
-  get selectedSections(): { [crn: string]: boolean } {
+  getSelectedSections(): { [crn: string]: boolean } {
     return this.courseSets[this.currentTerm][this.currentCourseSet];
   }
 
