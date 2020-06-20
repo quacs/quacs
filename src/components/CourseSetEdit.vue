@@ -62,7 +62,7 @@
       <h3 style="margin: 0px;">Current course sets:</h3>
       <p style="font-size: 80%;" v-if="Object.keys(getCourseSets).length <= 1">
         There must always be 1 course set, add another to remove the current
-        courseSet
+        course set
       </p>
       <div v-for="courseSet in Object.keys(getCourseSets)" :key="courseSet">
         <font-awesome-icon
