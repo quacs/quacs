@@ -54,7 +54,7 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
-  newCourseSet(p: { name: string }): void {
+  createNewCourseSet(p: { name: string }): void {
     Vue.set(this.courseSets[this.currentTerm], p.name, {});
   }
 
@@ -64,7 +64,7 @@ export default class Schedule extends VuexModule {
     if (this.courseSets[this.currentTerm][p.name]) {
       return false;
     }
-    this.context.commit("newCourseSet", p);
+    this.context.commit("createNewCourseSet", p);
     this.context.commit("switchCurrentCourseSet", p);
     return true;
   }

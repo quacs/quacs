@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-nav-item-dropdown left title="Switch between saved courseSets">
+    <b-nav-item-dropdown left title="Switch between saved course sets">
       <template v-slot:button-content>
         <em class="nav-text" style="font-style: normal;">{{
           currentCourseSet
@@ -31,21 +31,21 @@
       <b-input-group>
         <b-form-input
           v-model="newCourseSetName"
-          :state="verifyNewCourseSet"
+          :state="newCourseSetExists"
           placeholder="CourseSet Name"
           aria-lable="CourseSet Name"
           trim
-          @keyup.enter="newCourseSet"
+          @keyup.enter="createNewCourseSet"
         ></b-form-input>
         <b-input-group-append>
           <b-button
-            @click="newCourseSet"
+            @click="createNewCourseSet"
             style="
               border-top-right-radius: 0.25rem;
               border-bottom-right-radius: 0.25rem;
             "
-            :disabled="!verifyNewCourseSet"
-            :title="verifyNewCourseSet ? '' : 'Disabled'"
+            :disabled="!newCourseSetExists"
+            :title="newCourseSetExists ? '' : 'Disabled'"
             >Add Course Set</b-button
           ></b-input-group-append
         >
@@ -117,7 +117,7 @@ import { mapGetters, mapState } from "vuex";
   computed: {
     ...mapGetters("schedule", ["getCourseSets"]),
     ...mapState("schedule", ["currentCourseSet", "courseSets"]),
-    verifyNewCourseSet(): boolean {
+    newCourseSetExists(): boolean {
       // @ts-expect-error: this is in code below
       if (this.newCourseSetName.length === 0) {
         return false;
@@ -130,9 +130,9 @@ import { mapGetters, mapState } from "vuex";
 export default class CourseSetEdit extends Vue {
   newCourseSetName = "";
 
-  newCourseSet() {
+  createNewCourseSet() {
     // @ts-expect-error: this is in the computed section above
-    if (!this.verifyNewCourseSet) {
+    if (!this.newCourseSetExists) {
       return;
     }
     this.$store.dispatch("schedule/addCourseSet", {
