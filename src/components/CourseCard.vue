@@ -146,8 +146,8 @@ Vue.use(ModalPlugin);
       let selectedCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
-        // @ts-expect-error: no u typescript, this does exist
         if (
+          // @ts-expect-error: This is mapped in the custom computed section
           this.courseSets[this.currentTerm][this.currentCourseSet][section.crn]
         ) {
           selectedCount++;

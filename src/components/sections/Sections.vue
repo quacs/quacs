@@ -202,8 +202,8 @@ export default class Section extends Vue {
   ) {
     let selected = true;
 
-    // @ts-expect-error: This is mapped in the custom computed section
     if (
+      // @ts-expect-error: This is mapped in the custom computed section
       section.crn in this.courseSets[this.currentTerm][this.currentCourseSet]
     ) {
       // @ts-expect-error: This is mapped in the custom computed section
