@@ -32,8 +32,8 @@
         <b-form-input
           v-model="newCourseSetName"
           :state="newCourseSetExists"
-          placeholder="CourseSet Name"
-          aria-lable="CourseSet Name"
+          placeholder="Course Set Name"
+          aria-lable="Course Set Name"
           trim
           @keyup.enter="createNewCourseSet"
         ></b-form-input>
