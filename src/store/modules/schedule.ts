@@ -20,7 +20,7 @@ export default class Schedule extends VuexModule {
   } = { 202009: { "Course Set 1": {} } };
 
   wasmLoaded = false;
-  lastNewSchedule = Date.now();
+  lastNewSchedule = 0;
 
   @Mutation
   initializeStore(): void {

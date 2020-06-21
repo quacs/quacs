@@ -38,7 +38,13 @@
         </div>
         <template v-slot:overlay>
           <div class="text-center">
-            <div class="warning-message" v-if="selectedCourses.length === 0">
+            <div v-if="lastNewSchedule === 0">
+              <b-spinner label="Loading" class="loading-spinner"></b-spinner>
+            </div>
+            <div
+              class="warning-message"
+              v-else-if="selectedCourses.length === 0"
+            >
               <h3>It looks like you have not selected any courses yet :(</h3>
               <router-link class="navbar-brand" to="/"
                 >Click to select a course</router-link
@@ -53,7 +59,7 @@
                 one section.
               </h3>
             </div>
-            <div class="warning-message" v-else>
+            <div class="warning-message" v-else-if="numSchedules === 0">
               <h3>
                 Uh oh! All possible schedules have conflicts! Try choosing more
                 sections.
@@ -97,7 +103,11 @@ function mod(n: number, m: number) {
   computed: {
     ...mapGetters(["departmentsInitialized", "catalogInitialized"]),
     ...mapGetters("schedule", ["numSchedules"]),
-    ...mapState("schedule", ["lastNewSchedule", "currentCourseSet"]),
+    ...mapState("schedule", [
+      "lastNewSchedule",
+      "currentCourseSet",
+      "lastNewSchedule",
+    ]),
   },
   components: {
     Calendar,
