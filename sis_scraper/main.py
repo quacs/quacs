@@ -98,6 +98,8 @@ def getContentFromChild(element, childType):
 def cleanOutAbbr(text):
     text = re.sub("<abbr.*?>", "", text)
     text = re.sub("<\/abbr>", "", text)
+    text = re.sub("\s?\([pP]\)", "", text)#Remove primary instructor indicator (maybe we can use this data somewhere later but for now it is removed)
+    text = re.sub("\w+\.\s+", "", text)
     return text
 
 
@@ -186,7 +188,7 @@ with requests.Session() as s:
                     "timeEnd": timeToMilitary(
                         getContentFromChild(td[9], "abbr"), False
                     ),
-                    "instructor": cleanOutAbbr(getContent(td[19])),
+                    "instructor": ", ".join([x.strip() for x in cleanOutAbbr(getContent(td[19])).split(',')]),
                     "dateStart": getContentFromChild(td[20], "abbr").split("-")[0],
                     "dateEnd": getContentFromChild(td[20], "abbr").split("-")[1],
                     "location": getContentFromChild(td[21], "abbr"),
