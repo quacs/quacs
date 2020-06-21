@@ -80,12 +80,12 @@
     </div>
 
     <div
-      class="card-body"
+      :id="'section-grow-' + course.id"
+      class="card-body section-grow"
       :class="{ expanded: expanded }"
-      v-if="expanded"
       :key="course.id + lastNewSchedule"
     >
-      <Sections v-bind:course="course" />
+      <Sections :id="'measuringWrapper-' + course.id" v-bind:course="course" />
     </div>
   </div>
 </template>
@@ -194,6 +194,19 @@ export default class CourseCard extends Vue {
 
   toggleExpanded() {
     this.expanded = !this.expanded;
+    const growDiv = document.getElementById("section-grow-" + this.course.id);
+    if (growDiv) {
+      if (!this.expanded) {
+        growDiv.style.height = "0";
+      } else {
+        const measuringWrapper = document.getElementById(
+          "measuringWrapper-" + this.course.id
+        );
+        if (measuringWrapper) {
+          growDiv.style.height = measuringWrapper.clientHeight + "px";
+        }
+      }
+    }
   }
 
   get lastNewSchedule() {
@@ -204,7 +217,13 @@ export default class CourseCard extends Vue {
 
 <style scoped>
 .open_close_icon {
-  transition: 0.2s;
+  transition: 0.5s;
+}
+
+.section-grow {
+  transition: height 0.5s;
+  height: 0;
+  overflow: hidden;
 }
 
 .opened_icon {

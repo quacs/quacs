@@ -92,7 +92,7 @@ export default class Settings extends Vue {
     { value: "light", text: "Light" },
     { value: "dark", text: "Dark" },
     { value: "dark black", text: "Black" },
-    { value: "light colorful", text: "Colorful" },
+    { value: "light colorful", text: "Test theme (may change)" },
     { value: "yacs", text: "YACS" },
   ];
 }
