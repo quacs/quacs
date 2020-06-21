@@ -182,15 +182,9 @@ export default class Calendar extends Vue {
         ) % numCalColors;
 
       return {
-        bg: getComputedStyle(document.documentElement).getPropertyValue(
-          "--calendar-bg-color-" + colorIdx
-        ),
-        border: getComputedStyle(document.documentElement).getPropertyValue(
-          "--calendar-border-color-" + colorIdx
-        ),
-        text: getComputedStyle(document.documentElement).getPropertyValue(
-          "--calendar-text-color-" + colorIdx
-        ),
+        bg: "var(--calendar-bg-color-" + colorIdx + ")",
+        border: "var(--calendar-border-color-" + colorIdx + ")",
+        text: "var(--calendar-text-color-" + colorIdx + ")",
       };
     };
   }
