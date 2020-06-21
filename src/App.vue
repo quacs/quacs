@@ -47,6 +47,12 @@
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
               >
+              <b-nav-item
+                v-if="installable"
+                class="nav-text mobile-only"
+                @click="installPrompt()"
+                >Install QuACS App</b-nav-item
+              >
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
                 <font-awesome-icon
                   title="Settings"
@@ -182,6 +188,8 @@ import CourseSetEdit from "@/components/CourseSetEdit.vue";
 export default class App extends Vue {
   searchCallback: number | null = null;
   searching = false;
+  installable = false;
+  installEvent: Event | null = null;
 
   search(input: string, searchTimeout = 250) {
     this.searching = true;
@@ -217,6 +225,25 @@ export default class App extends Vue {
       setTimeout(function () {
         footer.classList.remove("footer-logo-rotate");
       }, 500);
+    }
+  }
+
+  created() {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      this.installEvent = e;
+      this.installable = true;
+    });
+  }
+
+  installPrompt() {
+    if (this.installEvent !== null) {
+      // @ts-expect-error: ts does understand this event
+      this.installEvent.prompt();
+      // @ts-expect-error: ts does understand this event
+      this.installEvent.userChoice.then(() => {
+        this.installEvent = null;
+      });
     }
   }
 }
