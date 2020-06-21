@@ -62,8 +62,8 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <router-view :key="wasmLoaded + currentCourseSet" />
-            <b-alert
+            <router-view :key="wasmLoaded" />
+            <!-- <b-alert
               variant="warning"
               class="fixed-bottom sticky-top"
               :show="shouldShowAlert"
@@ -74,7 +74,7 @@
               ><span class="warning-message">{{
                 warningMessage
               }}</span></b-alert
-            >
+            > -->
             <b-alert
               class="fixed-bottom sticky-top"
               :show="updateAvailable"

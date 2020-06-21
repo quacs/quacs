@@ -1,4 +1,4 @@
-name: Deploy to github pages
+name: Lint
 on: push
 jobs:
   lint:

@@ -17,7 +17,7 @@ export default class Schedule extends VuexModule {
   currentCourseSet = "Course Set 1";
   courseSets: {
     [term: number]: { [courseSet: string]: { [crn: string]: boolean } };
-  } = {};
+  } = { 202009: { "Course Set 1": {} } };
 
   wasmLoaded = false;
   lastNewSchedule = Date.now();
@@ -148,13 +148,13 @@ export default class Schedule extends VuexModule {
   @Mutation
   initSelectedSetions() {
     //initialize courseSets if they are empty. There should never be an empty courseSet
-    if (Object.keys(this.courseSets).length === 0) {
-      Vue.set(this.courseSets, this.currentTerm, {});
-    }
-    if (Object.keys(this.courseSets[this.currentTerm]).length === 0) {
-      Vue.set(this.courseSets, this.currentTerm, {});
-      Vue.set(this.courseSets[this.currentTerm], this.currentCourseSet, {});
-    }
+    // if (Object.keys(this.courseSets).length === 0) {
+    //   Vue.set(this.courseSets, this.currentTerm, {});
+    // }
+    // if (Object.keys(this.courseSets[this.currentTerm]).length === 0) {
+    //   Vue.set(this.courseSets, this.currentTerm, {});
+    //   Vue.set(this.courseSets[this.currentTerm], this.currentCourseSet, {});
+    // }
 
     for (const section in this.courseSets[this.currentTerm][
       this.currentCourseSet
