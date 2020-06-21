@@ -20,7 +20,7 @@
             />
             <b-spinner
               label="Loading"
-              v-if="searching"
+              v-if="searching || !wasmLoaded"
               class="loading-spinner"
             ></b-spinner>
           </b-input-group>
@@ -62,7 +62,7 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <router-view :key="wasmLoaded" />
+            <router-view :key="wasmLoaded" v-if="wasmLoaded" />
             <!-- <b-alert
               variant="warning"
               class="fixed-bottom sticky-top"

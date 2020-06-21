@@ -79,13 +79,16 @@
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
-    <div
-      :id="'section-grow-' + course.id"
-      class="card-body section-grow"
-      :class="{ expanded: expanded }"
-      :key="course.id + lastNewSchedule"
-    >
-      <Sections :id="'measuringWrapper-' + course.id" v-bind:course="course" />
+    <div :id="'section-grow-' + course.id" class="section-grow">
+      <div :id="'measuringWrapper-' + course.id">
+        <div
+          class="card-body"
+          :class="{ expanded: expanded }"
+          :key="course.id + lastNewSchedule"
+        >
+          <Sections v-bind:course="course" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
