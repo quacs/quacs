@@ -27,7 +27,10 @@
     </b-nav-item-dropdown>
 
     <b-modal id="courseSet-modal" title="Course Set Settings">
-      <p></p>
+      <p>
+        Course sets allow you to save and switch among multiple selections of
+        courses/sections.
+      </p>
       <b-input-group>
         <b-form-input
           v-model="newCourseSetName"

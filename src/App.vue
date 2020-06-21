@@ -102,9 +102,11 @@
           ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
         </a>
         <img
+          id="footer-logo"
           src="@/assets/images/quacs_white.svg"
           alt="QuACS"
           style="height: 40px;"
+          @click="rotateLogo()"
         />
         <a
           href="https://discord.gg/EyGZTAP"
@@ -207,6 +209,16 @@ export default class App extends Vue {
   reloadPage() {
     window.location.reload(true);
   }
+
+  rotateLogo() {
+    const footer = document.getElementById("footer-logo");
+    if (footer && !footer.classList.contains("footer-logo-rotate")) {
+      footer.classList.add("footer-logo-rotate");
+      setTimeout(function () {
+        footer.classList.remove("footer-logo-rotate");
+      }, 500);
+    }
+  }
 }
 </script>
 
@@ -305,5 +317,10 @@ body,
   #search-bar {
     width: 300px;
   }
+}
+
+.footer-logo-rotate {
+  transform: rotate(360deg);
+  transition-duration: 0.5s;
 }
 </style>
