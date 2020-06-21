@@ -133,7 +133,7 @@ Vue.use(ModalPlugin);
       for (const section of this.course.sections) {
         if (
           this.$store.state.courseSizes[section.crn] &&
-          this.$store.state.courseSizes[section.crn].avail === 0
+          this.$store.state.courseSizes[section.crn].avail <= 0
         ) {
           emptyCount++;
         }

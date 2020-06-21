@@ -73,7 +73,7 @@
             :class="{
               hidden: !(
                 $store.state.courseSizes[section.crn] &&
-                $store.state.courseSizes[section.crn].avail === 0
+                $store.state.courseSizes[section.crn].avail <= 0
               ),
             }"
             v-on:click.stop.prevent
