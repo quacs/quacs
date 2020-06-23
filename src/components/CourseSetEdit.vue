@@ -20,9 +20,9 @@
         Add /
         <font-awesome-icon
           title="Settings"
-          :icon="['fas', 'edit']"
+          :icon="['fas', 'trash']"
         ></font-awesome-icon>
-        Edit</b-dropdown-item
+        Remove</b-dropdown-item
       >
     </b-nav-item-dropdown>
 
