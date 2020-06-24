@@ -25,4 +25,4 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Run linter
-        run: yarn lint
+        run: yarn build
