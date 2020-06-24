@@ -13,6 +13,7 @@ import "@/assets/styles/global.css";
 import "@/assets/styles/colors.css";
 import "@/assets/styles/themes/dark.css";
 import "@/assets/styles/themes/black.css";
+import "@/assets/styles/themes/colorful.css";
 import "@/assets/styles/themes/yacs.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -21,8 +22,10 @@ import {
   faCaretRight,
   faCheck,
   faCog,
+  faEdit,
   faExclamationTriangle,
   faInfoCircle,
+  faPlus,
   faTrash,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -38,7 +41,9 @@ library.add(
   faCalendar,
   faTrash,
   faExclamationTriangle,
-  faUserSlash
+  faUserSlash,
+  faPlus,
+  faEdit
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

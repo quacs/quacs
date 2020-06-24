@@ -129,8 +129,10 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       paths: [
-        "schedule.selectedSections",
         "schedule.storedVersion",
+        "schedule.currentTerm",
+        "schedule.currentCourseSet",
+        "schedule.courseSets",
         "settings.timePreference",
         "settings.colorTheme",
         "settings.hidePrerequisites",

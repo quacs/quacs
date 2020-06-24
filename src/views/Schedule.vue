@@ -2,23 +2,14 @@
   <div>
     <!-- We don't care if the prerequisite info isn't loaded yet (that can fill in later) -->
     <div v-if="departmentsInitialized && catalogInitialized">
-      <div class="warning-message" v-if="selectedCourses.length === 0">
-        <h3>It looks like you have not selected any courses yet :(</h3>
-        <router-link class="navbar-brand" to="/"
-          >Click to select a course</router-link
-        >
-      </div>
-
-      <!-- <div class="warning-message" v-else-if="totalNumSchedules === 0">
-      <h3>
-        Uh oh! All possible schedules have conflicts! Try choosing more
-        sections.
-      </h3>
-    </div> -->
-
-      <div style="padding-bottom: 2rem;" v-else :key="lastNewSchedule">
-        <div class="schedule-select">
-          <div v-if="numSchedules !== 0">
+      <b-overlay
+        :show="selectedCourses.length === 0 || currentScheduleCRNs.length === 0"
+        rounded="sm"
+        opacity="0.7"
+      >
+        <div style="padding-bottom: 2rem;" :key="lastNewSchedule">
+          <div class="schedule-select">
+            <!-- <div v-if="numSchedules !== 0"> -->
             <b-icon-chevron-left
               class="schedule-select-button"
               v-on:click="decrementSchedule()"
@@ -31,28 +22,52 @@
               v-on:click="incrementSchedule()"
             ></b-icon-chevron-right>
           </div>
-          <div v-else>
-            No valid schedules,
-            <span v-if="filteredKeepSelected.length > 0"
-              >there are conflicts</span
+
+          <Calendar :crns="currentScheduleCRNs" />
+
+          <div class="crn-list">
+            CRNs:
+            <template v-for="(crn, idx) in currentScheduleCRNs">
+              <template v-if="idx !== 0">, </template>
+              <span class="crn" :key="crn" v-on:click="copyToClipboard(crn)">{{
+                crn
+              }}</span></template
             >
-            <span v-else>please select at least one course</span>
+            <div id="crn-copy-indicator">Copied!</div>
           </div>
         </div>
-
-        <Calendar v-if="numSchedules !== 0" :crns="currentScheduleCRNs" />
-
-        <div class="crn-list">
-          CRNs:
-          <template v-for="(crn, idx) in currentScheduleCRNs">
-            <template v-if="idx !== 0">, </template>
-            <span class="crn" :key="crn" v-on:click="copyToClipboard(crn)">{{
-              crn
-            }}</span></template
-          >
-          <div id="crn-copy-indicator">Copied!</div>
-        </div>
-      </div>
+        <template v-slot:overlay>
+          <div class="text-center">
+            <div v-if="lastNewSchedule === 0">
+              <b-spinner label="Loading" class="loading-spinner"></b-spinner>
+            </div>
+            <div
+              class="warning-message"
+              v-else-if="selectedCourses.length === 0"
+            >
+              <h3>It looks like you have not selected any courses yet :(</h3>
+              <router-link class="navbar-brand" to="/"
+                >Click to select a course</router-link
+              >
+            </div>
+            <div
+              class="warning-message"
+              v-else-if="filteredKeepSelected.length === 0"
+            >
+              <h3>
+                Uh oh! You have deselected all sections! Please select at least
+                one section.
+              </h3>
+            </div>
+            <div class="warning-message" v-else-if="numSchedules === 0">
+              <h3>
+                Uh oh! All possible schedules have conflicts! Try choosing more
+                sections.
+              </h3>
+            </div>
+          </div>
+        </template>
+      </b-overlay>
 
       <div class="card-columns">
         <CourseCard
@@ -70,7 +85,12 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
-import { BIconChevronLeft, BIconChevronRight, BSpinner } from "bootstrap-vue";
+import {
+  BIconChevronLeft,
+  BIconChevronRight,
+  BOverlay,
+  BSpinner,
+} from "bootstrap-vue";
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
@@ -83,7 +103,11 @@ function mod(n: number, m: number) {
   computed: {
     ...mapGetters(["departmentsInitialized", "catalogInitialized"]),
     ...mapGetters("schedule", ["numSchedules"]),
-    ...mapState("schedule", ["lastNewSchedule"]),
+    ...mapState("schedule", [
+      "lastNewSchedule",
+      "currentCourseSet",
+      "lastNewSchedule",
+    ]),
   },
   components: {
     Calendar,
@@ -91,10 +115,12 @@ function mod(n: number, m: number) {
     "b-icon-chevron-left": BIconChevronLeft,
     "b-icon-chevron-right": BIconChevronRight,
     "b-spinner": BSpinner,
+    "b-overlay": BOverlay,
   },
 })
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];
+  keepSelectedCourseSet = "";
   currentScheduleNumber = 0;
   currentScheduleCRNs = [];
   // loadedWithCRNs = true;
@@ -106,6 +132,12 @@ export default class Schedule extends Vue {
   }
 
   get selectedCourses(): Course[] {
+    // @ts-expect-error: This is mapped in the @Component decorator
+    if (this.currentCourseSet !== this.keepSelectedCourseSet) {
+      this.keepSelected = [];
+      // @ts-expect-error: This is mapped in the @Component decorator
+      this.keepSelectedCourseSet = this.currentCourseSet;
+    }
     if (this.keepSelected.length > 0) {
       return this.keepSelected;
     }
@@ -155,12 +187,12 @@ export default class Schedule extends Vue {
     return this.currentScheduleNumber + 1;
   }
 
-  async getSchedule(idx: number) {
+  async getSchedule(idx: number): Promise<void> {
     // @ts-expect-error: This is mapped in the @Component decorator
     if (this.numSchedules === 0) {
-      return [];
+      this.currentScheduleCRNs = [];
+      return;
     }
-
     this.currentScheduleCRNs = await this.$store.getters[
       "schedule/getSchedule"
     ](idx);

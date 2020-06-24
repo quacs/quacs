@@ -91,6 +91,7 @@
           </span>
           <span
             class="padding-left"
+            v-b-tooltip.hover
             :title="
               'There are ' +
               formatCourseSize(section.crn, courseSizes) +
@@ -158,10 +159,14 @@ import {
   getSessions,
   hasMetAllPrerequisites,
 } from "@/utilities";
+import { VBTooltip } from "bootstrap-vue";
 
 @Component({
   components: {
     SectionInfo,
+  },
+  directives: {
+    "b-tooltip": VBTooltip,
   },
   computed: {
     formatTimeslot,
@@ -170,6 +175,7 @@ import {
     hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime", "hidePrerequisitesState"]),
     ...mapGetters("schedule", ["isSelected"]),
+    ...mapState("schedule", ["courseSets", "currentTerm", "currentCourseSet"]),
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapState(["courseSizes"]),
   },
@@ -196,7 +202,10 @@ export default class Section extends Vue {
   ) {
     let selected = true;
 
-    if (section.crn in this.$store.state.schedule.selectedSections) {
+    if (
+      // @ts-expect-error: This is mapped in the custom computed section
+      section.crn in this.courseSets[this.currentTerm][this.currentCourseSet]
+    ) {
       // @ts-expect-error: This is mapped in the custom computed section
       selected = !this.isSelected(section.crn);
     }

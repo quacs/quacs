@@ -1,14 +1,8 @@
-name: Deploy to github pages
-on:
-  push:
-    branches:
-      - master
-      - staging
-  schedule:
-    - cron:  '0 6 * * *'
+name: Lint
+on: push
 jobs:
-  gh-pages-deploy:
-    name: Deploying to gh-pages
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js for use with actions
@@ -30,7 +24,5 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Run deploy script
-        run: |
-          git config user.name "QuACS" && git config user.email "eli@elischiff.org"
-          yarn gh-pages-deploy
+      - name: Run linter
+        run: yarn build

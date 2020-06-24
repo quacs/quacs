@@ -6,7 +6,7 @@
           ><img
             src="@/assets/images/quacs_logo_white_duck.svg"
             alt="QuACS Home"
-            style="height: 40px;"
+            style="height: 27px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -20,12 +20,13 @@
             />
             <b-spinner
               label="Loading"
-              v-if="searching"
+              v-if="searching || !wasmLoaded"
               class="loading-spinner"
             ></b-spinner>
           </b-input-group>
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
+              <CourseSetEdit></CourseSetEdit>
               <b-nav-item
                 to="#"
                 class="nav-text text-nowrap"
@@ -46,6 +47,12 @@
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
               >
+              <b-nav-item
+                v-if="installable"
+                class="nav-text mobile-only"
+                @click="installPrompt()"
+                >Install QuACS App</b-nav-item
+              >
               <b-nav-item class="nav-text" v-b-modal.settings-modal>
                 <font-awesome-icon
                   title="Settings"
@@ -61,8 +68,8 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <router-view :key="wasmLoaded" />
-            <b-alert
+            <router-view :key="wasmLoaded" v-if="wasmLoaded" />
+            <!-- <b-alert
               variant="warning"
               class="fixed-bottom sticky-top"
               :show="shouldShowAlert"
@@ -73,7 +80,7 @@
               ><span class="warning-message">{{
                 warningMessage
               }}</span></b-alert
-            >
+            > -->
             <b-alert
               class="fixed-bottom sticky-top"
               :show="updateAvailable"
@@ -101,9 +108,11 @@
           ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
         </a>
         <img
+          id="footer-logo"
           src="@/assets/images/quacs_white.svg"
           alt="QuACS"
           style="height: 40px;"
+          @click="rotateLogo()"
         />
         <a
           href="https://discord.gg/EyGZTAP"
@@ -128,8 +137,10 @@ import {
   BAlert,
   BButton,
   BCollapse,
+  BDropdownItem,
   BInputGroup,
   BNavItem,
+  BNavItemDropdown,
   BNavbar,
   BNavbarNav,
   BNavbarToggle,
@@ -138,10 +149,12 @@ import {
   VBTooltip,
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
+import CourseSetEdit from "@/components/CourseSetEdit.vue";
 
 @Component({
   components: {
     Settings,
+    CourseSetEdit,
     "b-alert": BAlert,
     "b-button": BButton,
     "b-collapse": BCollapse,
@@ -151,6 +164,8 @@ import Settings from "@/components/Settings.vue";
     "b-navbar-nav": BNavbarNav,
     "b-navbar-toggle": BNavbarToggle,
     "b-spinner": BSpinner,
+    "b-nav-item-dropdown": BNavItemDropdown,
+    "b-dropdown-item": BDropdownItem,
   },
   directives: {
     "b-modal": VBModal,
@@ -158,7 +173,8 @@ import Settings from "@/components/Settings.vue";
   },
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
-    ...mapState("schedule", ["wasmLoaded"]),
+    ...mapGetters("schedule", ["getCourseSets"]),
+    ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
@@ -172,6 +188,8 @@ import Settings from "@/components/Settings.vue";
 export default class App extends Vue {
   searchCallback: number | null = null;
   searching = false;
+  installable = false;
+  installEvent: Event | null = null;
 
   search(input: string, searchTimeout = 250) {
     this.searching = true;
@@ -199,12 +217,42 @@ export default class App extends Vue {
   reloadPage() {
     window.location.reload(true);
   }
+
+  rotateLogo() {
+    const footer = document.getElementById("footer-logo");
+    if (footer && !footer.classList.contains("footer-logo-rotate")) {
+      footer.classList.add("footer-logo-rotate");
+      setTimeout(function () {
+        footer.classList.remove("footer-logo-rotate");
+      }, 500);
+    }
+  }
+
+  created() {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      this.installEvent = e;
+      this.installable = true;
+    });
+  }
+
+  installPrompt() {
+    if (this.installEvent !== null) {
+      // @ts-expect-error: ts does understand this event
+      this.installEvent.prompt();
+      // @ts-expect-error: ts does understand this event
+      this.installEvent.userChoice.then(() => {
+        this.installEvent = null;
+      });
+    }
+  }
 }
 </script>
 
 <style>
 @import "./assets/styles/main.css";
-<style > <style scoped > footer {
+
+.footer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -236,17 +284,18 @@ export default class App extends Vue {
   color: var(--global-text);
   font-size: 1rem;
   padding: 0rem 1rem;
+  text-align: center;
 }
 
 .nav-text {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 #search-bar {
-  width: 400px;
+  width: 100%;
   border: 1px solid #eee;
   border-radius: 8px;
-  padding: 12px 12px 12px 48px;
+  padding: 6px 6px 6px 42px;
   box-sizing: border-box;
   position: relative;
   font-size: 16px;
@@ -290,4 +339,15 @@ body,
   flex-shrink: 0;
 }
 /* End for sticky footer */
+
+@media (min-width: 992px) {
+  #search-bar {
+    width: 300px;
+  }
+}
+
+.footer-logo-rotate {
+  transform: rotate(360deg);
+  transition-duration: 0.5s;
+}
 </style>

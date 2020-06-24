@@ -8,15 +8,19 @@ const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeo
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
-  selectedSections: { [crn: string]: boolean } = {};
   numCurrentSchedules = 0;
   CURRENT_STORAGE_VERSION = "0.0.3";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
   currentlyGeneratingSchedules = false;
   needToGenerateSchedules = false;
+  currentTerm = 202009;
+  currentCourseSet = "Course Set 1";
+  courseSets: {
+    [term: number]: { [courseSet: string]: { [crn: string]: boolean } };
+  } = { 202009: { "Course Set 1": {} } };
 
   wasmLoaded = false;
-  lastNewSchedule = Date.now();
+  lastNewSchedule = 0;
 
   @Mutation
   initializeStore(): void {
@@ -28,9 +32,70 @@ export default class Schedule extends VuexModule {
     }
   }
 
+  get getCourseSets() {
+    return this.courseSets[this.currentTerm];
+  }
+
+  @Mutation
+  switchCurrentCourseSet(p: { name: string }): void {
+    for (const sec in this.courseSets[this.currentTerm][
+      this.currentCourseSet
+    ]) {
+      worker.setSelected(sec, false);
+    }
+    this.currentCourseSet = p.name;
+    for (const sec in this.courseSets[this.currentTerm][
+      this.currentCourseSet
+    ]) {
+      if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
+        worker.setSelected(sec, true);
+      }
+    }
+  }
+
+  @Mutation
+  createNewCourseSet(p: { name: string }): void {
+    Vue.set(this.courseSets[this.currentTerm], p.name, {});
+  }
+
+  @Action
+  addCourseSet(p: { name: string }): boolean {
+    //Cannot add a courseSet with a name of one that exists
+    if (this.courseSets[this.currentTerm][p.name]) {
+      return false;
+    }
+    this.context.commit("createNewCourseSet", p);
+    this.context.commit("switchCurrentCourseSet", p);
+    return true;
+  }
+
+  @Mutation
+  deleteCourseSet(p: { name: string }) {
+    Vue.delete(this.courseSets[this.currentTerm], p.name);
+  }
+
+  @Action
+  removeCourseSet(p: { name: string }): boolean {
+    if (Object.keys(this.courseSets[this.currentTerm]).length <= 1) {
+      return false;
+    }
+    this.context.commit("deleteCourseSet", p);
+    if (this.currentCourseSet === p.name) {
+      this.context.commit("switchCurrentCourseSet", {
+        name: Object.keys(this.courseSets[this.currentTerm])[0],
+      });
+      this.context.dispatch("generateCurrentSchedulesAndConflicts");
+    }
+    return true;
+  }
+
   @Mutation
   setSelected(p: { crn: string; selected: boolean }): void {
-    Vue.set(this.selectedSections, p.crn, p.selected);
+    Vue.set(
+      this.courseSets[this.currentTerm][this.currentCourseSet],
+      p.crn,
+      p.selected
+    );
     worker.setSelected(p.crn, p.selected);
   }
 
@@ -54,8 +119,10 @@ export default class Schedule extends VuexModule {
       console.log("worker initialized");
     }
 
-    for (const sec in this.selectedSections) {
-      if (this.selectedSections[sec]) {
+    for (const sec in this.courseSets[this.currentTerm][
+      this.currentCourseSet
+    ]) {
+      if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
         await worker.setSelected(sec, true);
       }
     }
@@ -67,10 +134,7 @@ export default class Schedule extends VuexModule {
       });
     }
 
-    this.context.commit(
-      "setNumSchedules",
-      await worker.generateCurrentSchedulesAndConflicts()
-    );
+    this.context.dispatch("generateCurrentSchedulesAndConflicts");
 
     this.context.commit("setWasmLoaded", true);
 
@@ -83,8 +147,22 @@ export default class Schedule extends VuexModule {
 
   @Mutation
   initSelectedSetions() {
-    for (const section in this.selectedSections) {
-      worker.setSelected(section, this.selectedSections[section]);
+    //initialize courseSets if they are empty. There should never be an empty courseSet
+    // if (Object.keys(this.courseSets).length === 0) {
+    //   Vue.set(this.courseSets, this.currentTerm, {});
+    // }
+    // if (Object.keys(this.courseSets[this.currentTerm]).length === 0) {
+    //   Vue.set(this.courseSets, this.currentTerm, {});
+    //   Vue.set(this.courseSets[this.currentTerm], this.currentCourseSet, {});
+    // }
+
+    for (const section in this.courseSets[this.currentTerm][
+      this.currentCourseSet
+    ]) {
+      worker.setSelected(
+        section,
+        this.courseSets[this.currentTerm][this.currentCourseSet][section]
+      );
     }
   }
 
@@ -93,7 +171,8 @@ export default class Schedule extends VuexModule {
   }
 
   get isSelected(): (crn: string) => boolean {
-    return (crn: string) => this.selectedSections[crn] === true;
+    return (crn: string) =>
+      this.courseSets[this.currentTerm][this.currentCourseSet][crn] === true;
   }
 
   get getSchedule() {

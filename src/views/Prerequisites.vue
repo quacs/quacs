@@ -36,7 +36,6 @@
             <b-row class="my-1">
               <b-col>
                 <b-form-input
-                  id="input-live"
                   v-model="newCourse"
                   :state="verifyNewCourse"
                   placeholder="Course Code"
@@ -98,22 +97,6 @@
               courses by hand if you wish to stay on mobile.
               <br /><br />
             </h3>
-            <h3 v-if="safari">
-              ALERT: Importing your transcript is known to have bugs on Safari.
-              Please input the data by hand, or use Firefox/Chrome.
-            </h3>
-            <p v-if="safari">
-              As of right now there are no plans to fix this for Safari as none
-              of the QuACS devs have a mac to test on. If you have a mac and
-              would like to help please join our discord
-              <a
-                href="https://discord.gg/EyGZTAP"
-                title="Join our development Discord server"
-                aria-label="Join our development Discord server"
-                target="_blank"
-                >https://discord.gg/EyGZTAP
-              </a>
-            </p>
             <p>
               1) Go to
               <a href="https://sis.rpi.edu" target="_blank"
@@ -246,16 +229,6 @@ export default class Prerequisites extends Vue {
   tabNumber = 0;
   file = null;
 
-  get safari() {
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.indexOf("safari") !== -1) {
-      if (ua.indexOf("chrome") <= -1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   formatCourse(value: string) {
     return value
       .toUpperCase()
@@ -306,15 +279,6 @@ export default class Prerequisites extends Vue {
 <style>
 #valid-feedback {
   visibility: hidden;
-}
-
-.trash-btn {
-  color: var(--trash-btn);
-  cursor: pointer;
-}
-
-.trash-btn:hover {
-  color: var(--trash-btn-hover);
 }
 
 .jumbotron {

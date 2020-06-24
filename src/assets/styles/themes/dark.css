@@ -13,6 +13,7 @@
         --navbar-text-focus: rgba(255, 255, 255, 0.7);
         --navbar-text-disabled: rgba(255, 255, 255, 0.3);
         --navbar-text-active: rgba(255, 255, 255, 0.9);
+        --navbar-text-show: rgba(255, 255, 255, 0.9);
         --modal-header-background: #2b2e33;
         --modal-header-text: #dcddde;
         --modal-body-background: #36393f;
@@ -43,6 +44,7 @@
         --prerequisite-text: #ffffff;
         --taken-course: #2EBD4F;
         --not-taken-course: #EA8591;
+        --overlay-background: #36393f;
 }
 
 [data-theme="dark"] .navbar-toggler-icon {

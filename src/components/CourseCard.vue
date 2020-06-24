@@ -79,20 +79,23 @@
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
-    <div
-      class="card-body"
-      :class="{ expanded: expanded }"
-      v-if="expanded"
-      :key="course.id + lastNewSchedule"
-    >
-      <Sections v-bind:course="course" />
+    <div :id="'section-grow-' + course.id" class="section-grow">
+      <div :id="'measuringWrapper-' + course.id">
+        <div
+          class="card-body"
+          :class="{ expanded: expanded }"
+          :key="course.id + lastNewSchedule"
+        >
+          <Sections v-bind:course="course" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { ModalPlugin } from "bootstrap-vue";
 import { Course } from "@/typings";
 import { hasMetAllPrerequisites } from "@/utilities";
@@ -111,6 +114,7 @@ Vue.use(ModalPlugin);
     hasMetAllPrerequisites,
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapGetters("settings", ["hidePrerequisitesState"]),
+    ...mapState("schedule", ["courseSets", "currentTerm", "currentCourseSet"]),
     areThereMissingPrerequisites: function (): number {
       let missingCount = 0;
       // @ts-expect-error: no u typescript, this does exist
@@ -145,7 +149,10 @@ Vue.use(ModalPlugin);
       let selectedCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
-        if (this.$store.state.schedule.selectedSections[section.crn]) {
+        if (
+          // @ts-expect-error: This is mapped in the custom computed section
+          this.courseSets[this.currentTerm][this.currentCourseSet][section.crn]
+        ) {
           selectedCount++;
         }
       }
@@ -190,6 +197,19 @@ export default class CourseCard extends Vue {
 
   toggleExpanded() {
     this.expanded = !this.expanded;
+    const growDiv = document.getElementById("section-grow-" + this.course.id);
+    if (growDiv) {
+      if (!this.expanded) {
+        growDiv.style.height = "0";
+      } else {
+        const measuringWrapper = document.getElementById(
+          "measuringWrapper-" + this.course.id
+        );
+        if (measuringWrapper) {
+          growDiv.style.height = measuringWrapper.clientHeight + "px";
+        }
+      }
+    }
   }
 
   get lastNewSchedule() {
@@ -200,7 +220,13 @@ export default class CourseCard extends Vue {
 
 <style scoped>
 .open_close_icon {
-  transition: 0.2s;
+  transition: 0.5s;
+}
+
+.section-grow {
+  transition: height 0.5s;
+  height: 0;
+  overflow: hidden;
 }
 
 .opened_icon {

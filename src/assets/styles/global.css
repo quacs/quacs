@@ -17,8 +17,12 @@ body{
   color: var(--card-header-text);
 }
 
-.bg-light{
+.navbar.bg-light{
   background: var(--navbar-background)!important;
+}
+
+.b-overlay > .bg-light{
+  background: var(--overlay-background)!important;
 }
 
 .navbar-light .navbar-nav .nav-link{
@@ -39,6 +43,10 @@ body{
 
 .navbar-light .navbar-nav .nav-link:focus{
   color: var(--navbar-text-focus);
+}
+
+.navbar-light .navbar-nav .show > .nav-link{
+  color: var(--navbar-text-show);
 }
 
 .modal-header, .close{

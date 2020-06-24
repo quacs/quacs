@@ -8,8 +8,21 @@ export async function scrapeTranscript(fileId) {
     throw `wrong type "${files[0].type}"`;
   }
 
+  const text = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    // Wait till complete
+    reader.onload = function (e) {
+      resolve(e.target.result);
+    };
+    // Make sure to handle error states
+    reader.onerror = function (e) {
+      reject(e);
+    };
+    reader.readAsText(files[0]);
+  });
+
   const parser = new DOMParser();
-  const transcript = parser.parseFromString(await files[0].text(), "text/html");
+  const transcript = parser.parseFromString(text, "text/html");
 
   const rows = transcript
     .getElementsByClassName("datadisplaytable")[0]
