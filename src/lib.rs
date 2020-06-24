@@ -162,6 +162,11 @@ fn generate_schedules(
 
 #[wasm_bindgen(js_name = "setSelected")]
 pub fn set_selected(crn: u32, selected: bool) {
+    if !CRN_COURSES.contains_key(&crn) {
+        // Old CRN, ignore
+        return;
+    }
+
     console_log!("Setting crn {} to {}", crn, selected);
     let mut selected_courses_map = SELECTED_COURSES.write().unwrap();
 
@@ -199,6 +204,9 @@ pub fn everything_conflicts() -> bool {
 pub fn is_in_conflict(crn: u32) -> bool {
     if everything_conflicts() {
         return true;
+    } else if !CRN_COURSES.contains_key(&crn) {
+        // Old CRN, ignore
+        return false;
     }
 
     let selected_courses_map = SELECTED_COURSES.read().unwrap();
