@@ -44,6 +44,7 @@
         --prerequisite-text: #ffffff;
         --taken-course: #2EBD4F;
         --not-taken-course: #EA8591;
+        --overlay-background: #36393f;
 }
 
 [data-theme="dark"] .navbar-toggler-icon {

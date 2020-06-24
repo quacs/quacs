@@ -17,8 +17,12 @@ body{
   color: var(--card-header-text);
 }
 
-.bg-light{
+.navbar.bg-light{
   background: var(--navbar-background)!important;
+}
+
+.b-overlay > .bg-light{
+  background: var(--overlay-background)!important;
 }
 
 .navbar-light .navbar-nav .nav-link{
