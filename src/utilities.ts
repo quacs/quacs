@@ -85,7 +85,7 @@ export function formatCourseSize() {
         store.state.courseSizes[crn].avail +
         "/" +
         store.state.courseSizes[crn].seats +
-        " seats"
+        " seats available"
       );
     }
 
