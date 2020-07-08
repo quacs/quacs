@@ -25,6 +25,7 @@ import {
   faEdit,
   faExclamationTriangle,
   faInfoCircle,
+  faPen,
   faPlus,
   faTrash,
   faUserSlash,
@@ -42,6 +43,7 @@ library.add(
   faTrash,
   faExclamationTriangle,
   faUserSlash,
+  faPen,
   faPlus,
   faEdit
 );
