@@ -15,7 +15,7 @@
       <div class="dropdown-divider"></div>
       <b-dropdown-item v-b-modal.courseSet-modal>
         <font-awesome-icon
-          title="Settings"
+          title="Edit Course Sets"
           :icon="['fas', 'pen']"
         ></font-awesome-icon
         ><!-- this color is kind of ugly for an icon.  perhaps a dark gray instead? -->
@@ -29,7 +29,7 @@
         courses/sections.
       </p>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">
+        <li class="list-group-item pl-0">
           <h5 class="mb-0">Course Sets:</h5>
         </li>
         <li
@@ -45,7 +45,7 @@
           ></font-awesome-icon>
           {{ courseSet }}
         </li>
-        <li class="list-group-item">
+        <li class="list-group-item pl-0">
           <b-input-group>
             <b-form-input
               v-model="newCourseSetName"
@@ -73,20 +73,7 @@
             <b-form-invalid-feedback>
               Must be a unique name
             </b-form-invalid-feedback>
-            <!-- I dont actually show any form valid feedback, but having this here keeps
-               The page nicely spaced out and not bouncing-->
-            <b-form-valid-feedback id="valid-feedback">
-              Must be a unique name
-            </b-form-valid-feedback>
           </b-input-group>
-
-          <p
-            style="font-size: 80%;"
-            v-if="Object.keys(getCourseSets).length <= 1"
-          >
-            There must always be 1 course set, add another to remove the current
-            course set
-          </p>
         </li>
       </ul>
       <template v-slot:modal-footer="{ ok }">
