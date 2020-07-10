@@ -204,7 +204,7 @@ with requests.Session() as s:
                     "timeStart": -1,
                 }
 
-            if len(getContent(td[0])) == 0:
+            if len(getContent(td[1])) == 0:
                 data[-1]["courses"][-1]["sections"][-1]["timeslots"].append(
                     timeslot_data
                 )
