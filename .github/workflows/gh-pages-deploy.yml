@@ -1,11 +1,11 @@
 name: Deploy to github pages
 on:
+  repository_dispatch:
+    types: deploy
   push:
     branches:
       - master
       - staging
-  schedule:
-    - cron:  '0 6 * * *'
 jobs:
   gh-pages-deploy:
     name: Deploying to gh-pages
