@@ -4300,6 +4300,13 @@ json5@^1.0.1:
   dependencies:
     minimist "^1.2.0"
 
+json5@^2.1.2:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-2.1.3.tgz#c9b0f7fa9233bfe5807fe66fcf3a5617ed597d43"
+  integrity sha512-KXPvOm8K9IJKFM0bmdn8QXh7udDh1g/giieX0NLCaMnb4hEiVFqnop2ImTXCc5e0/oHz3LTqmHGtExn5hfMkOA==
+  dependencies:
+    minimist "^1.2.5"
+
 jsonfile@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-4.0.0.tgz#8771aae0799b64076b76640fca058f9c10e33ecb"
@@ -4474,6 +4481,15 @@ loader-utils@^1.0.2, loader-utils@^1.1.0, loader-utils@^1.2.3:
     big.js "^5.2.2"
     emojis-list "^3.0.0"
     json5 "^1.0.1"
+
+loader-utils@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-2.0.0.tgz#e4cace5b816d425a166b5f097e10cd12b36064b0"
+  integrity sha512-rP4F0h2RaWSvPEkD7BLDFQnvSf+nK+wr3ESUjNTyAGobqrijmW92zc+SO6d4p4B1wh7+B/Jg1mkQe5NYUEHtHQ==
+  dependencies:
+    big.js "^5.2.2"
+    emojis-list "^3.0.0"
+    json5 "^2.1.2"
 
 locate-path@^2.0.0:
   version "2.0.0"
@@ -8129,12 +8145,12 @@ worker-rpc@^0.1.0:
   dependencies:
     microevent.ts "~0.1.1"
 
-workerize-loader@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/workerize-loader/-/workerize-loader-1.2.1.tgz#9edec2720440dcb34be2e1941e10f7c929c54261"
-  integrity sha512-EYfLPfIh5DngHj+KR67/e2SlburVgnTJb4lpTd66/CCtEEqEWPW9BU9UThEbkUA4HFTDwQZv9FfYhLTVqKGKPg==
+workerize-loader@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/workerize-loader/-/workerize-loader-1.3.0.tgz#4995cf2ff2b45dd6dc60e4411e63f5ae2c704d36"
+  integrity sha512-utWDc8K6embcICmRBUUkzanPgKBb8yM1OHfh6siZfiMsswE8wLCa9CWS+L7AARz0+Th4KH4ZySrqer/OJ9WuWw==
   dependencies:
-    loader-utils "^1.2.3"
+    loader-utils "^2.0.0"
 
 wrap-ansi@^3.0.1:
   version "3.0.1"
