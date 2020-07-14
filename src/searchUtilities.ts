@@ -21,6 +21,7 @@ const fuseOptions = {
     "sections.crn",
     "sections.timeslots.instructor",
     "sections.timeslots.location",
+    "sections.attribute",
   ],
 };
 

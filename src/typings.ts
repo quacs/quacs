@@ -102,4 +102,5 @@ export interface Restriction {
 export interface Section {
   crn: number;
   conflicts: number[];
+  attribute: string;
 }
