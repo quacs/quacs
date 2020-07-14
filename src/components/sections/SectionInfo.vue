@@ -28,7 +28,7 @@
             this.$store.state.courseSizes[section.crn]
           )
         }}
-        available. Check SIS for more up to date information.
+        . Check SIS for more up to date information.
       </div>
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
