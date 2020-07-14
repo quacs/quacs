@@ -105,3 +105,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Quacs Internal Dependencies
+src/store/data/
+src/quacs-rs/
