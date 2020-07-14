@@ -27,6 +27,7 @@ export interface CourseSection {
   rem: number;
 
   timeslots: Timeslot[];
+  attribute: string;
 }
 
 export interface Course {
