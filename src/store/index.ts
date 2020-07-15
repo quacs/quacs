@@ -13,6 +13,7 @@ import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
 import SCHOOLS_JSON from "./data/schools.json";
+import DATA_STATS_JSON from "./data/meta.json";
 
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
@@ -24,6 +25,7 @@ Vue.use(VueAxios, axios);
 export default new Vuex.Store({
   state: {
     schools: SCHOOLS_JSON as { [id: string]: { code: string; name: string }[] },
+    dataStats: DATA_STATS_JSON as { last_updated: string },
     departments: [] as Department[], // asynchronously loaded
     catalog: {} as { [id: string]: CatalogCourse }, // asynchronously loaded
     prerequisitesData: {} as { [id: string]: PrerequisiteJSON }, // asynchronously loaded
