@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import json
 import re
 import sys
+from tqdm import tqdm
 
 
 def scrapePage(url, data):
@@ -12,7 +13,7 @@ def scrapePage(url, data):
 
     rows = soup.find("div", {"id": "advanced_filter_section"}).nextSibling.nextSibling.findAll('tr')
     final_row = None
-    for row in rows:
+    for row in tqdm(rows):
         final_row = row
         if len(row.findAll('td')) <= 1:
             continue
