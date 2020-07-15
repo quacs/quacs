@@ -194,7 +194,9 @@ export default class App extends Vue {
 
   get lastUpdated() {
     let timeDifference =
-      (new Date() - new Date(this.$store.state.dataStats.last_updated)) / 1000;
+      (new Date().getTime() -
+        new Date(this.$store.state.dataStats.last_updated).getTime()) /
+      1000;
     const seconds = Math.floor(timeDifference % 60);
     timeDifference = timeDifference / 60;
     const minutes = Math.floor(timeDifference % 60);
