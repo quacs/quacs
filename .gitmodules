@@ -1,8 +1,0 @@
-[submodule "src/store/data"]
-	path = src/store/data
-	url = https://github.com/quacs/quacs-data.git
-	branch = master
-[submodule "src/quacs-rs"]
-	path = src/quacs-rs
-	url = https://github.com/quacs/quacs-rs.git
-	branch = master

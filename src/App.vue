@@ -123,6 +123,7 @@
           ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
         </a>
       </div>
+      <div class="footer-updated">Last updated {{ lastUpdated }}</div>
       <div class="footer-copyright">
         &copy; 2020 - Questionably Accurate Course Scheduler
       </div>
@@ -190,6 +191,27 @@ export default class App extends Vue {
   searching = false;
   installable = false;
   installEvent: Event | null = null;
+
+  get lastUpdated() {
+    let timeDifference =
+      (new Date().getTime() -
+        new Date(this.$store.state.dataStats.last_updated).getTime()) /
+      1000;
+    const seconds = Math.floor(timeDifference % 60);
+    timeDifference = timeDifference / 60;
+    const minutes = Math.floor(timeDifference % 60);
+    timeDifference = timeDifference / 60;
+    const hours = Math.floor(timeDifference % 24);
+    const days = Math.floor(timeDifference / 24);
+    if (days > 0) {
+      return `${days} day${days !== 1 ? "s" : ""} ago`;
+    } else if (hours > 0) {
+      return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+    } else if (minutes > 0) {
+      return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+    }
+    return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
+  }
 
   search(input: string, searchTimeout = 250) {
     this.searching = true;

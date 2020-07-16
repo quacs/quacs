@@ -29,6 +29,7 @@
             {{ course.title }}</span
           >
           ꞏ {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
+          {{ attributes }}
         </span>
         <!--
         This code should be left here in case we ever need to add a more info button to a course
@@ -176,6 +177,12 @@ export default class CourseCard extends Vue {
         ? "-" + this.course.sections[0].credMax
         : "")
     );
+  }
+
+  get attributes() {
+    return this.course.sections[0].attribute === ""
+      ? ""
+      : "ꞏ " + this.course.sections[0].attribute;
   }
 
   getDescription(subject: string, code: string): string {

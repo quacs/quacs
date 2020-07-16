@@ -27,6 +27,7 @@ export interface CourseSection {
   rem: number;
 
   timeslots: Timeslot[];
+  attribute: string;
 }
 
 export interface Course {
@@ -102,4 +103,5 @@ export interface Restriction {
 export interface Section {
   crn: number;
   conflicts: number[];
+  attribute: string;
 }
