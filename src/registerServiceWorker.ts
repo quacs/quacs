@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "production") {
     },
     updated() {
       console.log("New content is available; please refresh.");
-      // window.location.reload(true);//Force refresh as soon as there are updates
+      window.location.reload(true); //Force refresh as soon as there are updates
       store.commit("toggleUpdateNotice", true);
     },
     offline() {
