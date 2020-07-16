@@ -31,7 +31,7 @@
     "vuex-persistedstate": "^3.0.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-eslint": "~4.4.6",
     "@vue/cli-plugin-pwa": "~4.4.6",
