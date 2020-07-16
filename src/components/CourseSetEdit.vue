@@ -12,18 +12,15 @@
         @click="switchCurrentCourseSet(courseSet)"
         >{{ courseSet }}</b-dropdown-item
       >
+      <div class="dropdown-divider"></div>
       <b-dropdown-item v-b-modal.courseSet-modal>
         <font-awesome-icon
-          title="Settings"
-          :icon="['fas', 'plus']"
-        ></font-awesome-icon>
-        Add /
-        <font-awesome-icon
-          title="Settings"
-          :icon="['fas', 'trash']"
-        ></font-awesome-icon>
-        Remove</b-dropdown-item
-      >
+          title="Edit Course Sets"
+          :icon="['fas', 'pen']"
+        ></font-awesome-icon
+        ><!-- this color is kind of ugly for an icon.  perhaps a dark gray instead? -->
+        Edit
+      </b-dropdown-item>
     </b-nav-item-dropdown>
 
     <b-modal id="courseSet-modal" title="Course Set Settings">
@@ -31,50 +28,63 @@
         Course sets allow you to save and switch among multiple selections of
         courses/sections.
       </p>
-      <b-input-group>
-        <b-form-input
-          v-model="newCourseSetName"
-          :state="newCourseSetExists"
-          placeholder="Course Set Name"
-          aria-lable="Course Set Name"
-          trim
-          @keyup.enter="createNewCourseSet"
-        ></b-form-input>
-        <b-input-group-append>
-          <b-button
-            @click="createNewCourseSet"
-            style="
-              border-top-right-radius: 0.25rem;
-              border-bottom-right-radius: 0.25rem;
-            "
-            :disabled="!newCourseSetExists"
-            :title="newCourseSetExists ? '' : 'Disabled'"
-            >Add Course Set</b-button
-          ></b-input-group-append
-        >
-        <b-form-invalid-feedback>
-          Must be a unique name
-        </b-form-invalid-feedback>
-        <!-- I dont actually show any form valid feedback, but having this here keeps
-           The page nicely spaced out and not bouncing-->
-        <b-form-valid-feedback id="valid-feedback">
-          Must be a unique name
-        </b-form-valid-feedback>
-      </b-input-group>
-
-      <h3 style="margin: 0px;">Current course sets:</h3>
-      <p style="font-size: 80%;" v-if="Object.keys(getCourseSets).length <= 1">
-        There must always be 1 course set, add another to remove the current
-        course set
-      </p>
-      <div v-for="courseSet in Object.keys(getCourseSets)" :key="courseSet">
-        <font-awesome-icon
-          v-if="Object.keys(getCourseSets).length > 1"
-          :icon="['fas', 'trash']"
-          class="open_close_icon, trash-btn"
-          @click="removeCourseSet(courseSet)"
-        ></font-awesome-icon>
-        {{ courseSet }}
+      <div>
+        <div>
+          <h5 class="mb-0">Course Sets:</h5>
+        </div>
+        <div class="p-2">
+          <div
+            class=""
+            v-for="courseSet in Object.keys(getCourseSets)"
+            :key="courseSet"
+          >
+            <font-awesome-icon
+              v-if="Object.keys(getCourseSets).length > 1"
+              :icon="['fas', 'trash']"
+              class="open_close_icon, trash-btn"
+              @click="removeCourseSet(courseSet)"
+            ></font-awesome-icon>
+            {{ courseSet }}
+          </div>
+        </div>
+        <div>
+          <b-input-group>
+            <b-form-input
+              v-model="newCourseSetName"
+              :state="newCourseSetExists"
+              placeholder="Course Set Name"
+              aria-lable="Course Set Name"
+              trim
+              @keyup.enter="createNewCourseSet"
+            ></b-form-input>
+            <b-input-group-append>
+              <b-button
+                @click="createNewCourseSet"
+                style="
+                  border-top-right-radius: 0.25rem;
+                  border-bottom-right-radius: 0.25rem;
+                "
+                :disabled="!newCourseSetExists"
+                :class="{
+                  'btn-success': newCourseSetExists,
+                }"
+                :title="newCourseSetExists ? '' : 'Disabled'"
+                >Add Course Set</b-button
+              ></b-input-group-append
+            >
+            <b-form-valid-feedback id="valid-feedback">
+              <span style="visibility: hidden;">Valid</span>
+            </b-form-valid-feedback>
+            <b-form-invalid-feedback>
+              <template v-if="newCourseSetName.length === 0">
+                You must give your course set a name
+              </template>
+              <template v-else>
+                Must be a unique name
+              </template>
+            </b-form-invalid-feedback>
+          </b-input-group>
+        </div>
       </div>
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
