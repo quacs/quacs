@@ -229,7 +229,7 @@ export default class Prerequisites extends Vue {
   tabNumber = 0;
   file = null;
 
-  formatCourse(value: string) {
+  formatCourse(value: string): string {
     return value
       .toUpperCase()
       .replace("_", "-")
@@ -237,18 +237,18 @@ export default class Prerequisites extends Vue {
       .substring(0, 9);
   }
 
-  addCourse() {
+  addCourse(): void {
     // @ts-expect-error: no u typescript, this does exist
     if (this.verifyNewCourse) {
       this.$store.commit("prerequisites/addPriorCourse", this.newCourse);
     }
   }
 
-  removeCourse(course: string) {
+  removeCourse(course: string): void {
     this.$store.commit("prerequisites/removePriorCourse", course);
   }
 
-  importTranscript() {
+  importTranscript(): void {
     const store = this.$store;
     const bvModal = this.$bvModal;
     const importedTranscript = scrapeTranscript("transcriptFileUpload");
@@ -258,7 +258,7 @@ export default class Prerequisites extends Vue {
         console.log(err);
         bvModal.show("transcriptImportModal");
       })
-      // @ts-expect-error
+      // @ts-expect-error: TBD
       .then(function (transcript) {
         for (const term of transcript.terms.concat(
           transcript.inProgressTerms

@@ -22,6 +22,7 @@ import { mapGetters } from "vuex";
 import { BSpinner } from "bootstrap-vue";
 
 import CourseCard from "../components/CourseCard.vue";
+import { Course } from "../typings";
 
 @Component({
   components: {
@@ -35,9 +36,10 @@ import CourseCard from "../components/CourseCard.vue";
 export default class Department extends Vue {
   @Prop() code!: string;
 
-  get department() {
-    // @ts-expect-error
+  get department(): Department {
+    // @ts-expect-error: value exists
     if (!this.departmentsInitialized) {
+      // @ts-expect-error: uses {} type
       return {};
     }
 
@@ -46,11 +48,11 @@ export default class Department extends Vue {
         return dept;
       }
     }
-
+    // @ts-expect-error: uses {} type
     return {};
   }
 
-  get formattedDept() {
+  get formattedDept(): Department {
     for (const schoolName in this.$store.state.schools) {
       const school = this.$store.state.schools[schoolName];
 
@@ -61,14 +63,15 @@ export default class Department extends Vue {
       }
     }
 
+    // @ts-expect-error: uses {} type
     return {};
   }
 
-  get courses() {
+  get courses(): Course[] {
     return this.department.courses;
   }
 
-  get name() {
+  get name(): string {
     return this.formattedDept.name;
   }
 }
