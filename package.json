@@ -132,12 +132,11 @@
   "gitHooks": {
     "post-checkout": "yarn install --frozen-lockfile",
     "post-merge": "yarn install --frozen-lockfile",
-    "pre-commit": "yarn install && lint-staged"
+    "pre-commit": "yarn install --frozen-lockfile && lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [
-      "vue-cli-service lint --max-warnings 0",
-      "git add"
+      "vue-cli-service lint --max-warnings 0"
     ]
   }
 }
