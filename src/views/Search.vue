@@ -34,7 +34,12 @@ export default {
         // @ts-expect-error: We're not in a real class so Typescript is confused
         const query = Object.keys(this.$route.query)[0];
         if (query.length < 3) {
-          return [];
+          // eslint-disable-next-line
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              return [] as Course[];
+            }, 1);
+          });
         }
 
         return fuseSearch(query);
