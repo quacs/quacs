@@ -170,7 +170,7 @@ export default class CourseCard extends Vue {
   @Prop() readonly startExpanded!: boolean;
   expanded = this.startExpanded ? this.startExpanded : false;
 
-  get credMin() {
+  get credMin(): string {
     return (
       this.course.sections[0].credMin +
       (this.course.sections[0].credMin !== this.course.sections[0].credMax
@@ -179,7 +179,7 @@ export default class CourseCard extends Vue {
     );
   }
 
-  get attributes() {
+  get attributes(): string {
     return this.course.sections[0].attribute === ""
       ? ""
       : "ꞏ " + this.course.sections[0].attribute;
@@ -194,7 +194,7 @@ export default class CourseCard extends Vue {
     return "";
   }
 
-  get rotation() {
+  get rotation(): number {
     if (this.expanded) {
       return 90;
     } else {
@@ -202,7 +202,7 @@ export default class CourseCard extends Vue {
     }
   }
 
-  toggleExpanded() {
+  toggleExpanded(): void {
     this.expanded = !this.expanded;
     const growDiv = document.getElementById("section-grow-" + this.course.id);
     if (growDiv) {
@@ -219,7 +219,7 @@ export default class CourseCard extends Vue {
     }
   }
 
-  get lastNewSchedule() {
+  get lastNewSchedule(): number {
     return this.$store.state.schedule.lastNewSchedule;
   }
 }

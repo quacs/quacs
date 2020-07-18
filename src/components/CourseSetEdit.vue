@@ -143,7 +143,7 @@ import { mapGetters, mapState } from "vuex";
 export default class CourseSetEdit extends Vue {
   newCourseSetName = "";
 
-  createNewCourseSet() {
+  createNewCourseSet(): void {
     // @ts-expect-error: this is in the computed section above
     if (!this.newCourseSetExists) {
       return;
@@ -155,13 +155,13 @@ export default class CourseSetEdit extends Vue {
     this.newCourseSetName = "";
   }
 
-  removeCourseSet(name: string) {
+  removeCourseSet(name: string): void {
     this.$store.dispatch("schedule/removeCourseSet", {
       name: name,
     });
   }
 
-  switchCurrentCourseSet(name: string) {
+  switchCurrentCourseSet(name: string): void {
     this.$store.commit("schedule/switchCurrentCourseSet", {
       name: name,
     });

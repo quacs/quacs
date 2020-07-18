@@ -105,3 +105,7 @@ export interface Section {
   conflicts: number[];
   attribute: string;
 }
+
+export interface CourseSet {
+  [courseSet: string]: { [crn: string]: boolean };
+}

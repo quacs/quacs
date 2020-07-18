@@ -185,7 +185,7 @@ export default class Section extends Vue {
   days = ["M", "T", "W", "R", "F"];
   conflicts: { [crn: number]: boolean } = {};
 
-  mounted() {
+  mounted(): void {
     for (const section of this.course.sections) {
       this.$store.getters["schedule/getInConflict"](section.crn).then(
         (isInConflict: number) => {
@@ -199,7 +199,7 @@ export default class Section extends Vue {
     section: CourseSection,
     newState: boolean | null = null,
     rePopulateConflicts = true
-  ) {
+  ): void {
     let selected = true;
 
     if (
@@ -223,7 +223,7 @@ export default class Section extends Vue {
     }
   }
 
-  toggleAll() {
+  toggleAll(): void {
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
       if (!this.$store.getters["schedule/isSelected"](section.crn)) {

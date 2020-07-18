@@ -2,7 +2,10 @@
   <!-- We don't care if the prerequisite info isn't loaded yet (that can fill in later) -->
   <div v-if="departmentsInitialized && catalogInitialized">
     <div class="card-column">
-      <h1 v-if="courses && courses.length === 0">
+      <h1 v-if="Object.keys($route.query)[0].length < 3">
+        Search query must be at least 3 characters long
+      </h1>
+      <h1 v-else-if="courses && courses.length === 0">
         No results found for "{{ Object.keys(this.$route.query)[0] }}"
       </h1>
       <CourseCard
@@ -34,12 +37,7 @@ export default {
         // @ts-expect-error: We're not in a real class so Typescript is confused
         const query = Object.keys(this.$route.query)[0];
         if (query.length < 3) {
-          // eslint-disable-next-line
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              return [] as Course[];
-            }, 1);
-          });
+          return new Promise((resolve) => resolve([]));
         }
 
         return fuseSearch(query);

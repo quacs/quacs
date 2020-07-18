@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export async function scrapeTranscript(fileId) {
   const files = document.getElementById(fileId).files;
   if (files.length < 1) {
@@ -228,7 +229,5 @@ export async function scrapeTranscript(fileId) {
     rowNum += 2;
   }
 
-  // console.log(JSON.stringify(data, null, 4));
-  // console.log(data);
   return data;
 }

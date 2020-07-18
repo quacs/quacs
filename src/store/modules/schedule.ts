@@ -2,6 +2,7 @@ import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import * as quacsWorker from "@/workers/schedule.worker";
 import Vue from "vue";
+import { CourseSet } from "@/typings";
 
 // yay typescript fun
 const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
@@ -16,7 +17,7 @@ export default class Schedule extends VuexModule {
   currentTerm = 202009;
   currentCourseSet = "Course Set 1";
   courseSets: {
-    [term: number]: { [courseSet: string]: { [crn: string]: boolean } };
+    [term: number]: CourseSet;
   } = { 202009: { "Course Set 1": {} } };
 
   wasmLoaded = false;
@@ -32,7 +33,7 @@ export default class Schedule extends VuexModule {
     }
   }
 
-  get getCourseSets() {
+  get getCourseSets(): CourseSet {
     return this.courseSets[this.currentTerm];
   }
 
@@ -70,7 +71,7 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
-  deleteCourseSet(p: { name: string }) {
+  deleteCourseSet(p: { name: string }): void {
     Vue.delete(this.courseSets[this.currentTerm], p.name);
   }
 
@@ -146,7 +147,7 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
-  initSelectedSetions() {
+  initSelectedSetions(): void {
     //initialize courseSets if they are empty. There should never be an empty courseSet
     // if (Object.keys(this.courseSets).length === 0) {
     //   Vue.set(this.courseSets, this.currentTerm, {});
@@ -176,33 +177,33 @@ export default class Schedule extends VuexModule {
   }
 
   get getSchedule() {
-    return (idx: number) => worker.getSchedule(idx);
+    return (idx: number): Promise<Uint32Array> => worker.getSchedule(idx);
   }
 
-  get numSchedules() {
+  get numSchedules(): number {
     return this.numCurrentSchedules;
   }
 
   @Mutation
-  setNumSchedules(num: number) {
+  setNumSchedules(num: number): void {
     this.numCurrentSchedules = num;
   }
 
   @Mutation
-  setNeedToGenerateSchedules(state: boolean) {
+  setNeedToGenerateSchedules(state: boolean): void {
     this.needToGenerateSchedules = state;
   }
 
   @Mutation
-  setCurrentlyGeneratingSchedules(state: boolean) {
+  setCurrentlyGeneratingSchedules(state: boolean): void {
     this.currentlyGeneratingSchedules = state;
   }
 
-  get getNeedToGenerateSchedules() {
+  get getNeedToGenerateSchedules(): boolean {
     return this.needToGenerateSchedules;
   }
 
-  get getCurrentlyGeneratingSchedules() {
+  get getCurrentlyGeneratingSchedules(): boolean {
     return this.currentlyGeneratingSchedules;
   }
 

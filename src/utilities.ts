@@ -69,7 +69,7 @@ function formatTime(time: number, isMilitaryTime: boolean): string {
 }
 
 export function formatTimeslot() {
-  return (timeslot: Timeslot, isMilitaryTime: boolean) => {
+  return (timeslot: Timeslot, isMilitaryTime: boolean): string => {
     return timeslot.timeStart >= 0
       ? formatTime(timeslot.timeStart, isMilitaryTime) +
           "-" +

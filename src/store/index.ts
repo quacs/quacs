@@ -92,11 +92,16 @@ export default new Vuex.Store({
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(data, "text/xml");
 
-          // @ts-expect-error: liveData
-          const liveData: { [id: string]: CourseSize | DummyVal } = {};
+          const liveData: { [id: string]: CourseSize } = {};
           const courses = xmlDoc.getElementsByTagName("SECTION");
           for (let i = 0; i < courses.length; i++) {
-            liveData[courses[i].attributes[0].nodeValue || ""] = {};
+            liveData[courses[i].attributes[0].nodeValue || ""] = {
+              avail: 0,
+              crn: 0,
+              num: 0,
+              seats: 0,
+              students: 0,
+            };
             for (let j = 0; j < courses[i].attributes.length; j++) {
               const attribute = courses[i].attributes[j];
               Vue.set(

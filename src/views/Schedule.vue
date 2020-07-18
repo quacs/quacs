@@ -126,7 +126,7 @@ export default class Schedule extends Vue {
   // loadedWithCRNs = true;
 
   @Watch("lastNewSchedule")
-  onPropertyChanged() {
+  onPropertyChanged(): void {
     this.currentScheduleNumber = 0;
     this.getSchedule(this.currentScheduleNumber);
   }
@@ -164,7 +164,7 @@ export default class Schedule extends Vue {
     );
   }
 
-  mounted() {
+  mounted(): void {
     // if (this.$route.query.crns === undefined && this.totalNumSchedules > 0) {
     //   this.$router.replace(
     //     "/schedule?crns=" + this.currentScheduleCRNs.join(",")
@@ -174,11 +174,11 @@ export default class Schedule extends Vue {
     this.getSchedule(this.currentScheduleNumber);
   }
 
-  get lastNewSchedule() {
+  get lastNewSchedule(): number[] {
     return this.$store.state.schedule.lastNewSchedule;
   }
 
-  get visibleCurrentScheduleNumber() {
+  get visibleCurrentScheduleNumber(): number {
     // @ts-expect-error: This is mapped in the @Component decorator
     if (this.numSchedules === 0) {
       this.currentScheduleNumber = 0;
@@ -198,7 +198,7 @@ export default class Schedule extends Vue {
     ](idx);
   }
 
-  incrementSchedule() {
+  incrementSchedule(): void {
     this.currentScheduleNumber = mod(
       this.currentScheduleNumber + 1,
       // @ts-expect-error: This is mapped in the @Component decorator
@@ -207,7 +207,7 @@ export default class Schedule extends Vue {
     this.getSchedule(this.currentScheduleNumber);
   }
 
-  decrementSchedule() {
+  decrementSchedule(): void {
     this.currentScheduleNumber = mod(
       this.currentScheduleNumber - 1,
       // @ts-expect-error: This is mapped in the @Component decorator
@@ -216,7 +216,7 @@ export default class Schedule extends Vue {
     this.getSchedule(this.currentScheduleNumber);
   }
 
-  copyToClipboard(val: string) {
+  copyToClipboard(val: string): void {
     const tempInput = document.createElement("input");
     // @ts-expect-error: This works so ts is just being dumb
     tempInput.style = "position: absolute; left: -1000px; top: -1000px";

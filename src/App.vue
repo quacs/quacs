@@ -192,7 +192,7 @@ export default class App extends Vue {
   installable = false;
   installEvent: Event | null = null;
 
-  get lastUpdated() {
+  get lastUpdated(): string {
     let timeDifference =
       (new Date().getTime() -
         new Date(this.$store.state.dataStats.last_updated).getTime()) /
@@ -213,7 +213,7 @@ export default class App extends Vue {
     return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
   }
 
-  search(input: string, searchTimeout = 250) {
+  search(input: string, searchTimeout = 250): void {
     this.searching = true;
 
     if (this.searchCallback !== null) {
@@ -236,11 +236,11 @@ export default class App extends Vue {
     }
   }
 
-  reloadPage() {
+  reloadPage(): void {
     window.location.reload(true);
   }
 
-  rotateLogo() {
+  rotateLogo(): void {
     const footer = document.getElementById("footer-logo");
     if (footer && !footer.classList.contains("footer-logo-rotate")) {
       footer.classList.add("footer-logo-rotate");
@@ -250,7 +250,7 @@ export default class App extends Vue {
     }
   }
 
-  created() {
+  created(): void {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       this.installEvent = e;
@@ -258,7 +258,7 @@ export default class App extends Vue {
     });
   }
 
-  installPrompt() {
+  installPrompt(): void {
     if (this.installEvent !== null) {
       // @ts-expect-error: ts does understand this event
       this.installEvent.prompt();

@@ -38,16 +38,14 @@ export default class Department extends Vue {
 
   get department(): Department {
     // @ts-expect-error: value exists
-    if (!this.departmentsInitialized) {
-      // @ts-expect-error: uses {} type
-      return {};
-    }
-
-    for (const dept of this.$store.state.departments) {
-      if (dept.code === this.code) {
-        return dept;
+    if (this.departmentsInitialized) {
+      for (const dept of this.$store.state.departments) {
+        if (dept.code === this.code) {
+          return dept;
+        }
       }
     }
+
     // @ts-expect-error: uses {} type
     return {};
   }

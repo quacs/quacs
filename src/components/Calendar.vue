@@ -90,19 +90,19 @@ export default class Calendar extends Vue {
   //   return (this.$route.query.crns as string).split(",");
   // }
 
-  get numMinutes() {
+  get numMinutes(): number {
     return this.endTime - this.startTime;
   }
 
-  get dayWidth() {
+  get dayWidth(): number {
     return 100 / DAYS.length;
   }
 
-  get hourHeight() {
+  get hourHeight(): number {
     return (60 * 100) / this.numMinutes;
   }
 
-  get crnToSections() {
+  get crnToSections(): { [crn: string]: CourseSection } {
     //maybe refactor so we dont need this. This is just old code from when this was already calculated so it was not extra work to generate it
     const crnToSections: { [crn: string]: CourseSection } = {};
 
@@ -117,7 +117,7 @@ export default class Calendar extends Vue {
     return crnToSections;
   }
 
-  get selected() {
+  get selected(): CourseSection[] {
     const ret = [];
     for (const crn of this.crns) {
       ret.push(this.crnToSections[crn]);
@@ -144,7 +144,7 @@ export default class Calendar extends Vue {
     };
   }
 
-  get strHours() {
+  get strHours(): string[] {
     const hours = [];
     for (let time = this.startTime; time < this.endTime; time += 60) {
       hours.push(
@@ -170,7 +170,7 @@ export default class Calendar extends Vue {
   }
 
   get colors() {
-    return (crn: number) => {
+    return (crn: number): { [key: string]: string } => {
       const numCalColors = parseInt(
         getComputedStyle(document.documentElement).getPropertyValue(
           "--num-calendar-colors"

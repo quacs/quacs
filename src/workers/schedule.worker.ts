@@ -1,6 +1,6 @@
 let wasm: typeof import("@/quacs-rs") | null = null;
 
-export const init = async () => {
+export const init = async (): Promise<void> => {
   const start = Date.now();
   wasm = await import("../quacs-rs");
   const end = Date.now();
@@ -11,7 +11,9 @@ export const init = async () => {
   wasm.init();
 };
 
-export const generateCurrentSchedulesAndConflicts = async () => {
+export const generateCurrentSchedulesAndConflicts = async (): Promise<
+  number
+> => {
   while (wasm === null) {
     await new Promise((resolve: (value?: unknown) => void) =>
       setTimeout(resolve, 0)
@@ -20,16 +22,19 @@ export const generateCurrentSchedulesAndConflicts = async () => {
   return wasm.generateSchedulesAndConflicts();
 };
 
-export const setSelected = async (crn: string, selected: boolean) => {
+export const setSelected = async (
+  crn: string,
+  selected: boolean
+): Promise<void> => {
   while (wasm === null) {
     await new Promise((resolve: (value?: unknown) => void) =>
       setTimeout(resolve, 0)
     );
   }
-  return wasm.setSelected(parseInt(crn), selected);
+  wasm.setSelected(parseInt(crn), selected);
 };
 
-export const getInConflict = async (crn: number) => {
+export const getInConflict = async (crn: number): Promise<boolean> => {
   while (wasm === null) {
     await new Promise((resolve: (value?: unknown) => void) =>
       setTimeout(resolve, 0)
@@ -38,7 +43,7 @@ export const getInConflict = async (crn: number) => {
   return wasm.isInConflict(crn);
 };
 
-export const getSchedule = async (idx: number) => {
+export const getSchedule = async (idx: number): Promise<Uint32Array> => {
   while (wasm === null) {
     await new Promise((resolve: (value?: unknown) => void) =>
       setTimeout(resolve, 0)
