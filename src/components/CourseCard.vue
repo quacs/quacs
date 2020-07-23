@@ -66,14 +66,18 @@
         <span v-if="fullSections">
           <span
             class="padding-left prerequisiteError"
+            v-bind:class="{
+              prerequisiteBkgError: fullSections == 2,
+              prerequisiteBkgWarn: fullSections != 2,
+            }"
             title="Expand sections for more details"
           >
             <font-awesome-icon
               :icon="['fas', 'user-slash']"
             ></font-awesome-icon>
             <template v-if="fullSections === 2">Full Course</template>
-            <template v-else>Full Sections</template></span
-          >
+            <template v-else>Full Sections</template>
+          </span>
         </span>
       </div>
       <!-- <br> -->
@@ -282,12 +286,18 @@ export default class CourseCard extends Vue {
 }
 
 .prerequisiteError {
-  background: var(--prerequisite-error-icon);
   color: var(--prerequisite-text);
   margin: 0px 0.3rem;
   padding: 0.2rem 0.4rem;
 }
 
+.prerequisiteBkgError {
+  background: var(--prerequisite-error-icon);
+}
+
+.prerequisiteBkgWarn {
+  background: var(--prerequisite-warn-icon);
+}
 .hidden {
   display: none;
 }

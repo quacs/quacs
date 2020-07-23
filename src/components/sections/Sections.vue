@@ -385,7 +385,7 @@ export default class Section extends Vue {
 }
 
 .prerequisiteError {
-  background: var(--prerequisite-error-icon);
+  background: var(--prerequisite-warn-icon);
   color: var(--prerequisite-text);
   margin: 0px 0.3rem;
   padding: 0.2rem 0.4rem;
