@@ -272,11 +272,12 @@ with requests.Session() as s:
     # Generate binary conflict output
     # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
     day_offsets = {
-        "M": 0 * 19 * 2,
-        "T": 1 * 19 * 2,
-        "W": 2 * 19 * 2,
-        "R": 3 * 19 * 2,
-        "F": 4 * 19 * 2,
+        "M": 0 * 16 * 2,
+        "T": 1 * 16 * 2,
+        "W": 2 * 16 * 2,
+        "R": 3 * 16 * 2,
+        "F": 4 * 16 * 2,
+        'S': 5 * 16 * 2,
     }
 
     conflicts = {}
@@ -289,7 +290,7 @@ with requests.Session() as s:
                 conflict = [0] * (64 * 3)
                 for time in section["timeslots"]:
                     for day in time["days"]:
-                        for i in range(500, 2400, 100):
+                        for i in range(700, 2300, 100):
                             if time["timeStart"] <= i and time["timeEnd"] > i:
                                 conflict[day_offsets[day] + (int)(2 * i / 100) - 5] = 1
                             if time["timeStart"] <= i + 30 and time["timeEnd"] > i + 30:
