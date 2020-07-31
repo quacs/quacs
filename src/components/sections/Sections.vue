@@ -8,7 +8,11 @@
         v-on:keyup.enter="toggleAll()"
       >
         <th style="width: 100%;">Toggle all sections</th>
-        <th v-for="day in days" v-bind:key="day" class="week-day desktop-only">
+        <th
+          v-for="day in getDays()"
+          v-bind:key="day"
+          class="week-day desktop-only"
+        >
           {{ day }}
         </th>
       </tr>
@@ -101,7 +105,7 @@
           >
           <!-- Mobile times -->
           <div class="mobile-only">
-            <template v-for="day in days">
+            <template v-for="day in getDays()">
               <!-- TODO: fix different instructors for same timeslot -->
               <span
                 v-for="session in getSessions(section, day)"
@@ -122,7 +126,11 @@
           <!-- End mobile times -->
         </td>
         <!-- Desktop times -->
-        <td v-for="day in days" v-bind:key="day" class="time-cell desktop-only">
+        <td
+          v-for="day in getDays()"
+          v-bind:key="day"
+          class="time-cell desktop-only"
+        >
           <!-- TODO: fix different instructors for same timeslot -->
           <span
             v-for="timeslot in spaceOutTimeslots(
@@ -182,7 +190,7 @@ import { VBTooltip } from "bootstrap-vue";
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
-  days = ["M", "T", "W", "R", "F"];
+  days = [] as string[];
   conflicts: { [crn: number]: boolean } = {};
 
   mounted(): void {
@@ -193,6 +201,29 @@ export default class Section extends Vue {
         }
       );
     }
+  }
+
+  getDays(): string[] {
+    // Don't compute the days array again
+    if (this.days.length > 0) {
+      return this.days;
+    }
+
+    // By default, we list all 5 weekdays
+    this.days = ["M", "T", "W", "R", "F"];
+
+    // Check to see if the class has a weekend entry
+    const weekendTime = (timeslot: Timeslot) => timeslot.days.includes("S");
+    const hasWeekend = this.course.sections.some((section) =>
+      section.timeslots.some(weekendTime)
+    );
+
+    // Only display saturday if necessary
+    if (hasWeekend) {
+      this.days.push("S");
+    }
+
+    return this.days;
   }
 
   toggleSelection(
