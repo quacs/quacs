@@ -15,7 +15,7 @@
     <div class="calendar-grid">
       <div
         class="grid-day"
-        v-for="day of days"
+        v-for="day in getDays()"
         :key="day.short"
         :style="{ width: dayWidth + '%' }"
       >
@@ -73,7 +73,6 @@ import { mapGetters } from "vuex";
 
 @Component({
   computed: {
-    days: () => DAYS,
     ...mapGetters("settings", ["isMilitaryTime"]),
   },
 })
@@ -82,6 +81,17 @@ export default class Calendar extends Vue {
   readonly startTime = 420;
   readonly endTime = 1320;
   readonly totalHeight = 650;
+
+  getDays(): Day[] {
+    const hasWeekend =
+      this.sessionsOnDay({ name: "Saturday", short: "S" }).length > 0;
+
+    if (hasWeekend) {
+      return DAYS;
+    }
+
+    return DAYS.slice(0, 5);
+  }
 
   // get crns() {
   //   if (this.$route.query.crns === undefined) {
@@ -95,7 +105,7 @@ export default class Calendar extends Vue {
   }
 
   get dayWidth(): number {
-    return 100 / DAYS.length;
+    return 100 / this.getDays().length;
   }
 
   get hourHeight(): number {
