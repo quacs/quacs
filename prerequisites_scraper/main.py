@@ -36,7 +36,6 @@ def tokenize(prerequisites: str) -> Tokens:
     token_regex = re.compile(token_regex)
 
     # Convert regex matches to list of tokens
-    print(prerequisites)
     tokens = token_regex.finditer(prerequisites)
     tokens = map(
         lambda match: next(filter(
@@ -48,7 +47,6 @@ def tokenize(prerequisites: str) -> Tokens:
     tokens = list(tokens)
     tokens.append(("END", None))
 
-    print(tokens)
     return tokens
 
 def parse_atom(tokens: Tokens, cur_tok: int):
