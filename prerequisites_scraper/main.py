@@ -1,66 +1,106 @@
-import requests
-import bs4
 import json
-from tqdm import tqdm
 import re
+from typing import List, Tuple
 
-regex_list = ['\s*Undergraduate level\s*', '\s*Graduate level\s*', '\s*Minimum Grade of [ABCDF]\s*', '\s*Prerequisite Override 100\s*(or|and)', '(or|and)\s*Prerequisite Override 100\s*']
-course_regex = re.compile("[a-zA-Z]{4}(?:-| )\d{4}")
-def parse_prerequisites(prerequisites):
-    clean = []
-    for part in prerequisites:
-        new_text = part
-        for regex_match in regex_list:
-            new_text = re.sub(regex_match, '', new_text)
-        if(not course_regex.match(part)):
-            new_text = re.sub('\s?or\s?', 'o', new_text)
-            new_text = re.sub('\s?and\s?', 'a', new_text)
-        if(new_text):
-            clean.append(new_text)
+import bs4
+import requests
 
-    (output, _, _) = recursive_parse(clean)
+# The token format is (token_name, token_text)
+Token = Tuple[str, str]
+Tokens = List[Token]
 
-    return output
+def tokenize(prerequisites: str) -> Tokens:
+    """
+    Convert a prereq expression string to a list of tokens. The last token will
+    be `("END", None)`.
+    """
 
+    # Remove Prerequisite Override 100
+    prerequisites = re.sub(r'Prerequisite Override 100 +or', '', prerequisites)
+    prerequisites = re.sub(r'or +Prerequisite Override 100', '', prerequisites)
 
-def recursive_parse(prerequisites):
-    output = {
-      "type":"solo",
-      "solo":[],
-      "nested":[]
-    }
-    new_index = 0
-    new_char_index = 0
-    for (index,part) in enumerate(prerequisites):
-        if(new_index):
-            new_index-=1
-            continue
-        for (char_ind,char) in enumerate(part):
-            if(char_ind<new_char_index):
-                continue
-            if(course_regex.match(part)):
-                output['solo'].append(part)
-                break
-            else:
-                if(char == " "):
-                    pass
-                elif(char == "("):
-                    (new_output, new_index, new_char_index) = recursive_parse(prerequisites[index+1:])
-                    new_char_index+=1
-                    output['nested'].append(new_output)
-                    pass
-                elif(char == ")"):
-                    return (output, index, char_ind)
-                    pass
-                elif(char=='o'):
-                    output['type']="or"
-                elif(char=='a'):
-                    output['type']="and"
-                else:
-                    print("ERROR: Should not be here")
-                    exit(1)
-    return (output, index, char_ind)
+    # List of tokens and their regexps. Anything not matched is ignored.
+    TOKENS = [
+        # (name, regex)
+        ('OPEN_PAREN', r'\('),
+        ('CLOSE_PAREN', r'\)'),
+        ('OR', r'or'),
+        ('AND', r'and'),
+        ('COURSE', r'[a-zA-Z]{4}(?:-| )\d{4}'),
+    ]
 
+    # Get regex that matches a token
+    token_regex = '|'.join([
+        f'(?P<{token_name}>{regex})' for token_name, regex in TOKENS
+    ])
+    token_regex = re.compile(token_regex)
+
+    # Convert regex matches to list of tokens
+    print(prerequisites)
+    tokens = token_regex.finditer(prerequisites)
+    tokens = map(
+        lambda match: next(filter(
+            lambda group_text: group_text[1] is not None,
+            match.groupdict().items()
+        )),
+        tokens
+    )
+    tokens = list(tokens)
+    tokens.append(("END", None))
+
+    print(tokens)
+    return tokens
+
+def parse_atom(tokens: Tokens, cur_tok: int):
+    """Parse a course or a parenthesized sub-expression"""
+    if tokens[cur_tok][0] == "OPEN_PAREN":
+        result, cur_tok = parse_tokens(tokens, cur_tok + 1)
+        assert tokens[cur_tok][0] == "CLOSE_PAREN"
+    else:
+        result = {
+            "type": "course",
+            "course": tokens[cur_tok][1],
+        }
+    return (result, cur_tok + 1)
+
+def parse_or(tokens: Tokens, cur_tok: int):
+    """Parse a prereq expression with only OR"""
+    (left, cur_tok) = parse_atom(tokens, cur_tok)
+    left_list = [left]
+    while tokens[cur_tok][0] == "OR":
+        (right, cur_tok) = parse_atom(tokens, cur_tok + 1)
+        left_list.append(right)
+    if len(left_list) == 1:
+        result = left
+    else:
+        result = {
+            "type": "or",
+            "nested": left_list,
+        }
+    return (result, cur_tok)
+
+def parse_tokens(tokens: Tokens, cur_tok: int = 0):
+    """Parse a tokenized prereq expression"""
+    (left, cur_tok) = parse_or(tokens, cur_tok)
+    left_list = [left]
+    while tokens[cur_tok][0] == "AND":
+        (right, cur_tok) = parse_or(tokens, cur_tok + 1)
+        left_list.append(right)
+    if len(left_list) == 1:
+        result = left
+    else:
+        result = {
+            "type": "and",
+            "nested": left_list,
+        }
+    return (result, cur_tok)
+
+def parse(prereqs: str):
+    """Parse a prereq expression"""
+    tokens = tokenize(prereqs)
+    result, cur_tok = parse_tokens(tokens)
+    assert tokens[cur_tok][0] == "END"
+    return result
 
 def get_prereq_string(term, crn):
     r = requests.get(f"https://sis.rpi.edu/rss/bwckschd.p_disp_detail_sched?term_in={term}&crn_in={crn}")
@@ -79,7 +119,7 @@ def get_prereq_string(term, crn):
                 if(section not in data):
                     data[section] = []
                 el = el.next_sibling
-                continue;
+                continue
 
             if(section):
                 if(el.string.strip()):
@@ -89,7 +129,7 @@ def get_prereq_string(term, crn):
         el = el.next_sibling
 
     if('prerequisites' in data):
-        data['prerequisites'] = parse_prerequisites(data['prerequisites'])
+        data['prerequisites'] = parse(' '.join(data['prerequisites']))
 
     if('corequisites' in data):
         data['corequisites'] = [ "-".join(course.split()) for course in data['corequisites'] ]
@@ -144,23 +184,26 @@ def get_prereq_string(term, crn):
     return data
 
 
-prerequisites = {}
+if __name__ == '__main__':
+    from tqdm import tqdm
 
-# For testing
-# get_prereq_string(202009, 28329)
-# exit()
+    prerequisites = {}
 
-crns = []
-with open('courses.json') as json_file:
-    courses = json.load(json_file)
-    for department in courses:
-        for course in department['courses']:
-            for section in course['sections']:
-                crns.append(section['crn'])
+    # For testing
+    # get_prereq_string(202009, 28329)
+    # exit()
 
-for crn in tqdm(crns):
-    print(crn)
-    prerequisites[crn] = get_prereq_string(202009, crn)
+    crns = []
+    with open('courses.json') as json_file:
+        courses = json.load(json_file)
+        for department in courses:
+            for course in department['courses']:
+                for section in course['sections']:
+                    crns.append(section['crn'])
 
-with open('prerequisites.json', 'w') as outfile:
-    json.dump(prerequisites, outfile, indent=4)
+    for crn in tqdm(crns):
+        print(crn)
+        prerequisites[crn] = get_prereq_string(202009, crn)
+
+    with open('prerequisites.json', 'w') as outfile:
+        json.dump(prerequisites, outfile, indent=4)
