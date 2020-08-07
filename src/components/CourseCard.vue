@@ -28,7 +28,7 @@
             <span class="course-code">{{ course.subj }}-{{ course.crse }}</span>
             {{ course.title }}</span
           >
-          ꞏ {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
+          • {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
           {{ attributes }}
         </span>
         <!--
@@ -73,10 +73,34 @@
             title="Expand sections for more details"
           >
             <font-awesome-icon
-              :icon="['fas', 'user-slash']"
+              :icon="['fas', 'exclamation-triangle']"
             ></font-awesome-icon>
             <template v-if="fullSections === 2">Full Course</template>
             <template v-else>Full Sections</template>
+          </span>
+        </span>
+        <span v-if="inPerson">
+          <span class="padding-left prerequisiteError prerequisiteBkgWarn">
+            <font-awesome-icon :icon="['fas', 'user']"></font-awesome-icon>
+            In-Person Course
+          </span>
+        </span>
+        <span v-if="remote">
+          <span class="padding-left prerequisiteError prerequisiteBkgWarn">
+            <font-awesome-icon
+              :icon="['fas', 'laptop-house']"
+            ></font-awesome-icon>
+            Online Course
+          </span>
+        </span>
+        <span v-if="hybrid">
+          <span class="padding-left prerequisiteError prerequisiteBkgWarn">
+            <font-awesome-icon :icon="['fas', 'user']"></font-awesome-icon>
+            /
+            <font-awesome-icon
+              :icon="['fas', 'laptop-house']"
+            ></font-awesome-icon>
+            Hybrid Course
           </span>
         </span>
       </div>
@@ -184,9 +208,28 @@ export default class CourseCard extends Vue {
   }
 
   get attributes(): string {
-    return this.course.sections[0].attribute === ""
-      ? ""
-      : "ꞏ " + this.course.sections[0].attribute;
+    // Don't display if a course is remote since we have the tags for it
+    let attrs = this.course.sections[0].attribute
+      .replace(
+        /(and )?(In-Person Course|Online Course|Hybrid:Online\/In-Person Course)/gi,
+        ""
+      )
+      .trim();
+    return attrs === "" ? "" : "• " + attrs;
+  }
+
+  get inPerson(): boolean {
+    return (
+      this.course.sections[0].attribute.includes("In-Person") && !this.hybrid
+    );
+  }
+
+  get remote(): boolean {
+    return this.course.sections[0].attribute.includes("Online") && !this.hybrid;
+  }
+
+  get hybrid(): boolean {
+    return this.course.sections[0].attribute.includes("Hybrid");
   }
 
   getDescription(subject: string, code: string): string {

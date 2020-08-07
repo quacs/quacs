@@ -25,10 +25,11 @@ import {
   faEdit,
   faExclamationTriangle,
   faInfoCircle,
+  faLaptopHouse,
   faPen,
   faPlus,
   faTrash,
-  faUserSlash,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
@@ -42,9 +43,10 @@ library.add(
   faCalendar,
   faTrash,
   faExclamationTriangle,
-  faUserSlash,
+  faUser,
   faPen,
   faPlus,
+  faLaptopHouse,
   faEdit
 );
 
