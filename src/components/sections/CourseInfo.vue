@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal :id="'course-info' + course.sections[0].crn" title="Course Info">
+    <b-modal :id="'course-info' + course.sections[0].crn" :title="modalTitle">
       <template v-if="matchingData">
         <div class="font-weight-bold">Prerequisites:</div>
         <span
@@ -73,6 +73,10 @@ import { formatCourseSize, formatPrerequisites } from "@/utilities";
 })
 export default class CourseInfo extends Vue {
   @Prop() readonly course!: CourseSection;
+
+  get modalTitle(): string {
+    return `Course Info: ${this.course.title}`;
+  }
 }
 </script>
 
