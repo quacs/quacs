@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal :id="'section-info' + section.crn" title="Section Info">
+    <b-modal :id="'section-info' + section.crn" :title="modalTitle">
       <div class="font-weight-bold">Prerequisites:</div>
       <span v-html="formatPrerequisites(section.crn) || 'None'"></span>
       <template v-if="prerequisiteData.cross_list_courses">
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { BButton } from "bootstrap-vue";
-import { Section } from "@/typings";
+import { CourseSection } from "@/typings";
 import { formatCourseSize, formatPrerequisites } from "@/utilities";
 
 @Component({
@@ -59,7 +59,11 @@ import { formatCourseSize, formatPrerequisites } from "@/utilities";
   },
 })
 export default class SectionInfo extends Vue {
-  @Prop() readonly section!: Section;
+  @Prop() readonly section!: CourseSection;
+
+  get modalTitle(): string {
+    return `Section Info: ${this.section.sec} - ${this.section.title}`;
+  }
 }
 </script>
 
