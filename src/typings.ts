@@ -86,8 +86,8 @@ export interface PrerequisiteJSON {
 
 export interface Prerequisite {
   type: string;
-  solo: string[];
-  nested: Prerequisite[];
+  nested: ?Prerequisite[];
+  course: ?string;
 }
 
 export interface Restriction {
