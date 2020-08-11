@@ -153,26 +153,31 @@ function verifyPrerequisite(
 ): boolean {
   let hasAll = true;
   let hasOne = false;
-  for (const course of prerequisiteData.solo) {
+  for (const coursePrereq of prerequisiteData.nested.filter(
+    (prereq) => prereq.type === "course"
+  )) {
+    const course = coursePrereq.course;
     if (course.split(" ").join("-") in priorCourses) {
       hasOne = true;
     } else {
       hasAll = false;
     }
   }
-  for (const nested of prerequisiteData.nested) {
+  for (const nested of prerequisiteData.nested.filter(
+    (prereq) => prereq.type !== "course"
+  )) {
     if (verifyPrerequisite(priorCourses, nested)) {
       hasOne = true;
     } else {
       hasAll = false;
     }
   }
-  if (prerequisiteData.type === "and") {
-    return hasAll;
-  } else if (prerequisiteData.type === "or") {
+
+  if (prerequisiteData.type === "or") {
     return hasOne;
-  } // else if (prerequisiteData.type === "solo") {
-  return hasAll; //should not matter which
+  } else {
+    return hasAll;
+  }
 }
 
 export function hasMetAllPrerequisites() {
@@ -203,8 +208,11 @@ function getPrerequisiteFormatHtml(
 ): string {
   let output = "";
 
-  let iterations = prerequisiteData.solo.length;
-  for (const course of prerequisiteData.solo) {
+  const arr = prerequisiteData
+    .filter((prereq) => prereq.type === "course")
+    .map((prereq) => prereq.course);
+  let iterations = arr.length;
+  for (const course of arr) {
     output += '<span  style="';
     if (course.split(" ").join("-") in priorCourses) {
       output += "color: var(--taken-course);";
@@ -222,7 +230,9 @@ function getPrerequisiteFormatHtml(
   if (prerequisiteData.solo.length > 0 && prerequisiteData.nested.length > 0) {
     output += " " + prerequisiteData.type + " ";
   }
-  for (const nested of prerequisiteData.nested) {
+  for (const nested of prerequisiteData.nested.filter(
+    (prereq) => prereq.type !== "course"
+  )) {
     output += "(" + getPrerequisiteFormatHtml(priorCourses, nested) + ")";
     if (--iterations) {
       output += " " + prerequisiteData.type + " ";
