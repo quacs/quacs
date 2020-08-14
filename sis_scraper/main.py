@@ -98,7 +98,9 @@ def getContentFromChild(element, childType):
 def cleanOutAbbr(text):
     text = re.sub("<abbr.*?>", "", text)
     text = re.sub("<\/abbr>", "", text)
-    text = re.sub("\s?\([pP]\)", "", text)#Remove primary instructor indicator (maybe we can use this data somewhere later but for now it is removed)
+    text = re.sub(
+        "\s?\([pP]\)", "", text
+    )  # Remove primary instructor indicator (maybe we can use this data somewhere later but for now it is removed)
     text = re.sub("\w+\.\s+", "", text)
     return text
 
@@ -188,7 +190,9 @@ with requests.Session() as s:
                     "timeEnd": timeToMilitary(
                         getContentFromChild(td[9], "abbr"), False
                     ),
-                    "instructor": ", ".join([x.strip() for x in cleanOutAbbr(getContent(td[19])).split(',')]),
+                    "instructor": ", ".join(
+                        [x.strip() for x in cleanOutAbbr(getContent(td[19])).split(",")]
+                    ),
                     "dateStart": getContentFromChild(td[20], "abbr").split("-")[0],
                     "dateEnd": getContentFromChild(td[20], "abbr").split("-")[1],
                     "location": getContentFromChild(td[21], "abbr"),
@@ -234,7 +238,7 @@ with requests.Session() as s:
                 # "xlCap":getContent(td[16]),
                 # "xlAct":getContent(td[17]),
                 # "xlRem":getContent(td[18]),
-                "attribute":getContent(td[22]) if 22 < len(td) else "",
+                "attribute": getContent(td[22]) if 22 < len(td) else "",
                 "timeslots": [timeslot_data],
             }
 
@@ -272,12 +276,12 @@ with requests.Session() as s:
     # Generate binary conflict output
     # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
     day_offsets = {
-        "M": 0 * 16 * 2,
-        "T": 1 * 16 * 2,
-        "W": 2 * 16 * 2,
-        "R": 3 * 16 * 2,
-        "F": 4 * 16 * 2,
-        'S': 5 * 16 * 2,
+        "M": 0 * 16 * 6,
+        "T": 1 * 16 * 6,
+        "W": 2 * 16 * 6,
+        "R": 3 * 16 * 6,
+        "F": 4 * 16 * 6,
+        "S": 5 * 16 * 6,
     }
 
     conflicts = {}
@@ -287,16 +291,20 @@ with requests.Session() as s:
             for section in course["sections"]:
                 crn_to_courses[section["crn"]] = course["id"]
 
-                conflict = [0] * (64 * 3)
+                conflict = [0] * (64 * 9)
                 for time in section["timeslots"]:
                     for day in time["days"]:
-                        for i in range(700, 2300, 100):
-                            if time["timeStart"] <= i and time["timeEnd"] > i:
-                                conflict[day_offsets[day] + (int)(2 * i / 100) - 5] = 1
-                            if time["timeStart"] <= i + 30 and time["timeEnd"] > i + 30:
-                                conflict[
-                                    day_offsets[day] + 1 + (int)(2 * i / 100) - 5
-                                ] = 1
+                        for hour in range(700, 2300, 100):
+                            for minute in range(0, 60, 10):
+                                if (
+                                    time["timeStart"] <= hour + minute
+                                    and time["timeEnd"] > hour + minute
+                                ):
+                                    minute_idx = int(minute / 10)
+                                    hour_idx = int(hour / 100) - 7  # we start at 7am
+                                    conflict[
+                                        day_offsets[day] + hour_idx * 6 + minute_idx
+                                    ] = 1
 
                 conflicts[section["crn"]] = "".join(str(e) for e in conflict)
 
@@ -305,14 +313,19 @@ with requests.Session() as s:
             """\
 //This file was automatically generated. Please do not modify it directly
 use ::phf::{phf_map, Map};
-pub static CRN_TIMES: Map<u32, [u64; 3]> = phf_map! {
+pub static CRN_TIMES: Map<u32, [u64; 9]> = phf_map! {
 """
         )
 
         for crn, conflict in conflicts.items():
-            f.write(
-                f"\t{crn}u32 => [{int(conflict[:64], 2)}, {int(conflict[64:128], 2)}, {int(conflict[128:], 2)}],\n"
-            )
+            rust_array = f"\t{crn}u32 => ["
+            for i in range(0, 9 * 64, 64):
+                if i != 0:
+                    rust_array += ", "
+                rust_array += str(int(conflict[i : i + 64], 2))
+            rust_array += "],\n"
+
+            f.write(rust_array)
 
         f.write(
             """
