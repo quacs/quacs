@@ -13,7 +13,7 @@ use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::*;
 
 lazy_static! {
-    static ref CURR_TIMES: RwLock<[u64; 3]> = RwLock::new([0; 3]);
+    static ref CURR_TIMES: RwLock<[u64; 9]> = RwLock::new([0; 9]);
     static ref SCHEDULES: RwLock<Vec<Vec<u32>>> = RwLock::new(Vec::new());
     static ref SELECTED_COURSES: RwLock<HashMap<&'static str, HashSet<u32>>> =
         RwLock::new(HashMap::new());
@@ -37,7 +37,7 @@ pub fn generate_schedules_and_conflicts() -> usize {
         console_log!("Called generateSchedulesAndConflicts with no schedules, short circuiting!");
 
         *SCHEDULES.write().unwrap() = Vec::new();
-        *CURR_TIMES.write().unwrap() = [0; 3];
+        *CURR_TIMES.write().unwrap() = [0; 9];
 
         0
     } else {
@@ -46,7 +46,7 @@ pub fn generate_schedules_and_conflicts() -> usize {
         bm_start!("generate schedules");
         #[allow(unused_assignments)]
         let mut times = CURR_TIMES.write().unwrap();
-        *times = [u64::MAX; 3];
+        *times = [u64::MAX; 9];
         let schedules = generate_schedules_driver(&mut selected_courses, &mut times);
         bm_end!("generate schedules");
 
@@ -65,7 +65,7 @@ pub fn generate_schedules_and_conflicts() -> usize {
 
 fn generate_schedules_driver(
     courses: &mut Vec<&HashSet<u32>>,
-    global_times: &mut [u64; 3],
+    global_times: &mut [u64; 9],
 ) -> Vec<Vec<u32>> {
     courses.sort_by_cached_key(|set| set.len());
 
@@ -73,7 +73,7 @@ fn generate_schedules_driver(
         .iter()
         .take_while(|set| set.len() == 1)
         .map(|set| set.iter().next().unwrap())
-        .fold(([0u64; 3], false), |(conf, internal_conf), crn| {
+        .fold(([0u64; 9], false), |(conf, internal_conf), crn| {
             let crn_times = CRN_TIMES.get(crn).unwrap();
 
             let conflict_with_prev = bitwise_and(&conf, crn_times).iter().any(|cnf| *cnf != 0);
@@ -90,7 +90,7 @@ fn generate_schedules_driver(
     } else if required_times.iter().all(|cnf| *cnf == 0) {
         // There are no 1 section courses, so we can skip all of the below
         let courses = courses.iter().map(|set| (*set).clone()).collect();
-        return generate_schedules(0, &courses, &mut Vec::new(), &mut [0; 3], global_times);
+        return generate_schedules(0, &courses, &mut Vec::new(), &mut [0; 9], global_times);
     }
 
     let mut courses: Vec<HashSet<u32>> = courses
@@ -117,7 +117,7 @@ fn generate_schedules_driver(
     if courses[0].len() == 0 {
         Vec::new()
     } else {
-        generate_schedules(0, &courses, &mut Vec::new(), &mut [0; 3], global_times)
+        generate_schedules(0, &courses, &mut Vec::new(), &mut [0; 9], global_times)
     }
 }
 
@@ -125,8 +125,8 @@ fn generate_schedules(
     idx: usize,
     courses: &Vec<HashSet<u32>>,
     current_courses: &mut Vec<u32>,
-    current_times: &mut [u64; 3],
-    overall_times: &mut [u64; 3],
+    current_times: &mut [u64; 9],
+    overall_times: &mut [u64; 9],
 ) -> Vec<Vec<u32>> {
     if idx >= courses.len() {
         *overall_times = bitwise_and(overall_times, current_times);
@@ -226,7 +226,7 @@ pub fn is_in_conflict(crn: u32) -> bool {
         tmp_set.insert(crn);
         course_vec.push(&tmp_set);
 
-        generate_schedules_driver(&mut course_vec, &mut [0; 3]).is_empty()
+        generate_schedules_driver(&mut course_vec, &mut [0; 9]).is_empty()
     } else {
         // This is a normal section, so we can just check if the timeslots overlap
         let crn_times = CRN_TIMES.get(&crn).unwrap();

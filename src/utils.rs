@@ -21,25 +21,25 @@ macro_rules! bm_end {
     };
 }
 
-pub fn bitwise_and(t1: &[u64; 3], t2: &[u64; 3]) -> [u64; 3] {
-    let mut ret = [0; 3];
-    for i in 0..3 {
+pub fn bitwise_and(t1: &[u64; 9], t2: &[u64; 9]) -> [u64; 9] {
+    let mut ret = [0; 9];
+    for i in 0..9 {
         ret[i] = t1[i] & t2[i];
     }
     ret
 }
 
-pub fn bitwise_or(t1: &[u64; 3], t2: &[u64; 3]) -> [u64; 3] {
-    let mut ret = [0; 3];
-    for i in 0..3 {
+pub fn bitwise_or(t1: &[u64; 9], t2: &[u64; 9]) -> [u64; 9] {
+    let mut ret = [0; 9];
+    for i in 0..9 {
         ret[i] = t1[i] | t2[i];
     }
     ret
 }
 
-pub fn bitwise_xor(t1: &[u64; 3], t2: &[u64; 3]) -> [u64; 3] {
-    let mut ret = [0; 3];
-    for i in 0..3 {
+pub fn bitwise_xor(t1: &[u64; 9], t2: &[u64; 9]) -> [u64; 9] {
+    let mut ret = [0; 9];
+    for i in 0..9 {
         ret[i] = t1[i] ^ t2[i];
     }
     ret
