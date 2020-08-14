@@ -79,8 +79,8 @@ import { mapGetters } from "vuex";
 export default class Calendar extends Vue {
   @Prop() readonly crns!: string[];
   readonly startTime = 420;
-  readonly endTime = 1320;
-  readonly totalHeight = 650;
+  readonly endTime = 1380;
+  readonly totalHeight = 700;
 
   getDays(): Day[] {
     const hasWeekend =
