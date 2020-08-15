@@ -148,9 +148,7 @@ export default new Vuex.Store({
         "prerequisites.enableChecking",
       ],
       rehydrated: (store) => {
-        // @ts-expect-error: Typescript doesn't know that `store` can commit
         store.commit("schedule/initSelectedSetions");
-        // @ts-expect-error: Typescript doesn't know that `store` can dispatch
         store.dispatch("schedule/init", false);
       },
     }),
