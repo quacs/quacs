@@ -16,7 +16,7 @@ jobs:
           submodules: 'recursive'
 
       - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        run: cargo install --git https://github.com/Urhengulas/wasm-pack.git --branch wasm-opt-enable-non-mvp
 
       - name: Build site
         run: |
