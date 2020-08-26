@@ -11,7 +11,7 @@
           class="course"
           :class="{
             takenCourse:
-              course.split(' ').join('-') in
+              course.replace(' ', '-') in
               $store.getters['prerequisites/getPriorCourses'](),
           }"
           >{{ course }}

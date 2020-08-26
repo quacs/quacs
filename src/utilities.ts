@@ -152,7 +152,7 @@ function meetsPrerequisite(
   prereq: Prerequisite
 ): boolean {
   if (prereq.type === "course") {
-    return prereq.course.split(" ").join("-") in priorCourses;
+    return prereq.course.replace(" ", "-") in priorCourses;
   } else if (prereq.type === "and") {
     return prereq.nested.every((childPrereq) =>
       meetsPrerequisite(priorCourses, childPrereq)
@@ -201,7 +201,7 @@ function getPrerequisiteFormatHtml(
     } else {
       output += `<span style="color: var(--not-taken-course);">`;
     }
-    output += prereq.course.split(" ").join("-");
+    output += prereq.course.replace(" ", "-");
     output += "</span>";
   } else {
     if (!topLevel) {
