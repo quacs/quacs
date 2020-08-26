@@ -47,7 +47,7 @@
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5",
     "sass": "^1.26.10",
-    "sass-loader": "^9.0.2",
+    "sass-loader": "^10.0.1",
     "typescript": "~3.9.7",
     "vue-template-compiler": "^2.6.11",
     "vuex-module-decorators": "^0.17.0",
