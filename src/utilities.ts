@@ -147,32 +147,23 @@ export function setColorTheme(colorTheme: string): void {
   );
 }
 
-function verifyPrerequisite(
+function meetsPrerequisite(
   priorCourses: { [crn: string]: boolean },
-  prerequisiteData: Prerequisite
+  prereq: Prerequisite
 ): boolean {
-  let hasAll = true;
-  let hasOne = false;
-  for (const course of prerequisiteData.solo) {
-    if (course.split(" ").join("-") in priorCourses) {
-      hasOne = true;
-    } else {
-      hasAll = false;
-    }
+  if (prereq.type === "course") {
+    return prereq.course.replace(" ", "-") in priorCourses;
+  } else if (prereq.type === "and") {
+    return prereq.nested.every((childPrereq) =>
+      meetsPrerequisite(priorCourses, childPrereq)
+    );
+  } else if (prereq.type === "or") {
+    return prereq.nested.some((childPrereq) =>
+      meetsPrerequisite(priorCourses, childPrereq)
+    );
+  } else {
+    throw "Invalid prerequisite type";
   }
-  for (const nested of prerequisiteData.nested) {
-    if (verifyPrerequisite(priorCourses, nested)) {
-      hasOne = true;
-    } else {
-      hasAll = false;
-    }
-  }
-  if (prerequisiteData.type === "and") {
-    return hasAll;
-  } else if (prerequisiteData.type === "or") {
-    return hasOne;
-  } // else if (prerequisiteData.type === "solo") {
-  return hasAll; //should not matter which
 }
 
 export function hasMetAllPrerequisites() {
@@ -186,7 +177,7 @@ export function hasMetAllPrerequisites() {
     }
 
     if ("prerequisites" in store.state.prerequisitesData[crn]) {
-      return verifyPrerequisite(
+      return meetsPrerequisite(
         store.getters["prerequisites/getPriorCourses"](),
         // @ts-expect-error: I check that this exists already so we can ignore typescript
         store.state.prerequisitesData[crn].prerequisites
@@ -199,36 +190,36 @@ export function hasMetAllPrerequisites() {
 
 function getPrerequisiteFormatHtml(
   priorCourses: { [crn: string]: boolean },
-  prerequisiteData: Prerequisite
+  prereq: Prerequisite,
+  topLevel = true
 ): string {
   let output = "";
 
-  let iterations = prerequisiteData.solo.length;
-  for (const course of prerequisiteData.solo) {
-    output += '<span  style="';
-    if (course.split(" ").join("-") in priorCourses) {
-      output += "color: var(--taken-course);";
+  if (prereq.type === "course") {
+    if (meetsPrerequisite(priorCourses, prereq)) {
+      output += `<span style="color: var(--taken-course);">`;
     } else {
-      output += "color: var(--not-taken-course);";
+      output += `<span style="color: var(--not-taken-course);">`;
     }
-    output += '">';
-    output += course.split(" ").join("-");
+    output += prereq.course.replace(" ", "-");
     output += "</span>";
-    if (--iterations) {
-      output += " " + prerequisiteData.type + " ";
+  } else {
+    if (!topLevel) {
+      output += "(";
+    }
+
+    output += prereq.nested
+      .map((childPrereq) =>
+        getPrerequisiteFormatHtml(priorCourses, childPrereq, false)
+      )
+      .join(` ${prereq.type} `);
+
+    if (!topLevel) {
+      output += ")";
     }
   }
-  iterations = prerequisiteData.nested.length;
-  if (prerequisiteData.solo.length > 0 && prerequisiteData.nested.length > 0) {
-    output += " " + prerequisiteData.type + " ";
-  }
-  for (const nested of prerequisiteData.nested) {
-    output += "(" + getPrerequisiteFormatHtml(priorCourses, nested) + ")";
-    if (--iterations) {
-      output += " " + prerequisiteData.type + " ";
-    }
-  }
-  return output; //should not matter which
+
+  return output;
 }
 
 export function formatPrerequisites() {
@@ -244,8 +235,8 @@ export function formatPrerequisites() {
         // @ts-expect-error: I check that this exists already so we can ignore typescript
         store.state.prerequisitesData[crn].prerequisites
       );
+    } else {
+      return "";
     }
-    //Return '' because this section has no prerequisites
-    return "";
   };
 }

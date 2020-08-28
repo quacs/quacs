@@ -84,10 +84,16 @@ export interface PrerequisiteJSON {
   };
 }
 
-export interface Prerequisite {
-  type: string;
-  solo: string[];
+export type Prerequisite = GroupPrerequisite | CoursePrerequisite;
+
+export interface GroupPrerequisite {
+  type: "and" | "or";
   nested: Prerequisite[];
+}
+
+export interface CoursePrerequisite {
+  type: "course";
+  course: string;
 }
 
 export interface Restriction {
