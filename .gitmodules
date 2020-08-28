@@ -1,4 +1,0 @@
-[submodule "src/data"]
-	path = src/data
-	url = https://github.com/quacs/quacs-data.git
-	branch = master
