@@ -8,6 +8,7 @@ updates:
   ignored_updates:
     - match:
         dependency_name: "*eslint*"
+
 - package-ecosystem: cargo
   directory: "/src/quacs-rs"
   schedule:
