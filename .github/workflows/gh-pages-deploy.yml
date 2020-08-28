@@ -29,5 +29,5 @@ jobs:
 
       - name: Run deploy script
         run: |
-          git config user.name "QuACS" && git config user.email "eli@elischiff.org"
+          git config user.name "QuACS" && git config user.email "github@quacs.org"
           yarn gh-pages-deploy
