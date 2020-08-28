@@ -109,3 +109,9 @@ dist
 # Quacs Internal Dependencies
 src/store/data/
 src/quacs-rs/
+/target
+Cargo.lock
+package.json
+*.ts
+*.js
+*.wasm

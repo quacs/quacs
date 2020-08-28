@@ -8,3 +8,8 @@ updates:
   ignored_updates:
     - match:
         dependency_name: "*eslint*"
+- package-ecosystem: cargo
+  directory: "/src/quacs-rs"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
