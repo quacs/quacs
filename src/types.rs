@@ -12,6 +12,7 @@ pub enum CourseAttribute {
 
 /// Holds each semester a course can be offered in
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum Semester {
     Fall,
     Spring,
@@ -20,6 +21,8 @@ pub enum Semester {
 
 /// Restriction on the metadata over a course for a Course restriction.
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(tag = "type")]
 pub enum CourseRestriction {
     /// Checks against a certain attribute of a course.
     Attribute {
@@ -40,12 +43,15 @@ pub struct Course {
 /// Operator used for comparing different values.  This is probably only going to be Equal,
 /// but it's separated into an enum to allow for more extensibility.
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum BooleanOperator {
     Equal,
 }
 
 /// Enum specialized on each condition's type
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(tag = "type")]
 pub enum IfCondition {
     /// A nested If condition
     Nested {
@@ -66,6 +72,7 @@ pub enum IfCondition {
 }
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum ConditionOperator {
     Or,
     And,
@@ -73,6 +80,8 @@ pub enum ConditionOperator {
 
 /// Enum specialized based on each type of rule
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(tag = "type")]
 pub enum RuleData {
     /// Conditional rule (e.g. "If you're major X")
     If {
@@ -83,7 +92,9 @@ pub enum RuleData {
     /// A certain number of course requirements must be met (e.g. the courses for the CSCI
     /// concentrations)
     Course {
+        #[serde(skip_serializing_if = "Option::is_none")]
         num_courses_needed: Option<usize>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         num_credits_needed: Option<usize>,
         courses: Vec<Course>,
         except: Vec<Course>,
@@ -104,6 +115,7 @@ pub struct Rule {
     //pub per_complete: usize, // TODO: is this needed?
     pub label: String,
     pub rule_data: RuleData,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub extra_text: Option<String>,
 }
 
