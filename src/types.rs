@@ -1,9 +1,25 @@
+use serde::{Deserialize, Serialize};
+
 /// Enum of attributes which can be restricted.
+#[derive(Serialize, Deserialize)]
 pub enum CourseAttribute {
+    /// Course must be marked at Comm Intensive
     CommunicationIntensive,
+
+    /// Course must have been taken in this semester
+    RequiredSemester,
+}
+
+/// Holds each semester a course can be offered in
+#[derive(Serialize, Deserialize)]
+pub enum Semester {
+    Fall,
+    Spring,
+    Summer,
 }
 
 /// Restriction on the metadata over a course for a Course restriction.
+#[derive(Serialize, Deserialize)]
 pub enum CourseRestriction {
     /// Checks against a certain attribute of a course.
     Attribute {
@@ -13,59 +29,62 @@ pub enum CourseRestriction {
 }
 
 /// Restricts courses over various fields.  If a field is `None`, that means it is unrestricted.
+#[derive(Serialize, Deserialize)]
 pub struct Course {
-    dept: Option<String>,
-    crse: Option<String>,
-    restriction: Option<CourseRestriction>,
+    pub dept: String,
+    pub crse: String,
+    pub restriction: Vec<CourseRestriction>,
     // TODO: what does `NewDiscipline` mean?
 }
 
 /// Operator used for comparing different values.  This is probably only going to be Equal,
 /// but it's separated into an enum to allow for more extensibility.
+#[derive(Serialize, Deserialize)]
 pub enum BooleanOperator {
     Equal,
 }
 
 /// Enum specialized on each condition's type
-pub enum IfConditionValue {
+#[derive(Serialize, Deserialize)]
+pub enum IfCondition {
     /// A nested If condition
-    Nested(IfCondition),
+    Nested {
+        connector: ConditionOperator,
+        left_condition: Box<IfCondition>,
+        right_condition: Box<IfCondition>,
+    },
     /// Checks against the user's major
     Major {
-        connector: BooleanOperator,
+        operator: BooleanOperator,
         major: String,
     },
     /// Checks against the user's degree
     Degree {
-        connector: BooleanOperator,
+        operator: BooleanOperator,
         degree: String,
     },
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum ConditionOperator {
     Or,
     And,
 }
 
-/// Condition for an If rule variant
-pub struct IfCondition {
-    connector: ConditionOperator,
-    left_condition: Box<IfConditionValue>,
-    right_condition: Box<IfConditionValue>,
-}
-
 /// Enum specialized based on each type of rule
+#[derive(Serialize, Deserialize)]
 pub enum RuleData {
     /// Conditional rule (e.g. "If you're major X")
     If {
         condition: IfCondition,
-        if_part: Box<Rule>,
-        else_part: Box<Rule>,
+        if_branch: Vec<Rule>,
+        else_branch: Vec<Rule>,
     },
     /// A certain number of course requirements must be met (e.g. the courses for the CSCI
     /// concentrations)
     Course {
-        num_needed: usize,
+        num_courses_needed: Option<usize>,
+        num_credits_needed: Option<usize>,
         courses: Vec<Course>,
         except: Vec<Course>,
         // qualifier: TODO (XML key: 'Qualifier')
@@ -80,15 +99,17 @@ pub enum RuleData {
 }
 
 /// Wrapper for an individual rule
+#[derive(Serialize, Deserialize)]
 pub struct Rule {
-    per_complete: usize, // TODO: is this needed?
-    label: String,
-    data: RuleData,
-    extra_text: Option<String>,
+    //pub per_complete: usize, // TODO: is this needed?
+    pub label: String,
+    pub rule_data: RuleData,
+    pub extra_text: Option<String>,
 }
 
 /// Holds a collection of rules (e.g. "Communication Intensive Courses")
+#[derive(Serialize, Deserialize)]
 pub struct Block {
-    rules: Vec<Rule>,
-    title: String,
+    pub rules: Vec<Rule>,
+    pub title: String,
 }
