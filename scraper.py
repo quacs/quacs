@@ -1,61 +1,8 @@
 import time
 import os
 import subprocess
-
-from dotenv import load_dotenv
-import requests
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
-
-load_dotenv()
-RIN = os.getenv("RIN")
-SIS_PASS = os.getenv("PASSWORD")
-
-driver = webdriver.Firefox()
-driver.get("https://sis.rpi.edu/rss/twbkwbis.P_WWWLogin")
-driver.set_window_size(959, 1054)
-driver.find_element(By.ID, "UserID").send_keys(RIN)
-driver.find_element(By.NAME, "PIN").send_keys(SIS_PASS)
-driver.find_element(By.CSS_SELECTOR, "p > input:nth-child(1)").click()
-wait = WebDriverWait(driver, timeout=30)
-wait.until(
-    expected_conditions.presence_of_element_located((By.LINK_TEXT, "Student Menu"))
-)
-driver.find_element(By.LINK_TEXT, "Student Menu").click()
-driver.find_element(By.LINK_TEXT, "Degree Works").click()
-time.sleep(3)
-passport = driver.get_cookie("PASSPORT")["value"]
-print(f"Cookie: {passport}")
-
-payload = {
-    "SERVICE": "SCRIPTER",
-    "SCRIPT": "SD2GETAUD",
-    "ACTION": "WHATIFAUDIT",
-    "USERID": RIN,
-    "STUID": RIN,
-    "DEGREETERM": "ACTV",
-    "INTNOTES": "Y",
-    "DEGINTEREST": "",
-    "INPROGRESS": "Y",
-    "CUTOFFTERM": "9999",
-    "REFRESH": "N",
-    "WHATIF": "Y",
-    "BLOCKLIST": "********* CUSTOM *********",
-    "SCHOOL": "UG",  # TODO: support grad school?
-    "DEGREE": "********* CUSTOM *********",
-    "SCHOOLLIT": "Undergraduate",  # TODO: support grad school?
-    "DEGREELIT": "********* CUSTOM *********",
-    "CATYEAR": "********* CUSTOM *********",
-    "PROGRAM": "",
-    "DEBUG": "OFF",
-    "ContentType": "xml",
-    "CLASSLIST": "",
-    "REPORT": "WEB31",
-    "InProgress": "on",
-    "CutOffTerm": "on",
-}
+import sys
+from tqdm import tqdm
 
 degrees = [
     ("ARCH", True, "BA-ARCH", "BA+Architecture"),
@@ -109,38 +56,102 @@ degrees = [
     ("ENGR", True, "BS-ENGR", "BS+Undeclared+Engineering"),
 ]
 
-headers = {
-    "Cookie": f"PASSPORT={passport}; PASSPORT={passport}",
-    "Content-Type": "application/x-www-form-urlencoded",
-}
-
-cookies = dict(PASSPORT=passport)
-
 fnames = []
 for year in range(2012, 2027):
     for major, blocklist, short_degree, long_degree in degrees:
-        if blocklist:
-            payload[
-                "BLOCKLIST"
-            ] = f'dummy&&GOALCODE=MAJOR&GOALVALUE="{major}"&GOALCATYR=2019&'
-        else:
-            payload["BLOCKLIST"] = f"dummy&&"
+        fnames.append(f"{year}-{short_degree}")
 
-        payload["DEGREE"] = short_degree
-        payload["DEGREELIT"] = long_degree
-        payload["CATYEAR"] = str(year)
 
-        response = requests.request(
-            "POST",
-            "https://degwx-webprd.server.rpi.edu/IRISLink.cgi",
-            headers=headers,
-            cookies=cookies,
-            data=payload,
-        )
+if len(sys.argv) > 1 and sys.argv[0] == "refresh_data":
+    from dotenv import load_dotenv
+    import requests
+    from selenium import webdriver
+    from selenium.webdriver.firefox.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support import expected_conditions
+    from selenium.webdriver.support.wait import WebDriverWait
 
-        fname = f"{year}-{short_degree}"
-        fnames.append(fname)
-        with open(f"{fname}.xml", "w") as f:
-            f.write(response.text)
+    load_dotenv()
+    RIN = os.getenv("RIN")
+    SIS_PASS = os.getenv("PASSWORD")
+
+    firefox_options = Options()
+    firefox_options.add_argument("-headless")
+
+    driver = webdriver.Firefox(options=firefox_options)
+    driver.get("https://sis.rpi.edu/rss/twbkwbis.P_WWWLogin")
+    driver.set_window_size(959, 1054)
+    driver.find_element(By.ID, "UserID").send_keys(RIN)
+    driver.find_element(By.NAME, "PIN").send_keys(SIS_PASS)
+    driver.find_element(By.CSS_SELECTOR, "p > input:nth-child(1)").click()
+    wait = WebDriverWait(driver, timeout=30)
+    wait.until(
+        expected_conditions.presence_of_element_located((By.LINK_TEXT, "Student Menu"))
+    )
+    driver.find_element(By.LINK_TEXT, "Student Menu").click()
+    driver.find_element(By.LINK_TEXT, "Degree Works").click()
+    time.sleep(3)
+    passport = driver.get_cookie("PASSPORT")["value"]
+
+    payload = {
+        "SERVICE": "SCRIPTER",
+        "SCRIPT": "SD2GETAUD",
+        "ACTION": "WHATIFAUDIT",
+        "USERID": RIN,
+        "STUID": RIN,
+        "DEGREETERM": "ACTV",
+        "INTNOTES": "Y",
+        "DEGINTEREST": "",
+        "INPROGRESS": "Y",
+        "CUTOFFTERM": "9999",
+        "REFRESH": "N",
+        "WHATIF": "Y",
+        "BLOCKLIST": "********* CUSTOM *********",
+        "SCHOOL": "UG",  # TODO: support grad school?
+        "DEGREE": "********* CUSTOM *********",
+        "SCHOOLLIT": "Undergraduate",  # TODO: support grad school?
+        "DEGREELIT": "********* CUSTOM *********",
+        "CATYEAR": "********* CUSTOM *********",
+        "PROGRAM": "",
+        "DEBUG": "OFF",
+        "ContentType": "xml",
+        "CLASSLIST": "",
+        "REPORT": "WEB31",
+        "InProgress": "on",
+        "CutOffTerm": "on",
+    }
+
+    headers = {
+        "Cookie": f"PASSPORT={passport}; PASSPORT={passport}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    cookies = dict(PASSPORT=passport)
+
+    for year in range(2012, 2027):
+        for major, blocklist, short_degree, long_degree in tqdm(
+            degrees, desc=str(year)
+        ):
+            if blocklist:
+                payload[
+                    "BLOCKLIST"
+                ] = f'dummy&&GOALCODE=MAJOR&GOALVALUE="{major}"&GOALCATYR=2019&'
+            else:
+                payload["BLOCKLIST"] = "dummy&&"
+
+            payload["DEGREE"] = short_degree
+            payload["DEGREELIT"] = long_degree
+            payload["CATYEAR"] = str(year)
+
+            response = requests.request(
+                "POST",
+                "https://degwx-webprd.server.rpi.edu/IRISLink.cgi",
+                headers=headers,
+                cookies=cookies,
+                data=payload,
+            )
+
+            with open(f"{year}-{short_degree}.xml", "w") as f:
+                f.write(response.text)
 
 subprocess.call(["cargo", "run", "--", *fnames])

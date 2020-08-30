@@ -433,18 +433,29 @@ fn main() -> Result<()> {
     for major in std::env::args().skip(1) {
         let xml_contents = std::fs::read_to_string(format!("{}.xml", major))?;
         let doc = roxmltree::Document::parse(&xml_contents)?;
-        let audit = doc
+        let audit = match doc
             .descendants()
             .find(|node| node.tag_name().name() == "Audit")
-            .unwrap();
+        {
+            Some(node) => node,
+            None => continue,
+        };
 
-        let blocks: Vec<Block> = audit
+        let blocks: Result<Vec<Block>> = audit
             .children()
             .filter(|node| node.node_type() == NodeType::Element)
             .filter(|node| node.tag_name().name() == "Block")
             .filter(|block| block.attribute("Req_type").unwrap() != "DEGREE") // this deals with GPA and general degree requirements which we don't want
             .map(|block| parse_block(block))
-            .try_collect()?;
+            .try_collect();
+
+        let blocks = match blocks {
+            Ok(b) => b,
+            Err(e) => {
+                println!("Error with {}: {}", major, e);
+                continue;
+            }
+        };
 
         std::fs::write(
             format!("{}.json", major),
