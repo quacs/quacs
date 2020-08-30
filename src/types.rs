@@ -1,14 +1,6 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
-
-/// Enum of attributes which can be restricted.
-#[derive(Serialize, Deserialize)]
-pub enum CourseAttribute {
-    /// Course must be marked at Comm Intensive
-    CommunicationIntensive,
-
-    /// Course must have been taken in this semester
-    RequiredSemester,
-}
+use std::str::FromStr;
 
 /// Holds each semester a course can be offered in
 #[derive(Serialize, Deserialize)]
@@ -19,6 +11,55 @@ pub enum Semester {
     Summer,
 }
 
+impl FromStr for Semester {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        match s {
+            "Fall" => Ok(Self::Fall),
+            "Spring" => Ok(Self::Spring),
+            "Summer" => Ok(Self::Summer),
+            unknown => bail!("String {} is not a semester", unknown),
+        }
+    }
+}
+
+impl Semester {
+    pub fn from_compressed(s: &str) -> Result<Self> {
+        match s {
+            "09" => Ok(Self::Fall),
+            "01" => Ok(Self::Spring),
+            "05" => Ok(Self::Summer),
+            unknown => bail!("{} is not a valid compressed semester", unknown),
+        }
+    }
+}
+
+/// Enum of attributes which can be restricted.
+#[derive(Serialize, Deserialize)]
+pub enum CourseAttribute {
+    /// Course must be marked at Comm Intensive
+    CommunicationIntensive,
+
+    /// Course must have been taken in this semester
+    RequiredSemester { sem: Semester, year: usize },
+
+    /// Generated from 'DWRESIDENT' flag
+    Resident(bool),
+
+    /// Course taken for a certain number of credits
+    Credits(usize),
+
+    /// Checks against grade
+    Grade(String),
+
+    /// Contains a list of disciplines
+    Disciplines(Vec<String>),
+
+    /// Course counts for PDII
+    PD2,
+}
+
 /// Restriction on the metadata over a course for a Course restriction.
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -27,6 +68,7 @@ pub enum CourseRestriction {
     /// Checks against a certain attribute of a course.
     Attribute {
         operator: BooleanOperator,
+        connector: ConditionOperator,
         attribute: CourseAttribute,
     },
 }
@@ -46,6 +88,41 @@ pub struct Course {
 #[serde(rename_all = "kebab-case")]
 pub enum BooleanOperator {
     Equal,
+    NotEqual,
+    Was,
+    WasNot,
+}
+
+impl FromStr for BooleanOperator {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        match s {
+            "=" => Ok(Self::Equal),
+            "<>" => Ok(Self::NotEqual),
+            "WAS" => Ok(Self::Was),
+            "WASNOT" => Ok(Self::WasNot),
+            unknown => bail!("String '{}' is not a boolean operator", unknown),
+        }
+    }
+}
+
+/// Represents each state a course can be in for a Course IfCondition
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum CourseStatus {
+    Passed,
+}
+
+impl FromStr for CourseStatus {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        match s {
+            "PASSED" => Ok(Self::Passed),
+            unknown => bail!("String '{}' is not a course status", unknown),
+        }
+    }
 }
 
 /// Enum specialized on each condition's type
@@ -64,10 +141,25 @@ pub enum IfCondition {
         operator: BooleanOperator,
         major: String,
     },
+    /// Checks against the user's first major
+    FirstMajor {
+        operator: BooleanOperator,
+        major: String,
+    },
     /// Checks against the user's degree
     Degree {
         operator: BooleanOperator,
         degree: String,
+    },
+    /// Checks against the user's concentration
+    Concentration {
+        operator: BooleanOperator,
+        concentration: String,
+    },
+    /// Checks that a user's course is a certain status
+    Course {
+        course: Course,
+        status: CourseStatus,
     },
 }
 
@@ -76,6 +168,20 @@ pub enum IfCondition {
 pub enum ConditionOperator {
     Or,
     And,
+    None,
+}
+
+impl FromStr for ConditionOperator {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        match s {
+            "OR" => Ok(Self::Or),
+            "AND" => Ok(Self::And),
+            "" => Ok(Self::None),
+            unknown => bail!("String '{}' is not a condition operator", unknown),
+        }
+    }
 }
 
 /// Enum specialized based on each type of rule

@@ -4,6 +4,7 @@ extern crate anyhow;
 use anyhow::Result;
 use itertools::Itertools;
 use roxmltree::{Node, NodeType};
+use std::str::FromStr;
 use std::string::ToString;
 
 mod types;
@@ -38,12 +39,29 @@ fn parse_if_condition(condition: Node) -> Result<IfCondition> {
                 node.tag_name().name()
             );
 
+            if Some("-COURSE-") == node.attribute("Left") {
+                // This should have a single course child (we'll validate that it's a course
+                // further down)
+                ensure!(
+                    node.children()
+                        .filter(|node| node.node_type() == NodeType::Element)
+                        .count()
+                        == 1,
+                    "'Rop' node with '-COURSE-' value has more than one child {:#?}",
+                    node,
+                );
+            } else {
+                // No one else should have children
+                ensure!(!node.has_children(), "'Rop' node has children {:#?}", node);
+            }
+
             node
         };
 
         let operator = match rop.attribute("Operator") {
-            Some("=") => BooleanOperator::Equal,
-            Some(s) => bail!("Unknown boolean operator '{}'", s),
+            Some(s) => BooleanOperator::from_str(s).map_err(|e| {
+                anyhow!("Error parsing boolean operator {} for {:#?}: {}", s, rop, e)
+            })?,
             None => bail!("Course restriction 'With' has no operator"),
         };
 
@@ -57,12 +75,51 @@ fn parse_if_condition(condition: Node) -> Result<IfCondition> {
                 operator,
                 major: right,
             }),
+            Some("1STMAJOR") => Ok(IfCondition::FirstMajor {
+                operator,
+                major: right,
+            }),
             Some("DEGREE") => Ok(IfCondition::Degree {
                 operator,
                 degree: right,
             }),
+            Some("CONC") => Ok(IfCondition::Concentration {
+                operator,
+                concentration: right,
+            }),
+            Some("-COURSE-") => {
+                let children: Vec<Node> = rop
+                    .children()
+                    .filter(|node| node.node_type() == NodeType::Element)
+                    .collect();
+                ensure!(
+                    children.len() == 1,
+                    "'-COURSE-' Rop node doesn't have a single child {:#?}: {:#?}",
+                    children,
+                    rop
+                );
+                let child = children[0];
+                ensure!(
+                    child.tag_name().name() == "Course",
+                    "'-COURSE-' Rop node's child isn't a 'Course' node.  Parent: {:#?} Child {:#?}",
+                    rop,
+                    child
+                );
+
+                let course = parse_course(child)?;
+                let status = CourseStatus::from_str(&right).map_err(|e| {
+                    anyhow!(
+                        "Error parsing CourseStatus for {:#?}'s child {:#?}: {}",
+                        rop,
+                        child,
+                        e
+                    )
+                })?;
+
+                Ok(IfCondition::Course { course, status })
+            }
             Some(s) => Err(anyhow!(
-                "Expected 'MAJOR' or 'DEGREE' for If condition's Left field but found {}",
+                "Invalid value for If condition's Left field but found {}",
                 s
             )),
             None => Err(anyhow!(
@@ -71,9 +128,7 @@ fn parse_if_condition(condition: Node) -> Result<IfCondition> {
         }
     } else if inner.len() == 2 {
         let connector = match condition.attribute("Connector") {
-            Some("OR") => ConditionOperator::Or,
-            Some("AND") => ConditionOperator::And,
-            Some(s) => bail!("Unknown condition operator '{}'", s),
+            Some(s) => ConditionOperator::from_str(s)?,
             None => bail!("Condition with two children has no operator"),
         };
 
@@ -203,55 +258,145 @@ fn parse_course_restriction(course: Node) -> Result<Vec<CourseRestriction>> {
 
     withs
         .iter()
-        .map(|with| match with.attribute("Code") {
-            Some(attr @ "ATTRIBUTE") | Some(attr @ "DWTERM") => {
-                let operator = match with.attribute("Operator") {
-                    Some("=") => BooleanOperator::Equal,
-                    Some(s) => bail!("Unknown boolean operator '{}'", s),
-                    None => bail!("Course restriction 'With' has no operator"),
-                };
+        .map(|with| {
+            let operator = match with.attribute("Operator") {
+                Some(s) => BooleanOperator::from_str(s).map_err(|e| {
+                    anyhow!(
+                        "Error parsing boolean operator {} for {:#?}: {}",
+                        s,
+                        with,
+                        e
+                    )
+                })?,
+                None => bail!("Course restriction 'With' has no operator"),
+            };
 
-                let values: Vec<Node> = with
-                    .children()
-                    .filter(|node| node.node_type() == NodeType::Element)
-                    .collect();
+            let values: Vec<Node> = with
+                .children()
+                .filter(|node| node.node_type() == NodeType::Element)
+                .collect();
 
+            ensure!(
+                values.iter().all(|node| node.tag_name().name() == "Value"),
+                "Non-'Value' node underneath 'With' (Array: {:?} is under {:?}",
+                values,
+                with
+            );
+
+            ensure!(
+                values.len() != 0,
+                "'With' restriction has no values: {:#?}",
+                with
+            );
+            if Some("DWDISCIPLINE") != with.attribute("Code") {
+                // DWDISCIPLINE allows for multiple values, so only check other stuff
                 ensure!(
-                    values.iter().all(|node| node.tag_name().name() == "Value"),
-                    "Non-'Value' node underneath 'With' (Array: {:?} is under {:?}",
-                    values,
+                    values.len() == 1,
+                    "'With' restriction has multiple values: {:#?}",
                     with
                 );
-
-                ensure!(values.len() != 0, "'With' restriction has no values");
-                ensure!(values.len() == 1, "'With' restriction has multiple values");
-
-                let attribute = match values[0].text() {
-                    Some("COMM") => CourseAttribute::CommunicationIntensive,
-                    Some(s) => {
-                        if attr == "DWTERM" {
-                            CourseAttribute::RequiredSemester
-                        } else {
-                            bail!("Unknown course attribute '{}'", s)
-                        }
-                    }
-                    None => bail!("Course restriction value has no text"),
-                };
-
-                Ok(CourseRestriction::Attribute {
-                    operator,
-                    attribute,
-                })
             }
-            Some(s) => bail!("Unknown course restriction '{}'", s),
-            None => bail!("'With' has no Code"),
+
+            let connector = match with.attribute("Connector") {
+                Some(s) => ConditionOperator::from_str(s)
+                    .map_err(|e| anyhow!("Error parsing connector for {:#?}: {}", with, e))?,
+                None => bail!("'With' restriction has no connector {:#?}", with),
+            };
+
+            let attribute = match with.attribute("Code") {
+                Some("ATTRIBUTE") => match values[0].text() {
+                    Some("COMM") => CourseAttribute::CommunicationIntensive,
+                    Some("PDII") => CourseAttribute::PD2,
+                    Some(s) => bail!("Unknown course attribute value {} for {:?}", s, with),
+                    None => bail!("No course attribute value for {:?}", with),
+                },
+                Some("DWTERM") => {
+                    let sem_data: Vec<&str> = values[0]
+                        .text()
+                        .ok_or(anyhow!("No value for DWTERM with {:?}", with))?
+                        .split(" ")
+                        .collect();
+                    if sem_data.len() == 2 {
+                        // Data is of the form 'Semester Year' (e.g. 'Fall 2019')
+                        let sem = Semester::from_str(sem_data[0])?;
+                        let year = sem_data[1]
+                            .parse::<usize>()
+                            .map_err(|e| anyhow!("Error parsing year for {:#?}: {}", with, e))?;
+
+                        CourseAttribute::RequiredSemester { sem, year }
+                    } else if sem_data.len() == 1 {
+                        // Data is in a compressed form (e.g. '201909' for Fall 2019)
+                        let sem_data = sem_data[0];
+                        ensure!(
+                            sem_data.len() == 6,
+                            "Compressed semester info {} is an invalid length",
+                            sem_data
+                        );
+
+                        let year = sem_data[0..4].parse::<usize>().map_err(|e| {
+                            anyhow!(
+                                "Error parsing year in compressed form for {:#?}: {}",
+                                with,
+                                e
+                            )
+                        })?;
+                        let sem = Semester::from_compressed(&sem_data[4..6]).map_err(|e| {
+                            anyhow!("Error parsing compressed semester for {:#?}: {}", with, e)
+                        })?;
+
+                        CourseAttribute::RequiredSemester { sem, year }
+                    } else {
+                        bail!("Semester data {:?} has a length not 1 or 2", sem_data);
+                    }
+                }
+                Some("DWRESIDENT") => CourseAttribute::Resident(match values[0].text() {
+                    Some("Y") => true,
+                    Some("N") => false,
+                    Some(s) => bail!("Unexpected value {} for DWRESIDENT in {:?}", s, with),
+                    None => bail!("No value given for DWRESIDENT in {:?}", with),
+                }),
+                Some("DWCREDITS") => CourseAttribute::Credits(match values[0].text() {
+                    Some(credits) => credits
+                        .parse::<usize>()
+                        .map_err(|e| anyhow!("Error parsing credits for {:?}: {}", with, e))?,
+                    None => bail!("No value given for DWCREDITS in {:?}", with),
+                }),
+                Some("DWGRADELETTER")
+                | Some("DWGRADE")
+                | Some("DWGRADENUMBER")
+                | Some("DWGRADENUM") => CourseAttribute::Grade(
+                    values[0]
+                        .text()
+                        .ok_or(anyhow!("No value given for DWGRADELETTER in {:?}", with))?
+                        .to_string(),
+                ),
+                Some("DWDISCIPLINE") => CourseAttribute::Disciplines(
+                    values
+                        .iter()
+                        .map(|val| {
+                            val.text()
+                                .ok_or(anyhow!(
+                                    "Value doesn't have text in DWDISCIPLINE field for {:#?}",
+                                    with
+                                ))
+                                .and_then(|s| Ok(s.to_string()))
+                        })
+                        .try_collect()?,
+                ),
+                Some(s) => bail!("Unknown course restriction {} for {:?}", s, with),
+                None => bail!("No course restriction for {:?}", with),
+            };
+
+            Ok(CourseRestriction::Attribute {
+                operator,
+                attribute,
+                connector,
+            })
         })
         .try_collect()
 }
 
 fn parse_course(course: Node) -> Result<Course> {
-    //let dept = course.attribute("Disc").or(Some("@")).unwrap().to_string();
-    //let crse = course.attribute("Num").or(Some("@")).unwrap().to_string();
     let dept = course
         .attribute("Disc")
         .ok_or(anyhow!("Course {:#?} doesn't have 'Disc'", course))?
