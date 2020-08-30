@@ -1,0 +1,4 @@
+tqdm
+dotenv
+requests
+selenium
