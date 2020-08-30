@@ -1,5 +1,6 @@
 import time
 import os
+import subprocess
 
 from dotenv import load_dotenv
 import requests
@@ -56,7 +57,57 @@ payload = {
     "CutOffTerm": "on",
 }
 
-degrees = [("CSCI", "BS-CSCI", "BS+Computer+Science")]
+degrees = [
+    ("ARCH", True, "BA-ARCH", "BA+Architecture"),
+    ("AERO", False, "BS-AERO", "BS+Aeronautical+Engineering"),
+    ("AERO", True, "BS-AERO-TR", "BS+Aeronautical+Engr/+transfer"),
+    ("APHY", True, "BS-APHY", "BS+Applied+Physics"),
+    ("BCBP", True, "BS-BCBP", "BS+Biochemistry+and+Biophysics"),
+    ("BFMB", True, "BS-BFMB", "BS+Bioinformatics+and+Mol+Biol"),
+    ("BIOL", True, "BS-BIOL", "BS+Biology"),
+    ("BIAM", True, "BS-BIAM", "BS+Biology+Accelerated+Medical"),
+    ("BMED", False, "BS-BMED", "BS+Biomedical+Engineering"),
+    ("BLSC", True, "BS-BLSC", "BS+Building+Sciences"),
+    ("BSAN", True, "BS-BSAN-TR", "BS+Business+Analytics/transfer"),
+    ("BMGT", True, "BS-BMGT", "BS+Business+and+Management"),
+    ("CHEG", True, "BS-CHEG", "BS+Chemical+Engineering"),
+    ("CHEG", True, "BS-CHEG-TR", "BS+Chemical+Engr/+transfer"),
+    ("CHEM", True, "BS-CHEM", "BS+Chemistry"),
+    ("CIVL", False, "BS-CIVL", "BS+Civil+Engineering"),
+    ("CIVL", True, "BS-CIVL-TR", "BS+Civil+Engineering/+transfer"),
+    ("COGS", True, "BS-COGS", "BS+Cognitive+Science"),
+    ("COMM", True, "BS-COMM", "BS+Communication"),
+    ("CSCI", True, "BS-CSCI", "BS+Computer+Science"),
+    ("CSCI", True, "BS-CSCI-TR", "BS+Computer+Science/+transfer"),
+    ("CSYS", False, "BS-CSYS", "BS+Computer+And+Systems+Engr."),
+    ("DSIS", True, "BS-DSIS", "BS+Dsgn,+Innovation+&+Society"),
+    ("ECON", True, "BS-ECON", "BS+Economics"),
+    ("ELEC", False, "BS-ELEC", "BS+Electrical+Engineering"),
+    ("EART", True, "BS-EART", "BS+Electronic+Arts"),
+    ("EMAC", True, "BS-EMAC", "BS+Electronic+Media/Arts/Comm"),
+    ("ESCI", False, "BS-ESCI", "BS+Engineering+Science"),
+    # TODO: GSAS
+    ("GEOL", True, "BS-GEOL", "BS+Geology"),
+    ("HGEO", True, "BS-HGEO", "BS+Hydrogeology"),
+    ("MGTE", False, "BS-MGTE", "BS+Industrial+&+Management+Eng"),
+    ("ISCI", True, "BS-ISCI", "BS+Interdisciplinary+Science"),
+    ("MATL", False, "BS-MATL", "BS+Materials+Engineering"),
+    ("MATH", True, "BS-MATH", "BS+Mathematics"),
+    ("MATH", True, "BS-MATH-TR", "BS+Mathematics/+transfer"),
+    ("MECL", False, "BS-MECL", "BS+Mechanical+Engineering"),
+    ("MECL", True, "BS-MECL-TR", "BS+Mechanical+Eng/+transfer"),
+    ("MUSIC", True, "BS-MUSIC", "BS+Music"),
+    ("NUCL", False, "BS-NUCL", "BS+Nuclear+Engineering"),
+    ("PHIL", True, "BS-PHIL", "BS+Philosophy"),
+    ("PHYS", True, "BS-PHYS", "BS+Physics"),
+    ("PHYS", True, "BS-PHYS-TR", "BS+Physics/+transfer"),
+    ("PSYS", True, "BS-PSYS", "BS+Psychological+Science"),
+    ("PSYC", False, "BS-PSYC", "BS+Psychology"),
+    ("SSLW", True, "BS-SSLW", "BS+Science+and+Society+(Law)"),
+    ("STSO", True, "BS-STSO", "BS+Science,+Tech+&+Society"),
+    ("SUST", True, "BS-SUST", "BS+Sustainability+Studies"),
+    ("ENGR", True, "BS-ENGR", "BS+Undeclared+Engineering"),
+]
 
 headers = {
     "Cookie": f"PASSPORT={passport}; PASSPORT={passport}",
@@ -65,11 +116,16 @@ headers = {
 
 cookies = dict(PASSPORT=passport)
 
-for year in range(2018, 2020):
-    for major, short_degree, long_degree in degrees:
-        payload[
-            "BLOCKLIST"
-        ] = f'dummy&&GOALCODE=MAJOR&GOALVALUE="{major}"&GOALCATYR=2019&'
+fnames = []
+for year in range(2012, 2027):
+    for major, blocklist, short_degree, long_degree in degrees:
+        if blocklist:
+            payload[
+                "BLOCKLIST"
+            ] = f'dummy&&GOALCODE=MAJOR&GOALVALUE="{major}"&GOALCATYR=2019&'
+        else:
+            payload["BLOCKLIST"] = f"dummy&&"
+
         payload["DEGREE"] = short_degree
         payload["DEGREELIT"] = long_degree
         payload["CATYEAR"] = str(year)
@@ -82,5 +138,9 @@ for year in range(2018, 2020):
             data=payload,
         )
 
-        with open(f"{major}.xml", "w") as f:
+        fname = f"{year}-{short_degree}"
+        fnames.append(fname)
+        with open(f"{fname}.xml", "w") as f:
             f.write(response.text)
+
+subprocess.call(["cargo", "run", "--", *fnames])
