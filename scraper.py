@@ -62,7 +62,7 @@ for year in range(2012, 2027):
         fnames.append(f"{year}-{short_degree}")
 
 
-if len(sys.argv) > 1 and sys.argv[0] == "refresh_data":
+if len(sys.argv) > 2 and sys.argv[1] == "refresh_data":
     from dotenv import load_dotenv
     import requests
     from selenium import webdriver
