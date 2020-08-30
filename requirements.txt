@@ -1,4 +1,4 @@
 tqdm
-dotenv
+python-dotenv
 requests
 selenium
