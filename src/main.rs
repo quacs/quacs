@@ -574,39 +574,37 @@ fn parse_block(block: Node) -> Result<Block> {
     Ok(Block { title, rules })
 }
 
-fn main() -> Result<()> {
-    for major in std::env::args().skip(1) {
-        let xml_contents = std::fs::read_to_string(format!("{}.xml", major))?;
-        let doc = roxmltree::Document::parse(&xml_contents)?;
-        let audit = match doc
-            .descendants()
-            .find(|node| node.tag_name().name() == "Audit")
-        {
-            Some(node) => node,
-            None => continue,
-        };
+fn parse_xml(degree: &str) -> Result<()> {
+    let xml_contents = std::fs::read_to_string(format!("{}.xml", degree))?;
+    let doc = roxmltree::Document::parse(&xml_contents)?;
+    let audit = match doc
+        .descendants()
+        .find(|node| node.tag_name().name() == "Audit")
+    {
+        Some(node) => node,
+        None => return Ok(()),
+    };
 
-        let blocks: Result<Vec<Block>> = audit
-            .children()
-            .filter(|node| node.node_type() == NodeType::Element)
-            .filter(|node| node.tag_name().name() == "Block")
-            .filter(|block| block.attribute("Req_type").unwrap() != "DEGREE") // this deals with GPA and general degree requirements which we don't want
-            .map(|block| parse_block(block))
-            .try_collect();
+    let blocks: Vec<Block> = audit
+        .children()
+        .filter(|node| node.node_type() == NodeType::Element)
+        .filter(|node| node.tag_name().name() == "Block")
+        .filter(|block| block.attribute("Req_type").unwrap() != "DEGREE") // this deals with GPA and general degree requirements which we don't want
+        .map(|block| parse_block(block))
+        .try_collect()?;
 
-        let blocks = match blocks {
-            Ok(b) => b,
-            Err(e) => {
-                println!("Error with {}: {}", major, e);
-                continue;
-            }
-        };
-
-        std::fs::write(
-            format!("{}.json", major),
-            serde_json::to_string_pretty(&blocks)?,
-        )?;
-    }
+    std::fs::write(
+        format!("{}.json", degree),
+        serde_json::to_string_pretty(&blocks)?,
+    )?;
 
     Ok(())
+}
+
+fn main() {
+    for degree in std::env::args().skip(1) {
+        if let Err(e) = parse_xml(&degree) {
+            eprintln!("Error parsing degree {}: {}", degree, e);
+        }
+    }
 }
