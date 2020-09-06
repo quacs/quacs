@@ -2,11 +2,11 @@
   <div class="home">
     <b-card-group columns class="department-cards">
       <b-card
-        v-for="(departments, school) in schools"
-        v-bind:key="school"
-        :header="school"
+        v-for="school in schools"
+        v-bind:key="school.name"
+        :header="school.name"
       >
-        <div v-for="department in departments" v-bind:key="department.code">
+        <div v-for="department in school.depts" v-bind:key="department.code">
           <router-link
             class="nav-link department-link"
             :to="'/department/' + department.code"
@@ -29,7 +29,7 @@ import { BCard, BCardGroup } from "bootstrap-vue";
     "b-card": BCard,
     "b-card-group": BCardGroup,
   },
-  computed: mapState(["departments", "schools"]),
+  computed: mapState(["schools"]),
 })
 export default class Home extends Vue {}
 </script>
