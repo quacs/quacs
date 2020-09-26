@@ -54,7 +54,7 @@ export default class Department extends Vue {
     for (const schoolName in this.$store.state.schools) {
       const school = this.$store.state.schools[schoolName];
 
-      for (const dept of school) {
+      for (const dept of school.depts) {
         if (dept.code === this.code) {
           return dept;
         }

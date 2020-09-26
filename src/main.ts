@@ -30,6 +30,7 @@ import {
   faPlus,
   faTrash,
   faUser,
+  faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
@@ -44,6 +45,7 @@ library.add(
   faTrash,
   faExclamationTriangle,
   faUser,
+  faUserSlash,
   faPen,
   faPlus,
   faLaptopHouse,
