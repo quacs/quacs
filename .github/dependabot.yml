@@ -5,9 +5,13 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  labels:
+    - "automerge"
 
 - package-ecosystem: cargo
   directory: "/src/quacs-rs"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  labels:
+    - "automerge"
