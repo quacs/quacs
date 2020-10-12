@@ -69,7 +69,10 @@ def scrapePage(url, data):
 
 
 base_url = 'http://catalog.rpi.edu'
-next_url = '/content.php?catoid=20&navoid=498'
+catalog_home = requests.get('http://catalog.rpi.edu/')
+catalog_home_soup = BeautifulSoup(catalog_home.text.encode('utf8'), "lxml")
+next_url = catalog_home_soup('a', text='Courses')[0]['href']
+
 data = {}
 while True:
     if next_url == None:
