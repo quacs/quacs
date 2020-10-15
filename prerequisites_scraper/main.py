@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
     for crn in tqdm(crns):
         print(crn)
-        prerequisites[crn] = get_prereq_string(202009, crn)
+        prerequisites[crn] = {} # get_prereq_string(202009, crn)
 
     with open('prerequisites.json', 'w') as outfile:
         json.dump(prerequisites, outfile, indent=4)
