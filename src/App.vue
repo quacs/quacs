@@ -32,7 +32,7 @@
                 class="nav-text text-nowrap"
                 v-b-tooltip.hover
                 title="Multiple semester support coming soon!"
-                >Fall 2020</b-nav-item
+                >Spring 2021</b-nav-item
               >
               <b-nav-item class="nav-text desktop-only" disabled>|</b-nav-item>
               <b-nav-item
