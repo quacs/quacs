@@ -25,7 +25,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Install wasm-pack
-        run: cargo install --git https://github.com/Urhengulas/wasm-pack.git --branch wasm-opt-enable-non-mvp
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Run deploy script
         run: |
