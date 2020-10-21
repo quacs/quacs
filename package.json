@@ -18,7 +18,7 @@
     "axios": "^0.20.0",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.18.0",
-    "fuse.js": "^6.4.1",
+    "fuse.js": "^6.4.2",
     "register-service-worker": "^1.7.1",
     "simple-web-worker": "^1.2.0",
     "vue": "^2.6.12",
