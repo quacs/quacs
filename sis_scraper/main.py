@@ -281,7 +281,7 @@ with requests.Session() as s:
     NUM_HOURS = int((TIME_END - TIME_START) / 100)
 
     MINUTE_GRANULARITY = 10
-    NUM_MIN_PER_HOUR = int(60 / MINUTE_GRANULARITY)
+    NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
 
     offset = lambda x: x * NUM_HOURS * NUM_MIN_PER_HOUR
 
@@ -317,7 +317,7 @@ with requests.Session() as s:
                                     hour_idx = int(hour / 100) - 7  # we start at 7am
                                     conflict[
                                         day_offsets[day]
-                                        + hour_idx * MINUTE_GRANULARITY
+                                        + hour_idx * (60 // MINUTE_GRANULARITY)
                                         + minute_idx
                                     ] = 1
 
