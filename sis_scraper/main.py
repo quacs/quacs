@@ -276,25 +276,26 @@ with requests.Session() as s:
 
     # Generate binary conflict output
     # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
-    BIT_VEC_SIZE = 9
-
     TIME_START = 700
-    TIME_END = 2300
+    TIME_END = 2200
     NUM_HOURS = int((TIME_END - TIME_START) / 100)
 
     MINUTE_GRANULARITY = 10
     NUM_MIN_PER_HOUR = int(60 / MINUTE_GRANULARITY)
 
+    offset = lambda x: x * NUM_HOURS * NUM_MIN_PER_HOUR
+
     day_offsets = {
-        "M": 0 * NUM_HOURS * NUM_MIN_PER_HOUR,
-        "T": 1 * NUM_HOURS * NUM_MIN_PER_HOUR,
-        "W": 2 * NUM_HOURS * NUM_MIN_PER_HOUR,
-        "R": 3 * NUM_HOURS * NUM_MIN_PER_HOUR,
-        "F": 4 * NUM_HOURS * NUM_MIN_PER_HOUR,
-        "S": 5 * NUM_HOURS * NUM_MIN_PER_HOUR,
+        "M": offset(0),
+        "T": offset(1),
+        "W": offset(2),
+        "R": offset(3),
+        "F": offset(4),
+        "S": offset(5),
+        "U": offset(6),
     }
 
-    BIT_VEC_SIZE = math.ceil(len(day_offsets) * NUM_HOURS * NUM_MIN_PER_HOUR / 64)
+    BIT_VEC_SIZE = math.ceil(offset(len(day_offsets)) / 64)
 
     conflicts = {}
     crn_to_courses = {}
