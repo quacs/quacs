@@ -213,14 +213,16 @@ export default class Section extends Vue {
     this.days = ["M", "T", "W", "R", "F"];
 
     // Check to see if the class has a weekend entry
-    const weekendTime = (timeslot: Timeslot) => timeslot.days.includes("S");
+    const weekendTime = (timeslot: Timeslot) =>
+      timeslot.days.includes("S") || timeslot.days.includes("U");
     const hasWeekend = this.course.sections.some((section) =>
       section.timeslots.some(weekendTime)
     );
 
-    // Only display saturday if necessary
+    // Only display weekend days if necessary
     if (hasWeekend) {
       this.days.push("S");
+      this.days.push("U");
     }
 
     return this.days;

@@ -84,7 +84,9 @@ export default class Calendar extends Vue {
 
   getDays(): Day[] {
     const hasWeekend =
-      this.sessionsOnDay({ name: "Saturday", short: "S" }).length > 0;
+      this.sessionsOnDay({ name: "Saturday", short: "S" }).length +
+        this.sessionsOnDay({ name: "Sunday", short: "U" }).length >
+      0;
 
     if (hasWeekend) {
       return DAYS;
