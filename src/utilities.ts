@@ -26,6 +26,10 @@ export const DAYS: Day[] = [
     name: "Saturday",
     short: "S",
   },
+  {
+    name: "Sunday",
+    short: "U",
+  },
 ];
 
 export function getSessions() {
