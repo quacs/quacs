@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
+import math
 
 load_dotenv()
 
@@ -275,14 +276,25 @@ with requests.Session() as s:
 
     # Generate binary conflict output
     # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
+    BIT_VEC_SIZE = 9
+
+    TIME_START = 700
+    TIME_END = 2300
+    NUM_HOURS = int((TIME_END - TIME_START) / 100)
+
+    MINUTE_GRANULARITY = 10
+    NUM_MIN_PER_HOUR = int(60 / MINUTE_GRANULARITY)
+
     day_offsets = {
-        "M": 0 * 16 * 6,
-        "T": 1 * 16 * 6,
-        "W": 2 * 16 * 6,
-        "R": 3 * 16 * 6,
-        "F": 4 * 16 * 6,
-        "S": 5 * 16 * 6,
+        "M": 0 * NUM_HOURS * NUM_MIN_PER_HOUR,
+        "T": 1 * NUM_HOURS * NUM_MIN_PER_HOUR,
+        "W": 2 * NUM_HOURS * NUM_MIN_PER_HOUR,
+        "R": 3 * NUM_HOURS * NUM_MIN_PER_HOUR,
+        "F": 4 * NUM_HOURS * NUM_MIN_PER_HOUR,
+        "S": 5 * NUM_HOURS * NUM_MIN_PER_HOUR,
     }
+
+    BIT_VEC_SIZE = math.ceil(len(day_offsets) * NUM_HOURS * NUM_MIN_PER_HOUR / 64)
 
     conflicts = {}
     crn_to_courses = {}
@@ -291,11 +303,11 @@ with requests.Session() as s:
             for section in course["sections"]:
                 crn_to_courses[section["crn"]] = course["id"]
 
-                conflict = [0] * (64 * 9)
+                conflict = [0] * (64 * BIT_VEC_SIZE)
                 for time in section["timeslots"]:
                     for day in time["days"]:
-                        for hour in range(700, 2300, 100):
-                            for minute in range(0, 60, 10):
+                        for hour in range(TIME_START, TIME_END, 100):
+                            for minute in range(0, 60, MINUTE_GRANULARITY):
                                 if (
                                     time["timeStart"] <= hour + minute
                                     and time["timeEnd"] > hour + minute
@@ -303,7 +315,9 @@ with requests.Session() as s:
                                     minute_idx = int(minute / 10)
                                     hour_idx = int(hour / 100) - 7  # we start at 7am
                                     conflict[
-                                        day_offsets[day] + hour_idx * 6 + minute_idx
+                                        day_offsets[day]
+                                        + hour_idx * MINUTE_GRANULARITY
+                                        + minute_idx
                                     ] = 1
 
                 conflicts[section["crn"]] = "".join(str(e) for e in conflict)
@@ -312,14 +326,21 @@ with requests.Session() as s:
         f.write(
             """\
 //This file was automatically generated. Please do not modify it directly
-use ::phf::{phf_map, Map};
-pub static CRN_TIMES: Map<u32, [u64; 9]> = phf_map! {
+use ::phf::{{phf_map, Map}};
+
+pub type TimeBitVec = [u64; """
+            + str(BIT_VEC_SIZE)
+            + """];
+
+pub static CRN_TIMES: Map<u32, [u64; """
+            + str(BIT_VEC_SIZE)
+            + """]> = phf_map! {
 """
         )
 
         for crn, conflict in conflicts.items():
             rust_array = f"\t{crn}u32 => ["
-            for i in range(0, 9 * 64, 64):
+            for i in range(0, BIT_VEC_SIZE * 64, 64):
                 if i != 0:
                     rust_array += ", "
                 rust_array += str(int(conflict[i : i + 64], 2))
