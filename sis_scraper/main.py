@@ -333,7 +333,7 @@ pub const BIT_VEC_LEN: usize = """
             + str(BIT_VEC_SIZE)
             + """;
 
-pub static CRN_TIMES: Map<u32, [u64; TimeBitVecSize]> = phf_map! {
+pub static CRN_TIMES: Map<u32, [u64; BIT_VEC_LEN]> = phf_map! {
 """
         )
 
