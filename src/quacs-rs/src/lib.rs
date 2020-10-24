@@ -3,6 +3,7 @@ mod utils;
 use utils::*;
 
 mod data;
+pub use data::TimeBitVec;
 use data::{CRN_COURSES, CRN_TIMES};
 
 use lazy_static::lazy_static;
@@ -13,7 +14,7 @@ use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::*;
 
 lazy_static! {
-    static ref CURR_TIMES: RwLock<[u64; 9]> = RwLock::new([0; 9]);
+    static ref CURR_TIMES: RwLock<TimeBitVec> = RwLock::new(TimeBitVec::default());
     static ref SCHEDULES: RwLock<Vec<Vec<u32>>> = RwLock::new(Vec::new());
     static ref SELECTED_COURSES: RwLock<HashMap<&'static str, HashSet<u32>>> =
         RwLock::new(HashMap::new());
@@ -65,7 +66,7 @@ pub fn generate_schedules_and_conflicts() -> usize {
 
 fn generate_schedules_driver(
     courses: &mut Vec<&HashSet<u32>>,
-    global_times: &mut [u64; 9],
+    global_times: &mut TimeBitVec,
 ) -> Vec<Vec<u32>> {
     courses.sort_by_cached_key(|set| set.len());
 
@@ -125,8 +126,8 @@ fn generate_schedules(
     idx: usize,
     courses: &Vec<HashSet<u32>>,
     current_courses: &mut Vec<u32>,
-    current_times: &mut [u64; 9],
-    overall_times: &mut [u64; 9],
+    current_times: &mut TimeBitVec,
+    overall_times: &mut TimeBitVec,
 ) -> Vec<Vec<u32>> {
     if idx >= courses.len() {
         *overall_times = bitwise_and(overall_times, current_times);
