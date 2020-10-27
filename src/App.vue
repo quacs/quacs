@@ -137,6 +137,11 @@
         &copy; 2020 - Questionably Accurate Course Scheduler
       </div>
     </footer>
+    <script
+      data-goatcounter="https://quacs.goatcounter.com/count"
+      async
+      src="//gc.zgo.at/count.js"
+    ></script>
   </div>
 </template>
 
