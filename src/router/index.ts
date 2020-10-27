@@ -42,4 +42,23 @@ const router = new VueRouter({
   },
 });
 
+// eslint-disable-next-line
+router.afterEach((to, _from) => {
+  window.goatcounter.count({
+    path: to.fullPath,
+  });
+});
+
+//Add goatcounter to window namespace
+declare global {
+  interface Window {
+    // eslint-disable-next-line
+    goatcounter: any;
+  }
+}
+
+window.goatcounter = {
+  no_onload: true, //Dont count on inital page load, the router afterEach function handles that
+};
+
 export default router;
