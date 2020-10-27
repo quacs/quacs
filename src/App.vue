@@ -69,7 +69,7 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <b-alert class="fixed-bottom sticky-top" :show="true">
+            <b-alert class="fixed-bottom sticky-top" :show="true" v-if="false">
               <font-awesome-icon
                 :icon="['fas', 'exclamation-triangle']"
               ></font-awesome-icon>
