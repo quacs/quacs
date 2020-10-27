@@ -75,10 +75,7 @@
           <span
             class="padding-left prerequisiteError"
             :class="{
-              hidden: !(
-                $store.state.courseSizes[section.crn] &&
-                $store.state.courseSizes[section.crn].avail <= 0
-              ),
+              hidden: !(section.rem <= 0),
             }"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
@@ -98,10 +95,10 @@
             v-b-tooltip.hover
             :title="
               'There are ' +
-              formatCourseSize(section.crn, courseSizes) +
+              formatCourseSize(section) +
               '. Check SIS for more up to date information.'
             "
-            >{{ formatCourseSize(section.crn) }}</span
+            >{{ formatCourseSize(section) }}</span
           >
           <!-- Mobile times -->
           <div class="mobile-only">
@@ -185,7 +182,6 @@ import { VBTooltip } from "bootstrap-vue";
     ...mapGetters("schedule", ["isSelected"]),
     ...mapState("schedule", ["courseSets", "currentTerm", "currentCourseSet"]),
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
-    ...mapState(["courseSizes"]),
   },
 })
 export default class Section extends Vue {

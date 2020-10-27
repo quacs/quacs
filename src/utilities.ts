@@ -87,17 +87,8 @@ export function formatTimeslot() {
 }
 
 export function formatCourseSize() {
-  return function (crn: string): string {
-    if (crn in store.state.courseSizes) {
-      return (
-        store.state.courseSizes[crn].avail +
-        "/" +
-        store.state.courseSizes[crn].seats +
-        " seats available"
-      );
-    }
-
-    return "";
+  return function (section: CourseSection): string {
+    return section.rem + "/" + section.cap + " seats available";
   };
 }
 

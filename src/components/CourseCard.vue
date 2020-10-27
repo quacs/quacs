@@ -160,19 +160,16 @@ Vue.use(ModalPlugin);
       );
     },
     fullSections: function () {
-      let emptyCount = 0;
+      let fullCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
-        if (
-          this.$store.state.courseSizes[section.crn] &&
-          this.$store.state.courseSizes[section.crn].avail <= 0
-        ) {
-          emptyCount++;
+        if (section.rem <= 0) {
+          fullCount++;
         }
       }
       //2==all sections full, 1==some sections full, 0==not sections full
       // @ts-expect-error: no u typescript, this does exist
-      return (emptyCount === this.course.sections.length) + (emptyCount > 0);
+      return (fullCount === this.course.sections.length) + (fullCount > 0);
     },
     areThereSelectedSections: function () {
       let selectedCount = 0;

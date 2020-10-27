@@ -22,12 +22,7 @@
       <div class="font-weight-bold">Seats:</div>
       <div>
         There are
-        {{
-          formatCourseSize(
-            section.crn,
-            this.$store.state.courseSizes[section.crn]
-          )
-        }}
+        {{ formatCourseSize(section) }}
         . Check SIS for more up to date information.
       </div>
       <template v-slot:modal-footer="{ ok }">
