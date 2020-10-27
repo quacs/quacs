@@ -42,7 +42,11 @@
                   aria-lable="Course Code"
                   trim
                   :disabled="!prerequisiteChecking"
-                  :title="prerequisiteChecking ? '' : 'Disabled'"
+                  :title="
+                    prerequisiteChecking
+                      ? 'Enter a course here'
+                      : 'Enable prerequisites to add a course'
+                  "
                   :formatter="formatCourse"
                   @keyup.enter="addCourse"
                 ></b-form-input>
@@ -59,7 +63,11 @@
                 <b-button
                   @click="addCourse"
                   :disabled="!verifyNewCourse || !prerequisiteChecking"
-                  :title="prerequisiteChecking ? '' : 'Disabled'"
+                  :title="
+                    prerequisiteChecking
+                      ? 'Enter a course here'
+                      : 'Enable prerequisites to add a course'
+                  "
                   >Add Course</b-button
                 >
               </b-col>
@@ -129,9 +137,15 @@
                 placeholder="Click to upload your transcript or drop it here..."
                 drop-placeholder="Drop transcript here..."
                 required
-                :title="prerequisiteChecking ? '' : 'Disabled'"
+                :title="
+                  prerequisiteChecking
+                    ? ''
+                    : 'Enable prerequisites to upload your transcript'
+                "
                 :disabled="!prerequisiteChecking"
                 @change="importTranscript()"
+                v-b-tooltip.disabled="prerequisiteChecking"
+                v-b-tooltip.hover
               ></b-form-file>
             </form>
           </b-tab>
@@ -140,14 +154,14 @@
     </div>
     <b-modal id="transcriptImportModal" title="Import Error">
       <p>
-        There was an issue importing from your transcript. Theses issues are
-        hard to debug because we dont have access to many test transcript files
+        There was an issue importing from your transcript. These issues are hard
+        to debug because we don't have access to many test transcript files.
       </p>
-      <p>For now you will have to add your courses by hand, sorry</p>
+      <p>For now you will have to add your courses by hand... sorry :(</p>
 
       <p>
         If you would like to help us fix this issue, join our discord so we can
-        talk
+        talk:
       </p>
       <a
         href="https://discord.gg/EyGZTAP"
@@ -167,8 +181,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-// @ts-expect-error: ¯\_(ツ)_/¯ I dont feel like making this work with typescript. TODO make this work with typescript
-import { scrapeTranscript } from "@/components/scrapeTranscript.js";
+import { scrapeTranscript } from "@/components/scrapeTranscript.ts";
 import { mapGetters, mapState } from "vuex";
 import {
   BButton,
@@ -183,6 +196,7 @@ import {
   BRow,
   BTab,
   BTabs,
+  VBTooltip,
 } from "bootstrap-vue";
 
 @Component({
@@ -199,6 +213,9 @@ import {
     "b-row": BRow,
     "b-tab": BTab,
     "b-tabs": BTabs,
+  },
+  directives: {
+    "b-tooltip": VBTooltip,
   },
   computed: {
     verifyNewCourse(): boolean {
@@ -258,11 +275,15 @@ export default class Prerequisites extends Vue {
         console.log(err);
         bvModal.show("transcriptImportModal");
       })
-      // @ts-expect-error: TBD
       .then(function (transcript) {
-        for (const term of transcript.terms.concat(
-          transcript.inProgressTerms
-        )) {
+        if (!transcript) {
+          //eslint-disable-next-line
+          console.log("transcript is void");
+          bvModal.show("transcriptImportModal");
+          return;
+        }
+
+        for (const term of transcript.terms) {
           for (const course of term.courses) {
             store.commit(
               "prerequisites/addPriorCourse",
