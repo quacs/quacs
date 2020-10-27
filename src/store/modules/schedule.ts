@@ -10,7 +10,7 @@ const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeo
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
   numCurrentSchedules = 0;
-  CURRENT_STORAGE_VERSION = "0.0.3";
+  CURRENT_STORAGE_VERSION = "0.0.4";
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
   currentlyGeneratingSchedules = false;
   needToGenerateSchedules = false;
