@@ -95,8 +95,8 @@
               In order to import your courses you will need to upload your
               transcript. Don't worry, QuACS is 100% client-side which means
               that all the data in your transcript stays on your computer and
-              there is literally no way for anyone - including the QuACS
-              developers - to view the data.
+              there is no way for anyone - including the QuACS developers - to
+              view the data.
             </p>
             <h3 class="mobile-only">
               NOTE: Transcript importing does not work on mobile because there
