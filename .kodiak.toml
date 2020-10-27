@@ -4,3 +4,6 @@ version = 1
 
 [approve]
 auto_approve_usernames = ["dependabot"]
+
+[update]
+update.ignored_usernames = ["dependabot"]
