@@ -232,7 +232,7 @@ with requests.Session() as s:
                 "title": toTitle(getContent(td[7])),
                 "cap": int(getContent(td[10])),
                 "act": int(getContent(td[11])),
-                # "rem": int(getContent(td[12])),
+                "rem": int(getContent(td[12])),
                 # "wlCap":int(getContent(td[13])),
                 # "wlAct":int(getContent(td[14])),
                 # "wlRem":int(getContent(td[15])),
