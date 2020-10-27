@@ -124,7 +124,7 @@
           @click="rotateLogo()"
         />
         <a
-          href="https://discord.gg/EyGZTAP"
+          href="https://discord.gg/yXaHkwU"
           rel="noopener"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
