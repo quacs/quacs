@@ -2,10 +2,7 @@
 
 View the live version here: [https://quacs.org](https://quacs.org)
 
-Join the development [discord](https://discord.gg/EyGZTAP)!
-You can view QuACS at [https://quacs.org](https://quacs.org)
-
-Want to help with development? Join the development [discord](https://discord.gg/EyGZTAP)!
+Want to help with development? [Join our discord!](https://discord.gg/nZKAzzE5bX)
 
 # What are people saying?
 
