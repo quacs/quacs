@@ -42,25 +42,16 @@ const router = new VueRouter({
   },
 });
 
-// eslint-disable-next-line
-router.afterEach((to, _from) => {
-  // @ts-expect-error: typescript does not know that umami exists because it comes from an external srcipt file
-  umami.trackView(to.fullPath.split("?")[0]);
-  window.goatcounter.count({
-    path: to.fullPath,
-  });
-});
-
-//Add goatcounter to window namespace
-declare global {
-  interface Window {
-    // eslint-disable-next-line
-    goatcounter: any;
-  }
+interface Umami {
+  trackView(path: string): void;
 }
 
-window.goatcounter = {
-  no_onload: true, //Dont count on inital page load, the router afterEach function handles that
-};
+// eslint-disable-next-line
+declare const umami: Umami; // Not initialized here since it's declared elsewhere
+
+// eslint-disable-next-line
+router.afterEach((to, _from) => {
+  umami.trackView(to.fullPath.split("?")[0]);
+});
 
 export default router;

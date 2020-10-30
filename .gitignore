@@ -116,3 +116,5 @@ src/quacs-rs/package.json
 src/quacs-rs/*.ts
 src/quacs-rs/*.js
 src/quacs-rs/*.wasm
+
+public/umami.js

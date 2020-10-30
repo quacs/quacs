@@ -73,6 +73,5 @@ new Vue({
   },
   mounted() {
     setColorTheme(this.$store.state.settings.colorTheme);
-    this.$store.dispatch("loadCourseSizes");
   },
 }).$mount("#app");
