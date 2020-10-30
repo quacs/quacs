@@ -43,15 +43,29 @@ const router = new VueRouter({
 });
 
 interface Umami {
-  trackView(path: string): void;
+  trackView(path: string, referrer?: string): void;
 }
 
 // eslint-disable-next-line
 declare const umami: Umami; // Not initialized here since it's declared elsewhere
 
-// eslint-disable-next-line
-router.afterEach((to, _from) => {
-  umami.trackView(to.fullPath.split("?")[0]);
+let initialDataSent = false;
+
+router.afterEach((to, from) => {
+  const to_path = to.fullPath.split("?")[0];
+  const from_path = from.fullPath.split("?")[0];
+
+  if (to_path === from_path) {
+    return;
+  }
+
+  if (initialDataSent) {
+    // Don't track referrers for subsequent page changes
+    umami.trackView(to_path, "");
+  } else {
+    initialDataSent = true;
+    umami.trackView(to_path);
+  }
 });
 
 export default router;
