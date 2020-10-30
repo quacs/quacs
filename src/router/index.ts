@@ -44,6 +44,8 @@ const router = new VueRouter({
 
 // eslint-disable-next-line
 router.afterEach((to, _from) => {
+  // @ts-expect-error: typescript does not know that umami exists because it comes from an external srcipt file
+  umami.trackView(to.fullPath.substr(0, to.fullPath.indexOf("?")));
   window.goatcounter.count({
     path: to.fullPath,
   });
