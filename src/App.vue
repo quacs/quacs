@@ -35,10 +35,10 @@
                   }}</em>
                 </template>
                 <b-dropdown-item
-                  v-for="otherShortSem in allOtherSems"
-                  :key="otherShortSem"
-                  :href="shortSemToURL(otherShortSem)"
-                  >{{ shortSemToLongSem(otherShortSem) }}</b-dropdown-item
+                  v-for="shortSem in allSems"
+                  :key="shortSem"
+                  :href="shortSemToURL(shortSem)"
+                  >{{ shortSemToLongSem(shortSem) }}</b-dropdown-item
                 >
               </b-nav-item-dropdown>
               <b-nav-item class="nav-text desktop-only" disabled>|</b-nav-item>
@@ -210,10 +210,8 @@ export default class App extends Vue {
   installable = false;
   installEvent: Event | null = null;
 
-  get allOtherSems(): string[] {
-    return JSON.parse(process.env.VUE_APP_ALL_SEMS).filter(
-      (sem: string) => sem !== this.currentSem
-    );
+  get allSems(): string[] {
+    return JSON.parse(process.env.VUE_APP_ALL_SEMS);
   }
 
   get currentSem(): string {
