@@ -157,7 +157,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Scrape faculty
-        run: python3 scraper/faculty_directory_scraper/main.py
+        run: python3 faculty_directory_scraper/main.py
 
       - name: Upload data
         uses: actions/upload-artifact@v2
