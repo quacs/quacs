@@ -38,7 +38,7 @@ for directory in $(find src/store/data/semester_data/* -type d -print0 | xargs -
 	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
 done
 
-LATEST_SEMESTER=$(basename "$(find src/store/data/semester_data/* -type d -print0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
+LATEST_SEMESTER=$(python scripts/short_sem_to_long_sem.py $(basename "$(find src/store/data/semester_data/* -type d -print0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)"))
 
 # Create html entry page
 cat <<EOF >"$OUTPUT_DIR/index.html"
