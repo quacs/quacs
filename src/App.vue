@@ -28,13 +28,19 @@
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <CourseSetEdit></CourseSetEdit>
-              <b-nav-item
-                to="#"
-                class="nav-text text-nowrap"
-                v-b-tooltip.hover
-                title="Multiple semester support coming soon!"
-                >Spring 2021</b-nav-item
-              >
+              <b-nav-item-dropdown left :title="shortSemToLongSem(currentSem)">
+                <template v-slot:button-content>
+                  <em class="nav-text" style="font-style: normal;">{{
+                    shortSemToLongSem(currentSem)
+                  }}</em>
+                </template>
+                <b-dropdown-item
+                  v-for="otherShortSem in allOtherSems"
+                  :key="otherShortSem"
+                  :href="shortSemToURL(otherShortSem)"
+                  >{{ shortSemToLongSem(otherShortSem) }}</b-dropdown-item
+                >
+              </b-nav-item-dropdown>
               <b-nav-item class="nav-text desktop-only" disabled>|</b-nav-item>
               <b-nav-item
                 to="/prerequisites"
@@ -160,6 +166,7 @@ import {
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
+import { shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 @Component({
   components: {
@@ -185,6 +192,8 @@ import CourseSetEdit from "@/components/CourseSetEdit.vue";
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
     ...mapGetters("schedule", ["getCourseSets"]),
     ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
+    shortSemToURL,
+    shortSemToLongSem,
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
@@ -200,6 +209,16 @@ export default class App extends Vue {
   searching = false;
   installable = false;
   installEvent: Event | null = null;
+
+  get allOtherSems(): string[] {
+    return JSON.parse(process.env.VUE_APP_ALL_SEMS).filter(
+      (sem: string) => sem !== this.currentSem
+    );
+  }
+
+  get currentSem(): string {
+    return process.env.VUE_APP_CURR_SEM;
+  }
 
   get lastUpdated(): string {
     let timeDifference =

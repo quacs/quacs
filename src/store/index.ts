@@ -7,8 +7,10 @@ import Vue from "vue";
 import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
-import SCHOOLS_JSON from "./data/schools.json";
-import DATA_STATS_JSON from "./data/meta.json";
+// eslint-disable-next-line
+const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
+// eslint-disable-next-line
+const DATA_STATS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/meta.json`);
 
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
@@ -75,17 +77,17 @@ export default new Vuex.Store({
   },
   actions: {
     init({ commit }): void {
-      import("./data/catalog.json").then((catalog) =>
-        commit("SET_CATALOG", catalog)
-      );
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/catalog.json`
+      ).then((catalog) => commit("SET_CATALOG", catalog));
 
-      import("./data/courses.json").then((departments) =>
-        commit("SET_DEPARTMENTS", departments.default)
-      );
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/courses.json`
+      ).then((departments) => commit("SET_DEPARTMENTS", departments.default));
 
-      import("./data/prerequisites.json").then((prereqs) =>
-        commit("SET_PREREQUISITES_DATA", prereqs)
-      );
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/prerequisites.json`
+      ).then((prereqs) => commit("SET_PREREQUISITES_DATA", prereqs));
     },
   },
   modules: {
@@ -95,6 +97,10 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
+      key:
+        process.env.VUE_APP_CURR_SEM === "202101"
+          ? "vuex"
+          : process.env.VUE_APP_CURR_SEM,
       paths: [
         "schedule.storedVersion",
         "schedule.currentTerm",

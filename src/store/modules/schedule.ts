@@ -2,7 +2,7 @@ import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import * as quacsWorker from "@/workers/schedule.worker";
 import Vue from "vue";
-import { CourseSet } from "@/typings";
+import { CourseSets } from "@/typings";
 
 // yay typescript fun
 const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
@@ -14,10 +14,10 @@ export default class Schedule extends VuexModule {
   storedVersion = ""; // If a value is in localstorage, this will be set to that on load
   currentlyGeneratingSchedules = false;
   needToGenerateSchedules = false;
-  currentTerm = 202009;
+  currentTerm = 202009; // TODO: remove this after the current semester
   currentCourseSet = "Course Set 1";
   courseSets: {
-    [term: number]: CourseSet;
+    [term: number]: CourseSets;
   } = { 202009: { "Course Set 1": {} } };
 
   wasmLoaded = false;

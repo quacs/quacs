@@ -235,3 +235,46 @@ export function formatPrerequisites() {
     }
   };
 }
+
+export function shortSemToLongSem() {
+  return function (shortSem: string): string {
+    const year = shortSem.substring(0, 4);
+
+    const semNum = shortSem.substring(4);
+    let sem = "";
+    if (semNum === "01") {
+      sem = "Spring";
+    } else if (semNum === "09") {
+      sem = "Fall";
+    } else if (semNum === "05") {
+      sem = "Summer";
+    } else {
+      sem = semNum;
+    }
+
+    return `${sem} ${year}`;
+  };
+}
+
+// THIS FUNCTION IS DUPLICATED IN vue.config.js BECAUSE
+// I DON'T KNOW HOW TO IMPORT IT.  ANY CHANGES MUST ALSO
+// BE MADE THERE.
+export function shortSemToURL() {
+  return function (shortSem: string): string {
+    const year = shortSem.substring(0, 4);
+
+    const semNum = shortSem.substring(4);
+    let sem = "";
+    if (semNum === "01") {
+      sem = "spring";
+    } else if (semNum === "09") {
+      sem = "fall";
+    } else if (semNum === "05") {
+      sem = "summer";
+    } else {
+      sem = semNum;
+    }
+
+    return `/${sem}${year}`;
+  };
+}

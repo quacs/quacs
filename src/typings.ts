@@ -104,6 +104,6 @@ export interface Section {
   attribute: string;
 }
 
-export interface CourseSet {
+export interface CourseSets {
   [courseSet: string]: { [crn: string]: boolean };
 }
