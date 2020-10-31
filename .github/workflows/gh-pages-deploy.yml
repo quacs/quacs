@@ -22,7 +22,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: "quacs/site"
-          ref: "${GITHUB_REF##*/}"
           path: "gh-pages-site"
 
       - name: Clean install dependencies

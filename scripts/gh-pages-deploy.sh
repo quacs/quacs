@@ -15,8 +15,10 @@ fi
 
 if ! test -d gh-pages-site/; then
 	# This should only occur when testing locally
-	git clone git@github.com:quacs/site.git gh-pages-site/ --branch $BRANCH
+	git clone git@github.com:quacs/site.git gh-pages-site/
 fi
+
+git -C gh-pages-site checkout -b ${BRANCH} || exit 1
 
 # clear existing data
 rm gh-pages-site/* -rf
