@@ -55,7 +55,7 @@ router.afterEach((to, from) => {
   const to_path = to.fullPath.split("?")[0];
   const from_path = from.fullPath.split("?")[0];
 
-  if (to_path === from_path) {
+  if (to_path === from_path && initialDataSent) {
     return;
   }
 
