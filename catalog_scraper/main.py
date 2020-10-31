@@ -95,6 +95,7 @@ def get_schools(url):
 
     school = schools
     data = {}
+    departments = set()
     for _ in range(num_schools):
         school = school.findNext("p")
 
@@ -109,7 +110,9 @@ def get_schools(url):
             first_space = dept.index(" ")
             code = dept[:first_space]
             name = dept[first_space + 1 :]
-            data[school_name].append({"code": code, "name": name})
+            if code not in departments:
+                data[school_name].append({"code": code, "name": name})
+            departments.add(code)
     return data
 
 
