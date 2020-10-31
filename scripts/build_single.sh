@@ -47,7 +47,7 @@ rm .env
 echo "VUE_APP_CURR_SEM=$CURR_SEMESTER" >>.env
 echo -n "VUE_APP_ALL_SEMS=[" >>.env
 ITER=0
-for directory in $(find src/store/data/semester_data/* -type d -print0 | xargs -0); do
+for directory in $(find src/store/data/semester_data/* -type d -print0 | xargs -0 | sed 's/ /\n/g' | sort -r); do
 	if test $ITER -ne 0; then
 		echo -n "," >>.env
 	fi

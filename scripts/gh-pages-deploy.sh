@@ -24,7 +24,8 @@ git -C gh-pages-site checkout -B ${BRANCH} || exit 1
 rm gh-pages-site/* -rf
 
 yarn ${ACTION} -a -o gh-pages-site || exit 1
-# echo ${CNAME} > site/CNAME # TODO: uncomment this when quacs.org points to the new repo
+echo "balletlang.org" >"gh-pages-site/CNAME" # TODO: set this to the right file
+# echo ${CNAME} > gh-pages-site/CNAME # TODO: uncomment this when quacs.org points to the new repo
 git -C gh-pages-site add --all || exit 1
 git -C gh-pages-site commit -m "$(date -u)" || exit 1
 git -C gh-pages-site push origin HEAD:${BRANCH} --force || exit 1
