@@ -13,13 +13,11 @@ CURR_DIR=$(dirname "${BASH_SOURCE[0]}")
 BUILD_ALL=false
 
 OUTPUT_DIR=site
-SUBDOMAIN=""
 while getopts ao:d option; do
 	case "${option}" in
 
 	a) BUILD_ALL=true ;;
 	o) OUTPUT_DIR=${OPTARG} ;;
-	d) SUBDOMAIN="staging." ;;
 	*) ;; # ignore other flags
 	esac
 done
@@ -52,8 +50,8 @@ cat <<EOF >"$OUTPUT_DIR/index.html"
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="description" content="QuACS is the new and improved course scheduler for Rensselaer Polytechnic Institute (RPI) students. Stop using YACS and start using QuACS!">
-    <meta name="og:image" content="https://$SUBDOMAIN.quacs.org/img/icons/android-chrome-512x512.png" />
-    <link rel="icon" href="https://$SUBDOMAIN.quacs.org/favicon.ico">
+    <meta name="og:image" content="/img/icons/android-chrome-512x512.png" />
+    <link rel="icon" href="/favicon.ico">
     <title>QuACS</title>
 </head>
 
@@ -62,7 +60,7 @@ cat <<EOF >"$OUTPUT_DIR/index.html"
         <strong>We're sorry but QuACS doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
 		<script type="text/javascript>
-				window.location.href = "https://$SUBDOMAIN.quacs.org/$LATEST_SEMESTER"
+				window.location.href.replace("/$LATEST_SEMESTER")
 		</script>
 </body>
 

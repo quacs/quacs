@@ -12,8 +12,6 @@ jobs:
 
       - name: Checkout branch
         uses: actions/checkout@v2
-        with:
-          submodules: 'recursive'
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
@@ -21,7 +19,7 @@ jobs:
       - name: Build site
         run: |
           yarn install --frozen-lockfile
-          yarn build
+          yarn build -a
 
       - name: Run Lighthouse CI
         env:
