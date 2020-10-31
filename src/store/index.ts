@@ -106,16 +106,21 @@ export default new Vuex.Store({
         "schedule.currentTerm",
         "schedule.currentCourseSet",
         "schedule.courseSets",
+      ],
+      rehydrated: (store) => {
+        store.commit("schedule/initSelectedSetions");
+        store.dispatch("schedule/init", false);
+      },
+    }),
+    createPersistedState({
+      key: "inter-semester-storage",
+      paths: [
         "settings.timePreference",
         "settings.colorTheme",
         "settings.hidePrerequisites",
         "prerequisites.priorCourses",
         "prerequisites.enableChecking",
       ],
-      rehydrated: (store) => {
-        store.commit("schedule/initSelectedSetions");
-        store.dispatch("schedule/init", false);
-      },
     }),
   ],
 });
