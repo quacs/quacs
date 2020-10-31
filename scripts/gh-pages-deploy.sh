@@ -18,7 +18,7 @@ if ! test -d gh-pages-site/; then
 	git clone git@github.com:quacs/site.git gh-pages-site/
 fi
 
-git -C gh-pages-site checkout -b ${BRANCH} || exit 1
+git -C gh-pages-site checkout -B ${BRANCH} || exit 1
 
 # clear existing data
 rm gh-pages-site/* -rf

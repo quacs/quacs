@@ -18,6 +18,11 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
       - name: Checkout site repo
         uses: actions/checkout@v2
         with:

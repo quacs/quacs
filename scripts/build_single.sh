@@ -68,7 +68,8 @@ if test "$BUILD_SITE" = "true"; then
 	vue-cli-service build || exit 1
 
 	mkdir -p "$OUTPUT_DIR"
-	mv dist/ "$OUTPUT_DIR/$CURR_SEMESTER"
+	CURR_SEM_LONG=$(python scripts/short_sem_to_long_sem.py $CURR_SEMESTER)
+	mv dist/ "$OUTPUT_DIR/$CURR_SEM_LONG"
 else
 	vue-cli-service serve
 fi
