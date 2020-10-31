@@ -9,13 +9,15 @@ ROOT_DIRECTORY=$(pwd)
 DEBUG=false
 DONT_BENCHMARK=false
 BUILD_SITE=false
-while getopts ds:nb option; do
+OUTPUT_DIR=site
+while getopts dnbs:o: option; do
 	case "${option}" in
 
 	d) DEBUG=true ;;
 	s) CURR_SEMESTER=${OPTARG} ;;
 	n) DONT_BENCHMARK=true ;;
 	b) BUILD_SITE=true ;;
+	o) OUTPUT_DIR=${OPTARG} ;;
 	*) ;; # ignore other flags
 	esac
 done
@@ -63,7 +65,10 @@ cd "$ROOT_DIRECTORY"
 
 echo Building site
 if test "$BUILD_SITE" = "true"; then
-	vue-cli-service build
+	vue-cli-service build || exit 1
+
+	mkdir -p "$OUTPUT_DIR"
+	mv dist/ "$OUTPUT_DIR/$CURR_SEMESTER"
 else
 	vue-cli-service serve
 fi

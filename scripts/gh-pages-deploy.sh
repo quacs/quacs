@@ -3,23 +3,26 @@
 set -x
 
 # If current branch == staging
-if git rev-parse --abbrev-ref HEAD | grep -w staging > /dev/null; then
-  BRANCH="staging"
-  PAGESBRANCH="gh-pages-staging"
-  CNAME="staging.quacs.org"
+if git rev-parse --abbrev-ref HEAD | grep -w staging >/dev/null; then
+	BRANCH="staging"
+	CNAME="staging.quacs.org"
 	ACTION="debug-build"
 else
-  BRANCH="master"
-  PAGESBRANCH="gh-pages"
-  CNAME="quacs.org"
+	BRANCH="master"
+	CNAME="quacs.org"
 	ACTION="build"
 fi
 
-git checkout --orphan ${PAGESBRANCH} || exit 1
-yarn ${ACTION} || exit 1
-echo ${CNAME} > dist/CNAME
-git --work-tree dist add --all || exit 1
-git --work-tree dist commit -m "$(date -u)" || exit 1
-git push origin HEAD:${PAGESBRANCH} --force || exit 1
-git checkout -f ${BRANCH} || exit 1
-git branch -D ${PAGESBRANCH} || exit 1
+if ! test -d gh-pages-site/; then
+	# This should only occur when testing locally
+	git clone git@github.com:quacs/site.git gh-pages-site/ --branch $BRANCH
+fi
+
+# clear existing data
+rm gh-pages-site/* -rf
+
+yarn ${ACTION} -a -o gh-pages-site || exit 1
+# echo ${CNAME} > site/CNAME # TODO: uncomment this when quacs.org points to the new repo
+git -C gh-pages-site add --all || exit 1
+git -C gh-pages-site commit -m "$(date -u)" || exit 1
+git -C gh-pages-site push origin HEAD:${BRANCH} --force || exit 1
