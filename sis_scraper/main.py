@@ -184,6 +184,9 @@ with requests.Session() as s:
 
         data = []
 
+        print(response)
+        print(response.text)
+        print(term)
         # print(response.text.encode('utf8'))
         soup = BeautifulSoup(response.text.encode("utf8"), "html.parser")
         table = soup.findAll("table", {"class": "datadisplaytable"})[0]
