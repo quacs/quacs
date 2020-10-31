@@ -1,10 +1,13 @@
 from dotenv import load_dotenv
 import os
+import shutil
 import requests
 from bs4 import BeautifulSoup
 import json
 import re
 import math
+from tqdm import tqdm
+import urllib.parse
 
 load_dotenv()
 
@@ -136,7 +139,7 @@ def toTitle(text):
     return text
 
 
-payload = f'sid={os.getenv("RIN")}&PIN={os.getenv("PASSWORD")}'
+payload = f'sid={os.getenv("RIN")}&PIN={urllib.parse.quote(os.getenv("PASSWORD"))}'
 headers = {"Content-Type": "application/x-www-form-urlencoded"}
 with requests.Session() as s:
     s.get(url="https://sis.rpi.edu/rss/twbkwbis.P_WWWLogin")
@@ -151,210 +154,236 @@ with requests.Session() as s:
         print("Failed to log into sis")
         exit(1)
 
-    url = "https://sis.rpi.edu/rss/bwskfcls.P_GetCrse_Advanced"
-    payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=ADMN&sel_subj=USAF&sel_subj=ARCH&sel_subj=ARTS&sel_subj=ASTR&sel_subj=BCBP&sel_subj=BIOL&sel_subj=BMED&sel_subj=CHME&sel_subj=CHEM&sel_subj=CIVL&sel_subj=COGS&sel_subj=COMM&sel_subj=CSCI&sel_subj=ENGR&sel_subj=ERTH&sel_subj=ECON&sel_subj=ECSE&sel_subj=ESCI&sel_subj=ENVE&sel_subj=GSAS&sel_subj=ISYE&sel_subj=ITWS&sel_subj=IENV&sel_subj=IHSS&sel_subj=ISCI&sel_subj=LANG&sel_subj=LGHT&sel_subj=LITR&sel_subj=MGMT&sel_subj=MTLE&sel_subj=MATP&sel_subj=MATH&sel_subj=MANE&sel_subj=USAR&sel_subj=USNA&sel_subj=PHIL&sel_subj=PHYS&sel_subj=PSYC&sel_subj=STSH&sel_subj=STSS&sel_subj=WRIT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
+    for term in tqdm(os.listdir("data")):
+        url = "https://sis.rpi.edu/rss/bwskfcls.P_GetCrse_Advanced"
+        payload = f"rsts=dummy&crn=dummy&term_in={term}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&"
 
-    # This payload is for testing. It will only return CSCI classes and will therefore be a bit faster
-    # payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=CSCI&sel_subj=LGHT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
+        with open(f"data/{term}/schools.json") as f:
+            for school in json.load(f):
+                for dept in school["depts"]:
+                    payload += f"sel_subj={dept['code']}&"
 
-    headers = {}
-    response = s.request("POST", url, headers=headers, data=payload)
+        payload += "sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&"
+        if int(term) <= 201101:  # SIS removed a field after this semester
+            payload += "sel_instr=%25&"
+        payload += "begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1"
 
-    data = []
+        # This payload is for testing. It will only return CSCI classes and will therefore be a bit faster
+        # payload = f'rsts=dummy&crn=dummy&term_in={os.getenv("CURRENT_TERM")}&sel_subj=dummy&sel_day=dummy&sel_schd=dummy&sel_insm=dummy&sel_camp=dummy&sel_levl=dummy&sel_sess=dummy&sel_instr=dummy&sel_ptrm=dummy&sel_attr=dummy&sel_subj=CSCI&sel_subj=LGHT&sel_crse=&sel_title=&sel_from_cred=&sel_to_cred=&sel_camp=%25&sel_ptrm=%25&begin_hh=0&begin_mi=0&begin_ap=a&end_hh=0&end_mi=0&end_ap=a&SUB_BTN=Section+Search&path=1'
 
-    # print(response.text.encode('utf8'))
-    soup = BeautifulSoup(response.text.encode("utf8"), "html.parser")
-    table = soup.findAll("table", {"class": "datadisplaytable"})[0]
-    rows = table.findAll("tr")
-    current_department = None
-    current_code = None
-    current_courses = None
+        headers = {}
+        response = s.request("POST", url, headers=headers, data=payload)
 
-    last_subject = None
-    last_course_code = None
-    for row in rows:
-        th = row.findAll("th")
-        if len(th) != 0:
-            if "ddtitle" in th[0].attrs["class"]:
-                # if(current_department):
-                data.append(
-                    {"name": toTitle(getContent(th[0])), "code": "", "courses": []}
-                )
-        else:
-            td = row.findAll("td")
-            if "TBA" not in getContent(td[8]):
-                timeslot_data = {
-                    "days": list(getContent(td[8])),
-                    "timeStart": timeToMilitary(
-                        getContentFromChild(td[9], "abbr"), True
-                    ),
-                    "timeEnd": timeToMilitary(
-                        getContentFromChild(td[9], "abbr"), False
-                    ),
-                    "instructor": ", ".join(
-                        [x.strip() for x in cleanOutAbbr(getContent(td[19])).split(",")]
-                    ),
-                    "dateStart": getContentFromChild(td[20], "abbr").split("-")[0],
-                    "dateEnd": getContentFromChild(td[20], "abbr").split("-")[1],
-                    "location": getContentFromChild(td[21], "abbr"),
-                }
+        if "No classes were found that meet your search criteria" in response.text:
+            print(f"Term {term} has no classes!")
+            print(payload)
+            shutil.rmtree(
+                f"data/{term}"
+            )  # This term doesn't have classes, just remove it and continue
+            continue
+
+        data = []
+
+        # print(response.text.encode('utf8'))
+        soup = BeautifulSoup(response.text.encode("utf8"), "html.parser")
+        table = soup.findAll("table", {"class": "datadisplaytable"})[0]
+        rows = table.findAll("tr")
+        current_department = None
+        current_code = None
+        current_courses = None
+
+        last_subject = None
+        last_course_code = None
+        for row in rows:
+            th = row.findAll("th")
+            if len(th) != 0:
+                if "ddtitle" in th[0].attrs["class"]:
+                    # if(current_department):
+                    data.append(
+                        {"name": toTitle(getContent(th[0])), "code": "", "courses": []}
+                    )
             else:
-                timeslot_data = {
-                    "dateEnd": "",
-                    "dateStart": "",
-                    "days": [],
-                    "instructor": "",
-                    "location": "",
-                    "timeEnd": -1,
-                    "timeStart": -1,
-                }
+                td = row.findAll("td")
+                if "TBA" not in getContent(td[8]):
+                    timeslot_data = {
+                        "days": list(getContent(td[8])),
+                        "timeStart": timeToMilitary(
+                            getContentFromChild(td[9], "abbr"), True
+                        ),
+                        "timeEnd": timeToMilitary(
+                            getContentFromChild(td[9], "abbr"), False
+                        ),
+                        "instructor": ", ".join(
+                            [
+                                x.strip()
+                                for x in cleanOutAbbr(getContent(td[19])).split(",")
+                            ]
+                        ),
+                        "dateStart": getContentFromChild(td[20], "abbr").split("-")[0],
+                        "dateEnd": getContentFromChild(td[20], "abbr").split("-")[1],
+                        "location": getContentFromChild(td[21], "abbr"),
+                    }
+                else:
+                    timeslot_data = {
+                        "dateEnd": "",
+                        "dateStart": "",
+                        "days": [],
+                        "instructor": "",
+                        "location": "",
+                        "timeEnd": -1,
+                        "timeStart": -1,
+                    }
 
-            if len(getContent(td[1])) == 0:
-                data[-1]["courses"][-1]["sections"][-1]["timeslots"].append(
-                    timeslot_data
-                )
-                continue
+                if len(getContent(td[1])) == 0:
+                    data[-1]["courses"][-1]["sections"][-1]["timeslots"].append(
+                        timeslot_data
+                    )
+                    continue
 
-            credit_min = float(getContent(td[6]).split("-")[0])
-            credit_max = credit_min
-            if len(getContent(td[6]).split("-")) > 1:
-                credit_max = float(getContent(td[6]).split("-")[1])
+                credit_min = float(getContent(td[6]).split("-")[0])
+                credit_max = credit_min
+                if len(getContent(td[6]).split("-")) > 1:
+                    credit_max = float(getContent(td[6]).split("-")[1])
 
-            section_data = {
-                # "select":getContentFromChild(td[0], 'abbr'),
-                "crn": int(getContentFromChild(td[1], "a")),
-                "subj": getContent(td[2]),
-                "crse": int(getContent(td[3])),
-                "sec": getContent(td[4]),
-                # "cmp":getContent(td[5]),
-                "credMin": credit_min,
-                "credMax": credit_max,
-                "title": toTitle(getContent(td[7])),
-                "cap": int(getContent(td[10])),
-                "act": int(getContent(td[11])),
-                "rem": int(getContent(td[12])),
-                # "wlCap":int(getContent(td[13])),
-                # "wlAct":int(getContent(td[14])),
-                # "wlRem":int(getContent(td[15])),
-                # "xlCap":getContent(td[16]),
-                # "xlAct":getContent(td[17]),
-                # "xlRem":getContent(td[18]),
-                "attribute": getContent(td[22]) if 22 < len(td) else "",
-                "timeslots": [timeslot_data],
-            }
-
-            if (
-                section_data["subj"] == last_subject
-                and section_data["crse"] == last_course_code
-            ):
-                data[-1]["courses"][-1]["sections"].append(section_data)
-                continue
-
-            last_subject = getContent(td[2])
-            last_course_code = int(getContent(td[3]))
-            data[-1]["courses"].append(
-                {
-                    "title": toTitle(getContent(td[7])),
+                section_data = {
+                    # "select":getContentFromChild(td[0], 'abbr'),
+                    "crn": int(getContentFromChild(td[1], "a")),
                     "subj": getContent(td[2]),
                     "crse": int(getContent(td[3])),
-                    "id": getContent(td[2]) + "-" + getContent(td[3]),
-                    "sections": [section_data],
+                    "sec": getContent(td[4]),
+                    # "cmp":getContent(td[5]),
+                    "credMin": credit_min,
+                    "credMax": credit_max,
+                    "title": toTitle(getContent(td[7])),
+                    "cap": int(getContent(td[10])),
+                    "act": int(getContent(td[11])),
+                    "rem": int(getContent(td[12])),
+                    # "wlCap":int(getContent(td[13])),
+                    # "wlAct":int(getContent(td[14])),
+                    # "wlRem":int(getContent(td[15])),
+                    # "xlCap":getContent(td[16]),
+                    # "xlAct":getContent(td[17]),
+                    # "xlRem":getContent(td[18]),
+                    "attribute": getContent(td[22]) if 22 < len(td) else "",
+                    "timeslots": [timeslot_data],
                 }
-            )
 
-            if len(getContent(td[2])) > 0:
-                data[-1]["code"] = getContent(td[2])
+                if (
+                    section_data["subj"] == last_subject
+                    and section_data["crse"] == last_course_code
+                ):
+                    data[-1]["courses"][-1]["sections"].append(section_data)
+                    continue
 
-    # This is for the old conflict method that has a list for each class that it conflicts with
-    # addConflicts(data)
+                last_subject = getContent(td[2])
+                last_course_code = int(getContent(td[3]))
+                data[-1]["courses"].append(
+                    {
+                        "title": toTitle(getContent(td[7])),
+                        "subj": getContent(td[2]),
+                        "crse": int(getContent(td[3])),
+                        "id": getContent(td[2]) + "-" + getContent(td[3]),
+                        "sections": [section_data],
+                    }
+                )
 
-    # data = reformatJson(data)
+                if len(getContent(td[2])) > 0:
+                    data[-1]["code"] = getContent(td[2])
 
-    # print(json.dumps(data,sort_keys=False,indent=2))
-    with open(f"courses.json", "w") as outfile:  # -{os.getenv("CURRENT_TERM")}
-        json.dump(data, outfile, sort_keys=False, indent=2)
+        # This is for the old conflict method that has a list for each class that it conflicts with
+        # addConflicts(data)
 
-    # Generate binary conflict output
-    # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
-    TIME_START = 700
-    TIME_END = 2200
-    NUM_HOURS = int((TIME_END - TIME_START) / 100)
+        # data = reformatJson(data)
 
-    MINUTE_GRANULARITY = 10
-    NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
+        # print(json.dumps(data,sort_keys=False,indent=2))
+        with open(
+            f"data/{term}/courses.json", "w"
+        ) as outfile:  # -{os.getenv("CURRENT_TERM")}
+            json.dump(data, outfile, sort_keys=False, indent=2)
 
-    offset = lambda x: x * NUM_HOURS * NUM_MIN_PER_HOUR
+        # Generate binary conflict output
+        # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
+        TIME_START = 700
+        TIME_END = 2200
+        NUM_HOURS = int((TIME_END - TIME_START) / 100)
 
-    day_offsets = {
-        "M": offset(0),
-        "T": offset(1),
-        "W": offset(2),
-        "R": offset(3),
-        "F": offset(4),
-        "S": offset(5),
-        "U": offset(6),
-    }
+        MINUTE_GRANULARITY = 10
+        NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
 
-    BIT_VEC_SIZE = math.ceil(offset(len(day_offsets)) / 64)
+        offset = lambda x: x * NUM_HOURS * NUM_MIN_PER_HOUR
 
-    conflicts = {}
-    crn_to_courses = {}
-    for dept in data:
-        for course in dept["courses"]:
-            for section in course["sections"]:
-                crn_to_courses[section["crn"]] = course["id"]
+        day_offsets = {
+            "M": offset(0),
+            "T": offset(1),
+            "W": offset(2),
+            "R": offset(3),
+            "F": offset(4),
+            "S": offset(5),
+            "U": offset(6),
+        }
 
-                conflict = [0] * (64 * BIT_VEC_SIZE)
-                for time in section["timeslots"]:
-                    for day in time["days"]:
-                        for hour in range(TIME_START, TIME_END, 100):
-                            for minute in range(0, 60, MINUTE_GRANULARITY):
-                                if (
-                                    time["timeStart"] <= hour + minute
-                                    and time["timeEnd"] > hour + minute
-                                ):
-                                    minute_idx = int(minute / 10)
-                                    hour_idx = int(hour / 100) - 7  # we start at 7am
-                                    conflict[
-                                        day_offsets[day]
-                                        + hour_idx * (60 // MINUTE_GRANULARITY)
-                                        + minute_idx
-                                    ] = 1
+        BIT_VEC_SIZE = math.ceil(offset(len(day_offsets)) / 64)
 
-                conflicts[section["crn"]] = "".join(str(e) for e in conflict)
+        conflicts = {}
+        crn_to_courses = {}
+        for dept in data:
+            for course in dept["courses"]:
+                for section in course["sections"]:
+                    crn_to_courses[section["crn"]] = course["id"]
 
-    with open("mod.rs", "w") as f:  # -{os.getenv("CURRENT_TERM")}
-        f.write(
-            """\
+                    conflict = [0] * (64 * BIT_VEC_SIZE)
+                    for time in section["timeslots"]:
+                        for day in time["days"]:
+                            for hour in range(TIME_START, TIME_END, 100):
+                                for minute in range(0, 60, MINUTE_GRANULARITY):
+                                    if (
+                                        time["timeStart"] <= hour + minute
+                                        and time["timeEnd"] > hour + minute
+                                    ):
+                                        minute_idx = int(minute / 10)
+                                        hour_idx = (
+                                            int(hour / 100) - 7
+                                        )  # we start at 7am
+                                        conflict[
+                                            day_offsets[day]
+                                            + hour_idx * (60 // MINUTE_GRANULARITY)
+                                            + minute_idx
+                                        ] = 1
+
+                    conflicts[section["crn"]] = "".join(str(e) for e in conflict)
+
+        with open(f"data/{term}/mod.rs", "w") as f:  # -{os.getenv("CURRENT_TERM")}
+            f.write(
+                """\
 //This file was automatically generated. Please do not modify it directly
 use ::phf::{{phf_map, Map}};
 
 pub const BIT_VEC_LEN: usize = """
-            + str(BIT_VEC_SIZE)
-            + """;
+                + str(BIT_VEC_SIZE)
+                + """;
 
 pub static CRN_TIMES: Map<u32, [u64; BIT_VEC_LEN]> = phf_map! {
 """
-        )
+            )
 
-        for crn, conflict in conflicts.items():
-            rust_array = f"\t{crn}u32 => ["
-            for i in range(0, BIT_VEC_SIZE * 64, 64):
-                if i != 0:
-                    rust_array += ", "
-                rust_array += str(int(conflict[i : i + 64], 2))
-            rust_array += "],\n"
+            for crn, conflict in conflicts.items():
+                rust_array = f"\t{crn}u32 => ["
+                for i in range(0, BIT_VEC_SIZE * 64, 64):
+                    if i != 0:
+                        rust_array += ", "
+                    rust_array += str(int(conflict[i : i + 64], 2))
+                rust_array += "],\n"
 
-            f.write(rust_array)
+                f.write(rust_array)
 
-        f.write(
-            """
+            f.write(
+                """
 };
 
 pub static CRN_COURSES: Map<u32, &'static str> = phf_map! {
 """
-        )
+            )
 
-        for crn, course in crn_to_courses.items():
-            f.write(f'\t{crn}u32 => "{course}",\n')
-        f.write("};")
+            for crn, course in crn_to_courses.items():
+                f.write(f'\t{crn}u32 => "{course}",\n')
+            f.write("};")

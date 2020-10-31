@@ -195,29 +195,31 @@ def get_prereq_string(term, crn):
 
 
 if __name__ == "__main__":
+    import os
     from tqdm import tqdm
 
-    prerequisites = {}
+    for term in tqdm(os.listdir("data"), desc="Semesters"):
+        prerequisites = {}
 
-    # For testing
-    # get_prereq_string(202009, 28329)
-    # exit()
+        # For testing
+        # get_prereq_string(202009, 28329)
+        # exit()
 
-    crns = []
-    with open("courses.json") as json_file:
-        courses = json.load(json_file)
-        for department in courses:
-            for course in department["courses"]:
-                for section in course["sections"]:
-                    crns.append(section["crn"])
+        crns = []
+        with open(f"data/{term}/courses.json") as json_file:
+            courses = json.load(json_file)
+            for department in courses:
+                for course in department["courses"]:
+                    for section in course["sections"]:
+                        crns.append(section["crn"])
 
-    for crn in tqdm(crns):
-        print(crn)
-        try:
-            prerequisites[crn] = get_prereq_string(202101, crn)
-        except Exception as e:
-            print(e)
-            prerequisites[crn] = {}
+        for crn in tqdm(crns, desc=term):
+            print(crn)
+            try:
+                prerequisites[crn] = get_prereq_string(term, crn)
+            except Exception as e:
+                print(e)
+                prerequisites[crn] = {}
 
-    with open("prerequisites.json", "w") as outfile:
-        json.dump(prerequisites, outfile, indent=4)
+        with open(f"data/{term}/prerequisites.json", "w") as outfile:
+            json.dump(prerequisites, outfile, indent=4)
