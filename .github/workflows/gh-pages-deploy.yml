@@ -29,6 +29,7 @@ jobs:
           repository: "quacs/site"
           ref: "master"
           path: "gh-pages-site"
+          token: ${{ secrets.QUACS_TOKEN }}
 
       - name: Clean install dependencies
         run: yarn install --frozen-lockfile
