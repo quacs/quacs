@@ -52,16 +52,11 @@ cat <<EOF >"$OUTPUT_DIR/index.html"
     <meta name="description" content="QuACS is the new and improved course scheduler for Rensselaer Polytechnic Institute (RPI) students. Stop using YACS and start using QuACS!">
     <meta name="og:image" content="/img/icons/android-chrome-512x512.png" />
     <link rel="icon" href="/favicon.ico">
+    <meta http-equiv="Refresh" content="0; url='/$LATEST_SEMESTER'" />
     <title>QuACS</title>
 </head>
 
 <body>
-    <noscript>
-        <strong>We're sorry but QuACS doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-		<script type="text/javascript>
-				window.location.href.replace("/$LATEST_SEMESTER")
-		</script>
 </body>
 
 </html>
