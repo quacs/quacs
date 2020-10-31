@@ -36,7 +36,7 @@ jobs:
           echo -n "::set-output name=semesters::["
           ITER=0
           for directory in $(find data -print0 | xargs -0); do
-            if test ITER -ne 0; then
+            if test $ITER -ne 0; then
               echo -n ","
             fi
             echo -n "\"$directory\""
