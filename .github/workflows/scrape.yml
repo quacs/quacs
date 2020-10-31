@@ -4,7 +4,7 @@ on:
     types: scrape
   push:
     branches:
-      - master
+      - multi-sem
   schedule:
     - cron: '0 0 * * *'
 
