@@ -9,8 +9,8 @@ import Vuex from "vuex";
 
 // eslint-disable-next-line
 const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
-// eslint-disable-next-line
-const DATA_STATS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/meta.json`);
+
+import DATA_STATS_JSON from "./data/semester_data/meta.json";
 
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";

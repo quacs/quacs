@@ -33,7 +33,7 @@ export default class Schedule extends VuexModule {
     }
   }
 
-  get getCourseSets(): CourseSet {
+  get getCourseSets(): CourseSets {
     return this.courseSets[this.currentTerm];
   }
 
