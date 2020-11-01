@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: courses
-          path: data
+          path: data/
 
   # scrape-degree-requirements:
   #   name: Scrape degree requirements
