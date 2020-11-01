@@ -18,6 +18,9 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
+      - name: Print event name
+        run: echo $GITHUB_EVENT_NAME
+
       - name: Checkout scrapers
         uses: actions/checkout@v2
         with:
