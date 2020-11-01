@@ -214,7 +214,11 @@ jobs:
 
       - name: Commit new data
         run: |
-          rsync -avz catalog/data courses/data
+          for directory in courses/data/*; do
+            DIR_BASENAME=$(basename directory)
+            cp catalog/data/$DIR_BASENAME/* $directory
+          done
+
           mv courses/data/* data
 
           cp faculty/faculty.json data
