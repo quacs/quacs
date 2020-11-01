@@ -23,9 +23,9 @@ git -C gh-pages-site checkout -B ${BRANCH} || exit 1
 # clear existing data
 rm gh-pages-site/* -rf
 
-yarn ${ACTION} -a -o gh-pages-site || exit 1
+cp scripts/service-worker.js gh-pages-site/service-worker.js
 echo ${CNAME} >gh-pages-site/CNAME
-touch gh-pages-site/service-worker.js
+yarn ${ACTION} -a -o gh-pages-site || exit 1
 git -C gh-pages-site add --all || exit 1
 git -C gh-pages-site commit -m "$(date -u)" || exit 1
 git -C gh-pages-site push origin HEAD:${BRANCH} --force || exit 1
