@@ -195,28 +195,31 @@ async def get_prereq_string(s, term, crn):
         return data
 
 
+async def parse_term(s, term):
+    prerequisites = {}
+
+    crns = []
+    with open(f"data/{term}/courses.json") as json_file:
+        courses = json.load(json_file)
+        for department in courses:
+            for course in department["courses"]:
+                for section in course["sections"]:
+                    crns.append(section["crn"])
+
+    for crn in tqdm(crns, desc=term):
+        try:
+            prerequisites[crn] = await get_prereq_string(s, term, crn)
+        except Exception as e:
+            print(f"CRN: {crn} - {e}")
+            prerequisites[crn] = {}
+
+    with open(f"data/{term}/prerequisites.json", "w") as outfile:
+        json.dump(prerequisites, outfile, indent=4)
+
+
 async def main():
     async with aiohttp.ClientSession() as s:
-        for term in os.listdir("data"):
-            prerequisites = {}
-
-            crns = []
-            with open(f"data/{term}/courses.json") as json_file:
-                courses = json.load(json_file)
-                for department in courses:
-                    for course in department["courses"]:
-                        for section in course["sections"]:
-                            crns.append(section["crn"])
-
-            for crn in tqdm(crns, desc=term):
-                try:
-                    prerequisites[crn] = await get_prereq_string(s, term, crn)
-                except Exception as e:
-                    print(f"CRN: {crn} - {e}")
-                    prerequisites[crn] = {}
-
-            with open(f"data/{term}/prerequisites.json", "w") as outfile:
-                json.dump(prerequisites, outfile, indent=4)
+        await asyncio.gather(*(parse_term(s, term) for term in os.listdir("data")))
 
 
 if __name__ == "__main__":

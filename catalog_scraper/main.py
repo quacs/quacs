@@ -157,30 +157,34 @@ async def get_years() -> List[Tuple[str, str, str]]:
 
 
 async def parse_year(s, year_data):
-    year, courses_url, schools_url = year_data
+    try:
+        year, courses_url, schools_url = year_data
 
-    if sys.argv[1] == "catalog":
-        data = {}
-        while True:
-            if courses_url is None:
-                break
-            courses_url = await scrapePage(s, courses_url, data)
-    else:
-        data = await get_schools(s, schools_url)
-        data = list(map(lambda x: {"name": x[0], "depts": x[1]}, data.items()))
+        if sys.argv[1] == "catalog":
+            data = {}
+            while True:
+                if courses_url is None:
+                    break
+                courses_url = await scrapePage(s, courses_url, data)
+        else:
+            data = await get_schools(s, schools_url)
+            data = list(map(lambda x: {"name": x[0], "depts": x[1]}, data.items()))
 
-    years = year.split("-")
-    for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
-        directory = "data/" + directory
-        os.makedirs(directory, exist_ok=True)
-        with open(f"{directory}/{sys.argv[1]}.json", "w") as outfile:
-            json.dump(data, outfile, sort_keys=False, indent=2)
+        years = year.split("-")
+        for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
+            directory = "data/" + directory
+            os.makedirs(directory, exist_ok=True)
+            with open(f"{directory}/{sys.argv[1]}.json", "w") as outfile:
+                json.dump(data, outfile, sort_keys=False, indent=2)
+    except Exception as e:
+        print(year_data)
+        print(e)
+        raise e
 
 
 async def parse_years(years_data):
     async with aiohttp.ClientSession() as s:
-        for year_data in years_data:
-            await parse_year(s, year_data)
+        await asyncio.gather(*(parse_year(s, year_data) for year_data in years_data))
 
 
 years = asyncio.run(get_years())
