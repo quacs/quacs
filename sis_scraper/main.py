@@ -8,6 +8,7 @@ import re
 import math
 from tqdm import tqdm
 import urllib.parse
+from copy import deepcopy
 
 load_dotenv()
 
@@ -139,9 +140,66 @@ def toTitle(text):
     return text
 
 
+def calculate_score(columns):
+    if not columns:
+        return 99999999999  # some arbitrarily large number
+
+    def column_sum(column):
+        return sum(map(lambda x: len(x["depts"]) + 3, column))
+
+    mean = sum(map(column_sum, columns)) / len(columns)
+    return sum(map(lambda x: abs(mean - column_sum(x)), columns)) / len(columns)
+
+
+# Recursively finds the most balanced set of columns.
+# Since `best` needs to be passed by reference, it's
+# actually [best], so we only manipulate best[0].
+def optimize_ordering_inner(data, i, columns, best):
+    if i == len(data):
+        this_score = calculate_score(columns)
+        best_score = calculate_score(best[0])
+
+        if this_score < best_score:
+            best[0] = deepcopy(columns)
+        return
+
+    for column in columns:
+        column.append(data[i])
+        optimize_ordering_inner(data, i + 1, columns, best)
+        column.pop()
+
+
+def optimize_column_ordering(data, num_columns=3):
+    """
+    Because we want the QuACS homepage to be as "square-like" as possible,
+    we need to re-order departments in such a way that once they're laid out
+    in multiple columns, each column is a similar height.
+    """
+
+    columns = [[] for _ in range(num_columns)]
+    best_result = [[]]
+
+    optimize_ordering_inner(data, 0, columns, best_result)
+
+    best_result = best_result[0]
+
+    for i in range(len(best_result)):
+        best_result[i] = sorted(
+            best_result[i], key=lambda s: len(s["depts"]), reverse=True
+        )
+
+    best_result = sorted(best_result, key=lambda c: len(c[0]["depts"]), reverse=True)
+
+    flattened = []
+    for column in best_result:
+        flattened.extend(column)
+
+    return flattened
+
+
 payload = f'sid={os.getenv("RIN")}&PIN={urllib.parse.quote(os.getenv("PASSWORD"))}'
 headers = {"Content-Type": "application/x-www-form-urlencoded"}
-with requests.Session() as s:
+with requests.Session() as s:  # We purposefully don't use aiohttp here since SIS doesn't like multiple logged in connections
     s.get(url="https://sis.rpi.edu/rss/twbkwbis.P_WWWLogin")
     response = s.request(
         "POST",
@@ -184,9 +242,6 @@ with requests.Session() as s:
 
         data = []
 
-        print(response)
-        print(response.text)
-        print(term)
         # print(response.text.encode('utf8'))
         soup = BeautifulSoup(response.text.encode("utf8"), "html.parser")
         table = soup.findAll("table", {"class": "datadisplaytable"})[0]
@@ -299,10 +354,28 @@ with requests.Session() as s:
         # data = reformatJson(data)
 
         # print(json.dumps(data,sort_keys=False,indent=2))
-        with open(
-            f"data/{term}/courses.json", "w"
-        ) as outfile:  # -{os.getenv("CURRENT_TERM")}
+        with open(f"data/{term}/courses.json", "w") as outfile:
             json.dump(data, outfile, sort_keys=False, indent=2)
+
+        # Remove schools which have no courses, then format it for the homepage
+        with open(f"data/{term}/schools.json", "r") as all_schools_f:
+            all_schools = json.load(all_schools_f)
+
+        schools = []
+        for possible_school in all_schools:
+            res_school = {"name": possible_school["name"], "depts": []}
+            for target_dept in possible_school["depts"]:
+                matching_depts = list(
+                    filter(lambda d: d["code"] == target_dept["code"], data)
+                )
+                if matching_depts:
+                    res_school["depts"].append(target_dept)
+            if res_school["depts"]:
+                schools.append(res_school)
+
+        school_columns = optimize_column_ordering(schools)
+        with open(f"data/{term}/schools.json", "w") as schools_f:
+            json.dump(school_columns, schools_f, sort_keys=False, indent=2)
 
         # Generate binary conflict output
         # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course

@@ -33,17 +33,13 @@ async def main():
 
     data = {}
     async with aiohttp.ClientSession() as s:
-        await asyncio.gather(
-            *(
-                get_professor(
-                    s,
-                    professor,
-                    f"https://faculty.rpi.edu{professor['node']['Path']}",
-                    data,
-                )
-                for professor in faculty["nodes"]
+        for professor in faculty["nodes"]:
+            await get_professor(
+                s,
+                professor,
+                f"https://faculty.rpi.edu{professor['node']['Path']}",
+                data,
             )
-        )
 
     with open("faculty.json", "w") as outfile:
         json.dump(data, outfile, sort_keys=True, indent=2)

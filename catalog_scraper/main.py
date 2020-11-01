@@ -5,7 +5,6 @@ import json
 import re
 import sys
 from tqdm import tqdm
-from copy import deepcopy
 
 from typing import Tuple, List
 
@@ -15,8 +14,7 @@ import aiohttp
 
 async def scrapePage(s, url, data):
     async with s.get(url) as response:
-        response_text = await response.text()
-        soup = BeautifulSoup(response_text.encode("utf8"), "lxml")
+        soup = BeautifulSoup(await response.text("utf8"), "lxml")
 
         rows = soup.find(
             "div", {"id": "advanced_filter_section"}
@@ -35,8 +33,7 @@ async def scrapePage(s, url, data):
             # print(data_url)
 
             async with s.get(data_url) as course_results:
-                results_text = await course_results.text()
-                data_soup = BeautifulSoup(results_text.encode("utf8"), "lxml")
+                data_soup = BeautifulSoup(await course_results.text("utf8"), "lxml")
                 course = data_soup.find("h1").contents[0].split("-")
                 course_code = course[0].split()
                 key = course_code[0].strip() + "-" + course_code[1].strip()
@@ -87,8 +84,7 @@ BASE_URL = "http://catalog.rpi.edu"
 
 async def get_schools(s, url):
     async with s.get(url) as homepage:
-        homepage_text = await homepage.text()
-        soup = BeautifulSoup(homepage_text.encode("utf8"), "lxml")
+        soup = BeautifulSoup(await homepage.text("utf8"), "lxml")
         schools = soup.find("h3", text="Four-Letter Subject Codes by School")
         num_schools = len(
             list(
@@ -117,63 +113,6 @@ async def get_schools(s, url):
                     data[school_name].append({"code": code, "name": name})
                 departments.add(code)
         return data
-
-
-def calculate_score(columns):
-    if not columns:
-        return 99999999999  # some arbitrarily large number
-
-    def column_sum(column):
-        return sum(map(lambda x: len(x["depts"]), column))
-
-    mean = sum(map(column_sum, columns)) / len(columns)
-    return sum(map(lambda x: abs(mean - column_sum(x)), columns)) / len(columns)
-
-
-# Recursively finds the most balanced set of columns.
-# Since `best` needs to be passed by reference, it's
-# actually [best], so we only manipulate best[0].
-def optimize_ordering_inner(data, i, columns, best):
-    if i == len(data):
-        this_score = calculate_score(columns)
-        best_score = calculate_score(best[0])
-
-        if this_score < best_score:
-            best[0] = deepcopy(columns)
-        return
-
-    for column in columns:
-        column.append(data[i])
-        optimize_ordering_inner(data, i + 1, columns, best)
-        column.pop()
-
-
-def optimize_ordering(data, num_columns=3):
-    """
-    Because we want the QuACS homepage to be as "square-like" as possible,
-    we need to re-order departments in such a way that once they're laid out
-    in multiple columns, each column is a similar height.
-    """
-
-    columns = [[] for _ in range(num_columns)]
-    best_result = [[]]
-
-    optimize_ordering_inner(data, 0, columns, best_result)
-
-    best_result = best_result[0]
-
-    for i in range(len(best_result)):
-        best_result[i] = sorted(
-            best_result[i], key=lambda s: len(s["depts"]), reverse=True
-        )
-
-    best_result = sorted(best_result, key=lambda c: len(c[0]["depts"]), reverse=True)
-
-    flattened = []
-    for column in best_result:
-        flattened.extend(column)
-
-    return flattened
 
 
 HEADERS = {
@@ -229,7 +168,6 @@ async def parse_year(s, year_data):
     else:
         data = await get_schools(s, schools_url)
         data = list(map(lambda x: {"name": x[0], "depts": x[1]}, data.items()))
-        data = optimize_ordering(data)
 
     years = year.split("-")
     for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
@@ -241,7 +179,8 @@ async def parse_year(s, year_data):
 
 async def parse_years(years_data):
     async with aiohttp.ClientSession() as s:
-        await asyncio.gather(*(parse_year(s, year_data) for year_data in years_data))
+        for year_data in years_data:
+            await parse_year(s, year_data)
 
 
 years = asyncio.run(get_years())
