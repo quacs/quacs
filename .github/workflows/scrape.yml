@@ -34,7 +34,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Scrape schools
-        run: python3 catalog_scraper/main.py schools
+        run: python3 catalog_scraper/main.py schools LATEST_YEAR
 
       - name: Output semesters
         run: |
@@ -190,7 +190,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Scrape catalog
-        run: python3 catalog_scraper/main.py catalog
+        run: python3 catalog_scraper/main.py catalog LATEST_YEAR
 
       - name: Upload data
         uses: actions/upload-artifact@v2
