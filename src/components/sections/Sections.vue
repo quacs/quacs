@@ -246,18 +246,20 @@ export default class Section extends Vue {
       selected = newState;
     }
 
-    if (selected) {
-      umami.trackEvent("Section added", this.course.subj);
-    } else {
-      umami.trackEvent("Section removed", this.course.subj);
-    }
-
     this.$store.commit("schedule/setSelected", {
       crn: section.crn,
       selected,
     });
+
     if (rePopulateConflicts) {
       this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+    } else {
+      // This happens when we're individually changing sections
+      if (selected) {
+        umami.trackEvent("Section added", this.course.subj);
+      } else {
+        umami.trackEvent("Section removed", this.course.subj);
+      }
     }
   }
 
