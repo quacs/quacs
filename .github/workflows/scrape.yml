@@ -220,7 +220,7 @@ jobs:
       - name: Commit new data
         run: |
           for directory in courses/data/*; do
-            DIR_BASENAME=$(basename directory)
+            DIR_BASENAME=$(basename $directory)
             cp catalog/data/$DIR_BASENAME/* $directory
           done
 
