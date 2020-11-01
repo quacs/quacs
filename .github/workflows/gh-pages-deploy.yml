@@ -1,10 +1,11 @@
 name: Deploy to github pages
 on:
   repository_dispatch:
-    types: multi-sem-deploy
+    types: sem-deploy
   push:
     branches:
-      - multi-semester
+      - master
+      - staging
 jobs:
   gh-pages-deploy:
     name: Deploying to gh-pages
