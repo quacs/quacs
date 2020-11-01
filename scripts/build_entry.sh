@@ -6,7 +6,7 @@ curl https://umami.quacs.org/umami.js >public/umami.js || exit 1
 
 # Update our local dependencies (quacs-rs), or clone if possible
 echo Retrieving latest quacs-data
-git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=1 --branch multi-sem src/store/data || exit 1
+git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=1 --branch src/store/data || exit 1
 
 CURR_DIR=$(dirname "${BASH_SOURCE[0]}")
 
