@@ -219,9 +219,9 @@ jobs:
 
       - name: Commit new data
         run: |
-          for directory in courses/data/*; do
-            DIR_BASENAME=$(basename $directory)
-            cp catalog/data/$DIR_BASENAME/* $directory
+          for directory in $(find courses/data/* -type d -print0 | xargs -0); do
+            DIR_BASENAME=$(basename "$directory")
+            cp -r catalog/data/$DIR_BASENAME/* "$directory"
           done
 
           mv courses/data/* data
