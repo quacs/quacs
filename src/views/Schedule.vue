@@ -110,6 +110,9 @@ import { EventAttributes, createEvents } from "ics";
 import { saveAs } from "file-saver";
 import { shortSemToLongSem } from "@/utilities";
 
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
+
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
@@ -234,6 +237,8 @@ export default class Schedule extends Vue {
   }
 
   copyToClipboard(val: string): void {
+    umami.trackEvent("Copy crn", "schedule");
+
     const tempInput = document.createElement("input");
     // @ts-expect-error: This works so ts is just being dumb
     tempInput.style = "position: absolute; left: -1000px; top: -1000px";
@@ -253,6 +258,8 @@ export default class Schedule extends Vue {
   }
 
   exportIcs(): void {
+    umami.trackEvent("Export ics", "schedule");
+
     const recurrenceDays: { [day: string]: string } = {
       U: "SU",
       M: "MO",

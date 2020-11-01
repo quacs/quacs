@@ -1,6 +1,10 @@
 <template>
   <div>
-    <b-nav-item-dropdown left title="Switch between saved course sets">
+    <b-nav-item-dropdown
+      left
+      title="Switch between saved course sets"
+      v-on:show="trackShow()"
+    >
       <template v-slot:button-content>
         <em class="nav-text" style="font-style: normal;">{{
           currentCourseSet
@@ -111,6 +115,10 @@ import {
   VBModal,
 } from "bootstrap-vue";
 import { mapGetters, mapState } from "vuex";
+
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
+
 @Component({
   components: {
     "b-nav-item-dropdown": BNavItemDropdown,
@@ -143,11 +151,18 @@ import { mapGetters, mapState } from "vuex";
 export default class CourseSetEdit extends Vue {
   newCourseSetName = "";
 
+  trackShow(): void {
+    umami.trackEvent("Show course sets", "course-set");
+  }
+
   createNewCourseSet(): void {
     // @ts-expect-error: this is in the computed section above
     if (!this.newCourseSetExists) {
       return;
     }
+
+    umami.trackEvent("Add course set", "course-set");
+
     this.$store.dispatch("schedule/addCourseSet", {
       name: this.newCourseSetName,
     });
@@ -156,12 +171,16 @@ export default class CourseSetEdit extends Vue {
   }
 
   removeCourseSet(name: string): void {
+    umami.trackEvent("Remove course set", "course-set");
+
     this.$store.dispatch("schedule/removeCourseSet", {
       name: name,
     });
   }
 
   switchCurrentCourseSet(name: string): void {
+    umami.trackEvent("Change active course set", "course-set");
+
     this.$store.commit("schedule/switchCurrentCourseSet", {
       name: name,
     });

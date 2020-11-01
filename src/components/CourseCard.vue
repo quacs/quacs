@@ -45,8 +45,8 @@
           v-on:click.stop.prevent
           v-on:keyup.enter.stop.prevent
           tabindex="0"
-          @click="$bvModal.show('course-info' + course.sections[0].crn)"
-          @keyup.enter="$bvModal.show('course-info' + course.sections[0].crn)"
+          @click="showCourseModal(course.sections[0].crn)"
+          @keyup.enter="showCourseModal(course.sections[0].crn)"
         >
           <CourseInfo class="more-info" :course="course"></CourseInfo>
           <span
@@ -133,6 +133,9 @@ import CourseInfo from "@/components/sections/CourseInfo.vue";
 import Sections from "./sections/Sections.vue";
 
 Vue.use(ModalPlugin);
+
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
 
 @Component({
   components: {
@@ -265,6 +268,11 @@ export default class CourseCard extends Vue {
 
   get lastNewSchedule(): number {
     return this.$store.state.schedule.lastNewSchedule;
+  }
+
+  showCourseModal(crn: string): void {
+    umami.trackEvent("Course modal", "info-modal");
+    this.$bvModal.show("course-info" + crn);
   }
 }
 </script>

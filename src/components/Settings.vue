@@ -8,6 +8,7 @@
         id="timePreference"
         v-model="timePreference"
         :options="timeOptions"
+        v-on:change="trackSettingChange('time-preference', $event)"
       ></b-form-select>
       <br />
       <br />
@@ -18,6 +19,7 @@
         id="colorTheme"
         v-model="colorTheme"
         :options="themeOptions"
+        v-on:change="trackSettingChange('color-theme', $event)"
       ></b-form-select>
       <br />
       <br />
@@ -26,11 +28,17 @@
         disabled
         v-if="!this.$store.state.prerequisites.enableChecking"
         v-b-tooltip.hover.left
-        title="Enable prerequisite checking to access this option"
+        title="Enable prerequisite checking on the prerequisites page to access this option"
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >
-      <b-form-checkbox v-else switch v-model="hidePrerequisites"
+      <b-form-checkbox
+        v-else
+        switch
+        v-model="hidePrerequisites"
+        v-on:change="
+          trackSettingChange('hide-prerequisites', $event.toString())
+        "
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >
@@ -46,6 +54,9 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
+
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
 
 @Component({
   components: {
@@ -95,5 +106,9 @@ export default class Settings extends Vue {
     { value: "light colorful", text: "Splash of Color" },
     { value: "yacs", text: "YACS" },
   ];
+
+  trackSettingChange(settingName: string, value: string): void {
+    umami.trackEvent(`${settingName}: ${value}`, "setting");
+  }
 }
 </script>
