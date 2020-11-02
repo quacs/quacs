@@ -106,6 +106,7 @@ async def scrape_course_data(s, url, data):
     raise Exception(f"Failed to scrape {url}")
 
 
+# TODO: add proper rate limiting
 async def scrape_catalog(s, courses_url, data):
     print(courses_url)
 
@@ -132,12 +133,18 @@ async def scrape_catalog(s, courses_url, data):
                 break
 
             for row in rows:
+                await scrape_course_data(
+                    s,
+                    f"http://catalog.rpi.edu/preview_course.php?{row['href'].split('?')[1]}&print",
+                    data,
+                )
                 urls.append(
                     f"http://catalog.rpi.edu/preview_course.php?{row['href'].split('?')[1]}&print"
                 )
 
         index += 1
-    await asyncio.gather(*(scrape_course_data(s, url, data) for url in urls))
+
+    # await asyncio.gather(*(scrape_course_data(s, url, data) for url in urls))
 
 
 async def get_schools(s, url):
