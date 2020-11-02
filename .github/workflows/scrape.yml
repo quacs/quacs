@@ -213,6 +213,7 @@ jobs:
           repository: 'quacs/quacs-data'
           ref: 'master'
           clean: true
+          token: ${{ secrets.GITHUBTOKEN }}
 
       - name: Get scraped data
         uses: actions/download-artifact@v2
