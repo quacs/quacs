@@ -4,10 +4,9 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
-            src="@/assets/images/quacs_logo_halloween.svg"
+            src="@/assets/images/quacs_thanksgiving.svg"
             alt="QuACS Home"
-            title="Thanks to Josy Dom Alexis for the witch hat!"
-            style="height: 45px;"
+            style="height: 50px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
