@@ -228,7 +228,7 @@ jobs:
             cp -r catalog/$DIR_BASENAME/* "$directory"
           done
 
-          mv courses/* data/semester_data
+          rsync -avz courses/ data/semester_data/
 
           cp faculty/faculty.json data
 
