@@ -4,7 +4,7 @@ transcript_scraper/*.html
 !transcript_scraper/index.html
 transcript_scraper/*_files/*
 
-catalog_scraper/data
+*/data
 
 *.json
 *.msgpack
