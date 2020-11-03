@@ -45,8 +45,8 @@
           v-on:click.stop.prevent
           v-on:keyup.enter.stop.prevent
           tabindex="0"
-          @click="$bvModal.show('course-info' + course.sections[0].crn)"
-          @keyup.enter="$bvModal.show('course-info' + course.sections[0].crn)"
+          @click="showCourseModal(course.sections[0].crn)"
+          @keyup.enter="showCourseModal(course.sections[0].crn)"
         >
           <CourseInfo class="more-info" :course="course"></CourseInfo>
           <span
@@ -134,6 +134,9 @@ import Sections from "./sections/Sections.vue";
 
 Vue.use(ModalPlugin);
 
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
+
 @Component({
   components: {
     Sections,
@@ -160,19 +163,16 @@ Vue.use(ModalPlugin);
       );
     },
     fullSections: function () {
-      let emptyCount = 0;
+      let fullCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
-        if (
-          this.$store.state.courseSizes[section.crn] &&
-          this.$store.state.courseSizes[section.crn].avail <= 0
-        ) {
-          emptyCount++;
+        if (section.rem <= 0) {
+          fullCount++;
         }
       }
       //2==all sections full, 1==some sections full, 0==not sections full
       // @ts-expect-error: no u typescript, this does exist
-      return (emptyCount === this.course.sections.length) + (emptyCount > 0);
+      return (fullCount === this.course.sections.length) + (fullCount > 0);
     },
     areThereSelectedSections: function () {
       let selectedCount = 0;
@@ -268,6 +268,11 @@ export default class CourseCard extends Vue {
 
   get lastNewSchedule(): number {
     return this.$store.state.schedule.lastNewSchedule;
+  }
+
+  showCourseModal(crn: string): void {
+    umami.trackEvent("Course modal", "info-modal");
+    this.$bvModal.show("course-info" + crn);
   }
 }
 </script>

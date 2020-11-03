@@ -1,5 +1,29 @@
+// THIS FUNCTION IS DUPLICATED IN src/utilities.ts BECAUSE
+// I DON'T KNOW HOW TO IMPORT IT.  ANY CHANGES MUST ALSO
+// BE MADE THERE.
+function shortSemToURL(shortSem) {
+  const year = shortSem.substring(0, 4);
+
+  const semNum = shortSem.substring(4);
+  let sem = "";
+  if (semNum === "01") {
+    sem = "spring";
+  } else if (semNum === "09") {
+    sem = "fall";
+  } else if (semNum === "05") {
+    sem = "summer";
+  } else {
+    sem = semNum;
+  }
+
+  return `/${sem}${year}`;
+}
+
 module.exports = {
-  publicPath: "/",
+  publicPath:
+    process.env.VUE_APP_CURR_SEM !== undefined
+      ? shortSemToURL(process.env.VUE_APP_CURR_SEM)
+      : "/",
 
   pwa: {
     themeColor: "#DCC308",

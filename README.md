@@ -2,10 +2,7 @@
 
 View the live version here: [https://quacs.org](https://quacs.org)
 
-Join the development [discord](https://discord.gg/EyGZTAP)!
-You can view QuACS at [https://quacs.org](https://quacs.org)
-
-Want to help with development? Join the development [discord](https://discord.gg/EyGZTAP)!
+Want to help with development? [Join our discord!](https://discord.gg/nZKAzzE5bX)
 
 # What are people saying?
 
@@ -26,7 +23,7 @@ Want to help with development? Join the development [discord](https://discord.gg
 - Mobile phones should not be second class citizens. Do not hide important data from people on mobile devices.
 - Open Source. Everything in QuACS is open source under the MIT License.
 - Competition drives innovation. We love competition because we feel that everyone is better off because of it. Our data is not only publicly stored in this repo, but it also is easy to acquire yourself using our scrapers. We would love to see what people can do with the data!
-- Your privacy is extremely important. We do not track website visits and, because everything is client side, you can rest assured that nothing you upload or do on QuACS is viewable by anyone else.
+- Your privacy is extremely important. We do not collect any identifying data and, because everything is client side, you can rest assured that nothing you upload or do on QuACS is viewable by anyone else.
 
 # Other Notes
 

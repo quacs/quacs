@@ -53,14 +53,6 @@ export interface CatalogCourse {
   url: string;
 }
 
-export interface CourseSize {
-  avail: number;
-  crn: number;
-  num: number;
-  seats: number;
-  students: number;
-}
-
 /*
 export interface SelectedSection {
   section: CourseSection;
@@ -112,6 +104,6 @@ export interface Section {
   attribute: string;
 }
 
-export interface CourseSet {
+export interface CourseSets {
   [courseSet: string]: { [crn: string]: boolean };
 }

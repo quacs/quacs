@@ -87,17 +87,8 @@ export function formatTimeslot() {
 }
 
 export function formatCourseSize() {
-  return function (crn: string): string {
-    if (crn in store.state.courseSizes) {
-      return (
-        store.state.courseSizes[crn].avail +
-        "/" +
-        store.state.courseSizes[crn].seats +
-        " seats available"
-      );
-    }
-
-    return "";
+  return function (section: CourseSection): string {
+    return section.rem + "/" + section.cap + " seats available";
   };
 }
 
@@ -242,5 +233,48 @@ export function formatPrerequisites() {
     } else {
       return "";
     }
+  };
+}
+
+export function shortSemToLongSem() {
+  return function (shortSem: string): string {
+    const year = shortSem.substring(0, 4);
+
+    const semNum = shortSem.substring(4);
+    let sem = "";
+    if (semNum === "01") {
+      sem = "Spring";
+    } else if (semNum === "09") {
+      sem = "Fall";
+    } else if (semNum === "05") {
+      sem = "Summer";
+    } else {
+      sem = semNum;
+    }
+
+    return `${sem} ${year}`;
+  };
+}
+
+// THIS FUNCTION IS DUPLICATED IN vue.config.js BECAUSE
+// I DON'T KNOW HOW TO IMPORT IT.  ANY CHANGES MUST ALSO
+// BE MADE THERE.
+export function shortSemToURL() {
+  return function (shortSem: string): string {
+    const year = shortSem.substring(0, 4);
+
+    const semNum = shortSem.substring(4);
+    let sem = "";
+    if (semNum === "01") {
+      sem = "spring";
+    } else if (semNum === "09") {
+      sem = "fall";
+    } else if (semNum === "05") {
+      sem = "summer";
+    } else {
+      sem = semNum;
+    }
+
+    return `/${sem}${year}`;
   };
 }

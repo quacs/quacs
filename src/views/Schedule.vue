@@ -24,16 +24,27 @@
           </div>
 
           <Calendar :crns="currentScheduleCRNs" />
-
-          <div class="crn-list">
-            CRNs:
-            <template v-for="(crn, idx) in currentScheduleCRNs">
-              <template v-if="idx !== 0">, </template>
-              <span class="crn" :key="crn" v-on:click="copyToClipboard(crn)">{{
-                crn
-              }}</span></template
-            >
-            <div id="crn-copy-indicator">Copied!</div>
+          <div class="d-flex justify-content-between">
+            <div class="crn-list">
+              CRNs:
+              <template v-for="(crn, idx) in currentScheduleCRNs">
+                <template v-if="idx !== 0">, </template>
+                <span
+                  class="crn"
+                  :key="crn"
+                  v-on:click="copyToClipboard(crn)"
+                  >{{ crn }}</span
+                ></template
+              >
+              <div id="crn-copy-indicator">Copied!</div>
+            </div>
+            <b-button @click="exportIcs()">
+              <font-awesome-icon
+                title="Settings"
+                :icon="['fas', 'calendar']"
+              ></font-awesome-icon>
+              Export .ics
+            </b-button>
           </div>
         </div>
         <template v-slot:overlay>
@@ -86,6 +97,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
 import {
+  BButton,
   BIconChevronLeft,
   BIconChevronRight,
   BOverlay,
@@ -94,6 +106,12 @@ import {
 import Calendar from "@/components/Calendar.vue";
 import { Course } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
+import { EventAttributes, createEvents } from "ics";
+import { saveAs } from "file-saver";
+import { shortSemToLongSem } from "@/utilities";
+
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -108,6 +126,7 @@ function mod(n: number, m: number) {
       "currentCourseSet",
       "lastNewSchedule",
     ]),
+    shortSemToLongSem,
   },
   components: {
     Calendar,
@@ -116,13 +135,14 @@ function mod(n: number, m: number) {
     "b-icon-chevron-right": BIconChevronRight,
     "b-spinner": BSpinner,
     "b-overlay": BOverlay,
+    "b-button": BButton,
   },
 })
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];
   keepSelectedCourseSet = "";
   currentScheduleNumber = 0;
-  currentScheduleCRNs = [];
+  currentScheduleCRNs: number[] = [];
   // loadedWithCRNs = true;
 
   @Watch("lastNewSchedule")
@@ -217,6 +237,8 @@ export default class Schedule extends Vue {
   }
 
   copyToClipboard(val: string): void {
+    umami.trackEvent("Copy crn", "schedule");
+
     const tempInput = document.createElement("input");
     // @ts-expect-error: This works so ts is just being dumb
     tempInput.style = "position: absolute; left: -1000px; top: -1000px";
@@ -233,6 +255,97 @@ export default class Schedule extends Vue {
       // @ts-expect-error: I know it might be null but the element exists so stop complaining
       copyIndicator.className = copyIndicator.className.replace("show", "");
     }, 2000);
+  }
+
+  exportIcs(): void {
+    umami.trackEvent("Export ics", "schedule");
+
+    const recurrenceDays: { [day: string]: string } = {
+      U: "SU",
+      M: "MO",
+      T: "TU",
+      W: "WE",
+      R: "TH",
+      F: "FR",
+      S: "SA",
+    };
+
+    const dayNumToLetter: string[] = ["U", "M", "T", "W", "R", "F", "S"];
+
+    // @ts-expect-error: shortSemToLongSem is defined in the computed section
+    const year = this.shortSemToLongSem(process.env.VUE_APP_CURR_SEM).slice(-4);
+    const events: EventAttributes[] = [];
+
+    for (const dept of this.$store.state.departments) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          if (this.currentScheduleCRNs.includes(section.crn)) {
+            //Generate recurrenceRule for the days in the timeslot
+            for (const timeslot of section.timeslots) {
+              let recurrenceRule = "FREQ=WEEKLY;BYDAY=";
+              for (let i = 0; i < timeslot.days.length; i++) {
+                if (i) {
+                  recurrenceRule += ",";
+                }
+                recurrenceRule += recurrenceDays[timeslot.days[i]];
+              }
+              recurrenceRule += ";INTERVAL=1;UNTIL=";
+              recurrenceRule += year;
+              recurrenceRule += timeslot.dateEnd.replace("/", "");
+
+              // Make a js date that starts on the first day of the semester
+              // need to add hours/min/sec to make sure it gets the correct day
+              const month = timeslot.dateStart.split("/")[0];
+              const day = timeslot.dateStart.split("/")[1];
+              let start = new Date(`${year}-${month}-${day} 1:0:0`);
+
+              //Find the first day after the semester starts that has this section
+              //For example if the semster starts on a monday, but the section is on wednesday
+              // then move the date up to the next wednesday
+              while (!timeslot.days.includes(dayNumToLetter[start.getDay()])) {
+                start.setDate(start.getDate() + 1);
+              }
+
+              events.push({
+                title: section.title,
+                start: [
+                  Number(year),
+                  start.getMonth() + 1,
+                  start.getDate(),
+                  Math.floor(timeslot.timeStart / 100),
+                  timeslot.timeStart % 100,
+                ],
+                end: [
+                  Number(year),
+                  Number(timeslot.dateStart.split("/")[0]),
+                  Number(timeslot.dateStart.split("/")[1]),
+                  Math.floor(timeslot.timeEnd / 100),
+                  timeslot.timeEnd % 100,
+                ],
+                location:
+                  timeslot.location !== "TBA" ? timeslot.location : undefined,
+                recurrenceRule,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    //creates ics calendar
+    const { error, value } = createEvents(events);
+
+    if (!value) {
+      // eslint-disable-next-line
+      console.log(error);
+      // eslint-disable-next-line
+      alert(
+        "There was an error generating your ics file. Please report this bug to the developers using the Discord or GitHub links in the website footer."
+      );
+    } else {
+      const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+      saveAs(blob, "schedule.ics");
+    }
   }
 }
 </script>

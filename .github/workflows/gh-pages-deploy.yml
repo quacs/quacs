@@ -18,8 +18,19 @@ jobs:
 
       - name: Checkout branch
         uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
         with:
-          submodules: 'recursive'
+          python-version: '3.x'
+
+      - name: Checkout site repo
+        uses: actions/checkout@v2
+        with:
+          repository: "quacs/site"
+          ref: "master"
+          path: "gh-pages-site"
+          token: ${{ secrets.QUACS_TOKEN }}
 
       - name: Clean install dependencies
         run: yarn install --frozen-lockfile
@@ -29,5 +40,5 @@ jobs:
 
       - name: Run deploy script
         run: |
-          git config user.name "QuACS" && git config user.email "github@quacs.org"
+          git -C gh-pages-site config user.name "QuACS" && git -C gh-pages-site config user.email "github@quacs.org"
           yarn gh-pages-deploy

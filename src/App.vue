@@ -4,10 +4,9 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
-            src="@/assets/images/quacs_logo_halloween.svg"
+            src="@/assets/images/quacs_thanksgiving.svg"
             alt="QuACS Home"
-            title="Thanks to Josy Dom Alexis for the witch hat!"
-            style="height: 45px;"
+            style="height: 50px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -28,13 +27,19 @@
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <CourseSetEdit></CourseSetEdit>
-              <b-nav-item
-                to="#"
-                class="nav-text text-nowrap"
-                v-b-tooltip.hover
-                title="Multiple semester support coming soon!"
-                >Spring 2021</b-nav-item
-              >
+              <b-nav-item-dropdown left :title="shortSemToLongSem(currentSem)">
+                <template v-slot:button-content>
+                  <em class="nav-text" style="font-style: normal;">{{
+                    shortSemToLongSem(currentSem)
+                  }}</em>
+                </template>
+                <b-dropdown-item
+                  v-for="shortSem in allSems"
+                  :key="shortSem"
+                  :href="shortSemToURL(shortSem)"
+                  >{{ shortSemToLongSem(shortSem) }}</b-dropdown-item
+                >
+              </b-nav-item-dropdown>
               <b-nav-item class="nav-text desktop-only" disabled>|</b-nav-item>
               <b-nav-item
                 to="/prerequisites"
@@ -124,7 +129,7 @@
           @click="rotateLogo()"
         />
         <a
-          href="https://discord.gg/EyGZTAP"
+          href="https://discord.gg/yXaHkwU"
           rel="noopener"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
@@ -160,6 +165,7 @@ import {
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
+import { shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 @Component({
   components: {
@@ -185,6 +191,8 @@ import CourseSetEdit from "@/components/CourseSetEdit.vue";
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
     ...mapGetters("schedule", ["getCourseSets"]),
     ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
+    shortSemToURL,
+    shortSemToLongSem,
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
@@ -200,6 +208,14 @@ export default class App extends Vue {
   searching = false;
   installable = false;
   installEvent: Event | null = null;
+
+  get allSems(): string[] {
+    return JSON.parse(process.env.VUE_APP_ALL_SEMS);
+  }
+
+  get currentSem(): string {
+    return process.env.VUE_APP_CURR_SEM;
+  }
 
   get lastUpdated(): string {
     let timeDifference =

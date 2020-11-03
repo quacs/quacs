@@ -1,9 +1,4 @@
-import {
-  CatalogCourse,
-  CourseSize,
-  Department,
-  PrerequisiteJSON,
-} from "@/typings";
+import { CatalogCourse, Department, PrerequisiteJSON } from "@/typings";
 
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
@@ -12,8 +7,10 @@ import Vue from "vue";
 import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
-import SCHOOLS_JSON from "./data/schools.json";
-import DATA_STATS_JSON from "./data/meta.json";
+// eslint-disable-next-line
+const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
+
+import DATA_STATS_JSON from "./data/semester_data/meta.json";
 
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
@@ -32,7 +29,6 @@ export default new Vuex.Store({
     departments: [] as Department[], // asynchronously loaded
     catalog: {} as { [id: string]: CatalogCourse }, // asynchronously loaded
     prerequisitesData: {} as { [id: string]: PrerequisiteJSON }, // asynchronously loaded
-    courseSizes: {} as { [id: string]: CourseSize },
     lastNewSchedule: 0,
     warningMessage: "",
     updateAvailable: false,
@@ -59,10 +55,6 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    SET_COURSE_SIZES(state, courseSizes): void {
-      state.courseSizes = courseSizes;
-    },
-
     SET_DEPARTMENTS(state, departments): void {
       state.departments = departments;
     },
@@ -84,52 +76,18 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    loadCourseSizes({ commit }): void {
-      //TODO switch to better server for this over a free herokuapp instance
-      axios
-        .get(
-          "https://vast-waters-42287.herokuapp.com/https://sis.rpi.edu/reg/rocs/YACS_202009.xml"
-        )
-        .then((r) => r.data)
-        .then((data) => {
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(data, "text/xml");
-
-          const liveData: { [id: string]: CourseSize } = {};
-          const courses = xmlDoc.getElementsByTagName("SECTION");
-          for (let i = 0; i < courses.length; i++) {
-            liveData[courses[i].attributes[0].nodeValue || ""] = {
-              avail: 0,
-              crn: 0,
-              num: 0,
-              seats: 0,
-              students: 0,
-            };
-            for (let j = 0; j < courses[i].attributes.length; j++) {
-              const attribute = courses[i].attributes[j];
-              Vue.set(
-                liveData[courses[i].attributes[0].nodeValue || ""],
-                attribute.nodeName,
-                parseInt(attribute.nodeValue || "-1")
-              );
-            }
-          }
-          commit("SET_COURSE_SIZES", liveData);
-        });
-    },
-
     init({ commit }): void {
-      import("./data/catalog.json").then((catalog) =>
-        commit("SET_CATALOG", catalog)
-      );
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/catalog.json`
+      ).then((catalog) => commit("SET_CATALOG", catalog));
 
-      import("./data/courses.json").then((departments) =>
-        commit("SET_DEPARTMENTS", departments.default)
-      );
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/courses.json`
+      ).then((departments) => commit("SET_DEPARTMENTS", departments.default));
 
-      import("./data/prerequisites.json").then((prereqs) =>
-        commit("SET_PREREQUISITES_DATA", prereqs)
-      );
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/prerequisites.json`
+      ).then((prereqs) => commit("SET_PREREQUISITES_DATA", prereqs));
     },
   },
   modules: {
@@ -139,21 +97,30 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
+      key:
+        process.env.VUE_APP_CURR_SEM === "202101"
+          ? "vuex"
+          : process.env.VUE_APP_CURR_SEM,
       paths: [
         "schedule.storedVersion",
         "schedule.currentTerm",
         "schedule.currentCourseSet",
         "schedule.courseSets",
+      ],
+      rehydrated: (store) => {
+        store.commit("schedule/initSelectedSetions");
+        store.dispatch("schedule/init", false);
+      },
+    }),
+    createPersistedState({
+      key: "inter-semester-storage",
+      paths: [
         "settings.timePreference",
         "settings.colorTheme",
         "settings.hidePrerequisites",
         "prerequisites.priorCourses",
         "prerequisites.enableChecking",
       ],
-      rehydrated: (store) => {
-        store.commit("schedule/initSelectedSetions");
-        store.dispatch("schedule/init", false);
-      },
     }),
   ],
 });

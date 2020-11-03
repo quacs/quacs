@@ -42,7 +42,11 @@
                   aria-lable="Course Code"
                   trim
                   :disabled="!prerequisiteChecking"
-                  :title="prerequisiteChecking ? '' : 'Disabled'"
+                  :title="
+                    prerequisiteChecking
+                      ? 'Enter a course here'
+                      : 'Enable prerequisites to add a course'
+                  "
                   :formatter="formatCourse"
                   @keyup.enter="addCourse"
                 ></b-form-input>
@@ -59,7 +63,11 @@
                 <b-button
                   @click="addCourse"
                   :disabled="!verifyNewCourse || !prerequisiteChecking"
-                  :title="prerequisiteChecking ? '' : 'Disabled'"
+                  :title="
+                    prerequisiteChecking
+                      ? 'Enter a course here'
+                      : 'Enable prerequisites to add a course'
+                  "
                   >Add Course</b-button
                 >
               </b-col>
@@ -87,8 +95,8 @@
               In order to import your courses you will need to upload your
               transcript. Don't worry, QuACS is 100% client-side which means
               that all the data in your transcript stays on your computer and
-              there is literally no way for anyone - including the QuACS
-              developers - to view the data.
+              there is no way for anyone - including the QuACS developers - to
+              view the data.
             </p>
             <h3 class="mobile-only">
               NOTE: Transcript importing does not work on mobile because there
@@ -129,9 +137,15 @@
                 placeholder="Click to upload your transcript or drop it here..."
                 drop-placeholder="Drop transcript here..."
                 required
-                :title="prerequisiteChecking ? '' : 'Disabled'"
+                :title="
+                  prerequisiteChecking
+                    ? ''
+                    : 'Enable prerequisites to upload your transcript'
+                "
                 :disabled="!prerequisiteChecking"
                 @change="importTranscript()"
+                v-b-tooltip.disabled="prerequisiteChecking"
+                v-b-tooltip.hover
               ></b-form-file>
             </form>
           </b-tab>
@@ -140,14 +154,14 @@
     </div>
     <b-modal id="transcriptImportModal" title="Import Error">
       <p>
-        There was an issue importing from your transcript. Theses issues are
-        hard to debug because we dont have access to many test transcript files
+        There was an issue importing from your transcript. These issues are hard
+        to debug because we don't have access to many test transcript files.
       </p>
-      <p>For now you will have to add your courses by hand, sorry</p>
+      <p>For now you will have to add your courses by hand... sorry :(</p>
 
       <p>
         If you would like to help us fix this issue, join our discord so we can
-        talk
+        talk:
       </p>
       <a
         href="https://discord.gg/EyGZTAP"
@@ -167,8 +181,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-// @ts-expect-error: ¯\_(ツ)_/¯ I dont feel like making this work with typescript. TODO make this work with typescript
-import { scrapeTranscript } from "@/components/scrapeTranscript.js";
+import { scrapeTranscript } from "@/components/scrapeTranscript.ts";
 import { mapGetters, mapState } from "vuex";
 import {
   BButton,
@@ -183,7 +196,11 @@ import {
   BRow,
   BTab,
   BTabs,
+  VBTooltip,
 } from "bootstrap-vue";
+
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
 
 @Component({
   components: {
@@ -199,6 +216,9 @@ import {
     "b-row": BRow,
     "b-tab": BTab,
     "b-tabs": BTabs,
+  },
+  directives: {
+    "b-tooltip": VBTooltip,
   },
   computed: {
     verifyNewCourse(): boolean {
@@ -216,10 +236,12 @@ import {
         return this.$store.state.prerequisites.enableChecking;
       },
       set() {
-        this.$store.commit(
-          "prerequisites/togglePrerequisiteChecking",
-          !this.$store.state.prerequisites.enableChecking
+        const new_val = !this.$store.state.prerequisites.enableChecking;
+        umami.trackEvent(
+          (new_val ? "Enable" : "Disable") + " prerequisites",
+          "prerequisites"
         );
+        this.$store.commit("prerequisites/togglePrerequisiteChecking", new_val);
       },
     },
   },
@@ -240,11 +262,13 @@ export default class Prerequisites extends Vue {
   addCourse(): void {
     // @ts-expect-error: no u typescript, this does exist
     if (this.verifyNewCourse) {
+      umami.trackEvent("Manual add course", "prerequisites");
       this.$store.commit("prerequisites/addPriorCourse", this.newCourse);
     }
   }
 
   removeCourse(course: string): void {
+    umami.trackEvent("Remove course", "prerequisites");
     this.$store.commit("prerequisites/removePriorCourse", course);
   }
 
@@ -258,11 +282,16 @@ export default class Prerequisites extends Vue {
         console.log(err);
         bvModal.show("transcriptImportModal");
       })
-      // @ts-expect-error: TBD
       .then(function (transcript) {
-        for (const term of transcript.terms.concat(
-          transcript.inProgressTerms
-        )) {
+        if (!transcript) {
+          //eslint-disable-next-line
+          console.log("transcript is void");
+          bvModal.show("transcriptImportModal");
+          return;
+        }
+
+        umami.trackEvent("Import transcript", "prerequisites");
+        for (const term of transcript.terms) {
           for (const course of term.courses) {
             store.commit(
               "prerequisites/addPriorCourse",

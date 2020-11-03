@@ -45,8 +45,8 @@
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
             tabindex="0"
-            @click="$bvModal.show('section-info' + section.crn)"
-            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+            @click="showSectionModal(section.crn)"
+            @keyup.enter="showSectionModal(section.crn)"
           ></font-awesome-icon>
           <span class="font-weight-bold" title="Section number">{{
             section.sec
@@ -64,8 +64,8 @@
             tabindex="0"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
-            @click="$bvModal.show('section-info' + section.crn)"
-            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+            @click="showSectionModal(section.crn)"
+            @keyup.enter="showSectionModal(section.crn)"
           >
             <font-awesome-icon
               :icon="['fas', 'exclamation-triangle']"
@@ -75,15 +75,12 @@
           <span
             class="padding-left prerequisiteError"
             :class="{
-              hidden: !(
-                $store.state.courseSizes[section.crn] &&
-                $store.state.courseSizes[section.crn].avail <= 0
-              ),
+              hidden: !(section.rem <= 0),
             }"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
-            @click="$bvModal.show('section-info' + section.crn)"
-            @keyup.enter="$bvModal.show('section-info' + section.crn)"
+            @click="showSectionModal(section.crn)"
+            @keyup.enter="showSectionModal(section.crn)"
           >
             <font-awesome-icon
               :icon="['fas', 'user-slash']"
@@ -98,10 +95,10 @@
             v-b-tooltip.hover
             :title="
               'There are ' +
-              formatCourseSize(section.crn, courseSizes) +
+              formatCourseSize(section) +
               '. Check SIS for more up to date information.'
             "
-            >{{ formatCourseSize(section.crn) }}</span
+            >{{ formatCourseSize(section) }}</span
           >
           <!-- Mobile times -->
           <div class="mobile-only">
@@ -169,6 +166,9 @@ import {
 } from "@/utilities";
 import { VBTooltip } from "bootstrap-vue";
 
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared elsewhere
+
 @Component({
   components: {
     SectionInfo,
@@ -185,7 +185,6 @@ import { VBTooltip } from "bootstrap-vue";
     ...mapGetters("schedule", ["isSelected"]),
     ...mapState("schedule", ["courseSets", "currentTerm", "currentCourseSet"]),
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
-    ...mapState(["courseSizes"]),
   },
 })
 export default class Section extends Vue {
@@ -251,12 +250,22 @@ export default class Section extends Vue {
       crn: section.crn,
       selected,
     });
+
     if (rePopulateConflicts) {
       this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+    } else {
+      // This happens when we're individually changing sections
+      if (selected) {
+        umami.trackEvent("Section added", this.course.subj);
+      } else {
+        umami.trackEvent("Section removed", this.course.subj);
+      }
     }
   }
 
   toggleAll(): void {
+    umami.trackEvent("All toggled", this.course.subj);
+
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
       if (!this.$store.getters["schedule/isSelected"](section.crn)) {
@@ -353,6 +362,11 @@ export default class Section extends Vue {
       spacedTimeslots.push(timeslot);
     }
     return spacedTimeslots;
+  }
+
+  showSectionModal(crn: string): void {
+    umami.trackEvent("Section modal", "info-modal");
+    this.$bvModal.show("section-info" + crn);
   }
 }
 </script>
