@@ -282,6 +282,15 @@ export default class Schedule extends Vue {
           if (this.currentScheduleCRNs.includes(section.crn)) {
             //Generate recurrenceRule for the days in the timeslot
             for (const timeslot of section.timeslots) {
+              //If the timeslot is not set, just skip it
+              if (
+                timeslot.days.length === 0 ||
+                timeslot.timeStart < 0 ||
+                timeslot.timeEnd < 0
+              ) {
+                continue;
+              }
+
               let recurrenceRule = "FREQ=WEEKLY;BYDAY=";
               for (let i = 0; i < timeslot.days.length; i++) {
                 if (i) {
