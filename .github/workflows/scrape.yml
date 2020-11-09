@@ -173,38 +173,38 @@ jobs:
           name: faculty
           path: faculty.json
 
-  scrape-catalog:
-    name: Scrapes catalog by year
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout scrapers
-        uses: actions/checkout@v2
-        with:
-          ref: 'master'
+  # scrape-catalog:
+  #   name: Scrapes catalog by year
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout scrapers
+  #       uses: actions/checkout@v2
+  #       with:
+  #         ref: 'master'
 
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
+  #     - name: Set up python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.x'
 
-      - name: Install pip requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r requirements.txt
 
-      - name: Scrape catalog
-        run: python3 catalog_scraper/main.py catalog LATEST_YEAR
+  #     - name: Scrape catalog
+  #       run: python3 catalog_scraper/main.py catalog LATEST_YEAR
 
-      - name: Upload data
-        uses: actions/upload-artifact@v2
-        with:
-          name: catalog
-          path: data/
+  #     - name: Upload data
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: catalog
+  #         path: data/
 
   commit-data:
     name: Commit changes
     runs-on: ubuntu-latest
-    needs: [scrape-courses-and-prerequisites, scrape-faculty, scrape-catalog]
+    needs: [scrape-courses-and-prerequisites, scrape-faculty]
     steps:
       - name: Checkout data repository
         uses: actions/checkout@v2
@@ -223,10 +223,10 @@ jobs:
 
       - name: Commit new data
         run: |
-          for directory in $(find courses/* -type d -print0 | xargs -0); do
-            DIR_BASENAME=$(basename "$directory")
-            cp -r catalog/$DIR_BASENAME/* "$directory"
-          done
+          # for directory in $(find courses/* -type d -print0 | xargs -0); do
+          #   DIR_BASENAME=$(basename "$directory")
+          #   cp -r catalog/$DIR_BASENAME/* "$directory"
+          # done
 
           rsync -avz courses/ data/semester_data/
 
