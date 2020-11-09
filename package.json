@@ -18,7 +18,7 @@
     "@types/file-saver": "^2.0.1",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
-    "bootstrap-vue": "^2.18.1",
+    "bootstrap-vue": "^2.19.0",
     "file-saver": "^2.0.2",
     "fuse.js": "^6.4.3",
     "ics": "^2.26.1",
