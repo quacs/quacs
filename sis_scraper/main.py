@@ -398,7 +398,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
             "U": offset(6),
         }
 
-        BIT_VEC_SIZE = math.ceil(offset(len(day_offsets)) / 64)
+        BIT_VEC_SIZE = offset(len(day_offsets))
 
         conflicts = {}
         crn_to_courses = {}
@@ -407,7 +407,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                 for section in course["sections"]:
                     crn_to_courses[section["crn"]] = course["id"]
 
-                    conflict = [0] * (64 * BIT_VEC_SIZE)
+                    conflict = [0] * BIT_VEC_SIZE
                     for time in section["timeslots"]:
                         for day in time["days"]:
                             for hour in range(TIME_START, TIME_END, 100):
@@ -427,7 +427,21 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                                         ] = 1
 
                     conflicts[section["crn"]] = "".join(str(e) for e in conflict)
+        # If 0 courses, or exactly one course, occupies a slot in the conflict bitstring, we can safely remove it to save space
+        # as that implies no conflicts are possible in that block.
+        # The following code computes a list of candidates that fit this criteria
+        unnecessary_indices = [bit_index for bit_index in range(0, BIT_VEC_SIZE)
+                if sum(int(conflicts[section_crn][bit_index]) for section_crn in conflicts) <= 1]
+        # Reverse the list as to not break earlier offsets
+        conflicts_to_prune = reversed(unnecessary_indices)
 
+        # Prune the bits in `conflicts_to_prune` from all the bitstrings
+        for section_crn in conflicts:
+            bitstr = conflicts[section_crn]
+            for x in conflicts_to_prune:
+                conflicts[section_crn] = bitstr[:x] + bitstr[x+1:]
+        # Compute the proper bit vec length for quacs-rs
+        BIT_VEC_SIZE = math.ceil((BIT_VEC_SIZE - len(unnecessary_indices)) / 64)
         with open(f"data/{term}/mod.rs", "w") as f:  # -{os.getenv("CURRENT_TERM")}
             f.write(
                 """\
