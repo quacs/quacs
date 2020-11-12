@@ -378,15 +378,8 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
             json.dump(school_columns, schools_f, sort_keys=False, indent=2)
 
         # Generate binary conflict output
-        # (32bit crn + 3*64bit conflicts 5am-midnight(by 30min))for every course
-        TIME_START = 700
-        TIME_END = 2200
-        NUM_HOURS = int((TIME_END - TIME_START) / 100)
-
-        MINUTE_GRANULARITY = 10
-        NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
-
-        offset = lambda x: x * NUM_HOURS * NUM_MIN_PER_HOUR
+        # day * 24 hours/day * 60minutes/hour = total buckets
+        offset = lambda x: x * 24 * 60
 
         day_offsets = {
             "M": offset(0),
@@ -402,6 +395,12 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
 
         conflicts = {}
         crn_to_courses = {}
+
+        # A table consisting of lists of classes that conflict on the 'x'th bit
+        sem_conflict_table = []
+
+        for _ in range(BIT_VEC_SIZE):
+            sem_conflict_table.append([])
         for dept in data:
             for course in dept["courses"]:
                 for section in course["sections"]:
@@ -410,36 +409,47 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                     conflict = [0] * BIT_VEC_SIZE
                     for time in section["timeslots"]:
                         for day in time["days"]:
-                            for hour in range(TIME_START, TIME_END, 100):
-                                for minute in range(0, 60, MINUTE_GRANULARITY):
+                            for hour in range(0, 2400, 100):
+                                for minute in range(60):
                                     if (
                                         time["timeStart"] <= hour + minute
                                         and time["timeEnd"] > hour + minute
                                     ):
-                                        minute_idx = int(minute / 10)
-                                        hour_idx = (
-                                            int(hour / 100) - 7
-                                        )  # we start at 7am
-                                        conflict[
+                                        minute_idx = minute
+                                        hour_idx = hour // 100
+                                        index = (
                                             day_offsets[day]
-                                            + hour_idx * (60 // MINUTE_GRANULARITY)
+                                            + hour_idx * 60
                                             + minute_idx
-                                        ] = 1
+                                        )
+                                        conflict[index] = 1
+                                        sem_conflict_table[index].append(section["crn"])
 
-                    conflicts[section["crn"]] = "".join(str(e) for e in conflict)
-        # If 0 courses, or exactly one course, occupies a slot in the conflict bitstring, we can safely remove it to save space
-        # as that implies no conflicts are possible in that block.
+                    conflicts[section["crn"]] = conflict
+        # Compute unnecessary conflict bits - where a bit is defined as unnecessary if its removal does not affect the result conflict checking
         # The following code computes a list of candidates that fit this criteria
-        unnecessary_indices = [bit_index for bit_index in range(0, BIT_VEC_SIZE)
-                if sum(int(conflicts[section_crn][bit_index]) for section_crn in conflicts) <= 1]
+        unnecessary_indices = set()
+
+        for index1 in range(BIT_VEC_SIZE):
+            for index2 in range(index1 + 1, BIT_VEC_SIZE):
+                if (
+                    index2 not in unnecessary_indices
+                    and sem_conflict_table[index1] == sem_conflict_table[index2]
+                ):
+                    unnecessary_indices.add(index2)
+
         # Reverse the list as to not break earlier offsets
-        conflicts_to_prune = reversed(unnecessary_indices)
+        conflicts_to_prune = list(unnecessary_indices)
+        conflicts_to_prune.reverse()
 
         # Prune the bits in `conflicts_to_prune` from all the bitstrings
         for section_crn in conflicts:
-            bitstr = conflicts[section_crn]
-            for x in conflicts_to_prune:
-                conflicts[section_crn] = bitstr[:x] + bitstr[x+1:]
+            for bit in conflicts_to_prune:
+                del conflicts[section_crn][bit]
+
+            # Convert to a string for the quacs-rs rust codegen
+            conflicts[section_crn] = "".join(str(x) for x in conflicts[section_crn])
+
         # Compute the proper bit vec length for quacs-rs
         BIT_VEC_SIZE = math.ceil((BIT_VEC_SIZE - len(unnecessary_indices)) / 64)
         with open(f"data/{term}/mod.rs", "w") as f:  # -{os.getenv("CURRENT_TERM")}
