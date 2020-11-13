@@ -404,8 +404,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         for dept in data:
             for course in dept["courses"]:
                 for section in course["sections"]:
-                    crn_to_courses[section["crn"]] = course["id"]
-
                     conflict = [0] * BIT_VEC_SIZE
                     for time in section["timeslots"]:
                         for day in time["days"]:
@@ -424,7 +422,9 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                                         )
                                         conflict[index] = 1
                                         sem_conflict_table[index].append(section["crn"])
-
+                    if sum(conflict) == 0:
+                        continue
+                    crn_to_courses[section["crn"]] = course["id"]
                     conflicts[section["crn"]] = conflict
         # Compute unnecessary conflict bits - where a bit is defined as unnecessary if its removal does not affect the result conflict checking
         # The following code computes a list of candidates that fit this criteria
