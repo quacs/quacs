@@ -12,82 +12,6 @@ from copy import deepcopy
 
 load_dotenv()
 
-
-def addConflicts(data):
-    for department in data:
-        for course in department["courses"]:
-            for section in course["sections"]:
-                section["conflicts"] = getConflict(
-                    data, section["timeslots"], section["subj"] + str(section["crse"])
-                )
-
-
-def getConflict(data, check_timeslots, course_code):
-    conflicts = {}
-
-    for department in data:
-        for course in department["courses"]:
-            for section in course["sections"]:
-                for timeslot in section["timeslots"]:
-                    for day in timeslot["days"]:
-                        # Dont conflict with other sections of the same course (or with self)
-                        if course_code == section["subj"] + str(section["crse"]):
-                            continue
-
-                        # If this course does not have a timeslot just skip it
-                        if timeslot["timeStart"] == -1 or timeslot["timeEnd"] == -1:
-                            continue
-
-                        for check_timeslot in check_timeslots:
-                            # If this course does not have a timeslot just skip it
-                            if (
-                                check_timeslot["timeStart"] == -1
-                                or check_timeslot["timeEnd"] == -1
-                            ):
-                                continue
-
-                            # If not happening on the same day skip it
-                            if day not in check_timeslot["days"]:
-                                continue
-
-                            # If the dates dont overlap skip it
-                            if not max(
-                                check_timeslot["dateStart"], timeslot["dateStart"]
-                            ) < min(check_timeslot["dateEnd"], timeslot["dateEnd"]):
-                                continue
-
-                            # There is a conflict
-                            if max(
-                                check_timeslot["timeStart"], timeslot["timeStart"]
-                            ) < min(check_timeslot["timeEnd"], timeslot["timeEnd"]):
-                                # JSON does not support hashtables without a value so the value
-                                # is always set to true even though just by being in the conflicts
-                                # hash table is enough to know it conflicts
-                                conflicts[section["crn"]] = True
-
-    return conflicts
-
-
-# We decided not to use this but I left it just in case
-# def reformatJson(data):
-#     departments_copy = data
-#     reformat = {}
-#     for department in departments_copy:
-#         reformat[department['code']] = department
-#         course_copy = department['courses']
-#         reformat[department['code']]['courses'] = {}
-#         for course in course_copy:
-#             reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"] = course
-#             sections_copy = course['sections']
-#             reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'] = {}
-#             for section in sections_copy:
-#                 reformat[department['code']]['courses'][f"{course['subj']}-{course['crse']}"]['sections'][section['crn']] = section
-#
-#
-#     return reformat
-#
-
-
 def getContent(element):
     return " ".join(
         element.encode_contents().decode().strip().replace("&amp;", "&").split()
@@ -348,12 +272,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                 if len(getContent(td[2])) > 0:
                     data[-1]["code"] = getContent(td[2])
 
-        # This is for the old conflict method that has a list for each class that it conflicts with
-        # addConflicts(data)
-
-        # data = reformatJson(data)
-
-        # print(json.dumps(data,sort_keys=False,indent=2))
         with open(f"data/{term}/courses.json", "w") as outfile:
             json.dump(data, outfile, sort_keys=False, indent=2)
 
