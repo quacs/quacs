@@ -6,7 +6,7 @@
           ><img
             src="@/assets/images/quacs_thanksgiving.svg"
             alt="QuACS Home"
-            style="height: 50px;"
+            style="height: 50px"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -29,7 +29,7 @@
               <CourseSetEdit></CourseSetEdit>
               <b-nav-item-dropdown left :title="shortSemToLongSem(currentSem)">
                 <template v-slot:button-content>
-                  <em class="nav-text" style="font-style: normal;">{{
+                  <em class="nav-text" style="font-style: normal">{{
                     shortSemToLongSem(currentSem)
                   }}</em>
                 </template>
@@ -70,7 +70,7 @@
         </b-collapse>
       </nav>
 
-      <div class="container-fluid" style="margin-top: 1rem;">
+      <div class="container-fluid" style="margin-top: 1rem">
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
@@ -125,7 +125,7 @@
           id="footer-logo"
           src="@/assets/images/quacs_white.svg"
           alt="QuACS"
-          style="height: 40px;"
+          style="height: 40px"
           @click="rotateLogo()"
         />
         <a

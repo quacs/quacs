@@ -61,31 +61,10 @@ export interface SelectedSection {
   selected: boolean;
 }
 */
-
+// eslint-disable-next-line no-shadow
 export enum TimePreference {
   Military = "M",
   Standard = "S",
-}
-
-export interface PrerequisiteJSON {
-  [crn: number]: {
-    corequisites?: string[];
-    cross_list_courses?: string[];
-    restrictions?: Restriction;
-    prerequisites?: Prerequisite;
-  };
-}
-
-export type Prerequisite = GroupPrerequisite | CoursePrerequisite;
-
-export interface GroupPrerequisite {
-  type: "and" | "or";
-  nested: Prerequisite[];
-}
-
-export interface CoursePrerequisite {
-  type: "course";
-  course: string;
 }
 
 export interface Restriction {
@@ -96,6 +75,27 @@ export interface Restriction {
   degree: { must_be: string[]; may_not_be: string[] };
   college: { must_be: string[]; may_not_be: string[] };
   campus: { must_be: string[]; may_not_be: string[] };
+}
+
+export interface GroupPrerequisite {
+  type: "and" | "or";
+  nested: Prerequisite[]; // eslint-disable-line no-use-before-define
+}
+
+export interface CoursePrerequisite {
+  type: "course";
+  course: string;
+}
+
+export type Prerequisite = GroupPrerequisite | CoursePrerequisite;
+
+export interface PrerequisiteJSON {
+  [crn: number]: {
+    corequisites?: string[];
+    cross_list_courses?: string[];
+    restrictions?: Restriction;
+    prerequisites?: Prerequisite;
+  };
 }
 
 export interface Section {

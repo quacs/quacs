@@ -7,7 +7,7 @@
         rounded="sm"
         opacity="0.7"
       >
-        <div style="padding-bottom: 2rem;" :key="lastNewSchedule">
+        <div style="padding-bottom: 2rem" :key="lastNewSchedule">
           <div class="schedule-select">
             <!-- <div v-if="numSchedules !== 0"> -->
             <b-icon-chevron-left
