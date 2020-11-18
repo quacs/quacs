@@ -19,11 +19,11 @@ jobs:
       - name: Build site
         run: |
           yarn install --frozen-lockfile
-          yarn build -a
+          yarn build
 
       - name: Run Lighthouse CI
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         run: |
           npm install -g @lhci/cli@0.4.x
-          lhci autorun
+          lhci autorun --collect.staticDistDir=site/
