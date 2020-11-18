@@ -4,19 +4,19 @@ interface Course {
   title: string;
   grade: string;
   creditHours: string;
-  qualityPoints: string;
-  repeatStatus: string;
+  qualityPoints?: string;
+  repeatStatus?: string;
 }
 
 interface Term {
   name: string;
   courses: Course[];
-  attemptHours: string;
-  passedHours: string;
-  earnedHours: string;
-  gpaHours: string;
-  qualityPoints: string;
-  gpa: string;
+  attemptHours?: string;
+  passedHours?: string;
+  earnedHours?: string;
+  gpaHours?: string;
+  qualityPoints?: string;
+  gpa?: string;
 }
 
 export interface StudentData {
@@ -276,7 +276,7 @@ export async function scrapeTranscript(fileId: string): Promise<StudentData> {
     }
   }
 
-  rowNum += 6; // skip over transcript totals
+  rowNum += 7; // skip over transcript totals
   if (getTranscriptData(rowNum, 0).startsWith("COURSES IN PROGRESS")) {
     // Parse current term
     rowNum++; // Move off of header
@@ -304,8 +304,6 @@ export async function scrapeTranscript(fileId: string): Promise<StudentData> {
         title: columns[2].innerText.trim(),
         grade: columns[3].innerText.trim(),
         creditHours: columns[4].innerText.trim(),
-        qualityPoints: columns[5].innerText.trim(),
-        repeatStatus: columns[6].innerText.trim(),
       });
 
       rowNum++;
@@ -313,21 +311,10 @@ export async function scrapeTranscript(fileId: string): Promise<StudentData> {
 
     rowNum++; // move off of summary headers
 
-    // We're now pointing at the term summary.  We technically don't need to parse
-    // this data, but hey, might as well while we're here (this isn't used anywhere
-    // but it may be in the future).  There's no reason to not scrape it since this
-    // all stays client-side anyways, but it'll save us time later if we need it for
-    // something (cough cough, quacsworks)
-    const columns = transcriptRows[rowNum].getElementsByTagName("td");
+    // We're now pointing at the term summary.
     data.terms.push({
       name: termName,
       courses: courses,
-      attemptHours: columns[0].innerText.trim(),
-      passedHours: columns[1].innerText.trim(),
-      earnedHours: columns[2].innerText.trim(),
-      gpaHours: columns[3].innerText.trim(),
-      qualityPoints: columns[4].innerText.trim(),
-      gpa: columns[5].innerText.trim(),
     });
   }
 
