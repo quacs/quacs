@@ -19,7 +19,7 @@
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.19.0",
-    "file-saver": "^2.0.2",
+    "file-saver": "^2.0.5",
     "fuse.js": "^6.4.3",
     "ics": "^2.26.1",
     "register-service-worker": "^1.7.1",
