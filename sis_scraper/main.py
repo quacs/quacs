@@ -13,6 +13,7 @@ from itertools import combinations
 
 load_dotenv()
 
+
 def getContent(element):
     return " ".join(
         element.encode_contents().decode().strip().replace("&amp;", "&").split()
@@ -372,6 +373,15 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         BIT_VEC_SIZE -= len(unnecessary_indices)
         unnecessary_indices.clear()
 
+        sem_conflict_dict = dict()
+
+        for index1 in range(BIT_VEC_SIZE):
+            for crn in sem_conflict_table[index1]:
+                if crn not in sem_conflict_dict:
+                    sem_conflict_dict[crn] = [index1]
+                else:
+                    sem_conflict_dict[crn].append(index1)
+
         # Optimization phase 2:
         # Now that we're on a (greatly) reduced working space, we can now prune using this
         # less efficient algorithm
@@ -382,24 +392,17 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
             # This part essentially tries to see if some other bit(s) other than the current one will create a conflict
             # for the conflicting classes in pair_list
             # If there is, we can safely discard this bit.
-            for index2 in range(BIT_VEC_SIZE):
-                # We can't use index1 to guarantee no conflicts, nor can we use other values that we determined to be
-                # unnecessary
-                if index2 == index1 or index2 in unnecessary_indices:
-                    continue
+            pairs_to_delete = set()
+            for pair in pair_list:
+                for x in sem_conflict_dict[pair[0]]:
+                    if (
+                        x in sem_conflict_dict[pair[1]]
+                        and x not in unnecessary_indices
+                        and x != index1
+                    ):
+                        pairs_to_delete.add(pair)
 
-                table = sem_conflict_table[index2]
-                # Remove any pairs from the list that conflict on this bit
-                pairs_to_delete = set(
-                    pair
-                    for pair in pair_list
-                    if (pair[0] in table and pair[1] in table)
-                )
-
-                for pair in pairs_to_delete:
-                    pair_list.remove(pair)
-            # If we successfully found other bits to conflict on all the pairs, this index is now unnecessary
-            if len(pair_list) == 0:
+            if len(pairs_to_delete) == len(pair_list):
                 unnecessary_indices.add(index1)
 
         # Reverse the list as to not break earlier offsets
