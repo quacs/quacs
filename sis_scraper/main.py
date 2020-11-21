@@ -10,6 +10,7 @@ from tqdm import tqdm
 import urllib.parse
 from copy import deepcopy
 from itertools import combinations
+from datetime import date
 
 load_dotenv()
 
@@ -311,7 +312,22 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
             "U": offset(6),
         }
 
-        BIT_VEC_SIZE = offset(len(day_offsets))
+        unique_ranges = set()
+        get_date = lambda x: date(1, int(x[0]), int(x[1]))
+
+        for dept in data:
+            for course in dept["courses"]:
+                for section in course["sections"]:
+                    for time in section["timeslots"]:
+                        start = time["dateStart"].split("/")
+
+                        if len(start) < 2:
+                            continue
+                        start_date = get_date(start)
+                        unique_ranges.add(start_date)
+
+        BITS_PER_SLICE = offset(len(day_offsets))
+        BIT_VEC_SIZE = BITS_PER_SLICE * len(unique_ranges)
 
         conflicts = {}
         crn_to_courses = {}
@@ -326,22 +342,37 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                 for section in course["sections"]:
                     conflict = [0] * BIT_VEC_SIZE
                     for time in section["timeslots"]:
-                        for day in time["days"]:
-                            for hour in range(0, 2400, 100):
-                                for minute in range(60):
-                                    if (
-                                        time["timeStart"] <= hour + minute
-                                        and time["timeEnd"] > hour + minute
-                                    ):
-                                        minute_idx = minute
-                                        hour_idx = hour // 100
-                                        index = (
-                                            day_offsets[day]
-                                            + hour_idx * 60
-                                            + minute_idx
-                                        )
-                                        conflict[index] = 1
-                                        sem_conflict_table[index].append(section["crn"])
+                        end = time["dateEnd"].split("/")
+                        start = time["dateStart"].split("/")
+                        if len(end) < 2 or len(start) < 2:
+                            continue
+                        my_end = get_date(end)
+                        my_start = get_date(start)
+                        for i, date_range in enumerate(unique_ranges):
+                            # check to see if we are in this range
+                            if my_end < date_range:
+                                continue
+                            if my_start > date_range:
+                                continue
+
+                            for day in time["days"]:
+                                for hour in range(0, 2400, 100):
+                                    for minute in range(60):
+                                        if (
+                                            time["timeStart"] <= hour + minute
+                                            and time["timeEnd"] > hour + minute
+                                        ):
+                                            minute_idx = minute
+                                            hour_idx = hour // 100
+                                            index = BITS_PER_SLICE * i + (
+                                                day_offsets[day]
+                                                + hour_idx * 60
+                                                + minute_idx
+                                            )
+                                            conflict[index] = 1
+                                            sem_conflict_table[index].append(
+                                                section["crn"]
+                                            )
                     if sum(conflict) == 0:
                         continue
                     crn_to_courses[section["crn"]] = course["id"]
@@ -378,13 +409,14 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         for index1 in range(BIT_VEC_SIZE):
             for crn in sem_conflict_table[index1]:
                 if crn not in sem_conflict_dict:
-                    sem_conflict_dict[crn] = [index1]
-                else:
-                    sem_conflict_dict[crn].append(index1)
+                    sem_conflict_dict[crn] = set()
+
+                sem_conflict_dict[crn].add(index1)
 
         # Optimization phase 2:
         # Now that we're on a (greatly) reduced working space, we can now prune using this
         # less efficient algorithm
+        len2 = BIT_VEC_SIZE
         for index1 in range(BIT_VEC_SIZE):
             # We want all (unordered) pairs of conflicting courses on the bit `index1`
             pair_list = [pair for pair in combinations(sem_conflict_table[index1], 2)]
@@ -394,15 +426,20 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
             # If there is, we can safely discard this bit.
             pairs_to_delete = set()
             for pair in pair_list:
-                for x in sem_conflict_dict[pair[0]]:
-                    if (
-                        x in sem_conflict_dict[pair[1]]
-                        and x not in unnecessary_indices
-                        and x != index1
-                    ):
+                table1 = sem_conflict_dict[pair[0]]
+                table2 = sem_conflict_dict[pair[1]]
+                for x in table1:
+                    if x != index1 and x in table2:
                         pairs_to_delete.add(pair)
 
             if len(pairs_to_delete) == len(pair_list):
+                for pair in pair_list:
+                    table1 = sem_conflict_dict[pair[0]]
+                    table2 = sem_conflict_dict[pair[1]]
+
+                    table1.discard(index1)
+                    table2.discard(index1)
+
                 unnecessary_indices.add(index1)
 
         # Reverse the list as to not break earlier offsets
