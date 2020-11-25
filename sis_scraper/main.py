@@ -325,6 +325,8 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                             continue
                         start_date = get_date(start)
                         unique_ranges.add(start_date)
+        unique_ranges = list(unique_ranges)
+        unique_ranges.sort(reverse=True)
 
         BITS_PER_SLICE = offset(len(day_offsets))
         BIT_VEC_SIZE = BITS_PER_SLICE * len(unique_ranges)
@@ -416,7 +418,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         # Optimization phase 2:
         # Now that we're on a (greatly) reduced working space, we can now prune using this
         # less efficient algorithm
-        len2 = BIT_VEC_SIZE
         for index1 in range(BIT_VEC_SIZE):
             # We want all (unordered) pairs of conflicting courses on the bit `index1`
             pair_list = [pair for pair in combinations(sem_conflict_table[index1], 2)]
