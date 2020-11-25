@@ -391,7 +391,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
 
         # Reverse the list as to not break earlier offsets
         conflicts_to_prune = list(unnecessary_indices)
-        conflicts_to_prune.reverse()
+        conflicts_to_prune.sort(reverse=True)
 
         # Prune the bits in `conflicts_to_prune` from all the bitstrings
         for section_crn in conflicts:
@@ -444,7 +444,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
 
         # Reverse the list as to not break earlier offsets
         conflicts_to_prune = list(unnecessary_indices)
-        conflicts_to_prune.reverse()
+        conflicts_to_prune.sort(reverse=True)
 
         # Prune the bits in `conflicts_to_prune` from all the bitstrings
         for section_crn in conflicts:
