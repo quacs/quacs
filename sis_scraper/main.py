@@ -124,19 +124,29 @@ def optimize_column_ordering(data, num_columns=3):
     return flattened
 
 
-payload = f'sid={os.getenv("RIN")}&PIN={urllib.parse.quote(os.getenv("PASSWORD"))}'
-headers = {"Content-Type": "application/x-www-form-urlencoded"}
+LOGIN_BASE_PARAMS = f"username={os.getenv('RIN')}&password={urllib.parse.quote(os.getenv('PASSWORD'))}&_eventId=submit"
+headers = {
+    # "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0",
+    "Content-Type": "application/x-www-form-urlencoded",
+}
 with requests.Session() as s:  # We purposefully don't use aiohttp here since SIS doesn't like multiple logged in connections
-    s.get(url="https://sis.rpi.edu/rss/twbkwbis.P_WWWLogin")
+    # We first need to get the CSRF token from the login page
+    login_url = "https://cas-auth-ent.rpi.edu/cas/login?service=https%3A%2F%2Fbannerapp04-bnrprd.server.rpi.edu%3A443%2Fssomanager%2Fc%2FSSB"
+    login_page = s.get(url=login_url)
+    login_soup = BeautifulSoup(login_page.text.encode("utf8"), "html.parser")
+    csrf = login_soup.find("input", attrs={"name": "execution"})["value"]
+    login_params = LOGIN_BASE_PARAMS + f"&execution={csrf}"
+
     response = s.request(
         "POST",
-        "https://sis.rpi.edu/rss/twbkwbis.P_ValLogin",
+        login_url,
         headers=headers,
-        data=payload,
+        data=login_params,
     )
 
-    if b"Welcome" not in response.text.encode("utf8"):
-        print("Failed to log into sis")
+    if b"Main Menu" not in response.text.encode("utf8"):
+        print(response.text.encode("utf8"))
+        print("Failed to authenticate CAS")
         exit(1)
 
     for term in tqdm(os.listdir("data")):
@@ -169,7 +179,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
 
         data = []
 
-        # print(response.text.encode('utf8'))
         soup = BeautifulSoup(response.text.encode("utf8"), "html.parser")
         table = soup.findAll("table", {"class": "datadisplaytable"})[0]
         rows = table.findAll("tr")
