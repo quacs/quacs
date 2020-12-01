@@ -37,6 +37,7 @@
                   v-for="shortSem in allSems"
                   :key="shortSem"
                   :href="shortSemToURL(shortSem)"
+                  :title="shortSemToLongSem(shortSem)"
                   >{{ shortSemToLongSem(shortSem) }}</b-dropdown-item
                 >
               </b-nav-item-dropdown>
