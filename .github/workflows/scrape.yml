@@ -2,11 +2,6 @@ name: Scrape new data
 on:
   repository_dispatch:
     types: scrape
-  push:
-    branches:
-      - master
-  schedule:
-    - cron: '0 * * * *'
 
 jobs:
   scrape-schools:
