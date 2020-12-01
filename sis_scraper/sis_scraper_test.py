@@ -51,15 +51,14 @@ def get_date(year, ts) -> Range:
 
 
 # returns true if timeslot dateranges are not overlapping
-def dateranges_dont_overlap(year, ts1, ts2):
+def dateranges_do_overlap(year, ts1, ts2):
     # date comparision code adapted from here https://stackoverflow.com/a/9044111/7589854
     r1 = get_date(year, ts1)
     r2 = get_date(year, ts2)
     latest_start = max(r1.start, r2.start)
     earliest_end = min(r1.end, r2.end)
     delta = (earliest_end - latest_start).days + 1
-    overlap = max(0, delta) > 0
-    return overlap
+    return delta > 0
 
 
 # returns if sections conflict based on neieve method
@@ -72,7 +71,7 @@ def naive_section_conflict(a, b, year):
                 continue
 
             # If the days they happen in the semester don't overlap, skip it
-            if dateranges_dont_overlap(year, ts1, ts2):
+            if not dateranges_do_overlap(year, ts1, ts2):
                 continue
 
             for day in ts1["days"]:
