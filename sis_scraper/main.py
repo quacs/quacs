@@ -307,9 +307,36 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         with open(f"data/{term}/schools.json", "w") as schools_f:
             json.dump(school_columns, schools_f, sort_keys=False, indent=2)
 
+        unique_ranges = set()
+        get_date = lambda x: date(1, int(x[0]), int(x[1]))
+
+        divide = list(range(1, 61))
+
+        for dept in data:
+            for course in dept["courses"]:
+                for section in course["sections"]:
+                    for time in section["timeslots"]:
+                        if time["timeStart"] >= 0 and time["timeEnd"] >= 0:
+                            divide = [
+                                x
+                                for x in divide
+                                if (time["timeStart"] % x == time["timeEnd"] % x == 0)
+                            ]
+                        start = time["dateStart"].split("/")
+
+                        if len(start) < 2:
+                            continue
+                        start_date = get_date(start)
+                        unique_ranges.add(start_date)
+        unique_ranges = list(unique_ranges)
+        unique_ranges.sort(reverse=True)
+
+        MINUTE_GRANULARITY = max(divide)
+        NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
+
         # Generate binary conflict output
-        # day * 24 hours/day * 60minutes/hour = total buckets
-        offset = lambda x: x * 24 * 60
+        # day * 24 hours/day * NUM_MIN_PER_HOUR = total buckets
+        offset = lambda x: x * 24 * NUM_MIN_PER_HOUR
 
         day_offsets = {
             "M": offset(0),
@@ -320,22 +347,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
             "S": offset(5),
             "U": offset(6),
         }
-
-        unique_ranges = set()
-        get_date = lambda x: date(1, int(x[0]), int(x[1]))
-
-        for dept in data:
-            for course in dept["courses"]:
-                for section in course["sections"]:
-                    for time in section["timeslots"]:
-                        start = time["dateStart"].split("/")
-
-                        if len(start) < 2:
-                            continue
-                        start_date = get_date(start)
-                        unique_ranges.add(start_date)
-        unique_ranges = list(unique_ranges)
-        unique_ranges.sort(reverse=True)
 
         BITS_PER_SLICE = offset(len(day_offsets))
         BIT_VEC_SIZE = BITS_PER_SLICE * len(unique_ranges)
@@ -368,7 +379,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
 
                             for day in time["days"]:
                                 for hour in range(0, 2400, 100):
-                                    for minute in range(60):
+                                    for minute in range(0, 60, MINUTE_GRANULARITY):
                                         if (
                                             time["timeStart"] <= hour + minute
                                             and time["timeEnd"] > hour + minute
@@ -377,7 +388,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                                             hour_idx = hour // 100
                                             index = BITS_PER_SLICE * i + (
                                                 day_offsets[day]
-                                                + hour_idx * 60
+                                                + hour_idx * NUM_MIN_PER_HOUR
                                                 + minute_idx
                                             )
                                             conflict[index] = 1
