@@ -4,9 +4,9 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
-            src="@/assets/images/quacs_logo_christmas.svg"
+            src="@/assets/images/quacs_logo_white_duck.svg"
             alt="QuACS Home"
-            style="height: 50px;"
+            style="height: 27px;"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
