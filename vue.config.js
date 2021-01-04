@@ -8,9 +8,9 @@ function shortSemToURL(shortSem) {
   let sem = "";
   if (semNum === "01") {
     sem = "spring";
-  } else if (semNum === "09") {
+  } else if (semNum === "09" || semNum === "02") {
     sem = "fall";
-  } else if (semNum === "05") {
+  } else if (semNum === "05" || semNum === "03") {
     sem = "summer";
   } else {
     sem = semNum;

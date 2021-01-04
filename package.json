@@ -4,10 +4,14 @@
   "private": true,
   "scripts": {
     "serve": "./scripts/build_entry.sh -d",
+    "oxy-serve": "./scripts/build_entry.sh -d",
     "build": "./scripts/build_entry.sh -b",
+    "oxy-build": "./scripts/build_entry.sh -b",
     "debug-build": "./scripts/build_entry.sh -d -b",
+    "oxy-debug-build": "./scripts/build_entry.sh -d -b",
     "lint": "vue-cli-service lint",
-    "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
+    "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh",
+    "oxy-gh-pages-deploy": "sh scripts/oxy-gh-pages-deploy.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.32",

@@ -244,9 +244,9 @@ export function shortSemToLongSem() {
     let sem = "";
     if (semNum === "01") {
       sem = "Spring";
-    } else if (semNum === "09") {
+    } else if (semNum === "09" || semNum === "02") {
       sem = "Fall";
-    } else if (semNum === "05") {
+    } else if (semNum === "05" || semNum === "03") {
       sem = "Summer";
     } else {
       sem = semNum;
@@ -267,9 +267,9 @@ export function shortSemToURL() {
     let sem = "";
     if (semNum === "01") {
       sem = "spring";
-    } else if (semNum === "09") {
+    } else if (semNum === "09" || semNum === "02") {
       sem = "fall";
-    } else if (semNum === "05") {
+    } else if (semNum === "05" || semNum === "03") {
       sem = "summer";
     } else {
       sem = semNum;
