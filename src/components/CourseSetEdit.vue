@@ -115,9 +115,7 @@ import {
   VBModal,
 } from "bootstrap-vue";
 import { mapGetters, mapState } from "vuex";
-
-// eslint-disable-next-line
-declare const umami: any; // Not initialized here since it's declared elsewhere
+import { trackEvent } from "@/utilities";
 
 @Component({
   components: {
@@ -152,7 +150,7 @@ export default class CourseSetEdit extends Vue {
   newCourseSetName = "";
 
   trackShow(): void {
-    umami.trackEvent("Show course sets", "course-set");
+    trackEvent("Show course sets", "course-set");
   }
 
   createNewCourseSet(): void {
@@ -161,7 +159,7 @@ export default class CourseSetEdit extends Vue {
       return;
     }
 
-    umami.trackEvent("Add course set", "course-set");
+    trackEvent("Add course set", "course-set");
 
     this.$store.dispatch("schedule/addCourseSet", {
       name: this.newCourseSetName,
@@ -171,7 +169,7 @@ export default class CourseSetEdit extends Vue {
   }
 
   removeCourseSet(name: string): void {
-    umami.trackEvent("Remove course set", "course-set");
+    trackEvent("Remove course set", "course-set");
 
     this.$store.dispatch("schedule/removeCourseSet", {
       name: name,
@@ -179,7 +177,7 @@ export default class CourseSetEdit extends Vue {
   }
 
   switchCurrentCourseSet(name: string): void {
-    umami.trackEvent("Change active course set", "course-set");
+    trackEvent("Change active course set", "course-set");
 
     this.$store.commit("schedule/switchCurrentCourseSet", {
       name: name,

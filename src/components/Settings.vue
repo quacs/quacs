@@ -42,6 +42,9 @@
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >
+      <b-form-checkbox switch v-model="enableTracking"
+        >Enable anonymized usage analytics?</b-form-checkbox
+      >
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()">
           Close
@@ -54,9 +57,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
-
-// eslint-disable-next-line
-declare const umami: any; // Not initialized here since it's declared elsewhere
+import { trackEvent } from "@/utilities";
 
 @Component({
   components: {
@@ -87,6 +88,23 @@ declare const umami: any; // Not initialized here since it's declared elsewhere
         );
       },
     },
+
+    enableTracking: {
+      get() {
+        return this.$store.state.settings.enableTracking;
+      },
+      set() {
+        this.$store.commit(
+          "settings/setTracking",
+          !this.$store.state.settings.trackingEnabled
+        );
+
+        // If we just disabled tracking, this won't actually log any event.
+        // For simplicity it's just hardcoded to enabling, since that's the
+        // only thing which should be tracked by this setting.
+        trackEvent("enable-tracking", "setting");
+      },
+    },
   },
 })
 export default class Settings extends Vue {
@@ -108,7 +126,7 @@ export default class Settings extends Vue {
   ];
 
   trackSettingChange(settingName: string, value: string): void {
-    umami.trackEvent(`${settingName}: ${value}`, "setting");
+    trackEvent(`${settingName}: ${value}`, "setting");
   }
 }
 </script>

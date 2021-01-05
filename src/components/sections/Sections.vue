@@ -163,11 +163,9 @@ import {
   formatTimeslot,
   getSessions,
   hasMetAllPrerequisites,
+  trackEvent,
 } from "@/utilities";
 import { VBTooltip } from "bootstrap-vue";
-
-// eslint-disable-next-line
-declare const umami: any; // Not initialized here since it's declared elsewhere
 
 @Component({
   components: {
@@ -256,15 +254,15 @@ export default class Section extends Vue {
     } else {
       // This happens when we're individually changing sections
       if (selected) {
-        umami.trackEvent("Section added", this.course.subj);
+        trackEvent("Section added", this.course.subj);
       } else {
-        umami.trackEvent("Section removed", this.course.subj);
+        trackEvent("Section removed", this.course.subj);
       }
     }
   }
 
   toggleAll(): void {
-    umami.trackEvent("All toggled", this.course.subj);
+    trackEvent("All toggled", this.course.subj);
 
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
@@ -365,7 +363,7 @@ export default class Section extends Vue {
   }
 
   showSectionModal(crn: string): void {
-    umami.trackEvent("Section modal", "info-modal");
+    trackEvent("Section modal", "info-modal");
     this.$bvModal.show("section-info" + crn);
   }
 }

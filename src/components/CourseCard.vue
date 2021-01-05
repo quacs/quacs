@@ -127,15 +127,12 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
 import { ModalPlugin } from "bootstrap-vue";
 import { Course } from "@/typings";
-import { hasMetAllPrerequisites } from "@/utilities";
+import { hasMetAllPrerequisites, trackEvent } from "@/utilities";
 import CourseInfo from "@/components/sections/CourseInfo.vue";
 
 import Sections from "./sections/Sections.vue";
 
 Vue.use(ModalPlugin);
-
-// eslint-disable-next-line
-declare const umami: any; // Not initialized here since it's declared elsewhere
 
 @Component({
   components: {
@@ -271,7 +268,7 @@ export default class CourseCard extends Vue {
   }
 
   showCourseModal(crn: string): void {
-    umami.trackEvent("Course modal", "info-modal");
+    trackEvent("Course modal", "info-modal");
     this.$bvModal.show("course-info" + crn);
   }
 }
