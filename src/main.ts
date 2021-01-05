@@ -35,21 +35,21 @@ import {
 import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
 library.add(
-  faCog,
+  faCalendar,
   faCaretRight,
   faCheck,
-  faGithub,
+  faCog,
   faDiscord,
-  faInfoCircle,
-  faCalendar,
-  faTrash,
+  faEdit,
   faExclamationTriangle,
-  faUser,
-  faUserSlash,
+  faGithub,
+  faInfoCircle,
+  faLaptopHouse,
   faPen,
   faPlus,
-  faLaptopHouse,
-  faEdit
+  faTrash,
+  faUser,
+  faUserSlash
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
