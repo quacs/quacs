@@ -121,3 +121,14 @@ site/public/umami.js
 
 site/gh-pages-site/
 site/site/
+
+
+scrapers/transcript_scraper/*.html
+scrapers/!transcript_scraper/index.html
+scrapers/transcript_scraper/*_files/*
+
+scrapers/*/data
+
+scrapers/*.json
+scrapers/*.msgpack
+scrapers/*.rs
