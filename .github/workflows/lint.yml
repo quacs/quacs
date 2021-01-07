@@ -19,13 +19,16 @@ jobs:
         run: git submodule update --remote --recursive
 
       - name: Clean install dependencies
+        working-directory: ./site
         run: yarn install --frozen-lockfile
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Run linter
+        working-directory: ./site
         run: yarn lint --no-fix --max-warnings 0
 
       - name: Run build
+        working-directory: ./site
         run: yarn build

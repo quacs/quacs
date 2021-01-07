@@ -120,4 +120,4 @@ src/quacs-rs/*.wasm
 public/umami.js
 
 gh-pages-site/
-site/
+site/site/

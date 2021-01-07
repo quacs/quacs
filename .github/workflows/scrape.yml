@@ -1,0 +1,256 @@
+name: Scrape new data
+on:
+  repository_dispatch:
+    types: scrape
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  scrape-schools:
+    name: Scrapes schools per year
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Print event name
+        run: echo $GITHUB_EVENT_NAME
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pip requirements
+        working-directory: ./scrapers
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Scrape schools
+        working-directory: ./scrapers
+        run: python3 catalog_scraper/main.py schools LATEST_YEAR
+
+      - name: Output semesters
+        working-directory: ./scrapers
+        run: |
+          echo -n "::set-output name=semesters::["
+          ITER=0
+          for directory in $(find data -print0 | xargs -0); do
+            if test $ITER -ne 0; then
+              echo -n ","
+            fi
+            echo -n "\"$directory\""
+            ITER=$((ITER + 1))
+          done
+          echo "]"
+
+      - name: Upload data
+        working-directory: ./scrapers
+        uses: actions/upload-artifact@v2
+        with:
+          name: schools
+          path: data/
+
+  scrape-courses-and-prerequisites:
+    name: Scrapes courses and prerequisites
+    runs-on: ubuntu-latest
+    needs: [scrape-schools]
+    steps:
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pip requirements
+        working-directory: ./scrapers
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Populate env
+        working-directory: ./scrapers
+        run: printf "RIN=${{ secrets.RIN }}\nPASSWORD=${{ secrets.PASSWORD }}" > sis_scraper/.env
+
+      - name: Get semester data
+        working-directory: ./scrapers
+        uses: actions/download-artifact@v2
+        with:
+          name: schools
+          path: data
+
+      - name: Scrape courses
+        working-directory: ./scrapers
+        run: python3 sis_scraper/main.py
+
+      - name: Scrape prerequisites
+        working-directory: ./scrapers
+        run: python3 prerequisites_scraper/main.py
+
+      - name: Upload data
+        working-directory: ./scrapers
+        uses: actions/upload-artifact@v2
+        with:
+          name: courses
+          path: data/
+
+  # This may need to be updated now that the scrapers have been moved into the same repo as the site
+  # scrape-degree-requirements:
+  #   name: Scrape degree requirements
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout degree planner
+  #       uses: actions/checkout@v2
+  #       with:
+  #         path: 'degree-planner'
+  #         repository: 'quacs/degree-planner'
+
+  #     - name: Install geckodriver
+  #       run: |
+  #           export GECKODRIVER_VERSION="v0.27.0"
+  #           wget https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz
+  #           tar -xvzf geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz
+  #           chmod +x geckodriver
+
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.x'
+
+  #     - name: Set up Rust
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r degree-planner/requirements.txt
+
+  #     - name: Populate env
+  #       run: printf "RIN=${{ secrets.RIN }}\nPASSWORD=${{ secrets.PASSWORD }}" > degree-planner/.env
+
+  #     - name: Scrape courses
+  #       run: |
+  #           cd degree-planner
+  #           python3 scraper.py refresh_data
+
+  #     - name: Upload data
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: degree_requirements
+  #         path: degree-planner/*.json
+
+  scrape-faculty:
+    name: Scrape faculty
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install pip requirements
+        working-directory: ./scrapers
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Scrape faculty
+        working-directory: ./scrapers
+        run: python3 faculty_directory_scraper/main.py
+
+      - name: Upload data
+        working-directory: ./scrapers
+        uses: actions/upload-artifact@v2
+        with:
+          name: faculty
+          path: faculty.json
+
+  # This may need to be updated now that the scrapers have been moved into the same repo as the site
+  # scrape-catalog:
+  #   name: Scrapes catalog by year
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout scrapers
+  #       uses: actions/checkout@v2
+  #       with:
+  #         ref: 'master'
+
+  #     - name: Set up python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.x'
+
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r requirements.txt
+
+  #     - name: Scrape catalog
+  #       run: python3 catalog_scraper/main.py catalog LATEST_YEAR
+
+  #     - name: Upload data
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: catalog
+  #         path: data/
+
+  commit-data:
+    name: Commit changes
+    runs-on: ubuntu-latest
+    needs: [scrape-courses-and-prerequisites, scrape-faculty]
+    steps:
+      - name: Checkout data repository
+        working-directory: ./scrapers
+        uses: actions/checkout@v2
+        with:
+          path: 'data'
+          repository: 'quacs/quacs-data'
+          ref: 'master'
+          clean: true
+          token: ${{ secrets.GITHUBTOKEN }}
+
+      - name: Get scraped data
+        working-directory: ./scrapers
+        uses: actions/download-artifact@v2
+
+      - name: Generate meta json file
+        working-directory: ./scrapers
+        run: echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > data/meta.json
+
+      - name: Commit new data
+        working-directory: ./scrapers
+        run: |
+          # for directory in $(find courses/* -type d -print0 | xargs -0); do
+          #   DIR_BASENAME=$(basename "$directory")
+          #   cp -r catalog/$DIR_BASENAME/* "$directory"
+          # done
+
+          rsync -avz courses/ data/semester_data/
+
+          cp faculty/faculty.json data
+
+          cd data
+          git config user.name "QuACS" && git config user.email "github@quacs.org"
+
+          git add .
+
+          git commit -m "$(date -u)"
+          git push --force
+
+      - name: Deploy updated website
+        working-directory: ./scrapers
+        if: ${{ success() }}
+        run: |
+          cd data
+          curl -H "Accept: application/vnd.github.everest-preview+json" \
+              -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
+              --request POST \
+              --data '{"event_type": "deploy"}' \
+              https://api.github.com/repos/quacs/quacs/dispatches
