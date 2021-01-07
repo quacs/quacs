@@ -25,12 +25,11 @@ jobs:
           python-version: '3.x'
 
       - name: Checkout site repo
-        working-directory: ./site
         uses: actions/checkout@v2
         with:
           repository: "quacs/site"
           ref: "master"
-          path: "gh-pages-site"
+          path: "site/gh-pages-site"
           token: ${{ secrets.QUACS_TOKEN }}
 
       - name: Clean install dependencies
