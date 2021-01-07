@@ -77,11 +77,10 @@ jobs:
         run: printf "RIN=${{ secrets.RIN }}\nPASSWORD=${{ secrets.PASSWORD }}" > sis_scraper/.env
 
       - name: Get semester data
-        working-directory: ./scrapers
         uses: actions/download-artifact@v2
         with:
           name: schools
-          path: data
+          path: scrapers/data
 
       - name: Scrape courses
         working-directory: ./scrapers
@@ -214,8 +213,9 @@ jobs:
           token: ${{ secrets.GITHUBTOKEN }}
 
       - name: Get scraped data
-        working-directory: ./scrapers
         uses: actions/download-artifact@v2
+        with:
+          path: scrapers
 
       - name: Generate meta json file
         working-directory: ./scrapers
