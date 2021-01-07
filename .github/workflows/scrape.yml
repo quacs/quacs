@@ -51,11 +51,10 @@ jobs:
           echo "]"
 
       - name: Upload data
-        working-directory: ./scrapers
         uses: actions/upload-artifact@v2
         with:
           name: schools
-          path: data/
+          path: scrapers/data/
 
   scrape-courses-and-prerequisites:
     name: Scrapes courses and prerequisites
@@ -93,11 +92,10 @@ jobs:
         run: python3 prerequisites_scraper/main.py
 
       - name: Upload data
-        working-directory: ./scrapers
         uses: actions/upload-artifact@v2
         with:
           name: courses
-          path: data/
+          path: scrapers/data/
 
   # This may need to be updated now that the scrapers have been moved into the same repo as the site
   # scrape-degree-requirements:
@@ -166,11 +164,10 @@ jobs:
         run: python3 faculty_directory_scraper/main.py
 
       - name: Upload data
-        working-directory: ./scrapers
         uses: actions/upload-artifact@v2
         with:
           name: faculty
-          path: faculty.json
+          path: scrapers/faculty.json
 
   # This may need to be updated now that the scrapers have been moved into the same repo as the site
   # scrape-catalog:
