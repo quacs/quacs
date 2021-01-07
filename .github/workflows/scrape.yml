@@ -21,6 +21,9 @@ jobs:
       - name: Print event name
         run: echo $GITHUB_EVENT_NAME
 
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
       - name: Set up python
         uses: actions/setup-python@v2
         with:
@@ -62,6 +65,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [scrape-schools]
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
       - name: Set up python
         uses: actions/setup-python@v2
         with:
@@ -147,6 +153,9 @@ jobs:
     name: Scrape faculty
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
       - name: Set up python
         uses: actions/setup-python@v2
         with:
