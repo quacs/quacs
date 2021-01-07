@@ -31,8 +31,6 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          pwd
-          ls
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
