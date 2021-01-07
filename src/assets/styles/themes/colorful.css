@@ -1,9 +1,0 @@
-[data-theme-accent="colorful"] {
-        --navbar-background: #473200;
-        --navbar-unselected-text: rgba(255, 255, 255, 0.7);
-        --navbar-unselected-text-hover: rgba(255, 255, 255, 0.9);
-        --navbar-text-focus: rgba(255, 255, 255, 0.9);
-        --navbar-text-disabled: rgba(255, 255, 255, 0.5);
-        --navbar-text-active: rgba(255, 255, 255, 0.9);
-        --navbar-text-show: rgba(255, 255, 255, 1);
-}
