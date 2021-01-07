@@ -107,17 +107,28 @@ dist
 .tern-port
 
 # Quacs Internal Dependencies
-src/store/data/
-src/quacs-rs/target
-src/quacs-rs/src/data
-/target
-src/quacs-rs/Cargo.lock
-src/quacs-rs/package.json
-src/quacs-rs/*.ts
-src/quacs-rs/*.js
-src/quacs-rs/*.wasm
+site/src/store/data/
+site/src/quacs-rs/target
+site/src/quacs-rs/src/data
+site/target
+site/src/quacs-rs/Cargo.lock
+site/src/quacs-rs/package.json
+site/src/quacs-rs/*.ts
+site/src/quacs-rs/*.js
+site/src/quacs-rs/*.wasm
 
-public/umami.js
+site/public/umami.js
 
-gh-pages-site/
+site/gh-pages-site/
 site/site/
+
+
+scrapers/transcript_scraper/*.html
+scrapers/!transcript_scraper/index.html
+scrapers/transcript_scraper/*_files/*
+
+scrapers/*/data
+
+scrapers/*.json
+scrapers/*.msgpack
+scrapers/*.rs
