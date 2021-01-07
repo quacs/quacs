@@ -27,10 +27,11 @@ jobs:
           python-version: '3.x'
 
       - name: Install pip requirements
-        working-directory: ./scrapers
         run: |
+          pwd
+          ls
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r scrapers/requirements.txt
 
       - name: Scrape schools
         working-directory: ./scrapers
@@ -67,10 +68,9 @@ jobs:
           python-version: '3.x'
 
       - name: Install pip requirements
-        working-directory: ./scrapers
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r scrapers/requirements.txt
 
       - name: Populate env
         working-directory: ./scrapers
@@ -153,10 +153,9 @@ jobs:
           python-version: '3.x'
 
       - name: Install pip requirements
-        working-directory: ./scrapers
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r scrapers/requirements.txt
 
       - name: Scrape faculty
         working-directory: ./scrapers
