@@ -17,11 +17,13 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Build site
+        working-directory: ./site
         run: |
           yarn install --frozen-lockfile
           yarn build
 
       - name: Run Lighthouse CI
+        working-directory: ./site
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         run: |

@@ -1,0 +1,145 @@
+{
+  "name": "QuACS",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "./scripts/build_entry.sh -d",
+    "build": "./scripts/build_entry.sh -b",
+    "debug-build": "./scripts/build_entry.sh -d -b",
+    "lint": "vue-cli-service lint",
+    "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-brands-svg-icons": "^5.15.1",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@trevoreyre/autocomplete-vue": "^2.2.0",
+    "@types/file-saver": "^2.0.1",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.5.3",
+    "bootstrap-vue": "^2.21.2",
+    "file-saver": "^2.0.5",
+    "fuse.js": "^6.4.6",
+    "ics": "^2.26.2",
+    "register-service-worker": "^1.7.2",
+    "simple-web-worker": "^1.2.0",
+    "vue": "^2.6.12",
+    "vue-async-computed": "^3.9.0",
+    "vue-axios": "^3.2.2",
+    "vue-class-component": "^7.2.6",
+    "vue-property-decorator": "^9.1.2",
+    "vue-router": "^3.4.9",
+    "vuex": "^3.6.0",
+    "vuex-persistedstate": "^3.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@vue/cli-plugin-eslint": "~4.5.7",
+    "@vue/cli-plugin-pwa": "~4.5.10",
+    "@vue/cli-plugin-router": "~4.5.9",
+    "@vue/cli-plugin-typescript": "~4.5.9",
+    "@vue/cli-plugin-vuex": "~4.5.10",
+    "@vue/cli-service": "~4.5.9",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^5.1.0",
+    "eslint": "^7.17.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.1.0",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.0.5",
+    "sass": "^1.32.2",
+    "sass-loader": "^10.1.0",
+    "typescript": "~4.1.3",
+    "vue-template-compiler": "^2.6.12",
+    "vuex-module-decorators": "^1.0.1",
+    "workerize-loader": "^1.3.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "ignorePatterns": [
+      "src/quacs-rs/**"
+    ],
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended",
+      "@vue/typescript/recommended",
+      "@vue/prettier",
+      "@vue/prettier/@typescript-eslint"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {
+      "array-callback-return": "warn",
+      "block-scoped-var": "error",
+      "curly": [
+        "warn",
+        "all"
+      ],
+      "dot-notation": "warn",
+      "eqeqeq": "warn",
+      "init-declarations": "error",
+      "no-alert": "warn",
+      "no-caller": "error",
+      "no-confusing-arrow": "warn",
+      "no-console": "warn",
+      "no-duplicate-imports": "warn",
+      "no-eq-null": "warn",
+      "no-eval": "error",
+      "no-floating-decimal": "warn",
+      "no-implicit-coercion": "warn",
+      "no-implied-eval": "error",
+      "no-lone-blocks": "warn",
+      "no-multi-spaces": "warn",
+      "no-new": "warn",
+      "no-new-wrappers": "warn",
+      "no-param-reassign": "warn",
+      "no-script-url": "error",
+      "no-self-compare": "warn",
+      "no-sequences": "warn",
+      "no-shadow": "warn",
+      "no-template-curly-in-string": "warn",
+      "no-undef-init": "warn",
+      "no-unused-expressions": "warn",
+      "no-use-before-define": "warn",
+      "no-useless-computed-key": "warn",
+      "no-useless-concat": "warn",
+      "no-useless-rename": "warn",
+      "no-var": "error",
+      "sort-imports": [
+        "warn",
+        {
+          "ignoreDeclarationSort": true
+        }
+      ],
+      "vars-on-top": "warn",
+      "@typescript-eslint/ban-ts-comment": [
+        "error",
+        {
+          "ts-ignore": "allow-with-description",
+          "ts-expect-error": "allow-with-description"
+        }
+      ]
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "gitHooks": {
+    "post-checkout": "yarn install --frozen-lockfile",
+    "post-merge": "yarn install --frozen-lockfile",
+    "pre-commit": "yarn install --frozen-lockfile && lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue,ts,tsx}": [
+      "vue-cli-service lint --max-warnings 0"
+    ]
+  }
+}

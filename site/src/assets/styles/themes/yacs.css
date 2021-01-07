@@ -1,0 +1,29 @@
+[data-theme="yacs"] {
+        --navbar-background: #c65353;
+        --navbar-unselected-text: #ffffff;
+        --navbar-unselected-text-hover: #ffffff;
+        --navbar-text-focus: #ffffff;
+        --navbar-text-disabled: #ffffff;
+        --navbar-text-active: #ffffff;
+        --navbar-text-show: #ffffff;
+        --course-row-hover: #d57f7f;
+        --conflict-row: #ffffff;
+        --conflict-row-hover: #d57f7f;
+        --selected-row: #c65353;
+        --selected-row-hover: #d57f7f;
+
+
+        --calendar-text-color-0: #d9652b;
+
+        --calendar-text-color-1: #d1265d;
+
+        --calendar-text-color-2: #1577aa;
+
+        --calendar-text-color-3: #bf8a2e;
+
+        --calendar-text-color-4: #008a2e;
+
+        --calendar-text-color-5: #853d80;
+
+        --calendar-text-color-6: #9d5733;
+}
