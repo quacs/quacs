@@ -2,9 +2,10 @@ name: Scrape new data
 on:
   repository_dispatch:
     types: scrape
-  push:
-    branches:
-      - master
+  # TODO Ideally this will only run when changes to the scraper folder are made
+  # push:
+  #   branches:
+  #     - master
   schedule:
     - cron: '0 * * * *'
 
