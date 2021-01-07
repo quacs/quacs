@@ -203,10 +203,9 @@ jobs:
     needs: [scrape-courses-and-prerequisites, scrape-faculty]
     steps:
       - name: Checkout data repository
-        working-directory: ./scrapers
         uses: actions/checkout@v2
         with:
-          path: 'data'
+          path: 'scrapers/data'
           repository: 'quacs/quacs-data'
           ref: 'master'
           clean: true
