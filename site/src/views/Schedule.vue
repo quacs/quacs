@@ -309,7 +309,7 @@ export default class Schedule extends Vue {
               const hourStart = Math.floor(timeslot.timeStart / 100);
               const minStart = timeslot.timeStart % 100;
               let startJSDate = new Date(
-                `${year}-${monthStart}-${dayStart} ${hourStart}:${minStart}:0`
+                `${year}/${monthStart}/${dayStart} ${hourStart}:${minStart}:0`
               );
 
               // Make a js dates for end time
@@ -318,7 +318,7 @@ export default class Schedule extends Vue {
               const hourEnd = Math.floor(timeslot.timeEnd / 100);
               const minEnd = timeslot.timeEnd % 100;
               let endJSDate = new Date(
-                `${year}-${monthEnd}-${dayEnd} ${hourEnd}:${minEnd}:0`
+                `${year}/${monthEnd}/${dayEnd} ${hourEnd}:${minEnd}:0`
               );
 
               // Find the first day after the semester starts that has this section
