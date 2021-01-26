@@ -11,9 +11,7 @@ export const init = async (): Promise<void> => {
   wasm.init();
 };
 
-export const generateCurrentSchedulesAndConflicts = async (): Promise<
-  number
-> => {
+export const generateCurrentSchedulesAndConflicts = async (): Promise<number> => {
   while (wasm === null) {
     await new Promise((resolve: (value?: unknown) => void) =>
       setTimeout(resolve, 0)

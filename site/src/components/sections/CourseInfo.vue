@@ -26,9 +26,7 @@
         sections for more info on their exact prerequisites.
       </template>
       <template v-slot:modal-footer="{ ok }">
-        <b-button variant="primary" @click="ok()">
-          Close
-        </b-button>
+        <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
     </b-modal>
   </div>
