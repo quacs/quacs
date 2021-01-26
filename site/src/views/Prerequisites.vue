@@ -196,9 +196,7 @@ import {
   BTabs,
   VBTooltip,
 } from "bootstrap-vue";
-
-// eslint-disable-next-line
-declare const umami: any; // Not initialized here since it's declared elsewhere
+import { trackEvent } from "@/utilities";
 
 @Component({
   components: {
@@ -235,7 +233,7 @@ declare const umami: any; // Not initialized here since it's declared elsewhere
       },
       set() {
         const new_val = !this.$store.state.prerequisites.enableChecking;
-        umami.trackEvent(
+        trackEvent(
           (new_val ? "Enable" : "Disable") + " prerequisites",
           "prerequisites"
         );
@@ -260,13 +258,13 @@ export default class Prerequisites extends Vue {
   addCourse(): void {
     // @ts-expect-error: no u typescript, this does exist
     if (this.verifyNewCourse) {
-      umami.trackEvent("Manual add course", "prerequisites");
+      trackEvent("Manual add course", "prerequisites");
       this.$store.commit("prerequisites/addPriorCourse", this.newCourse);
     }
   }
 
   removeCourse(course: string): void {
-    umami.trackEvent("Remove course", "prerequisites");
+    trackEvent("Remove course", "prerequisites");
     this.$store.commit("prerequisites/removePriorCourse", course);
   }
 
@@ -288,7 +286,7 @@ export default class Prerequisites extends Vue {
           return;
         }
 
-        umami.trackEvent("Import transcript", "prerequisites");
+        trackEvent("Import transcript", "prerequisites");
         for (const term of transcript.terms) {
           for (const course of term.courses) {
             store.commit(

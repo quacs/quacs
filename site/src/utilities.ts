@@ -1,6 +1,9 @@
 import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
 
+// eslint-disable-next-line
+declare const umami: any; // Not initialized here since it's declared in an imported file
+
 export const DAYS: Day[] = [
   {
     name: "Monday",
@@ -277,4 +280,24 @@ export function shortSemToURL() {
 
     return `/${sem}${year}`;
   };
+}
+
+// All tracking should occur through these functions.  If the user has opted out of tracking,
+// they will just exit without logging anything.
+export function trackEvent(event_value: string, event_type: string): void {
+  const trackingEnabled = store.getters["settings/enableTracking"]();
+  if (!trackingEnabled) {
+    return;
+  }
+
+  umami.trackEvent(event_value, event_type);
+}
+
+export function trackView(url: string, referrer?: string): void {
+  const trackingEnabled = store.getters["settings/enableTracking"]();
+  if (!trackingEnabled) {
+    return;
+  }
+
+  umami.trackView(url, referrer);
 }
