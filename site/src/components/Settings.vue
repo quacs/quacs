@@ -1,9 +1,7 @@
 <template>
   <div>
     <b-modal id="settings-modal" title="Settings">
-      <label for="timePreference">
-        Time Preference:
-      </label>
+      <label for="timePreference"> Time Preference: </label>
       <b-form-select
         id="timePreference"
         v-model="timePreference"
@@ -12,9 +10,7 @@
       ></b-form-select>
       <br />
       <br />
-      <label for="colorTheme">
-        Color Theme:
-      </label>
+      <label for="colorTheme"> Color Theme: </label>
       <b-form-select
         id="colorTheme"
         v-model="colorTheme"
@@ -46,9 +42,7 @@
         >Enable anonymized usage analytics?</b-form-checkbox
       >
       <template v-slot:modal-footer="{ ok }">
-        <b-button variant="primary" @click="ok()">
-          Close
-        </b-button>
+        <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
     </b-modal>
   </div>

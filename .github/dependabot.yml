@@ -1,7 +1,7 @@
 version: 2
 updates:
 - package-ecosystem: npm
-  directory: "/"
+  directory: "/site/"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
@@ -9,9 +9,15 @@ updates:
     - "automerge"
 
 - package-ecosystem: cargo
-  directory: "/src/quacs-rs"
+  directory: "/site/src/quacs-rs"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
   labels:
     - "automerge"
+
+- package-ecosystem: pip
+  directory: "/scrapers/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10

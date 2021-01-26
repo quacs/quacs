@@ -1,5 +1,5 @@
 <template>
-  <table class="table table-bordered" style="margin-bottom: 0px;">
+  <table class="table table-bordered" style="margin-bottom: 0px">
     <thead>
       <tr
         v-on:click="toggleAll()"
@@ -7,7 +7,7 @@
         tabindex="0"
         v-on:keyup.enter="toggleAll()"
       >
-        <th style="width: 100%;">Toggle all sections</th>
+        <th style="width: 100%">Toggle all sections</th>
         <th
           v-for="day in getDays()"
           v-bind:key="day"

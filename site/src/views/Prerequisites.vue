@@ -78,7 +78,7 @@
             <div
               v-for="course in priorCourses"
               :key="course"
-              style="margin-left: 2rem; margin-bottom: 0.5rem;"
+              style="margin-left: 2rem; margin-bottom: 0.5rem"
             >
               <font-awesome-icon
                 :icon="['fas', 'trash']"
@@ -171,9 +171,7 @@
         >https://discord.gg/EyGZTAP
       </a>
       <template v-slot:modal-footer="{ ok }">
-        <b-button variant="primary" @click="ok()">
-          Close
-        </b-button>
+        <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
     </b-modal>
   </div>

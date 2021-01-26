@@ -6,7 +6,7 @@
       v-on:show="trackShow()"
     >
       <template v-slot:button-content>
-        <em class="nav-text" style="font-style: normal;">{{
+        <em class="nav-text" style="font-style: normal">{{
           currentCourseSet
         }}</em>
       </template>
@@ -77,23 +77,19 @@
               ></b-input-group-append
             >
             <b-form-valid-feedback id="valid-feedback">
-              <span style="visibility: hidden;">Valid</span>
+              <span style="visibility: hidden">Valid</span>
             </b-form-valid-feedback>
             <b-form-invalid-feedback>
               <template v-if="newCourseSetName.length === 0">
                 You must give your course set a name
               </template>
-              <template v-else>
-                Must be a unique name
-              </template>
+              <template v-else> Must be a unique name </template>
             </b-form-invalid-feedback>
           </b-input-group>
         </div>
       </div>
       <template v-slot:modal-footer="{ ok }">
-        <b-button variant="primary" @click="ok()">
-          Close
-        </b-button>
+        <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
     </b-modal>
   </div>

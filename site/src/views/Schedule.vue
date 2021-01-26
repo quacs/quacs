@@ -7,7 +7,7 @@
         rounded="sm"
         opacity="0.7"
       >
-        <div style="padding-bottom: 2rem;" :key="lastNewSchedule">
+        <div style="padding-bottom: 2rem" :key="lastNewSchedule">
           <div class="schedule-select">
             <!-- <div v-if="numSchedules !== 0"> -->
             <b-icon-chevron-left
@@ -109,6 +109,7 @@ import CourseCard from "@/components/CourseCard.vue";
 import { EventAttributes, createEvents } from "ics";
 import { saveAs } from "file-saver";
 import { shortSemToLongSem, trackEvent } from "@/utilities";
+import moment from "moment-timezone";
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -299,35 +300,62 @@ export default class Schedule extends Vue {
               recurrenceRule += year;
               recurrenceRule += timeslot.dateEnd.replace("/", "");
 
-              // Make a js date that starts on the first day of the semester
-              // need to add hours/min/sec to make sure it gets the correct day
-              const month = timeslot.dateStart.split("/")[0];
-              const day = timeslot.dateStart.split("/")[1];
-              let start = new Date(`${year}-${month}-${day} 1:0:0`);
+              // Make a js dates for start time
+              const monthStart = timeslot.dateStart.split("/")[0];
+              const dayStart = timeslot.dateStart.split("/")[1];
+              const hourStart = Math.floor(timeslot.timeStart / 100);
+              const minStart = timeslot.timeStart % 100;
+              let startJSDate = new Date(
+                `${year}/${monthStart}/${dayStart} ${hourStart}:${minStart}:0`
+              );
 
-              //Find the first day after the semester starts that has this section
-              //For example if the semster starts on a monday, but the section is on wednesday
+              // Make a js dates for end time
+              const monthEnd = timeslot.dateStart.split("/")[0];
+              const dayEnd = timeslot.dateStart.split("/")[1];
+              const hourEnd = Math.floor(timeslot.timeEnd / 100);
+              const minEnd = timeslot.timeEnd % 100;
+              let endJSDate = new Date(
+                `${year}/${monthEnd}/${dayEnd} ${hourEnd}:${minEnd}:0`
+              );
+
+              // Find the first day after the semester starts that has this section
+              // For example if the semster starts on a monday, but the section is on wednesday
               // then move the date up to the next wednesday
-              while (!timeslot.days.includes(dayNumToLetter[start.getDay()])) {
-                start.setDate(start.getDate() + 1);
+              while (
+                !timeslot.days.includes(dayNumToLetter[startJSDate.getDay()])
+              ) {
+                startJSDate.setDate(startJSDate.getDate() + 1);
+                endJSDate.setDate(endJSDate.getDate() + 1);
               }
+
+              // parse with NY time, and then convert to UTC
+              // TODO convert this to using a config file where you can set the default timezone
+              // Code based off here https://github.com/adamgibbons/ics/issues/126#issuecomment-586352771
+              const startMomentDate = moment
+                .tz(startJSDate, "America/New_York")
+                .utc();
+              const endMomentDate = moment
+                .tz(endJSDate, "America/New_York")
+                .utc();
 
               events.push({
                 title: section.title,
                 start: [
-                  Number(year),
-                  start.getMonth() + 1,
-                  start.getDate(),
-                  Math.floor(timeslot.timeStart / 100),
-                  timeslot.timeStart % 100,
+                  startMomentDate.get("year"),
+                  startMomentDate.get("month") + 1,
+                  startMomentDate.get("date"),
+                  startMomentDate.get("hour"),
+                  startMomentDate.get("minute"),
                 ],
+                startInputType: "utc",
                 end: [
-                  Number(year),
-                  Number(timeslot.dateStart.split("/")[0]),
-                  Number(timeslot.dateStart.split("/")[1]),
-                  Math.floor(timeslot.timeEnd / 100),
-                  timeslot.timeEnd % 100,
+                  endMomentDate.get("year"),
+                  endMomentDate.get("month") + 1,
+                  endMomentDate.get("date"),
+                  endMomentDate.get("hour"),
+                  endMomentDate.get("minute"),
                 ],
+                endInputType: "utc",
                 location:
                   timeslot.location !== "TBA" ? timeslot.location : undefined,
                 recurrenceRule,

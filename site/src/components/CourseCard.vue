@@ -16,8 +16,8 @@
       v-on:keyup.enter="toggleExpanded()"
       tabindex="0"
     >
-      <div style="display: flex;">
-        <span style="float: left; flex-grow: 2;">
+      <div style="display: flex">
+        <span style="float: left; flex-grow: 2">
           <font-awesome-icon
             :icon="['fas', 'caret-right']"
             class="open_close_icon"

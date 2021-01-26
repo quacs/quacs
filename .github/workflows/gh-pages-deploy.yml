@@ -29,16 +29,19 @@ jobs:
         with:
           repository: "quacs/site"
           ref: "master"
-          path: "gh-pages-site"
+          path: "site/gh-pages-site"
           token: ${{ secrets.QUACS_TOKEN }}
 
       - name: Clean install dependencies
+        working-directory: ./site
         run: yarn install --frozen-lockfile
 
       - name: Install wasm-pack
+        working-directory: ./site
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Run deploy script
+        working-directory: ./site
         run: |
           git -C gh-pages-site config user.name "QuACS" && git -C gh-pages-site config user.email "github@quacs.org"
           yarn gh-pages-deploy
