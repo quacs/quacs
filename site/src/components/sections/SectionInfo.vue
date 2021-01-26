@@ -26,9 +26,7 @@
         . Check SIS for more up to date information.
       </div>
       <template v-slot:modal-footer="{ ok }">
-        <b-button variant="primary" @click="ok()">
-          Close
-        </b-button>
+        <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
     </b-modal>
   </div>
