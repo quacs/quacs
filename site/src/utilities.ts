@@ -285,7 +285,7 @@ export function shortSemToURL() {
 // All tracking should occur through these functions.  If the user has opted out of tracking,
 // they will just exit without logging anything.
 export function trackEvent(event_value: string, event_type: string): void {
-  const trackingEnabled = store.getters["settings/enableTracking"]();
+  const trackingEnabled = store.state.settings.enableTracking;
   if (!trackingEnabled) {
     return;
   }
@@ -294,7 +294,7 @@ export function trackEvent(event_value: string, event_type: string): void {
 }
 
 export function trackView(url: string, referrer?: string): void {
-  const trackingEnabled = store.getters["settings/enableTracking"]();
+  const trackingEnabled = store.state.settings.enableTracking;
   if (!trackingEnabled) {
     return;
   }
