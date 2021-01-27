@@ -285,6 +285,7 @@ export function shortSemToURL() {
 // All tracking should occur through these functions.  If the user has opted out of tracking,
 // they will just exit without logging anything.
 export function trackEvent(event_value: string, event_type: string): void {
+  // @ts-expect-error: For whatever reason, Vuex's typings don't include modules in the state so it doesn't realize we can access `settings` here.
   const trackingEnabled = store.state.settings.enableTracking;
   if (!trackingEnabled) {
     return;
@@ -294,6 +295,7 @@ export function trackEvent(event_value: string, event_type: string): void {
 }
 
 export function trackView(url: string, referrer?: string): void {
+  // @ts-expect-error: For whatever reason, Vuex's typings don't include modules in the state so it doesn't realize we can access `settings` here.
   const trackingEnabled = store.state.settings.enableTracking;
   if (!trackingEnabled) {
     return;
