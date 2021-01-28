@@ -98,7 +98,7 @@ export default class Calendar extends Vue {
   readonly endTime = 1380;
   readonly totalHeight = 700;
 
-  selectedDate!: number;
+  selectedDate = 0; // This will be set to the correct value before rendering the schedule
 
   mounted(): void {
     this.resetToStartDate();
