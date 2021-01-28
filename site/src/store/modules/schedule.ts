@@ -2,7 +2,7 @@ import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import * as quacsWorker from "@/workers/schedule.worker";
 import Vue from "vue";
-import { CourseSets } from "@/typings";
+import { CourseSection, CourseSets } from "@/typings";
 
 // yay typescript fun
 const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
@@ -177,7 +177,24 @@ export default class Schedule extends VuexModule {
   }
 
   get getSchedule() {
-    return (idx: number): Promise<Uint32Array> => worker.getSchedule(idx);
+    return async (idx: number): Promise<CourseSection[]> => {
+      const scheduleCrns = await worker.getSchedule(idx);
+
+      // TODO: Is it possible to refactor this to not require a triple-nested loop?
+      const scheduleSections: CourseSection[] = [];
+
+      for (const dept of this.context.rootState.departments) {
+        for (const course of dept.courses) {
+          for (const section of course.sections) {
+            if (scheduleCrns.includes(section.crn)) {
+              scheduleSections.push(section);
+            }
+          }
+        }
+      }
+
+      return scheduleSections;
+    };
   }
 
   get numSchedules(): number {
