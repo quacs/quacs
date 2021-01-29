@@ -27,7 +27,7 @@
     "simple-web-worker": "^1.2.0",
     "vue": "^2.6.12",
     "vue-async-computed": "^3.9.0",
-    "vue-axios": "^3.2.2",
+    "vue-axios": "^3.2.3",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.1",
