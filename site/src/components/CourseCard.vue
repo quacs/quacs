@@ -136,8 +136,8 @@ Vue.use(ModalPlugin);
 
 @Component({
   components: {
-    Sections,
     CourseInfo,
+    Sections,
   },
   computed: {
     hasMetAllPrerequisites,

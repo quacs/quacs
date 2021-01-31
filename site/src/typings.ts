@@ -107,3 +107,11 @@ export interface Section {
 export interface CourseSets {
   [courseSet: string]: { [crn: string]: boolean };
 }
+
+// Prerequisite graph stored as an adjacency list
+export interface PrereqAdjList {
+  [courseCode: string]: {
+    title: string;
+    prereqs: string[];
+  };
+}
