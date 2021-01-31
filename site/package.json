@@ -31,8 +31,10 @@
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.1",
+    "vue-visjs": "^0.4.1",
     "vuex": "^3.6.2",
-    "vuex-persistedstate": "^3.2.0"
+    "vuex-persistedstate": "^3.2.0",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.10.1",

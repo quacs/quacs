@@ -95,6 +95,10 @@ jobs:
         working-directory: ./scrapers
         run: python3 prerequisites_scraper/main.py
 
+      - name: Build prerequisites graph
+        working-directory: ./scrapers
+        run: python3 prerequisites_graph/main.py
+
       - name: Upload data
         uses: actions/upload-artifact@v2
         with:
