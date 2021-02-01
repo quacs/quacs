@@ -188,6 +188,13 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
 
         last_subject = None
         last_course_code = None
+
+        year = int(term[: len(term) - 2])
+        unique_ranges = set()
+        get_date = lambda x: date(year, int(x[0]), int(x[1]))
+        end_date = date.today()
+        divide = list(range(1, 61))
+
         for row in rows:
             th = row.findAll("th")
             if len(th) != 0:
@@ -217,6 +224,23 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                         "dateEnd": getContentFromChild(td[20], "abbr").split("-")[1],
                         "location": getContentFromChild(td[21], "abbr"),
                     }
+
+                    divide = [
+                        x
+                        for x in divide
+                        if (
+                            timeslot_data["timeStart"] % x
+                            == timeslot_data["timeEnd"] % x
+                            == 0
+                        )
+                    ]
+                start = timeslot_data["dateStart"].split("/")
+                end = timeslot_data["dateEnd"].split("/")
+
+                if len(start) >= 2 and len(end) >= 2:
+                    end_date = max(end_date, get_date(end))
+                    start_date = get_date(start)
+                    unique_ranges.add(start_date)
                 else:
                     timeslot_data = {
                         "dateEnd": "",
@@ -227,7 +251,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                         "timeEnd": -1,
                         "timeStart": -1,
                     }
-
                 if len(getContent(td[1])) == 0:
                     data[-1]["courses"][-1]["sections"][-1]["timeslots"].append(
                         timeslot_data
@@ -284,6 +307,11 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                 if len(getContent(td[2])) > 0:
                     data[-1]["code"] = getContent(td[2])
 
+        if date.today() >= end_date:
+            print(f"Skipping data processing for {term}")
+            continue
+        unique_ranges = list(unique_ranges)
+        unique_ranges.sort(reverse=True)
         with open(f"data/{term}/courses.json", "w") as outfile:
             json.dump(data, outfile, sort_keys=False, indent=2)
 
@@ -306,30 +334,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         school_columns = optimize_column_ordering(schools)
         with open(f"data/{term}/schools.json", "w") as schools_f:
             json.dump(school_columns, schools_f, sort_keys=False, indent=2)
-
-        unique_ranges = set()
-        get_date = lambda x: date(1, int(x[0]), int(x[1]))
-
-        divide = list(range(1, 61))
-
-        for dept in data:
-            for course in dept["courses"]:
-                for section in course["sections"]:
-                    for time in section["timeslots"]:
-                        if time["timeStart"] >= 0 and time["timeEnd"] >= 0:
-                            divide = [
-                                x
-                                for x in divide
-                                if (time["timeStart"] % x == time["timeEnd"] % x == 0)
-                            ]
-                        start = time["dateStart"].split("/")
-
-                        if len(start) < 2:
-                            continue
-                        start_date = get_date(start)
-                        unique_ranges.add(start_date)
-        unique_ranges = list(unique_ranges)
-        unique_ranges.sort(reverse=True)
 
         MINUTE_GRANULARITY = max(divide)
         NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
