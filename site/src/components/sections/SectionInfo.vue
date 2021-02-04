@@ -29,7 +29,7 @@
         <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
       <br />
-      <PrereqGraph :course="course"></PrereqGraph>
+      <PrereqGraph :course="courseCode"></PrereqGraph>
     </b-modal>
   </div>
 </template>
@@ -63,7 +63,7 @@ export default class SectionInfo extends Vue {
     return `Section Info: ${this.section.sec} - ${this.section.title}`;
   }
 
-  get course(): string {
+  get courseCode(): string {
     return `${this.section.subj} ${this.section.crse}`;
   }
 }

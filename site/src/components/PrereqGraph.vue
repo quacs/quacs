@@ -47,27 +47,26 @@ interface Color {
   components: {
     Network,
   },
-  computed: {
-    options: function () {
-      return {
-        width: "100%",
-        height: "200px",
-        nodes: {
-          shape: "box",
-        },
-        edges: {
-          arrows: {
-            to: {
-              enabled: true,
-            },
-          },
-        },
-      };
-    },
-  },
 })
 export default class PrereqGraph extends Vue {
   @Prop() readonly course!: string;
+
+  get options(): unknown {
+    return {
+      width: "100%",
+      height: "200px",
+      nodes: {
+        shape: "box",
+      },
+      edges: {
+        arrows: {
+          to: {
+            enabled: true,
+          },
+        },
+      },
+    };
+  }
 
   get nodes(): Node[] {
     return this.graph().nodes;
