@@ -28,8 +28,11 @@
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
-      <br />
-      <PrereqGraph :course="courseCode"></PrereqGraph>
+      <template v-if="prerequisiteData.prerequisites">
+        <br />
+        <div class="font-weight-bold">Visualize Prerequisites:</div>
+        <PrereqGraph :course="courseCode"></PrereqGraph>
+      </template>
     </b-modal>
   </div>
 </template>
