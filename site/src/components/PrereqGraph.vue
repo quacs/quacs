@@ -65,6 +65,9 @@ export default class PrereqGraph extends Vue {
           },
         },
       },
+      layout: {
+        randomSeed: 0,
+      },
     };
   }
 
