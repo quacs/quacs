@@ -1,35 +1,123 @@
 <template>
-  <div v-on:click="propagateClick" ref="semesterBars">
-    <div v-for="section in sections" :key="section.crn">
-      <h5>{{ section.title }}</h5>
-      <b-progress :max="1" class="mb-3">
-        <b-progress-bar
-          v-for="segment in getSegments(section)"
-          :key="segment.key"
-          :value="segment.percentage"
-          :variant="segment.variant"
-        ></b-progress-bar>
-      </b-progress>
-    </div>
+  <div class="accordion" role="tablist">
+    <b-container fluid>
+      <b-row>
+        <b-col cols="0">
+          <b-button
+            v-on:click="semBarsExpanded = !semBarsExpanded"
+            variant="info"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'caret-right']"
+              class="open_close_icon"
+              :class="{ opened_icon: semBarsExpanded }"
+            ></font-awesome-icon>
+          </b-button>
+        </b-col>
+
+        <b-col>
+          <div class="sem-bar-wrapper">
+            <div class="sem-bar-segments" ref="semBarSegments">
+              <b-collapse
+                :visible="semBarsExpanded"
+                accordion="my-accordion"
+                role="tabpanel"
+              >
+                <div
+                  v-on:click="propagateClick('localSemesterBars', $event)"
+                  ref="localSemesterBars"
+                >
+                  <div v-for="section in sections" :key="section.crn">
+                    <b-progress :max="1" class="mb-3">
+                      <b-progress-bar
+                        v-for="segment in getSegments(section)"
+                        :key="segment.key"
+                        :value="segment.fillPercentage"
+                        :variant="segment.variant"
+                        :label="section.title"
+                      ></b-progress-bar>
+                    </b-progress>
+                  </div>
+                </div>
+              </b-collapse>
+
+              <b-collapse
+                :visible="!semBarsExpanded"
+                accordion="my-accordion"
+                role="tabpanel"
+              >
+                <div
+                  v-on:click="propagateClick('globalSemesterBars', $event)"
+                  ref="globalSemesterBars"
+                >
+                  <b-progress :max="1" class="mb-3">
+                    <b-progress-bar
+                      v-for="segment in subsemSegments"
+                      :class="
+                        segment.startPercentage !== 0 ? 'subsem-bar-inner' : ''
+                      "
+                      :key="segment.key"
+                      :value="segment.fillPercentage"
+                      :variant="segment.variant"
+                    ></b-progress-bar>
+                  </b-progress>
+                </div>
+              </b-collapse>
+            </div>
+
+            <div class="sem-bar-selector">
+              <b-progress
+                :max="1"
+                class="mb-3"
+              >
+                <b-progress-bar
+                  v-for="segment in subsemSegments"
+                  :class="
+                    segment.startPercentage !== 0 ? 'subsem-bar-inner' : ''
+                  "
+                  :key="segment.key"
+                  :value="segment.fillPercentage"
+                  :variant="segment.variant"
+                ></b-progress-bar>
+              </b-progress>
+            </div>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, ModelSync, Vue, Watch } from "vue-property-decorator";
-import { BProgress, BProgressBar } from "bootstrap-vue";
+import {
+  BButton,
+  BCol,
+  BCollapse,
+  BContainer,
+  BProgress,
+  BProgressBar,
+  BRow,
+} from "bootstrap-vue";
 import { CourseSection } from "@/typings";
 import { timeslotStartEndUnix } from "@/utilities";
 
 interface PercentageSegment {
   key: number;
-  percentage: number;
+  startPercentage: number;
+  fillPercentage: number;
   variant: string;
 }
 
 @Component({
   components: {
+    "b-button": BButton,
+    "b-col": BCol,
+    "b-collapse": BCollapse,
+    "b-container": BContainer,
     "b-progress": BProgress,
     "b-progress-bar": BProgressBar,
+    "b-row": BRow,
   },
 })
 export default class SemesterBars extends Vue {
@@ -43,6 +131,8 @@ export default class SemesterBars extends Vue {
   // Stored as Unix times for Easy Math™
   semesterStart = 0;
   semesterEnd = 0;
+
+  semBarsExpanded = false;
 
   mounted(): void {
     this.calculateSemesterBoundaries();
@@ -66,6 +156,43 @@ export default class SemesterBars extends Vue {
         this.semesterEnd = Math.max(this.semesterEnd, timeslotEnd);
       }
     }
+  }
+
+  get subsemSegments(): PercentageSegment[] {
+    const allSegments = this.sections
+      .map((section) => this.getSegments(section))
+      .flat();
+
+    const startPoints = Array.from(allSegments)
+      .sort((seg1, seg2) => seg2.startPercentage - seg1.startPercentage)
+      .map((seg) => seg.startPercentage);
+
+    const endPoints = Array.from(allSegments)
+      .sort(
+        (seg1, seg2) =>
+          seg2.startPercentage +
+          seg2.fillPercentage -
+          (seg1.startPercentage + seg1.fillPercentage)
+      )
+      .map((seg) => seg.startPercentage + seg.fillPercentage);
+
+    const togglePoints = Array.from(
+      new Set(startPoints.concat(endPoints))
+    ).sort();
+
+    let startPoint = togglePoints[0];
+    const segments = [];
+    for (const endPoint of togglePoints.slice(1)) {
+      segments.push({
+        key: startPoint,
+        startPercentage: startPoint,
+        fillPercentage: endPoint - startPoint,
+        variant: "success",
+      });
+      startPoint = endPoint;
+    }
+
+    return segments;
   }
 
   get getSegments() {
@@ -127,6 +254,7 @@ export default class SemesterBars extends Vue {
       */
 
       let currSegStart = this.semesterStart;
+      let startPercentage = 0;
       for (const togglePoint of sortedTogglePoints) {
         let isStartOfTimeslot = false;
         let isEndOfTimeslot = false;
@@ -161,7 +289,7 @@ export default class SemesterBars extends Vue {
 
         // If we get here, there definitely is a segment which ends here
 
-        const percentage =
+        const fillPercentage =
           (togglePoint - currSegStart) /
           (this.semesterEnd - this.semesterStart);
         const key = currSegStart;
@@ -171,17 +299,20 @@ export default class SemesterBars extends Vue {
           segments.push({
             variant: "danger",
             key,
-            percentage,
+            fillPercentage,
+            startPercentage,
           });
         } else if (isEndOfTimeslot) {
           // The segment which ends here is active
           segments.push({
             variant: "success",
             key,
-            percentage,
+            fillPercentage,
+            startPercentage,
           });
         }
 
+        startPercentage += fillPercentage;
         currSegStart = togglePoint;
       }
 
@@ -189,10 +320,10 @@ export default class SemesterBars extends Vue {
     };
   }
 
-  propagateClick(event: { layerX: number }): void {
+  propagateClick(refName: string, event: { layerX: number }): void {
     const x = event.layerX;
     // @ts-expect-error: Typescript doesn't know that `semesterBars` has a `clientWidth` attribute
-    const selfWidth = this.$refs.semesterBars.clientWidth;
+    const selfWidth = this.$refs[refName].clientWidth;
 
     const clickedPercentage = x / selfWidth;
 
@@ -202,3 +333,30 @@ export default class SemesterBars extends Vue {
   }
 }
 </script>
+
+<style>
+.subsem-bar-inner {
+  border-style: none;
+  border-color: black;
+  border-left-style: solid;
+}
+
+.open_close_icon {
+  transition: 0.5s;
+}
+
+.opened_icon {
+  transform: rotate(90deg);
+}
+
+.sem-bar-wrapper {
+  position: relative;
+}
+
+.sem-bar-selector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+</style>
