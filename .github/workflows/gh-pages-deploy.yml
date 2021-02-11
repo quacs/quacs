@@ -32,6 +32,9 @@ jobs:
           path: "site/gh-pages-site"
           token: ${{ secrets.QUACS_TOKEN }}
 
+      - name: Install Ubuntu dependencies for node-canvas
+        run: sudo apt-get -y install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
       - name: Clean install dependencies
         working-directory: ./site
         run: yarn install --frozen-lockfile
