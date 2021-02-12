@@ -75,24 +75,22 @@ def get_prereq_course_ids(prereqs):
         )
 
 
-def generate(quacs_data_path: str):
+def generate(semester_data_path: str):
     """
     Generate the prerequisite graph adjacency list.
-    The parameter `quacs_data_path` is the path to the root of the quacs-data repo.
+    The parameter `semester_data_path` is the path to the semester-specific data.
     """
 
     # Map from course ID to title and prereqs.
     # This is an adjacency list.
     adj_list = dict()
 
-    sem_data_path = f"{quacs_data_path}/semester_data"
-
     # List of semester paths
     sem_dirs = list(
         map(
-            lambda sem_dir: f"{sem_data_path}/{sem_dir}",
+            lambda sem_dir: f"{semester_data_path}/{sem_dir}",
             # Need to sort so new semester data replaces old data
-            sorted(os.listdir(sem_data_path)),
+            sorted(os.listdir(semester_data_path)),
         )
     )
 
@@ -103,7 +101,7 @@ def generate(quacs_data_path: str):
 
 
 if __name__ == "__main__":
-    graph = generate(".")
+    graph = generate("data/")
 
     with open("prereq_graph.json", "w") as f:
         json.dump(graph, f, indent=2)

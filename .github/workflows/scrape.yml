@@ -99,7 +99,13 @@ jobs:
         working-directory: ./scrapers
         run: python3 prerequisites_graph/main.py
 
-      - name: Upload data
+      - name: Upload prerequisite graph data
+        uses: actions/upload-artifact@v2
+        with:
+          name: prereq_graph
+          path: scrapers/prereq_graph.json
+
+      - name: Upload semester-specific data
         uses: actions/upload-artifact@v2
         with:
           name: courses
@@ -240,6 +246,8 @@ jobs:
           # done
 
           rsync -avz courses/ data/semester_data/
+
+          cp prereq_graph/prereq_graph.json data/
 
           cp faculty/faculty.json data
 
