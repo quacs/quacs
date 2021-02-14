@@ -2,70 +2,79 @@
   <div>
     <SemesterBars :sections="sections" v-model="selectedDate" />
 
-    <div class="calendar" :style="{ height: totalHeight + 'px' }">
-      <div class="calendar-times">
-        <div
-          class="hour-label"
-          :class="{ hour_label_military: isMilitaryTime() }"
-          v-for="hour of strHours"
-          :key="hour"
-          :style="{ height: hourHeight + '%' }"
-        >
-          <div>{{ hour }}</div>
-        </div>
-      </div>
-
-      <div class="calendar-grid">
-        <div
-          class="grid-day"
-          v-for="day in getDays()"
-          :key="day.short"
-          :style="{ width: dayWidth + '%' }"
-        >
-          <div class="day-label">{{ day.name }}</div>
-
+    <b-overlay :show="!subsemesterHasSections" rounded="sm" opacity="0.7">
+      <div class="calendar" :style="{ height: totalHeight + 'px' }">
+        <div class="calendar-times">
           <div
-            class="calendar-event"
-            v-for="session in selectedSectionsOnDay(day)"
-            v-bind:key="
-              day.short +
-              session.timeslot.timeStart +
-              session.section.crn +
-              session.timeslot.instrutor +
-              session.timeslot.location
-            "
-            :style="{
-              'margin-top': eventPosition(session.timeslot) + 'px',
-              height: eventHeight(session.timeslot) + 'px',
-              width: dayWidth + '%',
-              backgroundColor: colors(session.section.crn).bg,
-              borderColor: colors(session.section.crn).border,
-              color: colors(session.section.crn).text,
-            }"
-          >
-            <div class="event-text">
-              {{ session.section.title }}
-              <br />
-              {{ session.section.subj }} {{ session.section.crse }} -
-              {{ session.section.sec }}
-              <br />
-              {{ session.section.crn }}
-              <br />
-              {{ session.timeslot.instructor }}
-              <br />
-              {{ session.timeslot.location }}
-            </div>
-          </div>
-
-          <div
-            class="grid-hour"
+            class="hour-label"
+            :class="{ hour_label_military: isMilitaryTime() }"
             v-for="hour of strHours"
             :key="hour"
             :style="{ height: hourHeight + '%' }"
-          ></div>
+          >
+            <div>{{ hour }}</div>
+          </div>
+        </div>
+
+        <div class="calendar-grid">
+          <div
+            class="grid-day"
+            v-for="day in getDays()"
+            :key="day.short"
+            :style="{ width: dayWidth + '%' }"
+          >
+            <div class="day-label">{{ day.name }}</div>
+
+            <div
+              class="calendar-event"
+              v-for="session in selectedSectionsOnDay(day)"
+              v-bind:key="
+                day.short +
+                session.timeslot.timeStart +
+                session.section.crn +
+                session.timeslot.instrutor +
+                session.timeslot.location
+              "
+              :style="{
+                'margin-top': eventPosition(session.timeslot) + 'px',
+                height: eventHeight(session.timeslot) + 'px',
+                width: dayWidth + '%',
+                backgroundColor: colors(session.section.crn).bg,
+                borderColor: colors(session.section.crn).border,
+                color: colors(session.section.crn).text,
+              }"
+            >
+              <div class="event-text">
+                {{ session.section.title }}
+                <br />
+                {{ session.section.subj }} {{ session.section.crse }} -
+                {{ session.section.sec }}
+                <br />
+                {{ session.section.crn }}
+                <br />
+                {{ session.timeslot.instructor }}
+                <br />
+                {{ session.timeslot.location }}
+              </div>
+            </div>
+
+            <div
+              class="grid-hour"
+              v-for="hour of strHours"
+              :key="hour"
+              :style="{ height: hourHeight + '%' }"
+            ></div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <template v-slot:overlay>
+        <div style="text-align: center">
+          <h3>Break</h3>
+          <h4>No courses meet during this session</h4>
+        </div>
+      </template>
+    </b-overlay>
   </div>
 </template>
 
@@ -81,6 +90,7 @@ import {
 } from "@/utilities";
 import { mapGetters } from "vuex";
 import SemesterBars from "@/components/SemesterBars.vue";
+import { BOverlay } from "bootstrap-vue";
 
 @Component({
   computed: {
@@ -88,6 +98,7 @@ import SemesterBars from "@/components/SemesterBars.vue";
   },
   components: {
     SemesterBars,
+    "b-overlay": BOverlay,
   },
 })
 export default class Calendar extends Vue {
@@ -177,6 +188,20 @@ export default class Calendar extends Vue {
 
       return ret;
     };
+  }
+
+  get subsemesterHasSections(): boolean {
+    if (this.sections.length == 0){
+      return true;
+    }
+    for (const day of this.getDays()) {
+      for (const section of this.selectedSectionsOnDay(day)) {
+        if (section) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   get strHours(): string[] {
