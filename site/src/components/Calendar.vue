@@ -195,9 +195,9 @@ export default class Calendar extends Vue {
     //or if it is the first/last subsemester. This fixes an issue where the "break"
     //overlay flashes on screen
     if (
-      this.sections.length == 0 ||
-      this.selectedDate == 0 ||
-      this.selectedDate == Number.POSITIVE_INFINITY
+      this.sections.length === 0 ||
+      this.selectedDate === 0 ||
+      this.selectedDate === Number.POSITIVE_INFINITY
     ) {
       return true;
     }
