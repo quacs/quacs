@@ -66,7 +66,7 @@
                       :key="segment.key"
                       :value="segment.fillPercentage"
                       :variant="segment.variant"
-                      :label="section.title"
+                      :label="segment.variant === 'light' ? '' : section.title"
                     ></b-progress-bar>
                   </b-progress>
                 </div>
@@ -128,11 +128,11 @@
 
       <div style="text-align: center">
         <b-button class="mt-3" @click="switchToSubsem(currentSubsem - 1)"
-          >Prev subsemester</b-button
+          >Prev session</b-button
         >
         <!--span>Currently viewing: 01/01 - 02/02</span-->
         <b-button class="mt-3" @click="switchToSubsem(currentSubsem + 1)"
-          >Next subsemester</b-button
+          >Next session</b-button
         >
       </div>
     </b-container>
@@ -388,7 +388,7 @@ export default class SemesterBars extends Vue {
           }
         }
 
-        if (isInsideTimeslot || isStartOfTimeslot === isEndOfTimeslot) {
+        if (isInsideTimeslot || (isStartOfTimeslot && isEndOfTimeslot)) {
           continue;
         }
 
@@ -399,18 +399,18 @@ export default class SemesterBars extends Vue {
           (this.semesterEnd - this.semesterStart);
         const key = currSegStart;
 
-        if (isStartOfTimeslot) {
-          // The segment which ends here is inactive
+        if (isEndOfTimeslot) {
+          // The segment which ends here is active
           segments.push({
-            variant: "danger",
+            variant: "success",
             key,
             fillPercentage,
             startPercentage,
           });
-        } else if (isEndOfTimeslot) {
-          // The segment which ends here is active
+        } else {
+          // The segment which ends here is inactive
           segments.push({
-            variant: "success",
+            variant: "light",
             key,
             fillPercentage,
             startPercentage,
