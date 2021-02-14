@@ -191,7 +191,7 @@ export default class Calendar extends Vue {
   }
 
   get subsemesterHasSections(): boolean {
-    if (this.sections.length == 0){
+    if (this.sections.length === 0) {
       return true;
     }
     for (const day of this.getDays()) {
