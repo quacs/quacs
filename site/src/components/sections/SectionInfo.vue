@@ -28,6 +28,11 @@
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
+      <template v-if="prerequisiteData.prerequisites">
+        <br />
+        <div class="font-weight-bold">Visualize Prerequisites:</div>
+        <PrereqGraph :course="courseCode"></PrereqGraph>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -38,9 +43,12 @@ import { BButton } from "bootstrap-vue";
 import { CourseSection } from "@/typings";
 import { formatCourseSize, formatPrerequisites } from "@/utilities";
 
+import PrereqGraph from "@/components/PrereqGraph.vue";
+
 @Component({
   components: {
     "b-button": BButton,
+    PrereqGraph,
   },
   computed: {
     formatPrerequisites,
@@ -56,6 +64,10 @@ export default class SectionInfo extends Vue {
 
   get modalTitle(): string {
     return `Section Info: ${this.section.sec} - ${this.section.title}`;
+  }
+
+  get courseCode(): string {
+    return `${this.section.subj} ${this.section.crse}`;
   }
 }
 </script>

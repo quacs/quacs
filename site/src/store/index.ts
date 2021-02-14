@@ -1,4 +1,9 @@
-import { CatalogCourse, Department, PrerequisiteJSON } from "@/typings";
+import {
+  CatalogCourse,
+  Department,
+  PrereqAdjList,
+  PrerequisiteJSON,
+} from "@/typings";
 
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
@@ -11,6 +16,7 @@ import Vuex from "vuex";
 const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
 
 import DATA_STATS_JSON from "./data/meta.json";
+import PREREQ_GRAPH_JSON from "./data/prereq_graph.json";
 
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
@@ -29,6 +35,7 @@ export default new Vuex.Store({
     departments: [] as Department[], // asynchronously loaded
     catalog: {} as { [id: string]: CatalogCourse }, // asynchronously loaded
     prerequisitesData: {} as { [id: string]: PrerequisiteJSON }, // asynchronously loaded
+    prereqGraph: PREREQ_GRAPH_JSON as PrereqAdjList,
     lastNewSchedule: 0,
     warningMessage: "",
     updateAvailable: false,
