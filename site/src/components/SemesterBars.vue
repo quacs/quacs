@@ -111,15 +111,18 @@
               </div>
             </b-collapse>
           </div>
-
-          <b-button class="mt-3" @click="switchToSubsem(currentSubsem - 1)"
-            >prev</b-button
-          >
-          <b-button class="mt-3" @click="switchToSubsem(currentSubsem + 1)"
-            >next</b-button
-          >
         </b-col>
       </b-row>
+
+      <div style="text-align: center">
+        <b-button class="mt-3" @click="switchToSubsem(currentSubsem - 1)"
+          >Prev subsemester</b-button
+        >
+        <!--span>Currently viewing: 01/01 - 02/02</span-->
+        <b-button class="mt-3" @click="switchToSubsem(currentSubsem + 1)"
+          >Next subsemester</b-button
+        >
+      </div>
     </b-container>
   </b-collapse>
 </template>
@@ -168,7 +171,7 @@ export default class SemesterBars extends Vue {
   semesterStart = 0;
   semesterEnd = 0;
 
-  semBarsExpanded = false;
+  semBarsExpanded = true;
 
   percentageBeforeCurrentSubsem = 0;
   percentageOfCurrentSubsem = 1;
@@ -176,9 +179,6 @@ export default class SemesterBars extends Vue {
 
   mounted(): void {
     this.calculateSemesterBoundaries();
-
-    // Initialize subsemester selector
-    this.switchToSubsem(0);
   }
 
   // Identifies when the semester begins/ends so we can have accurate percentages in
@@ -201,6 +201,9 @@ export default class SemesterBars extends Vue {
         this.semesterEnd = Math.max(this.semesterEnd, timeslotEnd);
       }
     }
+
+    // Reinitialize subsemester selector
+    this.switchToSubsem(0);
   }
 
   // Gets a list of all subsemesters (represented as percentage segments).  This is used
@@ -377,10 +380,6 @@ export default class SemesterBars extends Vue {
 
     const clickedPercentage = x / selfWidth;
 
-    this.clickedDate =
-      clickedPercentage * (this.semesterEnd - this.semesterStart) +
-      this.semesterStart;
-
     // Identify which subsem we're in and switch to it
     for (const subsemIdx in this.subsemSegments) {
       const segment = this.subsemSegments[subsemIdx];
@@ -401,8 +400,11 @@ export default class SemesterBars extends Vue {
       return;
     }
 
-    subsemIdx = subsemIdx % this.subsemSegments.length;
-    this.currentSubsem = subsemIdx % this.subsemSegments.length;
+    // Since Javascript modulus doesn't account for negative numbers, we can just
+    // add the subsemSegments length to make it positive.  Since this will only ever be
+    // negative with a value of -1, this hack is fine.
+    this.currentSubsem =
+      (subsemIdx + this.subsemSegments.length) % this.subsemSegments.length;
 
     this.percentageBeforeCurrentSubsem = this.subsemSegments[
       this.currentSubsem
@@ -411,6 +413,13 @@ export default class SemesterBars extends Vue {
     this.percentageOfCurrentSubsem = this.subsemSegments[
       this.currentSubsem
     ].fillPercentage;
+
+    const subsemCenter =
+      this.percentageBeforeCurrentSubsem + this.percentageOfCurrentSubsem / 2;
+
+    this.clickedDate =
+      subsemCenter * (this.semesterEnd - this.semesterStart) +
+      this.semesterStart;
   }
 }
 </script>
@@ -450,6 +459,6 @@ export default class SemesterBars extends Vue {
 }
 
 .translucent {
-  opacity: 50%;
+  opacity: 40%;
 }
 </style>
