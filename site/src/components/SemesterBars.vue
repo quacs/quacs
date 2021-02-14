@@ -113,13 +113,13 @@
           </div>
           <div style="position: relative; width: 100%">
             <span
-              v-for="date in subsemDates"
+              v-for="date, index in subsemDates"
               :key="date[0]"
-              :style="
-                'position: absolute; left: ' +
-                date[0] * 100 +
-                '%; transform: translate(-50%, 0)'
-              "
+              class="subsem-date"
+              :style="{
+                left: date[0] * 100 + '%',
+                transform: `translate(${index===0?0:index==subsemDates.length-1?-100:-50}%, 0)`,
+              }"
               >{{ date[1] }}</span
             >
           </div>
@@ -514,5 +514,10 @@ export default class SemesterBars extends Vue {
 
 .translucent {
   opacity: 40%;
+}
+
+.subsem-date {
+  position: absolute;
+  white-space: nowrap;
 }
 </style>
