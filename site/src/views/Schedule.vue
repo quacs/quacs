@@ -8,14 +8,17 @@
         opacity="0.7"
       >
         <div style="padding-bottom: 2rem" :key="lastNewSchedule">
-          <div class="schedule-select">
+          <div class="schedule-select mb-3">
             <!-- <div v-if="numSchedules !== 0"> -->
             <b-icon-chevron-left
               class="schedule-select-button"
               v-on:click="decrementSchedule()"
             ></b-icon-chevron-left>
             <span class="schedule-num">
-              {{ visibleCurrentScheduleNumber }} / {{ numSchedules }}
+              Viewing schedule {{ visibleCurrentScheduleNumber }} out of
+              {{ numSchedules }} generated schedule{{
+                numSchedules > 1 ? "s" : ""
+              }}
             </span>
             <b-icon-chevron-right
               class="schedule-select-button"

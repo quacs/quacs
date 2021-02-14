@@ -1,141 +1,91 @@
 <template>
   <b-collapse
-    class="accordion"
-    role="tablist"
     :visible="Array.isArray(subsemSegments) && subsemSegments.length > 1"
   >
-    <b-container fluid>
-      <b-row>
-        <b-col cols="0">
-          <b-button
-            v-on:click="semBarsExpanded = !semBarsExpanded"
-            variant="info"
-          >
-            <font-awesome-icon
-              :icon="['fas', 'caret-right']"
-              class="open_close_icon"
-              :class="{ opened_icon: semBarsExpanded }"
-            ></font-awesome-icon>
-          </b-button>
-        </b-col>
+    <div
+      v-on:click="propagateClick('localSemesterBars', $event)"
+      ref="localSemesterBars"
+      class="sem-bar-wrapper"
+    >
+      <div class="sem-bar-wrapper">
+        <div v-for="section in sections" :key="section.crn">
+          <b-progress :max="1" class="mb-3">
+            <b-progress-bar
+              v-for="segment in getSegments(section)"
+              :key="segment.key"
+              :value="segment.fillPercentage"
+              :variant="segment.variant"
+              :label="segment.variant === 'light' ? '' : section.title"
+            ></b-progress-bar>
+          </b-progress>
+        </div>
 
-        <b-col>
-          <div
-            v-on:click="propagateClick('localSemesterBars', $event)"
-            ref="localSemesterBars"
-            class="sem-bar-wrapper"
-          >
-            <b-progress :max="1" class="sem-bar-selector mb-3">
-              <b-progress-bar
-                v-for="segment in subsemSegments"
-                :class="segment.startPercentage !== 0 ? 'subsem-bar-inner' : ''"
-                :key="segment.key"
-                :value="segment.fillPercentage"
-                variant="transparent"
-              ></b-progress-bar>
-            </b-progress>
-
-            <b-progress :max="1" class="sem-bar-selector transparent mb-3">
-              <b-progress-bar
-                :value="percentageBeforeCurrentSubsem"
-                class="transparent"
-              ></b-progress-bar>
-              <b-progress-bar
-                :value="percentageOfCurrentSubsem"
-                variant="dark"
-                class="translucent"
-              ></b-progress-bar>
-              <b-progress-bar
-                :value="
-                  1 - percentageOfCurrentSubsem - percentageBeforeCurrentSubsem
-                "
-                class="transparent"
-              ></b-progress-bar>
-            </b-progress>
-
-            <b-collapse
-              :visible="semBarsExpanded"
-              accordion="my-accordion"
-              role="tabpanel"
-            >
-              <div class="sem-bar-wrapper">
-                <div v-for="section in sections" :key="section.crn">
-                  <b-progress :max="1" class="mb-3">
-                    <b-progress-bar
-                      v-for="segment in getSegments(section)"
-                      :key="segment.key"
-                      :value="segment.fillPercentage"
-                      :variant="segment.variant"
-                      :label="segment.variant === 'light' ? '' : section.title"
-                    ></b-progress-bar>
-                  </b-progress>
-                </div>
-
-                <b-progress
-                  :max="1"
-                  class="sem-bar-selector full-height transparent mb-3"
-                >
-                  <b-progress-bar
-                    v-for="segment in subsemSegments"
-                    :class="
-                      segment.startPercentage !== 0 ? 'subsem-bar-inner' : ''
-                    "
-                    :key="segment.key"
-                    :value="segment.fillPercentage"
-                    variant="transparent"
-                  ></b-progress-bar>
-                </b-progress>
-
-                <b-progress
-                  :max="1"
-                  class="sem-bar-selector full-height transparent mb-3"
-                >
-                  <b-progress-bar
-                    :value="percentageBeforeCurrentSubsem"
-                    class="transparent"
-                  ></b-progress-bar>
-                  <b-progress-bar
-                    :value="percentageOfCurrentSubsem"
-                    variant="dark"
-                    class="translucent"
-                  ></b-progress-bar>
-                  <b-progress-bar
-                    :value="
-                      1 -
-                      percentageBeforeCurrentSubsem -
-                      percentageOfCurrentSubsem
-                    "
-                    class="transparent"
-                  ></b-progress-bar>
-                </b-progress>
-              </div>
-            </b-collapse>
-          </div>
-          <div style="position: relative; width: 100%">
-            <span
-              v-for="date, index in subsemDates"
-              :key="date[0]"
-              class="subsem-date"
-              :style="{
-                left: date[0] * 100 + '%',
-                transform: `translate(${index===0?0:index==subsemDates.length-1?-100:-50}%, 0)`,
-              }"
-              >{{ date[1] }}</span
-            >
-          </div>
-        </b-col>
-      </b-row>
-
-      <div style="text-align: center">
-        <b-button class="mt-3" @click="switchToSubsem(currentSubsem - 1)"
-          >Prev session</b-button
+        <b-progress
+          :max="1"
+          class="sem-bar-selector full-height transparent mb-3"
         >
-        <!--span>Currently viewing: 01/01 - 02/02</span-->
-        <b-button class="mt-3" @click="switchToSubsem(currentSubsem + 1)"
-          >Next session</b-button
+          <b-progress-bar
+            v-for="segment in subsemSegments"
+            :class="segment.startPercentage !== 0 ? 'subsem-bar-inner' : ''"
+            :key="segment.key"
+            :value="segment.fillPercentage"
+            variant="transparent"
+          ></b-progress-bar>
+        </b-progress>
+
+        <b-progress
+          :max="1"
+          class="sem-bar-selector full-height transparent mb-3"
+        >
+          <b-progress-bar
+            :value="percentageBeforeCurrentSubsem"
+            class="transparent"
+          ></b-progress-bar>
+          <b-progress-bar
+            :value="percentageOfCurrentSubsem"
+            variant="dark"
+            class="translucent"
+          ></b-progress-bar>
+          <b-progress-bar
+            :value="
+              1 - percentageBeforeCurrentSubsem - percentageOfCurrentSubsem
+            "
+            class="transparent"
+          ></b-progress-bar>
+        </b-progress>
+      </div>
+
+      <div style="position: relative; width: 100%">
+        <br />
+        <!-- This line break is needed for spacing the session change buttons out -->
+        <span
+          v-for="(date, index) in subsemDates"
+          :key="date[0]"
+          class="subsem-date"
+          :style="{
+            top: 0,
+            left: date[0] * 100 + '%',
+            transform: `translate(${
+              index === 0 ? 0 : index == subsemDates.length - 1 ? -100 : -50
+            }%, 0%)`,
+          }"
+          >{{ date[1] }}</span
         >
       </div>
-    </b-container>
+    </div>
+
+    <div style="display: flex; align-items: baseline; justify-content: center">
+      <b-button class="mt-3 mr-2" @click="switchToSubsem(currentSubsem - 1)"
+        >Prev session</b-button
+      >
+      <span
+        >Currently viewing: {{ currentSubsemDates[0] }} -
+        {{ currentSubsemDates[1] }}</span
+      >
+      <b-button class="mt-3 ml-2" @click="switchToSubsem(currentSubsem + 1)"
+        >Next session</b-button
+      >
+    </div>
   </b-collapse>
 </template>
 
@@ -151,7 +101,7 @@ import {
   BRow,
 } from "bootstrap-vue";
 import { CourseSection } from "@/typings";
-import { timeslotStartEndUnix } from "@/utilities";
+import { timestampToString, timeslotStartEndUnix } from "@/utilities";
 
 interface PercentageSegment {
   key: number;
@@ -257,22 +207,30 @@ export default class SemesterBars extends Vue {
     return segments;
   }
 
-  get subsemDates(): [number, string][] {
-    const monthsShortStr = [
-      "Jan.",
-      "Feb.",
-      "Mar.",
-      "Apr.",
-      "May",
-      "June",
-      "July",
-      "Aug.",
-      "Sep.",
-      "Oct.",
-      "Nov.",
-      "Dec.",
-    ];
+  get currentSubsemDates(): [string, string] {
+    const currentSubsem = this.subsemSegments[this.currentSubsem];
 
+    if (currentSubsem === undefined) {
+      // If the page hasn't loaded yet, just return with the full semester's dates
+      return [
+        timestampToString(this.semesterStart),
+        timestampToString(this.semesterEnd),
+      ];
+    }
+
+    const startTimestamp =
+      currentSubsem.startPercentage * (this.semesterEnd - this.semesterStart) +
+      this.semesterStart;
+
+    const endTimestamp =
+      (currentSubsem.startPercentage + currentSubsem.fillPercentage) *
+        (this.semesterEnd - this.semesterStart) +
+      this.semesterStart;
+
+    return [timestampToString(startTimestamp), timestampToString(endTimestamp)];
+  }
+
+  get subsemDates(): [number, string][] {
     const ret = [];
 
     for (const segment of this.subsemSegments) {
@@ -280,20 +238,10 @@ export default class SemesterBars extends Vue {
         segment.startPercentage * (this.semesterEnd - this.semesterStart) +
         this.semesterStart;
 
-      const startDate = new Date(startTimestamp);
-      const shortStr = `${
-        monthsShortStr[startDate.getMonth()]
-      } ${startDate.getDate()}`;
-
-      ret.push([segment.startPercentage, shortStr]);
+      ret.push([segment.startPercentage, timestampToString(startTimestamp)]);
     }
 
-    const endDate = new Date(this.semesterEnd);
-    const shortStr = `${
-      monthsShortStr[endDate.getMonth()]
-    } ${endDate.getDate()}`;
-
-    ret.push([1, shortStr]);
+    ret.push([1, timestampToString(this.semesterEnd)]);
 
     // Typescript isn't good enough to see that we're returning the right type :(
     return ret as [number, string][];

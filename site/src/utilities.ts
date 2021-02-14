@@ -79,6 +79,26 @@ function formatTime(time: number, isMilitaryTime: boolean): string {
   return output;
 }
 
+export function timestampToString(timestamp: number): string {
+  const monthsShortStr = [
+    "Jan.",
+    "Feb.",
+    "Mar.",
+    "Apr.",
+    "May",
+    "June",
+    "July",
+    "Aug.",
+    "Sep.",
+    "Oct.",
+    "Nov.",
+    "Dec.",
+  ];
+
+  const date = new Date(timestamp);
+  return `${monthsShortStr[date.getMonth()]} ${date.getDate()}`;
+}
+
 export function formatTimeslot() {
   return (timeslot: Timeslot, isMilitaryTime: boolean): string => {
     return timeslot.timeStart >= 0
