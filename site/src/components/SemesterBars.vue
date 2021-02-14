@@ -139,7 +139,7 @@ export default class SemesterBars extends Vue {
   percentageOfCurrentSubsem = 1;
   currentSubsem = 0;
 
-  mounted(): void {
+  beforeMount(): void {
     this.calculateSemesterBoundaries();
   }
 
