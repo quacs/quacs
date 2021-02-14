@@ -111,6 +111,18 @@
               </div>
             </b-collapse>
           </div>
+          <div style="position: relative; width: 100%">
+            <span
+              v-for="date in subsemDates"
+              :key="date[0]"
+              :style="
+                'position: absolute; left: ' +
+                date[0] * 100 +
+                '%; transform: translate(-50%, 0)'
+              "
+              >{{ date[1] }}</span
+            >
+          </div>
         </b-col>
       </b-row>
 
@@ -242,9 +254,49 @@ export default class SemesterBars extends Vue {
       startPoint = endPoint;
     }
 
-    console.log(segments);
-
     return segments;
+  }
+
+  get subsemDates(): [number, string][] {
+    const monthsShortStr = [
+      "Jan.",
+      "Feb.",
+      "Mar.",
+      "Apr.",
+      "May",
+      "June",
+      "July",
+      "Aug.",
+      "Sep.",
+      "Oct.",
+      "Nov.",
+      "Dec.",
+    ];
+
+    const ret = [];
+
+    for (const segment of this.subsemSegments) {
+      const startTimestamp =
+        segment.startPercentage * (this.semesterEnd - this.semesterStart) +
+        this.semesterStart;
+
+      const startDate = new Date(startTimestamp);
+      const shortStr = `${
+        monthsShortStr[startDate.getMonth()]
+      } ${startDate.getDate()}`;
+
+      ret.push([segment.startPercentage, shortStr]);
+    }
+
+    const endDate = new Date(this.semesterEnd);
+    const shortStr = `${
+      monthsShortStr[endDate.getMonth()]
+    } ${endDate.getDate()}`;
+
+    ret.push([1, shortStr]);
+
+    // Typescript isn't good enough to see that we're returning the right type :(
+    return ret as [number, string][];
   }
 
   // Returns the segments for an individual course bar.
@@ -381,7 +433,9 @@ export default class SemesterBars extends Vue {
     const clickedPercentage = x / selfWidth;
 
     // Identify which subsem we're in and switch to it
-    for (const subsemIdx in this.subsemSegments) {
+    for (const subsemIdxStr in this.subsemSegments) {
+      const subsemIdx = parseInt(subsemIdxStr);
+
       const segment = this.subsemSegments[subsemIdx];
       if (
         segment.startPercentage + segment.fillPercentage >=
