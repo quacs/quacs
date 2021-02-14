@@ -191,7 +191,14 @@ export default class Calendar extends Vue {
   }
 
   get subsemesterHasSections(): boolean {
-    if (this.sections.length == 0){
+    //We dont want to show the "break" overlay if there are no sections in the schedule
+    //or if it is the first/last subsemester. This fixes an issue where the "break"
+    //overlay flashes on screen
+    if (
+      this.sections.length == 0 ||
+      this.selectedDate == 0 ||
+      this.selectedDate == Number.POSITIVE_INFINITY
+    ) {
       return true;
     }
     for (const day of this.getDays()) {
