@@ -132,3 +132,9 @@ scrapers/*/data
 scrapers/*.json
 scrapers/*.msgpack
 scrapers/*.rs
+
+/target/
+.env
+*.xml
+*.json
+*.log

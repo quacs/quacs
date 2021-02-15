@@ -1,0 +1,4 @@
+tqdm
+python-dotenv
+requests
+selenium
