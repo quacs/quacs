@@ -75,12 +75,12 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <b-alert class="fixed-bottom sticky-top" :show="true" v-if="false">
+            <b-alert class="fixed-bottom sticky-top" :show="true" v-if="currentSem === '202105'">
               <font-awesome-icon
                 :icon="['fas', 'exclamation-triangle']"
               ></font-awesome-icon>
               QuACS is currently based off of a pre-release schedule for the
-              spring semester. Course offerings and associated faculty are
+              summer semester. Course offerings and associated faculty are
               subject to change, and prerequisite checking is not available.
             </b-alert>
             <router-view :key="wasmLoaded" v-if="wasmLoaded" />
