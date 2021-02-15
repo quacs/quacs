@@ -3,19 +3,22 @@
     <!-- We don't care if the prerequisite info isn't loaded yet (that can fill in later) -->
     <div v-if="departmentsInitialized && catalogInitialized">
       <b-overlay
-        :show="selectedCourses.length === 0 || currentScheduleCRNs.length === 0"
+        :show="selectedCourses.length === 0 || currentSchedule.length === 0"
         rounded="sm"
         opacity="0.7"
       >
         <div style="padding-bottom: 2rem" :key="lastNewSchedule">
-          <div class="schedule-select">
+          <div class="schedule-select mb-3">
             <!-- <div v-if="numSchedules !== 0"> -->
             <b-icon-chevron-left
               class="schedule-select-button"
               v-on:click="decrementSchedule()"
             ></b-icon-chevron-left>
             <span class="schedule-num">
-              {{ visibleCurrentScheduleNumber }} / {{ numSchedules }}
+              Viewing schedule {{ visibleCurrentScheduleNumber }} out of
+              {{ numSchedules }} generated schedule{{
+                numSchedules > 1 ? "s" : ""
+              }}
             </span>
             <b-icon-chevron-right
               class="schedule-select-button"
@@ -23,17 +26,18 @@
             ></b-icon-chevron-right>
           </div>
 
-          <Calendar :crns="currentScheduleCRNs" />
+          <Calendar :sections="currentSchedule" />
+
           <div class="d-flex justify-content-between">
             <div class="crn-list">
               CRNs:
-              <template v-for="(crn, idx) in currentScheduleCRNs">
+              <template v-for="(section, idx) in currentSchedule">
                 <template v-if="idx !== 0">, </template>
                 <span
                   class="crn"
-                  :key="crn"
-                  v-on:click="copyToClipboard(crn)"
-                  >{{ crn }}</span
+                  :key="section.crn"
+                  v-on:click="copyToClipboard(section.crn)"
+                  >{{ section.crn }}</span
                 ></template
               >
               <div id="crn-copy-indicator">Copied!</div>
@@ -104,7 +108,7 @@ import {
   BSpinner,
 } from "bootstrap-vue";
 import Calendar from "@/components/Calendar.vue";
-import { Course } from "@/typings";
+import { Course, CourseSection } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
 import { EventAttributes, createEvents } from "ics";
 import { saveAs } from "file-saver";
@@ -129,23 +133,20 @@ function mod(n: number, m: number) {
   components: {
     Calendar,
     CourseCard,
+    "b-button": BButton,
     "b-icon-chevron-left": BIconChevronLeft,
     "b-icon-chevron-right": BIconChevronRight,
-    "b-spinner": BSpinner,
     "b-overlay": BOverlay,
-    "b-button": BButton,
+    "b-spinner": BSpinner,
   },
 })
 export default class Schedule extends Vue {
   keepSelected: Course[] = [];
   keepSelectedCourseSet = "";
   currentScheduleNumber = 0;
-  currentScheduleCRNs: number[] = [];
-  // loadedWithCRNs = true;
+  currentSchedule: CourseSection[] = [];
 
-  @Watch("lastNewSchedule")
-  onPropertyChanged(): void {
-    this.currentScheduleNumber = 0;
+  mounted(): void {
     this.getSchedule(this.currentScheduleNumber);
   }
 
@@ -182,16 +183,6 @@ export default class Schedule extends Vue {
     );
   }
 
-  mounted(): void {
-    // if (this.$route.query.crns === undefined && this.totalNumSchedules > 0) {
-    //   this.$router.replace(
-    //     "/schedule?crns=" + this.currentScheduleCRNs.join(",")
-    //   );
-    //   this.loadedWithCRNs = false; // set to false to force Vue to re-render calendar
-    // }
-    this.getSchedule(this.currentScheduleNumber);
-  }
-
   get lastNewSchedule(): number[] {
     return this.$store.state.schedule.lastNewSchedule;
   }
@@ -208,12 +199,22 @@ export default class Schedule extends Vue {
   async getSchedule(idx: number): Promise<void> {
     // @ts-expect-error: This is mapped in the @Component decorator
     if (this.numSchedules === 0) {
-      this.currentScheduleCRNs = [];
+      this.currentSchedule = [];
       return;
     }
-    this.currentScheduleCRNs = await this.$store.getters[
-      "schedule/getSchedule"
-    ](idx);
+    this.currentSchedule = await this.$store.getters["schedule/getSchedule"](
+      idx
+    );
+  }
+
+  /////////////////////
+  // CHANGE SCHEDULE //
+  /////////////////////
+
+  @Watch("lastNewSchedule")
+  reloadSchedules(): void {
+    this.currentScheduleNumber = 0;
+    this.getSchedule(this.currentScheduleNumber);
   }
 
   incrementSchedule(): void {
@@ -233,6 +234,10 @@ export default class Schedule extends Vue {
     );
     this.getSchedule(this.currentScheduleNumber);
   }
+
+  ////////////////////
+  // OUTPUT TO USER //
+  ////////////////////
 
   copyToClipboard(val: string): void {
     trackEvent("Copy crn", "schedule");
@@ -274,95 +279,84 @@ export default class Schedule extends Vue {
     const year = this.shortSemToLongSem(process.env.VUE_APP_CURR_SEM).slice(-4);
     const events: EventAttributes[] = [];
 
-    for (const dept of this.$store.state.departments) {
-      for (const course of dept.courses) {
-        for (const section of course.sections) {
-          if (this.currentScheduleCRNs.includes(section.crn)) {
-            //Generate recurrenceRule for the days in the timeslot
-            for (const timeslot of section.timeslots) {
-              //If the timeslot is not set, just skip it
-              if (
-                timeslot.days.length === 0 ||
-                timeslot.timeStart < 0 ||
-                timeslot.timeEnd < 0
-              ) {
-                continue;
-              }
-
-              let recurrenceRule = "FREQ=WEEKLY;BYDAY=";
-              for (let i = 0; i < timeslot.days.length; i++) {
-                if (i) {
-                  recurrenceRule += ",";
-                }
-                recurrenceRule += recurrenceDays[timeslot.days[i]];
-              }
-              recurrenceRule += ";INTERVAL=1;UNTIL=";
-              recurrenceRule += year;
-              recurrenceRule += timeslot.dateEnd.replace("/", "");
-
-              // Make a js dates for start time
-              const monthStart = timeslot.dateStart.split("/")[0];
-              const dayStart = timeslot.dateStart.split("/")[1];
-              const hourStart = Math.floor(timeslot.timeStart / 100);
-              const minStart = timeslot.timeStart % 100;
-              let startJSDate = new Date(
-                `${year}/${monthStart}/${dayStart} ${hourStart}:${minStart}:0`
-              );
-
-              // Make a js dates for end time
-              const monthEnd = timeslot.dateStart.split("/")[0];
-              const dayEnd = timeslot.dateStart.split("/")[1];
-              const hourEnd = Math.floor(timeslot.timeEnd / 100);
-              const minEnd = timeslot.timeEnd % 100;
-              let endJSDate = new Date(
-                `${year}/${monthEnd}/${dayEnd} ${hourEnd}:${minEnd}:0`
-              );
-
-              // Find the first day after the semester starts that has this section
-              // For example if the semster starts on a monday, but the section is on wednesday
-              // then move the date up to the next wednesday
-              while (
-                !timeslot.days.includes(dayNumToLetter[startJSDate.getDay()])
-              ) {
-                startJSDate.setDate(startJSDate.getDate() + 1);
-                endJSDate.setDate(endJSDate.getDate() + 1);
-              }
-
-              // parse with NY time, and then convert to UTC
-              // TODO convert this to using a config file where you can set the default timezone
-              // Code based off here https://github.com/adamgibbons/ics/issues/126#issuecomment-586352771
-              const startMomentDate = moment
-                .tz(startJSDate, "America/New_York")
-                .utc();
-              const endMomentDate = moment
-                .tz(endJSDate, "America/New_York")
-                .utc();
-
-              events.push({
-                title: section.title,
-                start: [
-                  startMomentDate.get("year"),
-                  startMomentDate.get("month") + 1,
-                  startMomentDate.get("date"),
-                  startMomentDate.get("hour"),
-                  startMomentDate.get("minute"),
-                ],
-                startInputType: "utc",
-                end: [
-                  endMomentDate.get("year"),
-                  endMomentDate.get("month") + 1,
-                  endMomentDate.get("date"),
-                  endMomentDate.get("hour"),
-                  endMomentDate.get("minute"),
-                ],
-                endInputType: "utc",
-                location:
-                  timeslot.location !== "TBA" ? timeslot.location : undefined,
-                recurrenceRule,
-              });
-            }
-          }
+    for (const section of this.currentSchedule) {
+      //Generate recurrenceRule for the days in the timeslot
+      for (const timeslot of section.timeslots) {
+        //If the timeslot is not set, just skip it
+        if (
+          timeslot.days.length === 0 ||
+          timeslot.timeStart < 0 ||
+          timeslot.timeEnd < 0
+        ) {
+          continue;
         }
+
+        let recurrenceRule = "FREQ=WEEKLY;BYDAY=";
+        for (let i = 0; i < timeslot.days.length; i++) {
+          if (i) {
+            recurrenceRule += ",";
+          }
+          recurrenceRule += recurrenceDays[timeslot.days[i]];
+        }
+        recurrenceRule += ";INTERVAL=1;UNTIL=";
+        recurrenceRule += year;
+        recurrenceRule += timeslot.dateEnd.replace("/", "");
+
+        // Make a js dates for start time
+        const monthStart = timeslot.dateStart.split("/")[0];
+        const dayStart = timeslot.dateStart.split("/")[1];
+        const hourStart = Math.floor(timeslot.timeStart / 100);
+        const minStart = timeslot.timeStart % 100;
+        let startJSDate = new Date(
+          `${year}/${monthStart}/${dayStart} ${hourStart}:${minStart}:0`
+        );
+
+        // Make a js dates for end time
+        const monthEnd = timeslot.dateStart.split("/")[0];
+        const dayEnd = timeslot.dateStart.split("/")[1];
+        const hourEnd = Math.floor(timeslot.timeEnd / 100);
+        const minEnd = timeslot.timeEnd % 100;
+        let endJSDate = new Date(
+          `${year}/${monthEnd}/${dayEnd} ${hourEnd}:${minEnd}:0`
+        );
+
+        // Find the first day after the semester starts that has this section
+        // For example if the semster starts on a monday, but the section is on wednesday
+        // then move the date up to the next wednesday
+        while (!timeslot.days.includes(dayNumToLetter[startJSDate.getDay()])) {
+          startJSDate.setDate(startJSDate.getDate() + 1);
+          endJSDate.setDate(endJSDate.getDate() + 1);
+        }
+
+        // parse with NY time, and then convert to UTC
+        // TODO convert this to using a config file where you can set the default timezone
+        // Code based off here https://github.com/adamgibbons/ics/issues/126#issuecomment-586352771
+        const startMomentDate = moment
+          .tz(startJSDate, "America/New_York")
+          .utc();
+        const endMomentDate = moment.tz(endJSDate, "America/New_York").utc();
+
+        events.push({
+          title: section.title,
+          start: [
+            startMomentDate.get("year"),
+            startMomentDate.get("month") + 1,
+            startMomentDate.get("date"),
+            startMomentDate.get("hour"),
+            startMomentDate.get("minute"),
+          ],
+          startInputType: "utc",
+          end: [
+            endMomentDate.get("year"),
+            endMomentDate.get("month") + 1,
+            endMomentDate.get("date"),
+            endMomentDate.get("hour"),
+            endMomentDate.get("minute"),
+          ],
+          endInputType: "utc",
+          location: timeslot.location !== "TBA" ? timeslot.location : undefined,
+          recurrenceRule,
+        });
       }
     }
 

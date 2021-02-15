@@ -79,6 +79,26 @@ function formatTime(time: number, isMilitaryTime: boolean): string {
   return output;
 }
 
+export function timestampToString(timestamp: number): string {
+  const monthsShortStr = [
+    "Jan.",
+    "Feb.",
+    "Mar.",
+    "Apr.",
+    "May",
+    "June",
+    "July",
+    "Aug.",
+    "Sep.",
+    "Oct.",
+    "Nov.",
+    "Dec.",
+  ];
+
+  const date = new Date(timestamp);
+  return `${monthsShortStr[date.getMonth()]} ${date.getDate()}`;
+}
+
 export function formatTimeslot() {
   return (timeslot: Timeslot, isMilitaryTime: boolean): string => {
     return timeslot.timeStart >= 0
@@ -121,6 +141,32 @@ export function toMinutes(time: number): number {
 
 export function getDuration(timeslot: Timeslot): number {
   return toMinutes(timeslot.timeEnd) - toMinutes(timeslot.timeStart);
+}
+
+export function timeslotStartEndUnix(
+  timeslot: Timeslot
+): [number, number] | [null, null] {
+  if (timeslot.dateStart === "" || timeslot.dateEnd === "") {
+    // This timeslot doesn't have dates associated with it
+    return [null, null];
+  }
+
+  // Dates are in the form MM/DD, so we can just split the array
+  const [startMonth, startDay] = timeslot.dateStart
+    .split("/")
+    .map((x) => Number.parseInt(x));
+  const [endMonth, endDay] = timeslot.dateEnd
+    .split("/")
+    .map((x) => Number.parseInt(x));
+
+  const year = Number.parseInt(
+    shortSemToLongSem()(process.env.VUE_APP_CURR_SEM).slice(-4)
+  );
+
+  const start = new Date(year, startMonth, startDay).getTime();
+  const end = new Date(year, endMonth, endDay).getTime();
+
+  return [start, end];
 }
 
 //Sets the color theme to the word that is passed in
