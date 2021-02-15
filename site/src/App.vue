@@ -75,7 +75,12 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <b-alert class="fixed-bottom sticky-top" :show="true" v-if="currentSem === '202105'">
+            <b-alert
+              class="fixed-bottom sticky-top"
+              :show="true"
+              v-if="currentSem === '202105'"
+              style="z-index: 999 !important"
+            >
               <font-awesome-icon
                 :icon="['fas', 'exclamation-triangle']"
               ></font-awesome-icon>
@@ -140,7 +145,8 @@
       </div>
       <div class="footer-updated">Last updated {{ lastUpdated }}</div>
       <div class="footer-copyright">
-        &copy; {{ new Date().getFullYear() }} - Questionably Accurate Course Scheduler
+        &copy; {{ new Date().getFullYear() }} - Questionably Accurate Course
+        Scheduler
       </div>
     </footer>
   </div>

@@ -88,7 +88,11 @@
             Full Section</span
           >
           <span title="Professor(s)">
-            {{ section.timeslots[0].instructor }}
+            | {{ section.timeslots[0].instructor }} |
+          </span>
+          <span title="dates">
+            {{ section.timeslots[0].dateStart }} -
+            {{ section.timeslots[0].dateEnd }} |
           </span>
           <span
             class="padding-left"
