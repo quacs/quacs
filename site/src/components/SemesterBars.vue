@@ -44,7 +44,7 @@
           <b-progress-bar
             :value="percentageOfCurrentSubsem"
             variant="dark"
-            class="translucent"
+            style="opacity: 40%"
           ></b-progress-bar>
           <b-progress-bar
             :value="
@@ -458,10 +458,6 @@ export default class SemesterBars extends Vue {
 
 .transparent {
   background-color: #0000;
-}
-
-.translucent {
-  opacity: 40%;
 }
 
 .subsem-date {
