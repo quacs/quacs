@@ -96,7 +96,7 @@ export function timestampToString(timestamp: number): string {
   ];
 
   const date = new Date(timestamp);
-  return `${monthsShortStr[date.getMonth()]} ${date.getDate()}`;
+  return `${monthsShortStr[date.getMonth() - 1]} ${date.getDate()}`;
 }
 
 export function formatTimeslot() {

@@ -21,7 +21,8 @@
       <br />
       <div class="font-weight-bold">Dates Offered:</div>
       <div>
-        {{ section.timeslots[0].dateStart }} - {{ section.timeslots[0].dateEnd }}
+        {{ section.timeslots[0].dateStart }} -
+        {{ section.timeslots[0].dateEnd }}
       </div>
       <br />
       <div class="font-weight-bold">Seats:</div>
