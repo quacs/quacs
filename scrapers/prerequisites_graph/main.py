@@ -17,10 +17,14 @@ def sem_add_courses(sem_dir: str, adj_list):
     """
 
     # Load the JSONs
-    with open(f"{sem_dir}/courses.json", "r") as f:
-        sem_courses = json.load(f)
-    with open(f"{sem_dir}/prerequisites.json", "r") as f:
-        sem_prereqs = json.load(f)
+    try:
+        with open(f"{sem_dir}/courses.json", "r") as f:
+            sem_courses = json.load(f)
+        with open(f"{sem_dir}/prerequisites.json", "r") as f:
+            sem_prereqs = json.load(f)
+    except FileNotFoundError as e:
+        print(f"Skipping prereqs for term {sem_dir}", e)
+        return
 
     # Populate `courses`
     for dept in sem_courses:

@@ -199,12 +199,18 @@ async def parse_term(s, term):
     prerequisites = {}
 
     crns = []
-    with open(f"data/{term}/courses.json") as json_file:
-        courses = json.load(json_file)
-        for department in courses:
-            for course in department["courses"]:
-                for section in course["sections"]:
-                    crns.append(section["crn"])
+
+    try:
+        with open(f"data/{term}/courses.json") as json_file:
+            courses = json.load(json_file)
+    except FileNotFoundError as e:
+        print(f"Skipping prereqs for term {term}", e)
+        return
+
+    for department in courses:
+        for course in department["courses"]:
+            for section in course["sections"]:
+                crns.append(section["crn"])
 
     for crn in tqdm(crns, desc=term):
         try:
