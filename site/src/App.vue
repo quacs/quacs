@@ -140,7 +140,7 @@
       </div>
       <div class="footer-updated">Last updated {{ lastUpdated }}</div>
       <div class="footer-copyright">
-        &copy; 2020 - Questionably Accurate Course Scheduler
+        &copy; {{ new Date().getFullYear() }} - Questionably Accurate Course Scheduler
       </div>
     </footer>
   </div>
