@@ -160,7 +160,7 @@ export function timeslotStartEndUnix(
     .map((x) => Number.parseInt(x));
 
   const year = Number.parseInt(
-    shortSemToLongSem()(process.env.VUE_APP_CURR_SEM).slice(-4)
+    shortSemToLongSem()(process.env.VUE_APP_NEWEST_SEM).slice(-4)
   );
 
   const start = new Date(year, startMonth, startDay).getTime();

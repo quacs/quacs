@@ -276,7 +276,9 @@ export default class Schedule extends Vue {
     const dayNumToLetter: string[] = ["U", "M", "T", "W", "R", "F", "S"];
 
     // @ts-expect-error: shortSemToLongSem is defined in the computed section
-    const year = this.shortSemToLongSem(process.env.VUE_APP_CURR_SEM).slice(-4);
+    const year = this.shortSemToLongSem(process.env.VUE_APP_NEWEST_SEM).slice(
+      -4
+    );
     const events: EventAttributes[] = [];
 
     for (const section of this.currentSchedule) {

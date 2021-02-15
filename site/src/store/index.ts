@@ -12,9 +12,6 @@ import Vue from "vue";
 import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
-// eslint-disable-next-line
-const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
-
 import DATA_STATS_JSON from "./data/meta.json";
 import PREREQ_GRAPH_JSON from "./data/prereq_graph.json";
 
@@ -27,7 +24,7 @@ Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
-    schools: SCHOOLS_JSON as {
+    schools: {} as {
       name: string;
       depts: { code: string; name: string }[];
     }[],
@@ -62,16 +59,20 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    SET_DEPARTMENTS(state, departments): void {
+    SET_DEPARTMENTS_DATA(state, departments): void {
       state.departments = departments;
     },
 
-    SET_CATALOG(state, catalog): void {
+    SET_CATALOG_DATA(state, catalog): void {
       state.catalog = catalog;
     },
 
     SET_PREREQUISITES_DATA(state, data): void {
       state.prerequisitesData = data;
+    },
+
+    SET_SCHOOLS_DATA(state, schools): void {
+      state.schools = schools;
     },
 
     setWarningMessage(state, message): void {
@@ -84,17 +85,25 @@ export default new Vuex.Store({
   },
   actions: {
     init({ commit }): void {
+      console.log(window.localStorage.test, `./robots.txt`);
+      console.log(this.state);
       import(
-        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/catalog.json`
-      ).then((catalog) => commit("SET_CATALOG", catalog));
+        `./data/semester_data/${this.state.settings.currentTerm}/catalog.json`
+      ).then((catalog) => commit("SET_CATALOG_DATA", catalog));
 
       import(
-        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/courses.json`
-      ).then((departments) => commit("SET_DEPARTMENTS", departments.default));
+        `./data/semester_data/${this.state.settings.currentTerm}/courses.json`
+      ).then((departments) =>
+        commit("SET_DEPARTMENTS_DATA", departments.default)
+      );
 
       import(
-        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/prerequisites.json`
+        `./data/semester_data/${this.state.settings.currentTerm}/prerequisites.json`
       ).then((prereqs) => commit("SET_PREREQUISITES_DATA", prereqs));
+
+      import(
+        `./data/semester_data/${this.state.settings.currentTerm}/schools.json`
+      ).then((catalog) => commit("SET_SCHOOLS_DATA", catalog));
     },
   },
   modules: {
@@ -104,10 +113,22 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
-      key:
-        process.env.VUE_APP_CURR_SEM === "202101"
-          ? "vuex"
-          : process.env.VUE_APP_CURR_SEM,
+      key: "inter-semester-storage",
+      paths: [
+        "settings.timePreference",
+        "settings.colorTheme",
+        "settings.hidePrerequisites",
+        "settings.enableTracking",
+        "settings.currentTerm",
+        "prerequisites.priorCourses",
+        "prerequisites.enableChecking",
+      ],
+    }),
+    createPersistedState({
+      key: window.localStorage["inter-semester-storage"]
+        ? JSON.parse(window.localStorage["inter-semester-storage"]).settings
+            .currentTerm
+        : process.env.VUE_APP_NEWEST_SEM,
       paths: [
         "schedule.storedVersion",
         "schedule.currentTerm",
@@ -118,17 +139,6 @@ export default new Vuex.Store({
         store.commit("schedule/initSelectedSetions");
         store.dispatch("schedule/init", false);
       },
-    }),
-    createPersistedState({
-      key: "inter-semester-storage",
-      paths: [
-        "settings.timePreference",
-        "settings.colorTheme",
-        "settings.hidePrerequisites",
-        "settings.enableTracking",
-        "prerequisites.priorCourses",
-        "prerequisites.enableChecking",
-      ],
     }),
   ],
 });

@@ -27,17 +27,20 @@
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <CourseSetEdit></CourseSetEdit>
-              <b-nav-item-dropdown left :title="shortSemToLongSem(currentSem)">
+              <b-nav-item-dropdown
+                left
+                :title="shortSemToLongSem(getCurrentTerm)"
+              >
                 <template v-slot:button-content>
                   <em class="nav-text" style="font-style: normal">{{
-                    shortSemToLongSem(currentSem)
+                    shortSemToLongSem(getCurrentTerm)
                   }}</em>
                 </template>
                 <b-dropdown-item
                   v-for="shortSem in allSems"
                   :key="shortSem"
-                  :href="shortSemToURL(shortSem)"
                   :title="shortSemToLongSem(shortSem)"
+                  @click="setCurrentTerm(shortSem)"
                   >{{ shortSemToLongSem(shortSem) }}</b-dropdown-item
                 >
               </b-nav-item-dropdown>
@@ -78,7 +81,7 @@
             <b-alert
               class="fixed-bottom sticky-top"
               :show="true"
-              v-if="currentSem === '202105'"
+              v-if="getCurrentTerm === '202105'"
               style="z-index: 999 !important"
             >
               <font-awesome-icon
@@ -197,6 +200,7 @@ import { shortSemToLongSem, shortSemToURL } from "@/utilities";
   computed: {
     ...mapGetters(["shouldShowAlert", "warningMessage"]),
     ...mapGetters("schedule", ["getCourseSets"]),
+    ...mapGetters("settings", ["getCurrentTerm"]),
     ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
     shortSemToURL,
     shortSemToLongSem,
@@ -218,10 +222,6 @@ export default class App extends Vue {
 
   get allSems(): string[] {
     return JSON.parse(process.env.VUE_APP_ALL_SEMS);
-  }
-
-  get currentSem(): string {
-    return process.env.VUE_APP_CURR_SEM;
   }
 
   get lastUpdated(): string {
@@ -299,6 +299,10 @@ export default class App extends Vue {
         this.installEvent = null;
       });
     }
+  }
+
+  setCurrentTerm(newTerm: number): void {
+    this.$store.commit("settings/setCurrentTerm", newTerm);
   }
 }
 </script>

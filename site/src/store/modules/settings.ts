@@ -8,6 +8,7 @@ export default class Settings extends VuexModule {
   colorTheme = "system";
   hidePrerequisites = false;
   enableTracking = true;
+  currentTerm = process.env.VUE_APP_NEWEST_SEM;
 
   get isMilitaryTime(): () => boolean {
     return () => this.timePreference === "M";
@@ -42,7 +43,17 @@ export default class Settings extends VuexModule {
     this.enableTracking = newVal;
   }
 
-  getTracking(): boolean {
+  get getTracking(): boolean {
     return this.enableTracking;
+  }
+
+  @Mutation
+  setCurrentTerm(newVal: number): void {
+    this.currentTerm = newVal;
+    document.location.reload(true);
+  }
+
+  get getCurrentTerm(): number {
+    return this.currentTerm;
   }
 }

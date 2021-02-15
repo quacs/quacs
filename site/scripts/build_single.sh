@@ -44,7 +44,7 @@ cp src/store/data/semester_data/$CURR_SEMESTER/*.rs src/quacs-rs/src/data
 
 echo Setting .env file
 rm .env
-echo "VUE_APP_CURR_SEM=$CURR_SEMESTER" >>.env
+echo "VUE_APP_NEWEST_SEM=$CURR_SEMESTER" >>.env
 echo -n "VUE_APP_ALL_SEMS=[" >>.env
 ITER=0
 for directory in $(find src/store/data/semester_data/* -type d -print0 | xargs -0 | sed 's/ /\n/g' | sort -r); do

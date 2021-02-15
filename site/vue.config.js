@@ -21,8 +21,8 @@ function shortSemToURL(shortSem) {
 
 module.exports = {
   publicPath:
-    process.env.VUE_APP_CURR_SEM !== undefined
-      ? shortSemToURL(process.env.VUE_APP_CURR_SEM)
+    process.env.VUE_APP_NEWEST_SEM !== undefined
+      ? shortSemToURL(process.env.VUE_APP_NEWEST_SEM)
       : "/",
 
   pwa: {
