@@ -24,7 +24,7 @@ Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
-    schools: {} as {
+    schools: [] as {
       name: string;
       depts: { code: string; name: string }[];
     }[],
@@ -85,25 +85,27 @@ export default new Vuex.Store({
   },
   actions: {
     init({ commit }): void {
-      console.log(window.localStorage.test, `./robots.txt`);
-      console.log(this.state);
       import(
+        // @ts-expect-error: typescript does not know that settings exists yet
         `./data/semester_data/${this.state.settings.currentTerm}/catalog.json`
       ).then((catalog) => commit("SET_CATALOG_DATA", catalog));
 
       import(
+        // @ts-expect-error: typescript does not know that settings exists yet
         `./data/semester_data/${this.state.settings.currentTerm}/courses.json`
       ).then((departments) =>
         commit("SET_DEPARTMENTS_DATA", departments.default)
       );
 
       import(
+        // @ts-expect-error: typescript does not know that settings exists yet
         `./data/semester_data/${this.state.settings.currentTerm}/prerequisites.json`
       ).then((prereqs) => commit("SET_PREREQUISITES_DATA", prereqs));
 
       import(
+        // @ts-expect-error: typescript does not know that settings exists yet
         `./data/semester_data/${this.state.settings.currentTerm}/schools.json`
-      ).then((catalog) => commit("SET_SCHOOLS_DATA", catalog));
+      ).then((schools) => commit("SET_SCHOOLS_DATA", schools));
     },
   },
   modules: {
@@ -125,6 +127,7 @@ export default new Vuex.Store({
       ],
     }),
     createPersistedState({
+      //Must use local storage directly here because the state has not even been initilized yet
       key: window.localStorage["inter-semester-storage"]
         ? JSON.parse(window.localStorage["inter-semester-storage"]).settings
             .currentTerm
