@@ -20,6 +20,12 @@
             >{{ course }}
           </span>
         </template>
+        <template v-if="prerequisiteData.prerequisites">
+          <br />
+          <br />
+          <div class="font-weight-bold">Visualize Prerequisites:</div>
+          <PrereqGraph :course="courseCode"></PrereqGraph>
+        </template>
       </template>
       <template v-else>
         Some sections have different prerequisite data. Click on individual
@@ -38,9 +44,12 @@ import { BButton } from "bootstrap-vue";
 import { CourseSection } from "@/typings";
 import { formatCourseSize, formatPrerequisites } from "@/utilities";
 
+import PrereqGraph from "@/components/PrereqGraph.vue";
+
 @Component({
   components: {
     "b-button": BButton,
+    PrereqGraph,
   },
   computed: {
     formatPrerequisites,
@@ -74,6 +83,10 @@ export default class CourseInfo extends Vue {
 
   get modalTitle(): string {
     return `Course Info: ${this.course.title}`;
+  }
+
+  get courseCode(): string {
+    return this.course.id.split("-").join(" ");
   }
 }
 </script>
