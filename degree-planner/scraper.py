@@ -1,157 +1,133 @@
-import time
+import itertools
+import json
 import os
 import subprocess
 import sys
+import time
+
+from dotenv import load_dotenv
+import requests
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from tqdm import tqdm
 
-degrees = [
-    ("ARCH", True, "BA-ARCH", "BA+Architecture"),
-    ("AERO", False, "BS-AERO", "BS+Aeronautical+Engineering"),
-    ("AERO", True, "BS-AERO-TR", "BS+Aeronautical+Engr/+transfer"),
-    ("APHY", True, "BS-APHY", "BS+Applied+Physics"),
-    ("BCBP", True, "BS-BCBP", "BS+Biochemistry+and+Biophysics"),
-    ("BFMB", True, "BS-BFMB", "BS+Bioinformatics+and+Mol+Biol"),
-    ("BIOL", True, "BS-BIOL", "BS+Biology"),
-    ("BIAM", True, "BS-BIAM", "BS+Biology+Accelerated+Medical"),
-    ("BMED", False, "BS-BMED", "BS+Biomedical+Engineering"),
-    ("BLSC", True, "BS-BLSC", "BS+Building+Sciences"),
-    ("BSAN", True, "BS-BSAN-TR", "BS+Business+Analytics/transfer"),
-    ("BMGT", True, "BS-BMGT", "BS+Business+and+Management"),
-    ("CHEG", True, "BS-CHEG", "BS+Chemical+Engineering"),
-    ("CHEG", True, "BS-CHEG-TR", "BS+Chemical+Engr/+transfer"),
-    ("CHEM", True, "BS-CHEM", "BS+Chemistry"),
-    ("CIVL", False, "BS-CIVL", "BS+Civil+Engineering"),
-    ("CIVL", True, "BS-CIVL-TR", "BS+Civil+Engineering/+transfer"),
-    ("COGS", True, "BS-COGS", "BS+Cognitive+Science"),
-    ("COMM", True, "BS-COMM", "BS+Communication"),
-    ("CSCI", True, "BS-CSCI", "BS+Computer+Science"),
-    ("CSCI", True, "BS-CSCI-TR", "BS+Computer+Science/+transfer"),
-    ("CSYS", False, "BS-CSYS", "BS+Computer+And+Systems+Engr."),
-    ("DSIS", True, "BS-DSIS", "BS+Dsgn,+Innovation+&+Society"),
-    ("ECON", True, "BS-ECON", "BS+Economics"),
-    ("ELEC", False, "BS-ELEC", "BS+Electrical+Engineering"),
-    ("EART", True, "BS-EART", "BS+Electronic+Arts"),
-    ("EMAC", True, "BS-EMAC", "BS+Electronic+Media/Arts/Comm"),
-    ("ESCI", False, "BS-ESCI", "BS+Engineering+Science"),
-    # TODO: GSAS
-    ("GEOL", True, "BS-GEOL", "BS+Geology"),
-    ("HGEO", True, "BS-HGEO", "BS+Hydrogeology"),
-    ("MGTE", False, "BS-MGTE", "BS+Industrial+&+Management+Eng"),
-    ("ISCI", True, "BS-ISCI", "BS+Interdisciplinary+Science"),
-    ("MATL", False, "BS-MATL", "BS+Materials+Engineering"),
-    ("MATH", True, "BS-MATH", "BS+Mathematics"),
-    ("MATH", True, "BS-MATH-TR", "BS+Mathematics/+transfer"),
-    ("MECL", False, "BS-MECL", "BS+Mechanical+Engineering"),
-    ("MECL", True, "BS-MECL-TR", "BS+Mechanical+Eng/+transfer"),
-    ("MUSIC", True, "BS-MUSIC", "BS+Music"),
-    ("NUCL", False, "BS-NUCL", "BS+Nuclear+Engineering"),
-    ("PHIL", True, "BS-PHIL", "BS+Philosophy"),
-    ("PHYS", True, "BS-PHYS", "BS+Physics"),
-    ("PHYS", True, "BS-PHYS-TR", "BS+Physics/+transfer"),
-    ("PSYS", True, "BS-PSYS", "BS+Psychological+Science"),
-    ("PSYC", False, "BS-PSYC", "BS+Psychology"),
-    ("SSLW", True, "BS-SSLW", "BS+Science+and+Society+(Law)"),
-    ("STSO", True, "BS-STSO", "BS+Science,+Tech+&+Society"),
-    ("SUST", True, "BS-SUST", "BS+Sustainability+Studies"),
-    ("ENGR", True, "BS-ENGR", "BS+Undeclared+Engineering"),
-]
 
-fnames = []
-for year in range(2012, 2027):
-    for major, blocklist, short_degree, long_degree in degrees:
-        fnames.append(f"{year}-{short_degree}")
-
-
-if len(sys.argv) > 1 and sys.argv[1] == "refresh_data":
-    from dotenv import load_dotenv
-    import requests
-    from selenium import webdriver
-    from selenium.webdriver.firefox.options import Options
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support import expected_conditions
-    from selenium.webdriver.support.wait import WebDriverWait
-
-    load_dotenv()
-    RIN = os.getenv("RIN")
-    SIS_PASS = os.getenv("PASSWORD")
-
-    firefox_options = Options()
-    firefox_options.add_argument("-headless")
-
-    driver = webdriver.Firefox(options=firefox_options)
-    driver.get("https://sis.rpi.edu/rss/twbkwbis.P_WWWLogin")
-    driver.set_window_size(959, 1054)
-    driver.find_element(By.ID, "UserID").send_keys(RIN)
-    driver.find_element(By.NAME, "PIN").send_keys(SIS_PASS)
-    driver.find_element(By.CSS_SELECTOR, "p > input:nth-child(1)").click()
-    wait = WebDriverWait(driver, timeout=30)
-    wait.until(
-        expected_conditions.presence_of_element_located((By.LINK_TEXT, "Student Menu"))
+def get_dw_data(s: requests.Session, url: str, key: str):
+    raw_data = s.get(url).json()
+    return list(
+        map(
+            lambda data: (data["key"], data["description"]),
+            filter(
+                lambda data: data["isVisibleInWhatif"],
+                raw_data["_embedded"][key],
+            ),
+        )
     )
-    driver.find_element(By.LINK_TEXT, "Student Menu").click()
-    driver.find_element(By.LINK_TEXT, "Degree Works").click()
-    time.sleep(3)
-    passport = driver.get_cookie("PASSPORT")["value"]
 
-    payload = {
-        "SERVICE": "SCRIPTER",
-        "SCRIPT": "SD2GETAUD",
-        "ACTION": "WHATIFAUDIT",
-        "USERID": RIN,
-        "STUID": RIN,
-        "DEGREETERM": "ACTV",
-        "INTNOTES": "Y",
-        "DEGINTEREST": "",
-        "INPROGRESS": "Y",
-        "CUTOFFTERM": "9999",
-        "REFRESH": "N",
-        "WHATIF": "Y",
-        "BLOCKLIST": "********* CUSTOM *********",
-        "SCHOOL": "UG",  # TODO: support grad school?
-        "DEGREE": "********* CUSTOM *********",
-        "SCHOOLLIT": "Undergraduate",  # TODO: support grad school?
-        "DEGREELIT": "********* CUSTOM *********",
-        "CATYEAR": "********* CUSTOM *********",
-        "PROGRAM": "",
-        "DEBUG": "OFF",
-        "ContentType": "xml",
-        "CLASSLIST": "",
-        "REPORT": "WEB31",
-        "InProgress": "on",
-        "CutOffTerm": "on",
-    }
 
-    headers = {
-        "Cookie": f"PASSPORT={passport}; PASSPORT={passport}",
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
+load_dotenv()
+RIN = os.getenv("RIN")
+SIS_PASS = os.getenv("PASSWORD")
 
-    cookies = dict(PASSPORT=passport)
+firefox_options = Options()
+firefox_options.add_argument("-headless")
 
-    for year in range(2012, 2027):
-        for major, blocklist, short_degree, long_degree in tqdm(
-            degrees, desc=str(year)
-        ):
-            if blocklist:
-                payload[
-                    "BLOCKLIST"
-                ] = f'dummy&&GOALCODE=MAJOR&GOALVALUE="{major}"&GOALCATYR=2019&'
-            else:
-                payload["BLOCKLIST"] = "dummy&&"
+driver = webdriver.Firefox(options=firefox_options)
+driver.get(
+    "https://cas-auth-ent.rpi.edu/cas/login?service=https%3A%2F%2Fbannerapp04-bnrprd.server.rpi.edu%3A443%2Fssomanager%2Fc%2FSSB"
+)
+driver.find_element(By.ID, "username").send_keys(RIN)
+driver.find_element(By.ID, "password").send_keys(SIS_PASS)
+driver.find_element(By.NAME, "submit").click()
+wait = WebDriverWait(driver, timeout=30)
+wait.until(
+    expected_conditions.presence_of_element_located((By.LINK_TEXT, "Student Menu"))
+)
+driver.find_element(By.LINK_TEXT, "Student Menu").click()
+driver.find_element(By.LINK_TEXT, "Degree Works").click()
 
-            payload["DEGREE"] = short_degree
-            payload["DEGREELIT"] = long_degree
-            payload["CATYEAR"] = str(year)
+wait = WebDriverWait(driver, timeout=30)
+wait.until(expected_conditions.presence_of_element_located((By.ID, "what-if")))
+driver.find_element(By.ID, "what-if").click()
 
-            response = requests.request(
-                "POST",
-                "https://degwx-webprd.server.rpi.edu/IRISLink.cgi",
-                headers=headers,
-                cookies=cookies,
-                data=payload,
-            )
+wait = WebDriverWait(driver, timeout=30)
+wait.until(expected_conditions.presence_of_element_located((By.ID, "WhatIfGoals")))
 
-            with open(f"{year}-{short_degree}.xml", "w") as f:
-                f.write(response.text)
+with requests.Session() as s:
+    # Add X-AUTH-TOKEN to cookies
+    s.cookies = requests.cookies.cookiejar_from_dict(
+        {cookie["name"]: cookie["value"] for cookie in driver.get_cookies()},
+        s.cookies,
+    )
 
-subprocess.call(["cargo", "run", "--", *fnames])
+    years = get_dw_data(
+        s,
+        "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/catalogYears",
+        "catalogYears",
+    )
+
+    degrees = get_dw_data(
+        s,
+        "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/degrees",
+        "degrees",
+    )
+
+    levels = get_dw_data(
+        s,
+        "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/schools",
+        "schools",
+    )
+
+    # Majors, minors, and concentrations aren't currently used, but they're pulled for if we want them later
+    majors = get_dw_data(
+        s,
+        "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/majors-whatif",
+        "majors",
+    )
+
+    minors = get_dw_data(
+        s,
+        "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/minors-whatif",
+        "minors",
+    )
+
+    concentrations = get_dw_data(
+        s,
+        "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/concentrations",
+        "concentrations",
+    )
+
+    # Afaik, degreeworks doesn't actually use these values when deciding what rules to return
+    # Unfortunately, they're still required parameters :(
+    dummy_major = majors[0][0]
+    dummy_level = levels[0][0]
+
+    for (year, _), (degree, _) in tqdm(
+        itertools.product(years, degrees), total=len(years) * len(degrees)
+    ):
+        payload = {
+            "studentId": RIN,
+            "isIncludeInprogress": True,
+            "isIncludePreregistered": True,
+            "isKeepCurriculum": False,
+            "school": dummy_level,
+            "catalogYear": year,
+            "degree": degree,
+            "goals": [{"code": "MAJOR", "value": dummy_major}],
+            "classes": [],
+        }
+
+        res = s.post(
+            "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/audit",
+            headers={"Origin": "https://degreeworksprd.rpi.edu:8708"},
+            json=payload,
+        )
+
+        with open(f"data/{year}_{degree}.json", "w") as out_f:
+            json.dump(res.json(), out_f, indent=2)
+
+
+# subprocess.call(["cargo", "run", "--", *fnames])
