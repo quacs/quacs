@@ -41,7 +41,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { BButton } from "bootstrap-vue";
-import { CourseSection } from "@/typings";
+import { Course } from "@/typings";
 import { formatCourseSize, formatPrerequisites } from "@/utilities";
 
 import PrereqGraph from "@/components/PrereqGraph.vue";
@@ -79,7 +79,7 @@ import PrereqGraph from "@/components/PrereqGraph.vue";
   },
 })
 export default class CourseInfo extends Vue {
-  @Prop() readonly course!: CourseSection;
+  @Prop() readonly course!: Course;
 
   get modalTitle(): string {
     return `Course Info: ${this.course.title}`;
