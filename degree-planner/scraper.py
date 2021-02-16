@@ -1,19 +1,13 @@
 import itertools
 import json
 import os
-import subprocess
-import sys
-import time
 
 from dotenv import load_dotenv
 import requests
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
 from tqdm import tqdm
 
+import urllib.parse
+from bs4 import BeautifulSoup
 
 def get_dw_data(s: requests.Session, url: str, key: str):
     raw_data = s.get(url).json()
@@ -32,36 +26,27 @@ load_dotenv()
 RIN = os.getenv("RIN")
 SIS_PASS = os.getenv("PASSWORD")
 
-firefox_options = Options()
-firefox_options.add_argument("-headless")
-
-driver = webdriver.Firefox(options=firefox_options)
-driver.get(
-    "https://cas-auth-ent.rpi.edu/cas/login?service=https%3A%2F%2Fbannerapp04-bnrprd.server.rpi.edu%3A443%2Fssomanager%2Fc%2FSSB"
-)
-driver.find_element(By.ID, "username").send_keys(RIN)
-driver.find_element(By.ID, "password").send_keys(SIS_PASS)
-driver.find_element(By.NAME, "submit").click()
-wait = WebDriverWait(driver, timeout=30)
-wait.until(
-    expected_conditions.presence_of_element_located((By.LINK_TEXT, "Student Menu"))
-)
-driver.find_element(By.LINK_TEXT, "Student Menu").click()
-driver.find_element(By.LINK_TEXT, "Degree Works").click()
-
-wait = WebDriverWait(driver, timeout=30)
-wait.until(expected_conditions.presence_of_element_located((By.ID, "what-if")))
-driver.find_element(By.ID, "what-if").click()
-
-wait = WebDriverWait(driver, timeout=30)
-wait.until(expected_conditions.presence_of_element_located((By.ID, "WhatIfGoals")))
-
+LOGIN_BASE_PARAMS = f"username={os.getenv('RIN')}&password={urllib.parse.quote(os.getenv('PASSWORD'))}&_eventId=submit"
+headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+}
 with requests.Session() as s:
-    # Add X-AUTH-TOKEN to cookies
-    s.cookies = requests.cookies.cookiejar_from_dict(
-        {cookie["name"]: cookie["value"] for cookie in driver.get_cookies()},
-        s.cookies,
+    login_url = "https://cas-auth-ent.rpi.edu/cas/login?service=https%3A%2F%2Fdegreeworksprd.rpi.edu%3A8708%2Fdegwx%2FRespDashboard%2Flogin%2Fcas"
+    login_page = s.get(url=login_url)
+    login_soup = BeautifulSoup(login_page.text.encode("utf8"), "html.parser")
+    csrf = login_soup.find("input", attrs={"name": "execution"})["value"]
+    login_params = LOGIN_BASE_PARAMS + f"&execution={csrf}"
+
+    response = s.request(
+        "POST",
+        login_url,
+        headers=headers,
+        data=login_params,
     )
+    if b"dashboard.bundle.js" not in response.text.encode("utf8"):
+        print(response.text.encode("utf8"))
+        print("Failed to authenticate CAS")
+        exit(1)
 
     years = get_dw_data(
         s,
