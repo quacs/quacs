@@ -16,13 +16,13 @@ function shortSemToURL(shortSem) {
     sem = semNum;
   }
 
-  return `/${sem}${year}`;
+  return `${sem}${year}`;
 }
 
 module.exports = {
   publicPath:
     process.env.VUE_APP_CURR_SEM !== undefined
-      ? shortSemToURL(process.env.VUE_APP_CURR_SEM)
+      ? "/" + shortSemToURL(process.env.VUE_APP_CURR_SEM)
       : "/",
 
   pwa: {

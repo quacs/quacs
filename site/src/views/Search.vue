@@ -35,7 +35,7 @@ export default {
     courses: {
       get(): Promise<Course[]> {
         // @ts-expect-error: We're not in a real class so Typescript is confused
-        const query = Object.keys(this.$route.query)[0];
+        const query = this.$route.query.q;
         if (query.length < 3) {
           return new Promise((resolve) => resolve([]));
         }

@@ -12,8 +12,7 @@ import Vue from "vue";
 import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
-// eslint-disable-next-line
-const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
+import { currentSem } from "@/utilities";
 
 import DATA_STATS_JSON from "./data/meta.json";
 import PREREQ_GRAPH_JSON from "./data/prereq_graph.json";
@@ -27,7 +26,7 @@ Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
-    schools: SCHOOLS_JSON as {
+    schools: [] as {
       name: string;
       depts: { code: string; name: string }[];
     }[],
@@ -74,6 +73,10 @@ export default new Vuex.Store({
       state.prerequisitesData = data;
     },
 
+    SET_SCHOOLS_DATA(state, data): void {
+      state.schools = data;
+    },
+
     setWarningMessage(state, message): void {
       state.warningMessage = message;
     },
@@ -84,6 +87,8 @@ export default new Vuex.Store({
   },
   actions: {
     init({ commit }): void {
+      // console.log(currentSem())
+      // console.log(this.$route)
       import(
         `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/catalog.json`
       ).then((catalog) => commit("SET_CATALOG", catalog));
@@ -95,6 +100,10 @@ export default new Vuex.Store({
       import(
         `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/prerequisites.json`
       ).then((prereqs) => commit("SET_PREREQUISITES_DATA", prereqs));
+
+      import(
+        `./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`
+      ).then((schools) => commit("SET_SCHOOLS_DATA", schools));
     },
   },
   modules: {
@@ -105,6 +114,7 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       key:
+      //todo get this working with currentSem()
         process.env.VUE_APP_CURR_SEM === "202101"
           ? "vuex"
           : process.env.VUE_APP_CURR_SEM,

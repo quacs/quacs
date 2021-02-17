@@ -67,6 +67,7 @@ new Vue({
   store,
   render: (h) => h(App),
   beforeCreate() {
+    //TODO add redirect to current semester if the current page does not have any data
     this.$store.dispatch("init");
     this.$store.commit("schedule/initializeStore");
     this.$store.dispatch("schedule/init");

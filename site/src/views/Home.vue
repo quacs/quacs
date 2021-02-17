@@ -9,7 +9,7 @@
         <div v-for="department in school.depts" v-bind:key="department.code">
           <router-link
             class="nav-link department-link"
-            :to="'/department/' + department.code"
+            :to="{ name: 'department', params: { code: department.code } }"
             ><span class="department-code">{{ department.code }}</span>
             {{ department.name }}</router-link
           >

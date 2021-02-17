@@ -1,5 +1,6 @@
 import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
+import route from "@/router";
 
 // eslint-disable-next-line
 declare const umami: any; // Not initialized here since it's declared in an imported file
@@ -324,8 +325,32 @@ export function shortSemToURL() {
       sem = semNum;
     }
 
-    return `/${sem}${year}`;
+    return `${sem}${year}`;
   };
+}
+
+//Gets the current semester from the url
+export function currentSem(): string {
+  const currentSem = route.currentRoute.params.semester;
+  console.log(currentSem)
+  const semesterParts = currentSem.match(/(fall|spring|summer)(\d{4})/);
+
+  //If the current semester is formated wrong, just assume it is already in long form
+  if (!semesterParts) {
+    return currentSem;
+  }
+
+  let sem = "";
+  if (semesterParts[1] === "spring") {
+    sem = "01";
+  } else if (semesterParts[1] === "fall") {
+    sem = "09";
+  } else if (semesterParts[1] === "summer") {
+    sem = "05";
+  } else {
+    sem = semesterParts[1];
+  }
+  return `${semesterParts[2]}${sem}`;
 }
 
 // All tracking should occur through these functions.  If the user has opted out of tracking,

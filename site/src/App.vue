@@ -2,7 +2,7 @@
   <div id="app">
     <div id="wrapper">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <router-link class="navbar-brand" to="/"
+        <router-link class="navbar-brand" :to="{ name: 'semester' }"
           ><img
             src="@/assets/images/quacs_logo_white_duck.svg"
             alt="QuACS Home"
@@ -36,20 +36,23 @@
                 <b-dropdown-item
                   v-for="shortSem in allSems"
                   :key="shortSem"
-                  :href="shortSemToURL(shortSem)"
+                  :to="{
+                    name: 'semester',
+                    params: { semester: shortSemToURL(shortSem) },
+                  }"
                   :title="shortSemToLongSem(shortSem)"
                   >{{ shortSemToLongSem(shortSem) }}</b-dropdown-item
                 >
               </b-nav-item-dropdown>
               <b-nav-item class="nav-text desktop-only" disabled>|</b-nav-item>
               <b-nav-item
-                to="/prerequisites"
+                :to="{ name: 'prerequisites' }"
                 class="nav-text"
                 :active="this.$route.path == '/prerequisites'"
                 >Prerequisites</b-nav-item
               >
               <b-nav-item
-                to="/schedule"
+                :to="{ name: 'schedule' }"
                 class="nav-text"
                 :active="this.$route.path == '/schedule'"
                 >Schedule</b-nav-item
@@ -172,7 +175,7 @@ import {
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
-import { shortSemToLongSem, shortSemToURL } from "@/utilities";
+import { shortSemToLongSem, shortSemToURL, currentSem } from "@/utilities";
 
 @Component({
   components: {
@@ -200,6 +203,7 @@ import { shortSemToLongSem, shortSemToURL } from "@/utilities";
     ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
     shortSemToURL,
     shortSemToLongSem,
+    currentSem,
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
@@ -218,10 +222,6 @@ export default class App extends Vue {
 
   get allSems(): string[] {
     return JSON.parse(process.env.VUE_APP_ALL_SEMS);
-  }
-
-  get currentSem(): string {
-    return process.env.VUE_APP_CURR_SEM;
   }
 
   get lastUpdated(): string {
@@ -254,12 +254,12 @@ export default class App extends Vue {
 
     if (input.length === 0) {
       this.searching = false;
-      this.$router.push("/").catch(() => {
+      this.$router.push({ name: "semester" }).catch(() => {
         return;
       });
     } else {
       this.searchCallback = setTimeout(() => {
-        this.$router.push("/search?" + input).catch(() => {
+        this.$router.push({ name: "search", query: { q: input } }).catch(() => {
           this.searching = false;
           return;
         });

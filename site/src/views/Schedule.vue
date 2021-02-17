@@ -61,7 +61,7 @@
               v-else-if="selectedCourses.length === 0"
             >
               <h3>It looks like you have not selected any courses yet :(</h3>
-              <router-link class="navbar-brand" to="/"
+              <router-link class="navbar-brand" :to="{ name: 'semester' }"
                 >Click to select a course</router-link
               >
             </div>
