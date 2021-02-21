@@ -70,7 +70,7 @@ def get_prereq_course_ids(prereqs):
     if typ == "course":
         return [prereqs["course"]]
     if typ in ["and", "or"]:
-        return list(
+        return sorted(
             set(
                 functools.reduce(
                     operator.add, map(get_prereq_course_ids, prereqs["nested"]), []
