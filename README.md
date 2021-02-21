@@ -1,8 +1,8 @@
 # QuACS - The Questionably Accurate Course Scheduler
 
-View the live version here: [https://quacs.org](https://quacs.org)
+View the live website here: [https://quacs.org](https://quacs.org)
 
-Want to help with development? [Join our discord!](https://discord.gg/nZKAzzE5bX)
+Want to ask a question, help with development, or just hang out? [Join our discord!](https://discord.gg/nZKAzzE5bX)
 
 # What are people saying?
 
@@ -27,9 +27,9 @@ Want to help with development? [Join our discord!](https://discord.gg/nZKAzzE5bX
 
 # Other Notes
 
-While QuACS and the developers are huge fans of [RCOS](https://rcos.io/), we are not affiliated with RCOS at this time. If you want to help out with development, join our [Discord server](https://discord.gg/EyGZTAP).
+QuACS is a proud member of the [Rensselaer Center for Open Source](https://rcos.io/)
 
-We are also not affiliated with YACS. The work they have done has been invaluable to the RPI student body and while our codebase is different, much of our design was inspired by YACS. We however also support competition and believe we provide a number of features that YACS does not. We are hoping you try us out when you register for classes next semester.
+QuACS is in no way affiliated with YACS. The work they have done has been invaluable to the RPI student body and while our codebase is different, much of our design was inspired by YACS. We however also support competition and believe we provide a number of features that YACS does not. We are hoping you try us out when you register for classes next semester.
 
 # Development info
 
@@ -61,6 +61,7 @@ Please replace `dark` with your theme name
 4. Edit the colors in your new css file and when you are ready, make a pull request!
 
 ## Redeploy GitHub Pages
+NOTE: You must be a collaborator on this repo for this command to work
 1. Generate a github token with the repo scope. [Learn More](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
 2. Run this curl command with your token
 ```bash
