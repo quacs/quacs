@@ -50,6 +50,9 @@
                 {{ session.section.subj }} {{ session.section.crse }} -
                 {{ session.section.sec }}
                 <br />
+                {{ session.timeslot.dateStart }} -
+                {{ session.timeslot.dateEnd }}
+                <br />
                 {{ session.section.crn }}
                 <br />
                 {{ session.timeslot.instructor }}
