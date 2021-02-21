@@ -71,6 +71,24 @@ async def get_school_ids() -> List[str]:
     return [id for sublist in school_ids for id in sublist]
 
 
+# Takes in a raw value for the operator and does some checks to make sure it is
+# valid before adding it to school_data[type]
+def get_operator(school_data, type, operator):
+    assert type in ("transfer_operator", "rpi_operator")
+    assert len(operator) <= 1
+
+    operator = operator[0].text if operator else None
+    operator = operator if operator in ("AND", "OR") else None
+
+    # Ensure that
+    assert (
+        school_data[type] == None or operator == None or school_data[type] == operator
+    )
+
+    if school_data[type] == None and operator:
+        school_data[type] = operator
+
+
 async def get_school_data(s, id) -> None:
     async with s.post(
         url="https://sis.rpi.edu/rss/yhwwkwags.P_Select_Inst",
@@ -108,11 +126,23 @@ async def get_school_data(s, id) -> None:
                     "location": global_id_to_name_map[id],
                     "school_name": school_name,
                     "transfer": [],
+                    "transfer_operator": None,
                     "rpi": [],
+                    "rpi_operator": None,
                 }
 
                 for offset in range(i - row_offset_up + 1, i + row_offset_down):
                     current_cells = rows[offset].findAll("td")
+
+                    get_operator(
+                        school_data, "rpi_operator", current_cells[0].findAll("strong")
+                    )
+                    get_operator(
+                        school_data,
+                        "transfer_operator",
+                        current_cells[-1].findAll("strong"),
+                    )
+
                     for j in range(
                         start_cell_offset,
                         min(
@@ -125,24 +155,23 @@ async def get_school_data(s, id) -> None:
                         if value != "":
                             index = j - start_cell_offset
                             if index == 0:  # transfer id
-                                school_data["transfer"].append(
-                                    {"id": value}
-                                )
+                                school_data["transfer"].append({"id": value})
                             elif index == 1:  # transfer name
                                 school_data["transfer"][-1]["name"] = value
                             elif index == 2:  # rpi id
-                                assert(re.match(r"^\w{4} \d{4}$", value) != None)
-                                school_data["rpi"].append(
-                                    {"id": value}
-                                )
+                                assert re.match(r"^\w{4} \d{4}$", value) != None
+                                school_data["rpi"].append({"id": value})
                             elif index == 3:  # rpi name
                                 school_data["rpi"][-1]["name"] = value
                             elif index == 4:  # rpi credits
-                                assert(re.match(r"^\d+(?:\.\d+)? credits$", value) != None)
-                                school_data["rpi"][-1]["credits"] = float(re.match(r"\d+(?:\.\d+)?", value)[0])
+                                assert (
+                                    re.match(r"^\d+(?:\.\d+)? credits$", value) != None
+                                )
+                                school_data["rpi"][-1]["credits"] = float(
+                                    re.match(r"\d+(?:\.\d+)?", value)[0]
+                                )
 
-
-                assert(re.match(r"^\w{4} \d{4}$", course_id) != None)
+                assert re.match(r"^\w{4} \d{4}$", course_id) != None
                 if course_id not in data:
                     data[course_id] = []
 
@@ -155,7 +184,7 @@ async def get_data(data, school_ids: List[str]) -> None:
         await asyncio.gather(*(get_school_data(s, id) for id in school_ids))
         # If we start running into rate limit problems, replace the asyncio.gather above with this loop
         # for id in tqdm(school_ids):
-        # await get_school_data(s, id)
+        #     await get_school_data(s, id)
 
 
 data = {}
