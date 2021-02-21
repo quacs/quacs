@@ -29,7 +29,7 @@ Want to ask a question, help with development, or just hang out? [Join our disco
 
 QuACS is a proud member of the [Rensselaer Center for Open Source](https://rcos.io/)
 
-QuACS is in no way affiliated with YACS. The work they have done has been invaluable to the RPI student body and while our codebase is different, much of our design was inspired by YACS. We however also support competition and believe we provide a number of features that YACS does not. We are hoping you try us out when you register for classes next semester.
+QuACS is not affiliated with YACS. The work they have done has been invaluable to the RPI student body and while our codebase is different, much of our design was inspired by YACS. We however also support competition and believe we provide a number of features that YACS does not. We are hoping you try us out when you register for classes next semester.
 
 # Development info
 
