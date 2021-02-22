@@ -2,10 +2,9 @@ name: Scrape new data
 on:
   repository_dispatch:
     types: scrape
-  # TODO Ideally this will only run when changes to the scraper folder are made
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
   schedule:
     - cron: '0 * * * *'
 
@@ -185,34 +184,33 @@ jobs:
           name: faculty
           path: scrapers/faculty.json
 
-  # This may need to be updated now that the scrapers have been moved into the same repo as the site
-  # scrape-catalog:
-  #   name: Scrapes catalog by year
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout scrapers
-  #       uses: actions/checkout@v2
-  #       with:
-  #         ref: 'master'
 
-  #     - name: Set up python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: '3.x'
+  scrape-catalog:
+    name: Scrapes catalog by year
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
 
-  #     - name: Install pip requirements
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.txt
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-  #     - name: Scrape catalog
-  #       run: python3 catalog_scraper/main.py catalog LATEST_YEAR
+      - name: Install pip requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scrapers/requirements.txt
 
-  #     - name: Upload data
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: catalog
-  #         path: data/
+      - name: Scrape catalog
+        working-directory: ./scrapers
+        run: scripts/weekly_scrape.sh && python3 catalog_scraper/main.py catalog LATEST_YEAR
+
+      - name: Upload data
+        uses: actions/upload-artifact@v2
+        with:
+          name: catalog
+          path: scrapers/data/
 
   commit-data:
     name: Commit changes
