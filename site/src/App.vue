@@ -1,6 +1,8 @@
 <template>
   <div id="app">
     <div id="wrapper">
+      <UnofficialScheduleModal />
+
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
@@ -75,19 +77,6 @@
         <div class="row">
           <div class="col-lg-1"></div>
           <div class="col-lg">
-            <b-alert
-              class="fixed-bottom sticky-top"
-              :show="true"
-              v-if="currentSem === '202105'"
-              style="z-index: 999 !important"
-            >
-              <font-awesome-icon
-                :icon="['fas', 'exclamation-triangle']"
-              ></font-awesome-icon>
-              QuACS is currently based off of a pre-release schedule for the
-              summer semester. Course offerings and associated faculty are
-              subject to change, and prerequisite checking is not available.
-            </b-alert>
             <router-view :key="wasmLoaded" v-if="wasmLoaded" />
             <!-- <b-alert
               variant="warning"
@@ -172,12 +161,14 @@ import {
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
+import UnofficialScheduleModal from "@/components/UnofficialScheduleModal.vue";
 import { shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 @Component({
   components: {
     Settings,
     CourseSetEdit,
+    UnofficialScheduleModal,
     "b-alert": BAlert,
     "b-button": BButton,
     "b-collapse": BCollapse,
