@@ -1,7 +1,7 @@
 <template>
   <b-modal
     title="Course offerings are not official!"
-    :visible="currentSem === '202105'"
+    :visible="false"
     centered
     size="xl"
     :hide-footer="!acceptedThatScheduleIsUnofficial"
