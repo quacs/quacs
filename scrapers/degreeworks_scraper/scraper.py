@@ -1,13 +1,17 @@
 import itertools
 import json
 import os
+import subprocess
+import sys
+import time
 
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import requests
 from tqdm import tqdm
 
-import urllib.parse
-from bs4 import BeautifulSoup
+from .parser import parse_audit
+
 
 def get_dw_data(s: requests.Session, url: str, key: str):
     raw_data = s.get(url).json()
@@ -30,6 +34,7 @@ LOGIN_BASE_PARAMS = f"username={os.getenv('RIN')}&password={urllib.parse.quote(o
 headers = {
     "Content-Type": "application/x-www-form-urlencoded",
 }
+
 with requests.Session() as s:
     login_url = "https://cas-auth-ent.rpi.edu/cas/login?service=https%3A%2F%2Fdegreeworksprd.rpi.edu%3A8708%2Fdegwx%2FRespDashboard%2Flogin%2Fcas"
     login_page = s.get(url=login_url)
@@ -37,8 +42,7 @@ with requests.Session() as s:
     csrf = login_soup.find("input", attrs={"name": "execution"})["value"]
     login_params = LOGIN_BASE_PARAMS + f"&execution={csrf}"
 
-    response = s.request(
-        "POST",
+    response = s.post(
         login_url,
         headers=headers,
         data=login_params,
@@ -46,7 +50,7 @@ with requests.Session() as s:
     if b"dashboard.bundle.js" not in response.text.encode("utf8"):
         print(response.text.encode("utf8"))
         print("Failed to authenticate CAS")
-        exit(1)
+        sys.exit(1)
 
     years = get_dw_data(
         s,
@@ -105,14 +109,15 @@ with requests.Session() as s:
             "classes": [],
         }
 
-        res = s.post(
+        data = s.post(
             "https://degreeworksprd.rpi.edu:8708/degwx/RespDashboard/api/audit",
             headers={"Origin": "https://degreeworksprd.rpi.edu:8708"},
             json=payload,
-        )
+        ).json()
 
-        with open(f"data/{year}_{degree}.json", "w") as out_f:
-            json.dump(res.json(), out_f, indent=2)
+        parsed_data = parse_audit(data)
 
+        os.makedirs(f"data/{year}", exist_ok=True)
 
-# subprocess.call(["cargo", "run", "--", *fnames])
+        with open(f"data/{year}/{degree}.json", "w") as out_f:
+            json.dump(parsed_data, out_f, indent=2)
