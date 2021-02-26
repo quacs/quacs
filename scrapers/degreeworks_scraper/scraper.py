@@ -4,13 +4,14 @@ import os
 import subprocess
 import sys
 import time
+import urllib
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import requests
 from tqdm import tqdm
 
-from .parser import parse_audit
+from parser import parse_audit
 
 
 def get_dw_data(s: requests.Session, url: str, key: str):
@@ -115,9 +116,16 @@ with requests.Session() as s:
             json=payload,
         ).json()
 
-        parsed_data = parse_audit(data)
-
         os.makedirs(f"data/{year}", exist_ok=True)
+
+        # Store data for debugging purposes
+        with open(f"data/{year}/raw_{degree}.json", "w") as out_f:
+            json.dump(data, out_f, indent=2)
+
+        if "error" in data:
+            continue
+
+        parsed_data = parse_audit(data)
 
         with open(f"data/{year}/{degree}.json", "w") as out_f:
             json.dump(parsed_data, out_f, indent=2)
