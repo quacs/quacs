@@ -13,9 +13,6 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
-      - name: Install Ubuntu dependencies for node-canvas
-        run: sudo apt-get -y install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
-
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
