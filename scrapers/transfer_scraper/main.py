@@ -8,7 +8,7 @@ import sys
 import re
 from tqdm import tqdm
 
-# Stores the full name of a school, nation, or state maped from their sis id
+# Stores the full name of a school, nation, or state mapped from their sis id
 # Example: { "NY": "New York" }
 global_id_to_name_map = {}
 
@@ -22,7 +22,7 @@ def get_ids(homepage_soup, type: str) -> List[str]:
     values = selectbox_html[0].find_all("option")
 
     for id in values:
-        global_id_to_name_map[id.attrs["value"]] = id.text
+        global_id_to_name_map[id.attrs["value"] + "_" + type] = id.text
 
     return [id.attrs["value"] for id in values if id.attrs["value"] != ""]
 
@@ -43,7 +43,9 @@ async def get_specific_school_ids(
 
     ids = get_ids(homepage, "sbgi_code")
     for id in ids:
-        global_id_to_name_map[id] = global_id_to_name_map[state_id + nation_id]
+        global_id_to_name_map[id] = global_id_to_name_map[
+            f"{state_id}{nation_id}_{'stat_code' if state_id != '' else 'natn_code'}"
+        ]
 
     return ids
 
@@ -135,12 +137,12 @@ async def get_school_data(s, id) -> None:
                     current_cells = rows[offset].findAll("td")
 
                     get_operator(
-                        school_data, "rpi_operator", current_cells[0].findAll("strong")
+                        school_data, "rpi_operator", current_cells[-1].findAll("strong")
                     )
                     get_operator(
                         school_data,
                         "transfer_operator",
-                        current_cells[-1].findAll("strong"),
+                        current_cells[0].findAll("strong"),
                     )
 
                     for j in range(
@@ -181,10 +183,10 @@ async def get_school_data(s, id) -> None:
 # Takes in the school ids and
 async def get_data(data, school_ids: List[str]) -> None:
     async with aiohttp.ClientSession() as s:
-        await asyncio.gather(*(get_school_data(s, id) for id in school_ids))
+        # await asyncio.gather(*(get_school_data(s, id) for id in school_ids))
         # If we start running into rate limit problems, replace the asyncio.gather above with this loop
-        # for id in tqdm(school_ids):
-        #     await get_school_data(s, id)
+        for id in tqdm(school_ids):
+            await get_school_data(s, id)
 
 
 data = {}
@@ -193,6 +195,12 @@ school_ids = asyncio.run(get_school_ids())
 print(f"Found {len(school_ids)} schools")
 print("Getting transfer data")
 asyncio.run(get_data(data, school_ids))
+
+for k, v in data.items():
+    data[k] = sorted(
+        v, key=lambda school_data: school_data["location"] + school_data["school_name"]
+    )
+
 
 with open("transfer.json", "w") as outfile:
     json.dump(data, outfile, sort_keys=True, indent=2)
