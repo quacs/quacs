@@ -130,5 +130,8 @@ scrapers/transcript_scraper/*_files/*
 scrapers/*/data
 
 scrapers/*.json
+scrapers/*/*.json
 scrapers/*.msgpack
+scrapers/*/*.msgpack
 scrapers/*.rs
+scrapers/*/*.rs
