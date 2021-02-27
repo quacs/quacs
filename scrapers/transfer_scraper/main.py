@@ -111,7 +111,7 @@ async def get_school_data(s, id) -> None:
             if len(cells) > 3:
                 course_id = cells[3].text.strip()
                 if course_id in ["Not Transferable", "Not Evaluated"]:
-                    continue
+                    pass
 
                 # gets the offsets because some data actually fills more than one row
                 row_offset_up = 0
