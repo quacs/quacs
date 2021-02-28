@@ -260,10 +260,6 @@ jobs:
         with:
           path: scrapers
 
-      - name: Generate meta json file
-        working-directory: ./scrapers
-        run: echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > data/meta.json
-
       - name: Commit new data
         working-directory: ./scrapers
         run: |
@@ -285,7 +281,12 @@ jobs:
 
           git add .
 
-          git commit -m "$(date -u)"
+          git commit -m "$(date -u)" || exit 0
+
+          echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > data/meta.json
+          git add meta.json
+          
+          git commit -a --amend --no-edit
           git push --force
 
       - name: Deploy updated website

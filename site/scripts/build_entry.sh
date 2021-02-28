@@ -6,6 +6,10 @@ curl https://umami.quacs.org/umami.js > public/umami.js || exit 1
 # If umami crashes, the file will contain an nginx error instead of the js code
 if cat public/umami.js | grep -q nginx; then exit 1; fi
 
+echo Getting time of last data scraped
+curl "https://api.github.com/repos/quacs/quacs/actions/runs?per_page=100&event=schedule" | jq 'first(.workflow_runs[] | select(.conclusion=="success")) | .updated_at' > src/store/data/latest_scrape.json
+printf '%s%s%s' "{\"last_updated\":" "$(cat src/store/data/latest_scrape.json)" "}" > src/store/data/latest_scrape.json
+
 # Update our local dependencies (quacs-rs), or clone if possible
 echo Retrieving latest quacs-data
 git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=1 src/store/data || exit 1

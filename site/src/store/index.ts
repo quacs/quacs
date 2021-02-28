@@ -16,6 +16,7 @@ import Vuex from "vuex";
 const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
 
 import DATA_STATS_JSON from "./data/meta.json";
+import LATEST_SCRAPE from "./data/latest_scrape.json";
 import PREREQ_GRAPH_JSON from "./data/prereq_graph.json";
 
 import settings from "./modules/settings";
@@ -32,6 +33,7 @@ export default new Vuex.Store({
       depts: { code: string; name: string }[];
     }[],
     dataStats: DATA_STATS_JSON as { last_updated: string },
+    updatedTime: LATEST_SCRAPE.last_updated,
     departments: [] as Department[], // asynchronously loaded
     catalog: {} as { [id: string]: CatalogCourse }, // asynchronously loaded
     prerequisitesData: {} as { [id: string]: PrerequisiteJSON }, // asynchronously loaded

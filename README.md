@@ -40,7 +40,10 @@ The following commands should be run within the `site/` directory:
 yarn install
 ```
 
-You'll also need to install Rust and `wasm-pack` to build the WebAssembly components of the website.  Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).
+You'll also need to install:
+* Rust and `wasm-pack` to build the WebAssembly components of the website.  Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).
+
+* `jq` to parse json files. Instructions for installing `jq` can be found [here](https://stedolan.github.io/jq/download/).
 
 ### Compiles and hot-reloads for development
 ```
