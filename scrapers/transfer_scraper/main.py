@@ -110,7 +110,7 @@ async def get_school_data(s, id) -> None:
             cells = rows[i].findAll("td")
             if len(cells) > 3:
                 course_id = cells[3].text.strip()
-                if course_id in ["Not Transferable", "Not Evaluated"]:
+                if course_id in ("Not Transferable", "Not Evaluated"):
                     pass
 
                 # gets the offsets because some data actually fills more than one row
@@ -161,7 +161,7 @@ async def get_school_data(s, id) -> None:
                             elif index == 1:  # transfer name
                                 school_data["transfer"][-1]["name"] = value
                             elif index == 2:  # rpi id
-                                assert re.match(r"^\w{4} \d{4}$", value) != None
+                                assert re.match(r"^\w{4} \d{4}$", value) != None or value in ("Not Transferable", "Not Evaluated")
                                 school_data["rpi"].append({"id": value})
                             elif index == 3:  # rpi name
                                 school_data["rpi"][-1]["name"] = value
@@ -173,7 +173,7 @@ async def get_school_data(s, id) -> None:
                                     re.match(r"\d+(?:\.\d+)?", value)[0]
                                 )
 
-                assert re.match(r"^\w{4} \d{4}$", course_id) != None
+                assert re.match(r"^\w{4} \d{4}$", course_id) != None or value in ("Not Transferable", "Not Evaluated")
                 if course_id not in data:
                     data[course_id] = []
 
