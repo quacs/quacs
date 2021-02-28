@@ -3,11 +3,14 @@
     <a href="https://patreon.com/quacs" rel="noopener" target="_blank">
       <div class="advertisement">
         <img
-          srcset="
-            @/assets/images/funding_motivator_mobile.png 700w,
-            @/assets/images/funding_motivator.png
-          "
+          src="@/assets/images/funding_motivator.png"
           alt="Your advertisement could be here!"
+          class="d-none d-lg-inline-block"
+        />
+        <img
+          src="@/assets/images/funding_motivator_mobile.png"
+          alt="Your advertisement could be here!"
+          class="d-inline-block d-lg-none"
         />
       </div>
     </a>
