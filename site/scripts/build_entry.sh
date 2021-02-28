@@ -7,8 +7,10 @@ curl https://umami.quacs.org/umami.js > public/umami.js || exit 1
 if cat public/umami.js | grep -q nginx; then exit 1; fi
 
 echo Getting time of last data scraped
-curl "https://api.github.com/repos/quacs/quacs/actions/runs?per_page=100&event=schedule" | jq 'first(.workflow_runs[] | select(.conclusion=="success")) | .updated_at' > src/store/data/latest_scrape.json
+curl "https://api.github.com/repos/quacs/quacs/actions/runs?per_page=100&event=schedule" > temp.json
+jq 'first(.workflow_runs[] | select(.conclusion=="success")) | .updated_at' temp.json > src/store/data/latest_scrape.json
 printf '%s%s%s' "{\"last_updated\":" "$(cat src/store/data/latest_scrape.json)" "}" > src/store/data/latest_scrape.json
+rm temp.json
 
 # Update our local dependencies (quacs-rs), or clone if possible
 echo Retrieving latest quacs-data
