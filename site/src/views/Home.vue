@@ -1,5 +1,17 @@
 <template>
   <div class="home">
+    <div class="advertisement">
+      <img
+        src="@/assets/images/youradhere.png"
+        media="(min-width: 1000px)"
+        alt="Your advertisement could be here!"
+      />
+      <img
+        src="@/assets/images/youradhere_mobile.png"
+        media="(max-width: 1000px)"
+        alt="Your advertisement could be here!"
+      />
+    </div>
     <b-card-group columns class="department-cards">
       <b-card
         v-for="school in schools"
@@ -35,6 +47,12 @@ export default class Home extends Vue {}
 </script>
 
 <style scoped>
+.advertisement {
+  background: var(--global-text-hover);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 h3 {
   margin: 40px 0 0;
   text-align: left;
