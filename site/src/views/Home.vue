@@ -1,19 +1,7 @@
 <template>
   <div class="home">
-    <a href="https://patreon.com/quacs" rel="noopener" target="_blank">
-      <div class="advertisement">
-        <img
-          src="@/assets/images/funding_motivator.png"
-          alt="Your advertisement could be here!"
-          class="d-none d-lg-inline-block"
-        />
-        <img
-          src="@/assets/images/funding_motivator_mobile.png"
-          alt="Your advertisement could be here!"
-          class="d-inline-block d-lg-none"
-        />
-      </div>
-    </a>
+    <Advertisement />
+
     <b-card-group columns class="department-cards">
       <b-card
         v-for="school in schools"
@@ -37,9 +25,11 @@
 import { Component, Vue } from "vue-property-decorator";
 import { mapState } from "vuex";
 import { BCard, BCardGroup } from "bootstrap-vue";
+import Advertisement from "@/components/Advertisement.vue";
 
 @Component({
   components: {
+    Advertisement,
     "b-card": BCard,
     "b-card-group": BCardGroup,
   },
@@ -49,12 +39,6 @@ export default class Home extends Vue {}
 </script>
 
 <style scoped>
-.advertisement {
-  background: var(--global-text-hover);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
 h3 {
   margin: 40px 0 0;
   text-align: left;

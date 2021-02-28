@@ -328,6 +328,23 @@ export function shortSemToURL() {
   };
 }
 
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ *
+ * Modified from https://stackoverflow.com/a/6274381
+ */
+export function shuffleArray<T>(a: T[]): T[] {
+  let j, x;
+  for (let i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
 // All tracking should occur through these functions.  If the user has opted out of tracking,
 // they will just exit without logging anything.
 export function trackEvent(event_value: string, event_type: string): void {
