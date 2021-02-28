@@ -24,6 +24,7 @@ import {
   faCog,
   faEdit,
   faExclamationTriangle,
+  faHeart,
   faInfoCircle,
   faLaptopHouse,
   faPen,
@@ -32,7 +33,11 @@ import {
   faUser,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
+import {
+  faDiscord,
+  faGithub,
+  faPatreon,
+} from "@fortawesome/free-brands-svg-icons";
 
 library.add(
   faCalendar,
@@ -43,8 +48,10 @@ library.add(
   faEdit,
   faExclamationTriangle,
   faGithub,
+  faHeart,
   faInfoCircle,
   faLaptopHouse,
+  faPatreon,
   faPen,
   faPlus,
   faTrash,

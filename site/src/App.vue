@@ -109,21 +109,6 @@
     <footer class="footer">
       <div class="footer-links">
         <a
-          href="https://github.com/quacs/quacs"
-          rel="noopener"
-          title="Visit our GitHub"
-          aria-label="Visit our GitHub"
-          target="_blank"
-          ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
-        </a>
-        <img
-          id="footer-logo"
-          src="@/assets/images/quacs_white.svg"
-          alt="QuACS"
-          style="height: 40px"
-          @click="rotateLogo()"
-        />
-        <a
           href="https://discord.gg/yXaHkwU"
           rel="noopener"
           title="Join our development Discord server"
@@ -131,6 +116,32 @@
           target="_blank"
           ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
         </a>
+        <a
+          href="https://github.com/quacs/quacs"
+          rel="noopener"
+          title="Visit our GitHub"
+          aria-label="Visit our GitHub"
+          target="_blank"
+          ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
+        </a>
+        <!--img
+          id="footer-logo"
+          src="@/assets/images/quacs_white.svg"
+          alt="QuACS"
+          style="height: 40px"
+          @click="rotateLogo()"
+        /-->
+        <a
+          href="https://patreon.com/quacs"
+          rel="noopener"
+          title="Sponsor us on Patreon!"
+          aria-label="Sponsor us on Patreon!"
+          target="_blank"
+          ><font-awesome-icon :icon="['fab', 'patreon']"></font-awesome-icon>
+        </a>
+      </div>
+      <div class="footer-sponsors">
+        <router-link to="/sponsors"> View our sponsors</router-link>
       </div>
       <div class="footer-updated">Last updated {{ lastUpdated }}</div>
       <div class="footer-copyright">
@@ -319,6 +330,23 @@ export default class App extends Vue {
 }
 
 .footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.footer-sponsors > * {
+  color: var(--global-text);
+  font-size: 1.5rem;
+  padding: 0rem 1rem;
+}
+
+.footer-sponsors > a:hover {
+  color: DimGrey;
+}
+
+.footer-sponsors {
   display: flex;
   align-items: center;
   justify-content: center;
