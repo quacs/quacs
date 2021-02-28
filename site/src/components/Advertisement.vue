@@ -83,19 +83,19 @@ export default class Advertisement extends Vue {
   }
 
   mounted(): void {
-    this.advertIncrement();
+    this.scheduleAdvertIncrement();
   }
 
-  advertIncrement(): void {
-    setTimeout(
-      () =>
-        Vue.set(
-          this,
-          "currentAdvertisementIdx",
-          (this.currentAdvertisementIdx + 1) % this.advertisements.length
-        ),
-      10000
-    );
+  scheduleAdvertIncrement(): void {
+    setTimeout(() => {
+      Vue.set(
+        this,
+        "currentAdvertisementIdx",
+        (this.currentAdvertisementIdx + 1) % this.advertisements.length
+      );
+
+      this.scheduleAdvertIncrement();
+    }, 10000);
   }
 
   get currentAdvertisement(): Advert {
