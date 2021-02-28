@@ -1,17 +1,16 @@
 <template>
   <div class="home">
-    <div class="advertisement">
-      <img
-        src="@/assets/images/youradhere.png"
-        media="(min-width: 1000px)"
-        alt="Your advertisement could be here!"
-      />
-      <img
-        src="@/assets/images/youradhere_mobile.png"
-        media="(max-width: 1000px)"
-        alt="Your advertisement could be here!"
-      />
-    </div>
+    <a href="https://patreon.com/quacs" rel="noopener" target="_blank">
+      <div class="advertisement">
+        <img
+          srcset="
+            @/assets/images/funding_motivator_mobile.png 700w,
+            @/assets/images/funding_motivator.png
+          "
+          alt="Your advertisement could be here!"
+        />
+      </div>
+    </a>
     <b-card-group columns class="department-cards">
       <b-card
         v-for="school in schools"
