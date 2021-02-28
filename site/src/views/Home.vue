@@ -1,5 +1,19 @@
 <template>
   <div class="home">
+    <a href="https://patreon.com/quacs" rel="noopener" target="_blank">
+      <div class="advertisement">
+        <img
+          src="@/assets/images/funding_motivator.png"
+          alt="Your advertisement could be here!"
+          class="d-none d-lg-inline-block"
+        />
+        <img
+          src="@/assets/images/funding_motivator_mobile.png"
+          alt="Your advertisement could be here!"
+          class="d-inline-block d-lg-none"
+        />
+      </div>
+    </a>
     <b-card-group columns class="department-cards">
       <b-card
         v-for="school in schools"
@@ -35,6 +49,12 @@ export default class Home extends Vue {}
 </script>
 
 <style scoped>
+.advertisement {
+  background: var(--global-text-hover);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 h3 {
   margin: 40px 0 0;
   text-align: left;
