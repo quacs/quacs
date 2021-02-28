@@ -25,6 +25,11 @@
     <ul>
       <li>Enis Aras</li>
     </ul>
+    <br />
+    <h3>QuACS User Tier Patrons</h3>
+    <ul>
+      <li>Chris Jerrett</li>
+    </ul>
   </b-jumbotron>
 </template>
 
