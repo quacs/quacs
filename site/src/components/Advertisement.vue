@@ -13,18 +13,18 @@
         :style="'background:' + currentAdvertisement.backgroundColor"
       >
         <img
-          :src="'/ads/' + currentAdvertisement.desktop_path"
+          :src="baseUrl + currentAdvertisement.desktop_path"
           :alt="currentAdvertisement.altText"
           class="d-none d-lg-inline-block d-xl-inline-block"
         />
         <img
           v-if="hasTablet"
-          :src="'/ads/' + currentAdvertisement.tablet_path"
+          :src="baseUrl + currentAdvertisement.tablet_path"
           :alt="currentAdvertisement.altText"
           class="d-none d-sm-inline-block d-md-inline-block d-lg-none"
         />
         <img
-          :src="'/ads/' + currentAdvertisement.mobile_path"
+          :src="baseUrl + currentAdvertisement.mobile_path"
           :alt="currentAdvertisement.altText"
           :class="
             'd-inline-block d-lg-none d-xl-none ' +
@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { shuffleArray, trackEvent } from "@/utilities";
+import { shortSemToURL, shuffleArray, trackEvent } from "@/utilities";
 
 interface Advert {
   advertiser: string;
@@ -68,12 +68,14 @@ export default class Advertisement extends Vue {
     url: "https://discord.gg/rpi",
     altText: "Click here to join the RPI Academic Discord Server!",
     backgroundColor: "#dcc308",
-    desktop_path: "academic_discord/desktop.png",
-    tablet_path: "academic_discord/tablet.png",
-    mobile_path: "academic_discord/mobile.png",
+    desktop_path: "/academic_discord/desktop.png",
+    tablet_path: "/academic_discord/tablet.png",
+    mobile_path: "/academic_discord/mobile.png",
   };
 
   currentAdvertisementIdx = 0;
+
+  baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/ads`;
 
   created(): void {
     shuffleArray(this.advertisements);
