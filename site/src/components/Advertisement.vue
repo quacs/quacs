@@ -67,13 +67,15 @@ export default class Advertisement extends Vue {
 
     url: "https://discord.gg/rpi",
     altText: "Click here to join the RPI Academic Discord Server!",
-    backgroundColor: "#dcc308",
+    backgroundColor: "#dac423",
     desktop_path: "/academic_discord/desktop.png",
     tablet_path: "/academic_discord/tablet.png",
     mobile_path: "/academic_discord/mobile.png",
   };
 
   currentAdvertisementIdx = 0;
+
+  viewedAdvertisements: { [id: number]: boolean } = {};
 
   baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/ads`;
 
@@ -90,10 +92,14 @@ export default class Advertisement extends Vue {
 
   scheduleAdvertIncrement(): void {
     // This will be called every time the advertisement changes
-    this.track(
-      "View Advertisement",
-      this.advertisements[this.currentAdvertisementIdx].advertiser
-    );
+    if (this.viewedAdvertisements[this.currentAdvertisementIdx] !== true) {
+      this.viewedAdvertisements[this.currentAdvertisementIdx] = true;
+
+      this.track(
+        "View Advertisement",
+        this.advertisements[this.currentAdvertisementIdx].advertiser
+      );
+    }
 
     setTimeout(() => {
       Vue.set(
