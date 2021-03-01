@@ -75,6 +75,8 @@ export default class Advertisement extends Vue {
 
   currentAdvertisementIdx = 0;
 
+  viewedAdvertisements: { [id: number]: boolean } = {};
+
   baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/ads`;
 
   created(): void {
@@ -90,10 +92,14 @@ export default class Advertisement extends Vue {
 
   scheduleAdvertIncrement(): void {
     // This will be called every time the advertisement changes
-    this.track(
-      "View Advertisement",
-      this.advertisements[this.currentAdvertisementIdx].advertiser
-    );
+    if (this.viewedAdvertisements[this.currentAdvertisementIdx] !== true) {
+      this.viewedAdvertisements[this.currentAdvertisementIdx] = true;
+
+      this.track(
+        "View Advertisement",
+        this.advertisements[this.currentAdvertisementIdx].advertiser
+      );
+    }
 
     setTimeout(() => {
       Vue.set(
