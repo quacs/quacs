@@ -67,7 +67,7 @@ export default class Advertisement extends Vue {
 
     url: "https://discord.gg/rpi",
     altText: "Click here to join the RPI Academic Discord Server!",
-    backgroundColor: "#dcc308",
+    backgroundColor: "#dac423",
     desktop_path: "/academic_discord/desktop.png",
     tablet_path: "/academic_discord/tablet.png",
     mobile_path: "/academic_discord/mobile.png",
