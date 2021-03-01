@@ -91,6 +91,7 @@ export default class Advertisement extends Vue {
   }
 
   scheduleAdvertIncrement(): void {
+    /*
     // This will be called every time the advertisement changes
     if (this.viewedAdvertisements[this.currentAdvertisementIdx] !== true) {
       this.viewedAdvertisements[this.currentAdvertisementIdx] = true;
@@ -100,6 +101,7 @@ export default class Advertisement extends Vue {
         this.advertisements[this.currentAdvertisementIdx].advertiser
       );
     }
+    */
 
     setTimeout(() => {
       Vue.set(
