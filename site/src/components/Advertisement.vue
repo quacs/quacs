@@ -90,7 +90,10 @@ export default class Advertisement extends Vue {
 
   scheduleAdvertIncrement(): void {
     // This will be called every time the advertisement changes
-    this.track("View Advertisement", this.advertisements[this.currentAdvertisementIdx].advertiser);
+    this.track(
+      "View Advertisement",
+      this.advertisements[this.currentAdvertisementIdx].advertiser
+    );
 
     setTimeout(() => {
       Vue.set(
