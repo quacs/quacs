@@ -60,7 +60,18 @@ interface Advert {
 
 @Component
 export default class Advertisement extends Vue {
-  advertisements: Advert[] = [];
+  advertisements: Advert[] = [
+    {
+      advertiser: "Cait for GM",
+
+      url: "https://www.caitforgm.com/home",
+      altText: "Cait for GM",
+      backgroundColor: "#2b517f",
+      desktop_path: "/cait_for_gm/desktop.png",
+      tablet_path: "/cait_for_gm/tablet.png",
+      mobile_path: "/cait_for_gm/mobile.png",
+    },
+  ];
 
   academic_server_ad: Advert = {
     advertiser: "RPI Academic Discord Server",
