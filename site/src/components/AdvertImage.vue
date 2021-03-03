@@ -41,7 +41,7 @@ import { Advert } from "@/typings";
 export default class AdvertImage extends Vue {
   @Prop() readonly advertisement!: Advert;
 
-  baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/sponsors`;
+  baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/img`;
 
   get hasTablet(): boolean {
     return this.advertisement.tablet_path !== undefined;
