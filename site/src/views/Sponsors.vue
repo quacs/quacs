@@ -21,9 +21,14 @@
       >
     </h4>
     <br />
+    <h3>Advertiser Patrons</h3>
+    <ul>
+      <li>Cait for GM</li>
+    </ul>
     <h3>Rubber Duck Tier Patrons</h3>
     <ul>
       <li>Enis Aras</li>
+      <li>Chris Jerrett</li>
     </ul>
   </b-jumbotron>
 </template>
