@@ -115,3 +115,18 @@ export interface PrereqAdjList {
     prereqs: string[];
   };
 }
+
+export interface Advert {
+  advertiser: string;
+  url: string;
+  altText: string;
+  backgroundColor: string;
+  desktop_path: string;
+  tablet_path?: string;
+  mobile_path: string;
+}
+
+export interface LinkedSponsor {
+  name: string;
+  url: string;
+}

@@ -1,38 +1,6 @@
 <template>
-  <div class="advertisement">
-    <a
-      :href="currentAdvertisement.url"
-      v-on:click="
-        track('Advertisement clicked', currentAdvertisement.advertiser)
-      "
-      rel="noopener"
-      target="_blank"
-    >
-      <div
-        class="advertisement-img"
-        :style="'background:' + currentAdvertisement.backgroundColor"
-      >
-        <img
-          :src="baseUrl + currentAdvertisement.desktop_path"
-          :alt="currentAdvertisement.altText"
-          class="d-none d-lg-inline-block d-xl-inline-block"
-        />
-        <img
-          v-if="hasTablet"
-          :src="baseUrl + currentAdvertisement.tablet_path"
-          :alt="currentAdvertisement.altText"
-          class="d-none d-sm-inline-block d-md-inline-block d-lg-none"
-        />
-        <img
-          :src="baseUrl + currentAdvertisement.mobile_path"
-          :alt="currentAdvertisement.altText"
-          :class="
-            'd-inline-block d-lg-none d-xl-none ' +
-            (hasTablet ? 'd-sm-none d-md-none' : '')
-          "
-        />
-      </div>
-    </a>
+  <div class="sponsor">
+    <AdvertImage :advertisement="currentAdvertisement" />
 
     <a
       href="https://patreon.com/quacs"
@@ -46,21 +14,18 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { shortSemToURL, shuffleArray, trackEvent } from "@/utilities";
+import { shuffleArray, trackEvent } from "@/utilities";
+import { Advert } from "@/typings";
+import { advertisers } from "@/sponsors";
+import AdvertImage from "@/components/AdvertImage.vue";
 
-interface Advert {
-  advertiser: string;
-  url: string;
-  altText: string;
-  backgroundColor: string;
-  desktop_path: string;
-  tablet_path?: string;
-  mobile_path: string;
-}
-
-@Component
+@Component({
+  components: {
+    AdvertImage,
+  },
+})
 export default class Advertisement extends Vue {
-  advertisements: Advert[] = [];
+  advertisements: Advert[] = [...advertisers];
 
   academic_server_ad: Advert = {
     advertiser: "RPI Academic Discord Server",
@@ -76,8 +41,6 @@ export default class Advertisement extends Vue {
   currentAdvertisementIdx = 0;
 
   viewedAdvertisements: { [id: number]: boolean } = {};
-
-  baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/ads`;
 
   created(): void {
     shuffleArray(this.advertisements);
@@ -118,10 +81,6 @@ export default class Advertisement extends Vue {
     return this.advertisements[this.currentAdvertisementIdx];
   }
 
-  get hasTablet(): boolean {
-    return this.currentAdvertisement.tablet_path !== undefined;
-  }
-
   track(event_value: string, event_type: string): void {
     trackEvent(event_value, event_type);
   }
@@ -129,15 +88,15 @@ export default class Advertisement extends Vue {
 </script>
 
 <style scoped>
-.advertisement {
+.sponsor {
   margin-bottom: 1rem;
 }
 
-.advertisement > a > span {
+.sponsor > a > span {
   color: var(--raw-link);
 }
 
-.advertisement-img {
+.sponsor-img {
   text-align: center;
 }
 </style>
