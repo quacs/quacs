@@ -90,3 +90,10 @@ body{
 .list-group-item{
   background: var(--list-group-item-background)
 }
+
+
+.custom-badge {
+  color: var(--badge-text);
+  margin: 0px 0.3rem;
+  padding: 0.2rem 0.4rem;
+}

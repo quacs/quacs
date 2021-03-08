@@ -9,7 +9,7 @@
       >
         <th style="width: 100%">Toggle all sections</th>
         <th
-          v-for="day in getDays()"
+          v-for="day in getDays"
           v-bind:key="day"
           class="week-day desktop-only"
         >
@@ -27,9 +27,8 @@
           selected: isSelected(section.crn),
           conflict: conflicts[section.crn],
           hidden:
-            !hasMetAllPrerequisites(section.crn) &&
+            getMissingPrerequisiteSections.includes(section.crn) &&
             hidePrerequisitesState &&
-            prerequisiteCheckingState &&
             !isSelected(section.crn),
         }"
         v-on:click="toggleSelection(section)"
@@ -55,11 +54,8 @@
             section.crn
           }}</span>
           <span
-            v-if="prerequisiteCheckingState"
-            class="padding-left prerequisiteError"
-            :class="{
-              hidden: hasMetAllPrerequisites(section.crn),
-            }"
+            v-if="getMissingPrerequisiteSections.includes(section.crn)"
+            class="custom-badge rounded padding-left colorError"
             title="Click for more info"
             tabindex="0"
             v-on:click.stop.prevent
@@ -73,7 +69,7 @@
             Missing Prerequisites</span
           >
           <span
-            class="padding-left prerequisiteError"
+            class="custom-badge rounded padding-left colorError"
             :class="{
               hidden: !(section.rem <= 0),
             }"
@@ -106,7 +102,7 @@
           >
           <!-- Mobile times -->
           <div class="mobile-only">
-            <template v-for="day in getDays()">
+            <template v-for="day in getDays">
               <!-- TODO: fix different instructors for same timeslot -->
               <span
                 v-for="session in getSessions(section, day)"
@@ -128,7 +124,7 @@
         </td>
         <!-- Desktop times -->
         <td
-          v-for="day in getDays()"
+          v-for="day in getDays"
           v-bind:key="day"
           class="time-cell desktop-only"
         >
@@ -166,7 +162,6 @@ import {
   formatCourseSize,
   formatTimeslot,
   getSessions,
-  hasMetAllPrerequisites,
   trackEvent,
 } from "@/utilities";
 import { VBTooltip } from "bootstrap-vue";
@@ -182,15 +177,15 @@ import { VBTooltip } from "bootstrap-vue";
     formatTimeslot,
     formatCourseSize,
     getSessions,
-    hasMetAllPrerequisites,
     ...mapGetters("settings", ["isMilitaryTime", "hidePrerequisitesState"]),
     ...mapGetters("schedule", ["isSelected"]),
     ...mapState("schedule", ["courseSets", "currentTerm", "currentCourseSet"]),
-    ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
   },
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
+  @Prop() readonly missingPrerequisiteSections: number[] = [];
+
   days = [] as string[];
   conflicts: { [crn: number]: boolean } = {};
 
@@ -204,7 +199,11 @@ export default class Section extends Vue {
     }
   }
 
-  getDays(): string[] {
+  get getMissingPrerequisiteSections(): number[] {
+    return this.missingPrerequisiteSections;
+  }
+
+  get getDays(): string[] {
     // Don't compute the days array again
     if (this.days.length > 0) {
       return this.days;
@@ -433,11 +432,8 @@ export default class Section extends Vue {
   visibility: hidden;
 }
 
-.prerequisiteError {
-  background: var(--prerequisite-warn-icon);
-  color: var(--prerequisite-text);
-  margin: 0px 0.3rem;
-  padding: 0.2rem 0.4rem;
+.colorError {
+  background: var(--badge-error);
 }
 
 .hidden {

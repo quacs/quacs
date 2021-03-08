@@ -3,13 +3,13 @@
     class="card course-card"
     :class="{
       hidden:
-        areThereMissingPrerequisites === 2 &&
+        missingPrerequisiteSections &&
+        missingPrerequisiteSections.length === course.sections.length &&
         hidePrerequisitesState &&
         prerequisiteCheckingState &&
         areThereSelectedSections === 0,
     }"
   >
-    <!-- header -->
     <div
       class="card-header course-card-header"
       v-on:click="toggleExpanded()"
@@ -40,71 +40,13 @@
         ></font-awesome-icon> -->
       </div>
       <div>
-        <span
-          v-if="prerequisiteCheckingState && areThereMissingPrerequisites"
-          v-on:click.stop.prevent
-          v-on:keyup.enter.stop.prevent
-          tabindex="0"
-          @click="showCourseModal(course.sections[0].crn)"
-          @keyup.enter="showCourseModal(course.sections[0].crn)"
-        >
-          <CourseInfo class="more-info" :course="course"></CourseInfo>
-          <span
-            class="padding-left prerequisiteError"
-            title="Expand sections for more details"
-          >
-            <font-awesome-icon
-              :icon="['fas', 'exclamation-triangle']"
-            ></font-awesome-icon>
-            Missing prerequisites<template
-              v-if="areThereMissingPrerequisites === 1"
-            >
-              for some sections</template
-            ></span
-          >
-        </span>
-        <span v-if="fullSections">
-          <span
-            class="padding-left prerequisiteError"
-            v-bind:class="{
-              prerequisiteBkgError: fullSections == 2,
-              prerequisiteBkgWarn: fullSections != 2,
-            }"
-            title="Expand sections for more details"
-          >
-            <font-awesome-icon
-              :icon="['fas', 'exclamation-triangle']"
-            ></font-awesome-icon>
-            <template v-if="fullSections === 2">Full Course</template>
-            <template v-else>Full Sections</template>
-          </span>
-        </span>
-        <span v-if="inPerson">
-          <span class="padding-left prerequisiteError prerequisiteBkgWarn">
-            <font-awesome-icon :icon="['fas', 'user']"></font-awesome-icon>
-            In-Person Course
-          </span>
-        </span>
-        <span v-if="remote">
-          <span class="padding-left prerequisiteError prerequisiteBkgWarn">
-            <font-awesome-icon
-              :icon="['fas', 'laptop-house']"
-            ></font-awesome-icon>
-            Online Course
-          </span>
-        </span>
-        <span v-if="hybrid">
-          <span class="padding-left prerequisiteError prerequisiteBkgWarn">
-            <font-awesome-icon :icon="['fas', 'user']"></font-awesome-icon>
-            /
-            <font-awesome-icon
-              :icon="['fas', 'laptop-house']"
-            ></font-awesome-icon>
-            Hybrid Course
-          </span>
-        </span>
+        <CourseBadges
+          :course="course"
+          v-on:missing-prerequisite-sections="
+            missingPrerequisiteSections = $event
+          "
+        ></CourseBadges>
       </div>
-      <!-- <br> -->
       {{ getDescription(course.subj, course.crse) }}
     </div>
 
@@ -115,7 +57,10 @@
           :class="{ expanded: expanded }"
           :key="course.id + lastNewSchedule"
         >
-          <Sections v-bind:course="course" />
+          <Sections
+            :course="course"
+            :missingPrerequisiteSections="missingPrerequisiteSections"
+          />
         </div>
       </div>
     </div>
@@ -125,52 +70,22 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
-import { ModalPlugin } from "bootstrap-vue";
 import { Course } from "@/typings";
-import { hasMetAllPrerequisites, trackEvent } from "@/utilities";
 import CourseInfo from "@/components/sections/CourseInfo.vue";
 
 import Sections from "./sections/Sections.vue";
-
-Vue.use(ModalPlugin);
+import CourseBadges from "./CourseBadges.vue";
 
 @Component({
   components: {
     CourseInfo,
     Sections,
+    CourseBadges,
   },
   computed: {
-    hasMetAllPrerequisites,
     ...mapGetters("prerequisites", ["prerequisiteCheckingState"]),
     ...mapGetters("settings", ["hidePrerequisitesState"]),
     ...mapState("schedule", ["courseSets", "currentTerm", "currentCourseSet"]),
-    areThereMissingPrerequisites: function (): number {
-      let missingCount = 0;
-      // @ts-expect-error: no u typescript, this does exist
-      for (const section of this.course.sections) {
-        // @ts-expect-error: no u typescript, this does exist
-        if (!this.hasMetAllPrerequisites(section.crn)) {
-          missingCount++;
-        }
-      }
-      //2==missing all section prerequisites, 1==missing some sections, 0==not missing any prerequisites
-      return (
-        // @ts-expect-error: no u typescript, this does exist
-        (missingCount === this.course.sections.length) + (missingCount > 0)
-      );
-    },
-    fullSections: function () {
-      let fullCount = 0;
-      // @ts-expect-error: no u typescript, this does exist
-      for (const section of this.course.sections) {
-        if (section.rem <= 0) {
-          fullCount++;
-        }
-      }
-      //2==all sections full, 1==some sections full, 0==not sections full
-      // @ts-expect-error: no u typescript, this does exist
-      return (fullCount === this.course.sections.length) + (fullCount > 0);
-    },
     areThereSelectedSections: function () {
       let selectedCount = 0;
       // @ts-expect-error: no u typescript, this does exist
@@ -194,6 +109,7 @@ export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
   @Prop() readonly startExpanded!: boolean;
   expanded = this.startExpanded ? this.startExpanded : false;
+  missingPrerequisiteSections: number[] = [];
 
   get credMin(): string {
     return (
@@ -213,20 +129,6 @@ export default class CourseCard extends Vue {
       )
       .trim();
     return attrs === "" ? "" : "• " + attrs;
-  }
-
-  get inPerson(): boolean {
-    return (
-      this.course.sections[0].attribute.includes("In-Person") && !this.hybrid
-    );
-  }
-
-  get remote(): boolean {
-    return this.course.sections[0].attribute.includes("Online") && !this.hybrid;
-  }
-
-  get hybrid(): boolean {
-    return this.course.sections[0].attribute.includes("Hybrid");
   }
 
   getDescription(subject: string, code: string): string {
@@ -265,11 +167,6 @@ export default class CourseCard extends Vue {
 
   get lastNewSchedule(): number {
     return this.$store.state.schedule.lastNewSchedule;
-  }
-
-  showCourseModal(crn: string): void {
-    trackEvent("Course modal", "info-modal");
-    this.$bvModal.show("course-info" + crn);
   }
 }
 </script>
@@ -330,20 +227,6 @@ export default class CourseCard extends Vue {
   }
 }
 
-.prerequisiteError {
-  background: var(--prerequisite-warn-icon);
-  color: var(--prerequisite-text);
-  margin: 0px 0.3rem;
-  padding: 0.2rem 0.4rem;
-}
-
-.prerequisiteBkgError {
-  background: var(--prerequisite-error-icon);
-}
-
-.prerequisiteBkgWarn {
-  background: var(--prerequisite-warn-icon);
-}
 .hidden {
   display: none;
 }

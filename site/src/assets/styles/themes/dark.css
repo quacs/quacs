@@ -41,9 +41,9 @@
     --trash-btn: #ffffff;
     --trash-btn-hover: #EA8591;
     --prerequisite-jumbotron: #4e4e4e;
-    --prerequisite-warn-icon: #8A6700;
-    --prerequisite-text: #ffffff;
-    --prerequesite-error-icon: #920b0b;
+    --badge-warn: #8A6700;
+    --badge-error: #920b0b;
+    --badge-text: #ffffff;
     --taken-course: #2EBD4F;
     --not-taken-course: #EA8591;
     --overlay-background: #36393f;
