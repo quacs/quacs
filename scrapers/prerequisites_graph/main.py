@@ -8,6 +8,7 @@ import json
 import os
 import functools
 import operator
+import argparse
 
 
 def sem_add_courses(sem_dir: str, adj_list):
@@ -105,7 +106,12 @@ def generate(semester_data_path: str):
 
 
 if __name__ == "__main__":
-    graph = generate("data/")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("semester_data_path")
+    parser.add_argument("output_path")
+    args = parser.parse_args()
 
-    with open("prereq_graph.json", "w") as f:
+    graph = generate(args.semester_data_path)
+
+    with open(args.output_path, "w") as f:
         json.dump(graph, f, indent=2)
