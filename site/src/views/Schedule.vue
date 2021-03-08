@@ -196,15 +196,42 @@ export default class Schedule extends Vue {
     return this.currentScheduleNumber + 1;
   }
 
+  get sectionsWithoutTimes(): CourseSection[] {
+    const sections = [];
+
+    for (const dept of this.$store.state.departments) {
+      for (const course of dept.courses) {
+        for (const sectionIdx in course.sections) {
+          const section = course.sections[sectionIdx];
+
+          if (
+            this.$store.getters["schedule/isSelected"](section.crn) &&
+            // Only give sections with available seats (or the last one, if all are full)
+            // It's very unfortunate that we need to do a string parse here
+            (section.rem > 0 ||
+              Number.parseInt(sectionIdx) === course.sections.length - 1)
+          ) {
+            sections.push(section);
+            break;
+          }
+        }
+      }
+    }
+
+    return sections;
+  }
+
   async getSchedule(idx: number): Promise<void> {
     // @ts-expect-error: This is mapped in the @Component decorator
     if (this.numSchedules === 0) {
-      this.currentSchedule = [];
+      this.currentSchedule = this.sectionsWithoutTimes;
       return;
     }
-    this.currentSchedule = await this.$store.getters["schedule/getSchedule"](
-      idx
-    );
+
+    let newSchedule = await this.$store.getters["schedule/getSchedule"](idx);
+    newSchedule.push(...this.sectionsWithoutTimes);
+
+    this.currentSchedule = newSchedule;
   }
 
   /////////////////////
