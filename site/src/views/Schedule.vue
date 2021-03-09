@@ -113,6 +113,7 @@ import CourseCard from "@/components/CourseCard.vue";
 import { EventAttributes, createEvents } from "ics";
 import { saveAs } from "file-saver";
 import { shortSemToLongSem, trackEvent } from "@/utilities";
+import { Timeslot } from "@/typings";
 import moment from "moment-timezone";
 
 function mod(n: number, m: number) {
@@ -206,7 +207,9 @@ export default class Schedule extends Vue {
 
           if (
             this.$store.getters["schedule/isSelected"](section.crn) &&
-            section.timeslots.length === 0 &&
+            section.timeslots.every(
+              (timeslot: Timeslot) => timeslot.days.length === 0
+            ) &&
             // Only give sections with available seats (or the last one, if all are full)
             // It's very unfortunate that we need to do a string parse here
             (section.rem > 0 ||
