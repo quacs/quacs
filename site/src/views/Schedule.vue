@@ -206,6 +206,7 @@ export default class Schedule extends Vue {
 
           if (
             this.$store.getters["schedule/isSelected"](section.crn) &&
+            section.timeslots.length === 0 &&
             // Only give sections with available seats (or the last one, if all are full)
             // It's very unfortunate that we need to do a string parse here
             (section.rem > 0 ||
