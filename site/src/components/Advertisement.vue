@@ -46,7 +46,9 @@ export default class Advertisement extends Vue {
     shuffleArray(this.advertisements);
 
     // Always make the default ad last
-    this.advertisements.push(this.academic_server_ad);
+    if (this.advertisements.length < 2) {
+      this.advertisements.push(this.academic_server_ad);
+    }
   }
 
   mounted(): void {
