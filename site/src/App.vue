@@ -146,7 +146,18 @@
       <div class="footer-sponsors">
         <router-link to="/sponsors"> View our sponsors</router-link>
       </div>
-      <div class="footer-updated">Last updated {{ lastUpdated }}</div>
+      <div class="footer-updated">
+        Last updated {{ lastUpdated }} (<a
+          :href="'https://github.com/quacs/quacs/commit/' + quacsHash"
+          style="color: var(--raw-link)"
+          >site</a
+        >,
+        <a
+          :href="'https://github.com/quacs/quacs-data/commit/' + dataHash"
+          style="color: var(--raw-link)"
+          >data</a
+        >)
+      </div>
       <div class="footer-copyright">
         &copy; {{ new Date().getFullYear() }} - Questionably Accurate Course
         Scheduler
@@ -248,6 +259,14 @@ export default class App extends Vue {
       return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
     }
     return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
+  }
+
+  get quacsHash(): string {
+    return process.env.VUE_APP_QUACS_HASH;
+  }
+
+  get dataHash(): string {
+    return process.env.VUE_APP_DATA_HASH;
   }
 
   search(input: string, searchTimeout = 250): void {
