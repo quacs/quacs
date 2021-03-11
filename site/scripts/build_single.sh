@@ -42,6 +42,12 @@ echo Setting quacs-rs to build for "$CURR_SEMESTER"
 mkdir src/quacs-rs/src/data || rm -rf src/quacs-rs/src/data/*
 cp src/store/data/semester_data/$CURR_SEMESTER/*.rs src/quacs-rs/src/data
 
+QUACS_COMMIT_HASH=$(git rev-parse HEAD)
+QUACS_DATA_COMMIT_HASH=$(git -C src/store/data/semester_data rev-parse HEAD)
+
+echo "Got QuACS hash: $QUACS_COMMIT_HASH"
+echo "Got QUACS-data hash: $QUACS_DATA_COMMIT_HASH"
+
 echo Setting .env file
 rm .env
 echo "VUE_APP_CURR_SEM=$CURR_SEMESTER" >>.env
@@ -55,6 +61,9 @@ for directory in $(find src/store/data/semester_data/* -type d -print0 | xargs -
 	ITER=$((ITER + 1))
 done
 echo "]" >>.env
+
+echo "VUE_APP_QUACS_HASH=\"$QUACS_COMMIT_HASH\"" >> .env
+echo "VUE_APP_DATA_HASH=\"$QUACS_DATA_COMMIT_HASH\"" >> .env
 
 echo Building quacs-rs
 cd src/quacs-rs
