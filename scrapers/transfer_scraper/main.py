@@ -7,6 +7,8 @@ from typing import List
 import sys
 import re
 from tqdm import tqdm
+import csv
+import os
 
 # Stores the full name of a school, nation, or state mapped from their sis id
 # Example: { "NY": "New York" }
@@ -164,7 +166,6 @@ async def get_school_data(s, id) -> None:
                         value = re.sub(" +", " ", value)
                         if value != "":
                             index = j - start_cell_offset
-                            print(value)
                             if index == 0:  # transfer id
                                 school_data["transfer"].append({"id": value})
                             elif index == 1:  # transfer name
@@ -220,4 +221,79 @@ for k, v in data.items():
 with open("transfer.json", "w") as outfile:
     json.dump(data, outfile, sort_keys=True, indent=2)
 
-print("Finished")
+print("Finished generating transfer.json")
+
+data = {}
+with open("transfer.json") as f:
+    data = json.load(f)
+
+
+if sys.argv[-1] == "csv":
+    print("Generating csv files")
+
+    if not os.path.exists("transfer_guides"):
+        os.makedirs("transfer_guides")
+
+    for rpi_course in tqdm(data):
+        csv_output = []
+        csv_output.append(
+            [
+                "School Location",
+                "School Name",
+                "School id(s)",
+                "School Course(s)",
+                "RPI Equiv id(s)",
+                "RPI Equiv Courses(s)",
+                "RPI Equiv Credits(s)",
+            ]
+        )
+        for transfer_course in data[rpi_course]:
+            csv_output.append(
+                [
+                    transfer_course["location"],
+                    transfer_course["school_name"],
+                    f"\n{transfer_course['transfer_operator']} ".join(
+                        [
+                            course["id"]
+                            for course in transfer_course["transfer"]
+                            if "name" in course
+                        ]
+                    ),
+                    f"\n{transfer_course['transfer_operator']} ".join(
+                        [
+                            course["name"]
+                            for course in transfer_course["transfer"]
+                            if "name" in course
+                        ]
+                    ),
+                    f"\n{transfer_course['rpi_operator']} ".join(
+                        [
+                            course["id"]
+                            for course in transfer_course["rpi"]
+                            if "name" in course
+                        ]
+                    ),
+                    f"\n{transfer_course['rpi_operator']} ".join(
+                        [
+                            course["name"]
+                            for course in transfer_course["rpi"]
+                            if "name" in course
+                        ]
+                    ),
+                    f"\n{transfer_course['rpi_operator']} ".join(
+                        [
+                            str(course["credits"])
+                            for course in transfer_course["rpi"]
+                            if "name" in course and "credits" in course
+                        ]
+                    ),
+                ]
+            )
+
+        with open(
+            f"transfer_guides/{rpi_course} Transfer Guide.csv", "w", newline=""
+        ) as f:
+            writer = csv.writer(f)
+            writer.writerows(csv_output)
+
+    print("Finished generating csv files")
