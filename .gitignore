@@ -126,6 +126,7 @@ site/site/
 scrapers/transcript_scraper/*.html
 scrapers/!transcript_scraper/index.html
 scrapers/transcript_scraper/*_files/*
+scrapers/transfer_scraper/transfer_guides/*
 
 scrapers/*/data
 

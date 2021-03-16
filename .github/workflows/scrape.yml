@@ -246,13 +246,19 @@ jobs:
 
       - name: Scrape transfer
         working-directory: ./scrapers
-        run: python3 transfer_scraper/main.py
+        run: python3 transfer_scraper/main.py csv
 
-      - name: Upload data
+      - name: Upload JSON data
         uses: actions/upload-artifact@v2
         with:
           name: transfer
           path: scrapers/transfer.json
+
+      - name: Upload CSV data
+        uses: actions/upload-artifact@v2
+        with:
+          name: transfer_guides
+          path: scrapers/transfer_guides
 
   # This may need to be updated now that the scrapers have been moved into the same repo as the site
   # scrape-catalog:
@@ -324,6 +330,8 @@ jobs:
           cp faculty/faculty.json data
 
           cp transfer/transfer.json data
+
+          rsync -avz transfer_guides/ data/transfer_guides/
 
           cd data
           git config user.name "QuACS" && git config user.email "github@quacs.org"
