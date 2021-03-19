@@ -7,6 +7,7 @@ import json
 import re
 import math
 from tqdm import tqdm
+from time import sleep
 import urllib.parse
 from copy import deepcopy
 from itertools import combinations
@@ -129,7 +130,11 @@ headers = {
     # "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0",
     "Content-Type": "application/x-www-form-urlencoded",
 }
-with requests.Session() as s:  # We purposefully don't use aiohttp here since SIS doesn't like multiple logged in connections
+LOGIN_RETRY_NUM = 3
+
+
+def login(s):
+    global headers
     # We first need to get the CSRF token from the login page
     login_url = "https://cas-auth-ent.rpi.edu/cas/login?service=https%3A%2F%2Fbannerapp04-bnrprd.server.rpi.edu%3A443%2Fssomanager%2Fc%2FSSB"
     login_page = s.get(url=login_url)
@@ -144,9 +149,23 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
         data=login_params,
     )
 
-    if b"Main Menu" not in response.text.encode("utf8"):
-        print(response.text.encode("utf8"))
-        print("Failed to authenticate CAS")
+    text = response.text.encode("utf8")
+    if b"Main Menu" not in text:
+        return False, text
+    return True, None
+
+
+with requests.Session() as s:  # We purposefully don't use aiohttp here since SIS doesn't like multiple logged in connections
+    # Sometimes we fail to login to SIS -- therefore we'll retry several (LOGIN_RETRY_NUM) times.
+    for _ in range(LOGIN_RETRY_NUM):
+        result, data = login(s)
+        if result:
+            break
+        # Clear cookies to ensure we are in a fresh session
+        s.cookies.clear()
+        sleep(30)
+    else:
+        print(f"Failed to login to SIS {data}")
         exit(1)
 
     for term in tqdm(os.listdir("data")):
