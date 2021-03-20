@@ -8,7 +8,7 @@ if cat public/umami.js | grep -q nginx; then exit 1; fi
 
 # Update our local dependencies (quacs-rs), or clone if possible
 echo Retrieving latest quacs-data
-git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=1 src/store/data || exit 1
+git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=2 src/store/data || exit 1
 
 CURR_DIR=$(dirname "${BASH_SOURCE[0]}")
 
@@ -20,6 +20,7 @@ while getopts ao:d option; do
 
 	a) BUILD_ALL=true ;;
 	o) OUTPUT_DIR=${OPTARG} ;;
+	d) DIFF_BUILD=true ;;
 	*) ;; # ignore other flags
 	esac
 done
@@ -33,8 +34,14 @@ if test "$BUILD_ALL" != "true"; then
 	exit 0
 fi
 
+if test "$DIFF_BUILD" != "true"; then
+	DIRECTORIES=$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0)
+else
+	DIRECTORIES=$(git -C src/store/data/ diff --name-only HEAD~1 HEAD | grep semester_data | tr "/" "\n" | grep [0-9] | sort -u)
+fi
+
 # We're trying to build all semesters, just do it back to back
-for directory in $(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0); do
+for directory in $DIRECTORIES; do
 	SEMESTER=$(basename "$directory")
 	echo "Building $SEMESTER..."
 	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
