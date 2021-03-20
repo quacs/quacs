@@ -42,6 +42,9 @@ jobs:
 
       - name: Run deploy script
         working-directory: ./site
+        env:
+          BUILD_ARGS: ${{ github.event.client_payload.build_args }}
         run: |
           git -C gh-pages-site config user.name "QuACS" && git -C gh-pages-site config user.email "github@quacs.org"
           yarn gh-pages-deploy
+        

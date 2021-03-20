@@ -403,5 +403,5 @@ jobs:
           curl -H "Accept: application/vnd.github.everest-preview+json" \
               -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
               --request POST \
-              --data '{"event_type": "deploy"}' \
+              --data '{"event_type": "deploy", "client_payload": {"build_args": "-d"}}' \
               https://api.github.com/repos/quacs/quacs/dispatches

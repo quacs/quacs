@@ -78,7 +78,7 @@ if test "$BUILD_SITE" = "true"; then
 
 	mkdir -p "$OUTPUT_DIR"
 	CURR_SEM_LONG=$(python scripts/short_sem_to_long_sem.py $CURR_SEMESTER)
-	mv dist/ "$OUTPUT_DIR/$CURR_SEM_LONG"
+	rsync -av --delete dist/ "$OUTPUT_DIR/$CURR_SEM_LONG"
 else
 	vue-cli-service serve
 fi
