@@ -6,7 +6,7 @@
     "serve": "./scripts/build_entry.sh -d",
     "build": "./scripts/build_entry.sh -b",
     "debug-build": "./scripts/build_entry.sh -d -b",
-    "lint": "vue-cli-service lint",
+    "lint": "./scripts/lint.sh",
     "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
   },
   "dependencies": {

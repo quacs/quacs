@@ -1,4 +1,5 @@
-#[allow(unused_macros)]
+#![allow(unused_macros)]
+
 use super::BIT_VEC_LEN;
 
 macro_rules! console_log {

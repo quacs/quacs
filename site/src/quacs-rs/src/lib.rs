@@ -34,7 +34,7 @@ pub fn generate_schedules_and_conflicts() -> usize {
         .filter(|set| !set.is_empty())
         .collect();
 
-    let schedules_len = if selected_courses.len() == 0 {
+    let schedules_len = if selected_courses.is_empty() {
         console_log!("Called generateSchedulesAndConflicts with no schedules, short circuiting!");
 
         *SCHEDULES.write().unwrap() = Vec::new();
@@ -93,7 +93,10 @@ fn generate_schedules_driver(
         return Vec::new();
     } else if required_times.iter().all(|cnf| *cnf == 0) {
         // There are no 1 section courses, so we can skip all of the below
-        let courses = courses.iter().map(|set| (*set).clone()).collect();
+        let courses = courses
+            .iter()
+            .map(|set| (*set).clone())
+            .collect::<Vec<HashSet<u32>>>();
         return generate_schedules(
             0,
             &courses,
@@ -124,7 +127,7 @@ fn generate_schedules_driver(
 
     courses.sort_by_cached_key(|set| set.len());
 
-    if courses[0].len() == 0 {
+    if courses[0].is_empty() {
         Vec::new()
     } else {
         generate_schedules(
@@ -139,7 +142,7 @@ fn generate_schedules_driver(
 
 fn generate_schedules(
     idx: usize,
-    courses: &Vec<HashSet<u32>>,
+    courses: &[HashSet<u32>],
     current_courses: &mut Vec<u32>,
     current_times: &mut [u64; BIT_VEC_LEN],
     overall_times: &mut [u64; BIT_VEC_LEN],
