@@ -5,6 +5,11 @@ version = 1
 [approve]
 auto_approve_usernames = ["dependabot"]
 
+[merge]
+# don't remove the 'automerge' label when branches conflict.  this is usually caused by dependabot
+# being slightly out-of-date, but it'll update soon enough.
+notify_on_conflict = false
+
 [merge.automerge_dependencies]
 # auto merge all PRs opened by "dependabot" that are "minor" or "patch" version upgrades. "major" version upgrades will be ignored.
 versions = ["minor", "patch"]
