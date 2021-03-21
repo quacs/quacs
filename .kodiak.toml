@@ -5,5 +5,10 @@ version = 1
 [approve]
 auto_approve_usernames = ["dependabot"]
 
+[merge.automerge_dependencies]
+# auto merge all PRs opened by "dependabot" that are "minor" or "patch" version upgrades. "major" version upgrades will be ignored.
+versions = ["minor", "patch"]
+usernames = ["dependabot"]
+
 [update]
 ignored_usernames = ["dependabot"]
