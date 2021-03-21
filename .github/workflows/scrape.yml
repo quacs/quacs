@@ -355,13 +355,13 @@ jobs:
 
           cp prereq_graph/prereq_graph.json data/
 
-          cp faculty/faculty.json data
+          rsync -avzh --ignore-missing-args faculty/faculty.json data
 
-          cp hass_pathways/hass_pathways.json data
+          rsync -avzh --ignore-missing-args hass_pathways/hass_pathways.json data
 
-          cp transfer/transfer.json data
+          rsync -avzh --ignore-missing-args transfer/transfer.json data
 
-          rsync -avz transfer_guides/ data/transfer_guides/
+          rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/
 
           cd data
           git config user.name "QuACS" && git config user.email "github@quacs.org"
