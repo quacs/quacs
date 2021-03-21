@@ -179,7 +179,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { scrapeTranscript } from "@/components/scrapeTranscript.ts";
+import { scrapeTranscript, StudentData } from "@/components/scrapeTranscript";
 import { mapGetters, mapState } from "vuex";
 import {
   BButton,
@@ -278,7 +278,7 @@ export default class Prerequisites extends Vue {
         console.log(err);
         bvModal.show("transcriptImportModal");
       })
-      .then(function (transcript) {
+      .then(function (transcript: StudentData | void) {
         if (!transcript) {
           //eslint-disable-next-line
           console.log("transcript is void");
