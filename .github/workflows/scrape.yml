@@ -363,6 +363,19 @@ jobs:
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
 
+          # Merge any hard_coded data into the final values
+          for directory in $(find semester_data/* -type d  | grep -v "hard_coded" | xargs -0); do
+            if [ -d "$directory/hard_coded" ]; then
+              if [ -f "$directory/hard_coded/catalog.json" ]; then
+                  echo "$directory/catalog.json"
+                  jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/hard_coded/catalog.json" > "$directory/temp_catalog.json"
+                  mv "$directory/temp_catalog.json" "$directory/catalog.json"
+                  truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
+              fi
+            fi
+          done
+
+
           cd data
           git config user.name "QuACS" && git config user.email "github@quacs.org"
 
