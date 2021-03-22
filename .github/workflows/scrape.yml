@@ -53,12 +53,11 @@ jobs:
           done
           echo "]"
 
-      - name: Checkout QuACS Data
-        uses: actions/checkout@v2
-        repository: quacs/quacs-data
-        path: quacs-data
-
       - name: Add Fall 2021 schools
+        uses: actions/checkout@v2
+        with:
+          repository: quacs/quacs-data
+          path: quacs-data
         run: |
           mkdir scrapers/data/202109
           cp quacs-data/semester_data/202109/schools.json scrapers/data/202109
