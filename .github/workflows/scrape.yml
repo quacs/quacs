@@ -200,32 +200,32 @@ jobs:
   #         name: degree_requirements
   #         path: degree-planner/*.json
 
-  scrape-hass-pathways:
-    name: Scrape HASS pathways
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
+  # scrape-hass-pathways:
+  #   name: Scrape HASS pathways
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout branch
+  #       uses: actions/checkout@v2
 
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
+  #     - name: Set up python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.x'
 
-      - name: Install pip requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scrapers/requirements.txt
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r scrapers/requirements.txt
 
-      - name: Scrape HASS pathways
-        working-directory: ./scrapers
-        run: python3 hass_pathways_scraper/main.py > hass_pathways.json
+  #     - name: Scrape HASS pathways
+  #       working-directory: ./scrapers
+  #       run: python3 hass_pathways_scraper/main.py > hass_pathways.json
 
-      - name: Upload data
-        uses: actions/upload-artifact@v2
-        with:
-          name: hass_pathways
-          path: scrapers/hass_pathways.json
+  #     - name: Upload data
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: hass_pathways
+  #         path: scrapers/hass_pathways.json
 
   scrape-faculty:
     name: Scrape faculty
