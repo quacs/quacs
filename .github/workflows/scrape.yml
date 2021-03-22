@@ -374,6 +374,8 @@ jobs:
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
 
+          cd data
+
           # Merge any hard_coded data into the final values
           for directory in $(find semester_data/* -type d  | grep -v "hard_coded" | xargs -0); do
             if [ -d "$directory/hard_coded" ]; then
@@ -386,8 +388,6 @@ jobs:
             fi
           done
 
-
-          cd data
           git config user.name "QuACS" && git config user.email "github@quacs.org"
 
           git add .
