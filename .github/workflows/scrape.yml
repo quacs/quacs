@@ -53,6 +53,14 @@ jobs:
           done
           echo "]"
 
+      - name: Add Fall 2021 schools
+        uses: actions/checkout@v2
+        repository: quacs/quacs-data
+        path: quacs-data
+        run: |
+          mkdir scrapers/data/202109
+          cp quacs-data/semester_data/202109/schools.json scrapers/data/202109
+
       - name: Upload data
         uses: actions/upload-artifact@v2
         with:
