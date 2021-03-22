@@ -218,6 +218,7 @@ if sys.argv[-1] == "LATEST_YEAR":
 else:
     asyncio.run(get_page_urls(years))
 
+"""
 # Duplicate the final summer semester to fall of the next year. This is for if
 # the catalog does not update fast enough for the fall semester
 os.makedirs(f"data/{years[0][0].split('-')[1]}09", exist_ok=True)
@@ -228,6 +229,7 @@ try:
     )
 except:
     print("schools.json does not exist for the final semester")
+
 try:
     copyfile(
         f"data/{years[0][0].split('-')[1]}05/catalog.json",
@@ -235,3 +237,4 @@ try:
     )
 except:
     print("catalog.json does not exist for the final semester")
+"""
