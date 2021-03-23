@@ -27,5 +27,5 @@ echo ${CNAME} >gh-pages-site/CNAME
 yarn ${ACTION} ${BUILD_ARGS} -a -o gh-pages-site || exit 1
 
 git -C gh-pages-site add --all || exit 1
-git -C gh-pages-site commit -m "$(date -u)" || exit 1
+git -C gh-pages-site commit -m "$(date -u)" || { echo "No site changes to commit!"; exit 0; }
 git -C gh-pages-site push origin HEAD:${BRANCH} --force || exit 1
