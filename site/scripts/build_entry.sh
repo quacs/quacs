@@ -2,7 +2,7 @@
 
 # Update Umami
 echo Updating Umami
-curl https://umami.quacs.org/umami.js > public/umami.js || exit 1
+curl https://umami.quacs.org/umami.js >public/umami.js || exit 1
 # If umami crashes, the file will contain an nginx error instead of the js code
 if cat public/umami.js | grep -q nginx; then exit 1; fi
 
@@ -26,7 +26,7 @@ done
 
 if test "$BUILD_ALL" != "true"; then
 	# We're only building one semester
-	SEMESTER=$(basename "$(find src/store/data/semester_data/* -type d -print0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
+	SEMESTER=$(basename "$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
 	echo "Building $SEMESTER..."
 	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
 
