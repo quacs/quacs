@@ -34,13 +34,13 @@ if test "$BUILD_ALL" != "true"; then
 fi
 
 # We're trying to build all semesters, just do it back to back
-for directory in $(find src/store/data/semester_data/* -type d -print0 | xargs -0); do
+for directory in $(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0); do
 	SEMESTER=$(basename "$directory")
 	echo "Building $SEMESTER..."
 	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
 done
 
-LATEST_SEMESTER=$(python scripts/short_sem_to_long_sem.py $(basename "$(find src/store/data/semester_data/* -type d -print0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)"))
+LATEST_SEMESTER=$(python scripts/short_sem_to_long_sem.py $(basename "$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)"))
 
 # Create html entry page
 cat <<EOF >"$OUTPUT_DIR/index.html"
