@@ -283,7 +283,7 @@ export default class App extends Vue {
       });
     } else {
       this.searchCallback = setTimeout(() => {
-        this.$router.push("/search?" + input).catch(() => {
+        this.$router.push(`/search?${encodeURIComponent(input)}`).catch(() => {
           this.searching = false;
           return;
         });
