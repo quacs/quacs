@@ -8,6 +8,7 @@ and the data is very unstructured so this doesn't work super well.
 
 import json
 import requests
+import sys
 from bs4 import BeautifulSoup
 
 
@@ -97,12 +98,15 @@ def parse_pathways(soup):
 
 def main():
     """Download the pathways page and print a parsed json"""
+    print("Beginning HASS pathway scraping", file=sys.stderr)
     r = requests.get(
         "https://info.rpi.edu/hass-pathways/pathways-topics/",
         headers={"User-Agent": "Mozilla"},  # It 403 errors without this
     )
+    print("Retrieved pathways..", file=sys.stderr)
     soup = BeautifulSoup(r.text)
     pathways = parse_pathways(soup)
+    print("Pathways parsed successfully..", file=sys.stderr)
     print(json.dumps(pathways, indent=4, sort_keys=True))
 
 

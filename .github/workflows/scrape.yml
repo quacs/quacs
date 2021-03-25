@@ -214,6 +214,7 @@ jobs:
   scrape-hass-pathways:
     name: Scrape HASS pathways
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
