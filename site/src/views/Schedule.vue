@@ -124,11 +124,7 @@ function mod(n: number, m: number) {
   computed: {
     ...mapGetters(["departmentsInitialized", "catalogInitialized"]),
     ...mapGetters("schedule", ["numSchedules"]),
-    ...mapState("schedule", [
-      "lastNewSchedule",
-      "currentCourseSet",
-      "lastNewSchedule",
-    ]),
+    ...mapState("schedule", ["lastNewSchedule", "currentCourseSet"]),
     shortSemToLongSem,
   },
   components: {
@@ -152,10 +148,8 @@ export default class Schedule extends Vue {
   }
 
   get selectedCourses(): Course[] {
-    // @ts-expect-error: This is mapped in the @Component decorator
     if (this.currentCourseSet !== this.keepSelectedCourseSet) {
       this.keepSelected = [];
-      // @ts-expect-error: This is mapped in the @Component decorator
       this.keepSelectedCourseSet = this.currentCourseSet;
     }
     if (this.keepSelected.length > 0) {
@@ -186,6 +180,10 @@ export default class Schedule extends Vue {
 
   get lastNewSchedule(): number[] {
     return this.$store.state.schedule.lastNewSchedule;
+  }
+
+  get currentCourseSet(): string {
+    return this.$store.state.schedule.currentCourseSet;
   }
 
   get visibleCurrentScheduleNumber(): number {
@@ -403,7 +401,10 @@ export default class Schedule extends Vue {
       );
     } else {
       const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
-      saveAs(blob, "schedule.ics");
+      saveAs(
+        blob,
+        `${this.currentCourseSet.toLowerCase().replaceAll(" ", "_")}.ics`
+      );
     }
   }
 }
