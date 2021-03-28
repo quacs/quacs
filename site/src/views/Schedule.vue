@@ -110,11 +110,10 @@ import {
 import Calendar from "@/components/Calendar.vue";
 import { Course, CourseSection } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
-import { EventAttributes, createEvents } from "ics";
+import { EventAttributes, createEvents, DateArray } from "ics";
 import { saveAs } from "file-saver";
 import { shortSemToLongSem, trackEvent } from "@/utilities";
 import { Timeslot } from "@/typings";
-import moment from "moment-timezone";
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -357,32 +356,24 @@ export default class Schedule extends Vue {
           endJSDate.setDate(endJSDate.getDate() + 1);
         }
 
-        // parse with NY time, and then convert to UTC
+        const dateToArray = (date: Date): DateArray => {
+          return [
+            date.getFullYear(),
+            date.getMonth() + 1,
+            date.getDate(),
+            date.getHours(),
+            date.getSeconds(),
+          ];
+        };
         // TODO convert this to using a config file where you can set the default timezone
-        // Code based off here https://github.com/adamgibbons/ics/issues/126#issuecomment-586352771
-        const startMomentDate = moment
-          .tz(startJSDate, "America/New_York")
-          .utc();
-        const endMomentDate = moment.tz(endJSDate, "America/New_York").utc();
-
         events.push({
           title: section.title,
-          start: [
-            startMomentDate.get("year"),
-            startMomentDate.get("month") + 1,
-            startMomentDate.get("date"),
-            startMomentDate.get("hour"),
-            startMomentDate.get("minute"),
-          ],
-          startInputType: "utc",
-          end: [
-            endMomentDate.get("year"),
-            endMomentDate.get("month") + 1,
-            endMomentDate.get("date"),
-            endMomentDate.get("hour"),
-            endMomentDate.get("minute"),
-          ],
-          endInputType: "utc",
+          start: dateToArray(startJSDate),
+          startInputType: "local",
+          startOutputType: "local",
+          end: dateToArray(endJSDate),
+          endInputType: "local",
+          endOutputType: "local",
           location: timeslot.location !== "TBA" ? timeslot.location : undefined,
           recurrenceRule,
         });
@@ -400,7 +391,17 @@ export default class Schedule extends Vue {
         "There was an error generating your ics file. Please report this bug to the developers using the Discord or GitHub links in the website footer."
       );
     } else {
-      const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+      // Add appropriate timezone region information into DTSTART/DTEND per RFC 5545
+      // NOTE: Some calendar applications may not like that we aren't providing the actual timezone data, but this appears to work on Google Calendar and the iOS Calendar
+      const TZID = "America/New_York"; // TODO: make TZID configurable
+      const blob = new Blob(
+        [
+          value
+            .replaceAll("DTSTART", `DTSTART;TZID=${TZID}`)
+            .replaceAll("DTEND", `DTEND;TZID=${TZID}`),
+        ],
+        { type: "text/plain;charset=utf-8" }
+      );
       saveAs(
         blob,
         `${this.currentCourseSet.toLowerCase().replaceAll(" ", "_")}.ics`
