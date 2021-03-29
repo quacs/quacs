@@ -111,7 +111,6 @@ site/src/store/data/
 site/src/quacs-rs/target
 site/src/quacs-rs/src/data
 site/target
-site/src/quacs-rs/Cargo.lock
 site/src/quacs-rs/package.json
 site/src/quacs-rs/*.ts
 site/src/quacs-rs/*.js
