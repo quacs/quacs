@@ -115,7 +115,7 @@ export default new Vuex.Store({
         "schedule.courseSets",
       ],
       rehydrated: (store) => {
-        store.commit("schedule/initSelectedSetions");
+        store.dispatch("schedule/initSelectedSetions");
         store.dispatch("schedule/init", false);
       },
     }),

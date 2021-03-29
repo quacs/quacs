@@ -230,7 +230,7 @@ export default class Schedule extends Vue {
       return;
     }
 
-    let newSchedule = await this.$store.getters["schedule/getSchedule"](idx);
+    let newSchedule = await this.$store.dispatch("schedule/getSchedule", idx);
     newSchedule.push(...this.sectionsWithoutTimes);
 
     this.currentSchedule = newSchedule;

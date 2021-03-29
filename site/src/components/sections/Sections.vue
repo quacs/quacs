@@ -196,11 +196,11 @@ export default class Section extends Vue {
 
   mounted(): void {
     for (const section of this.course.sections) {
-      this.$store.getters["schedule/getInConflict"](section.crn).then(
-        (isInConflict: number) => {
+      this.$store
+        .dispatch("schedule/isInConflict", section.crn)
+        .then((isInConflict: number) => {
           Vue.set(this.conflicts, section.crn, isInConflict);
-        }
-      );
+        });
     }
   }
 
@@ -248,13 +248,13 @@ export default class Section extends Vue {
       selected = newState;
     }
 
-    this.$store.commit("schedule/setSelected", {
+    this.$store.dispatch("schedule/setSelected", {
       crn: section.crn,
       selected,
     });
 
     if (rePopulateConflicts) {
-      this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+      this.$store.dispatch("schedule/generateSchedulesAndConflicts");
     } else {
       // This happens when we're individually changing sections
       if (selected) {
@@ -281,7 +281,7 @@ export default class Section extends Vue {
       }
     }
 
-    this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+    this.$store.dispatch("schedule/generateSchedulesAndConflicts");
   }
 
   // Calculates the order of the timeslots for each section

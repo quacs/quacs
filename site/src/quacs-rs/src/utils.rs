@@ -4,8 +4,9 @@ use super::BIT_VEC_LEN;
 
 macro_rules! console_log {
     ( $( $t:tt )* ) => {
-        #[cfg(feature = "debug")]
-        web_sys::console::log_1(&format!( $( $t )* ).into());
+        if cfg!(feature = "debug") {
+            web_sys::console::log_1(&format!( $( $t )* ).into());
+        }
     }
 }
 
