@@ -18,7 +18,7 @@ benchmark = []
 lazy_static = "^1.4.0"
 phf = { version = "^0.8", features = ["macros"] }
 wasm-bindgen = "^0.2"
-web-sys = { version = "^0.3.40", features = ["console"] }
+web-sys = { version = "^0.3.50", features = ["console"] }
 
 console_error_panic_hook = { version = "0.1.6", optional = true }
 
