@@ -141,7 +141,6 @@ dependencies = [
  "console_error_panic_hook",
  "lazy_static",
  "phf",
- "syn",
  "wasm-bindgen",
  "web-sys",
 ]
