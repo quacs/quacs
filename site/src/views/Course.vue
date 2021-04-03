@@ -9,7 +9,7 @@
         </div>
       </div>
       <div v-else>
-        <h1>No course found for "{{ coursecode }}"</h1>
+        <h1>No course found for "{{ coursecode }}" during this semester</h1>
       </div>
     </div>
 

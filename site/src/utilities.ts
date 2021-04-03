@@ -240,13 +240,19 @@ function getPrerequisiteFormatHtml(
   let output = "";
 
   if (prereq.type === "course") {
+    const courseCode = prereq.course.replace(" ", "-");
+
+    let courseUrl = window.location.href.slice(0, window.location.href.indexOf("#"));
+    courseUrl+="#/course/"+courseCode
+
+    output += `<a href='${courseUrl}'>`;
     if (meetsPrerequisite(priorCourses, prereq)) {
       output += `<span style="color: var(--taken-course);">`;
     } else {
       output += `<span style="color: var(--not-taken-course);">`;
     }
-    output += prereq.course.replace(" ", "-");
-    output += "</span>";
+    output += courseCode;
+    output += "</span></a>";
   } else {
     if (!topLevel) {
       output += "(";

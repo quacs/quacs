@@ -201,10 +201,11 @@ Vue.use(ModalPlugin);
     // @ts-expect-error: this exists, typescript just does not realize
     this.expandSections(true);
 
-    window.addEventListener("resize", () => {
-      // @ts-expect-error: this exists, typescript just does not realize
-      this.expandSections(true);
-    });
+    // TODO This sadly seems to cause lag but we shoudl look into fixing it
+    // window.addEventListener("resize", () => {
+    //   // @ts-expect-error: this exists, typescript just does not realize
+    //   this.expandSections(true);
+    // });
   },
 })
 export default class CourseCard extends Vue {
