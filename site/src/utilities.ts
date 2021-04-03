@@ -242,8 +242,11 @@ function getPrerequisiteFormatHtml(
   if (prereq.type === "course") {
     const courseCode = prereq.course.replace(" ", "-");
 
-    let courseUrl = window.location.href.slice(0, window.location.href.indexOf("#"));
-    courseUrl+="#/course/"+courseCode
+    let courseUrl = window.location.href.slice(
+      0,
+      window.location.href.indexOf("#")
+    );
+    courseUrl += "#/course/" + courseCode;
 
     output += `<a href='${courseUrl}'>`;
     if (meetsPrerequisite(priorCourses, prereq)) {
