@@ -18,6 +18,11 @@ const routes: Array<RouteConfig> = [
     props: true,
   },
   {
+    path: "/course/:coursecode",
+    component: () => import("../views/Course.vue"),
+    props: true,
+  },
+  {
     path: "/schedule",
     component: () => import("../views/Schedule.vue"),
   },

@@ -38,6 +38,13 @@
           class="open_close_icon info-icon"
           title="More info"
         ></font-awesome-icon> -->
+        <router-link :to="'/course/' + course.id">
+          <font-awesome-icon
+            :icon="['fas', 'link']"
+            class="course-link"
+            title="Direct Couse Link"
+          ></font-awesome-icon>
+        </router-link>
       </div>
       <div>
         <span
@@ -189,11 +196,21 @@ Vue.use(ModalPlugin);
       );
     },
   },
+  mounted: function () {
+    // This should do anything if startExpanded is false
+    // @ts-expect-error: this exists, typescript just does not realize
+    this.expandSections(true);
+
+    window.addEventListener("resize", () => {
+      // @ts-expect-error: this exists, typescript just does not realize
+      this.expandSections(true);
+    });
+  },
 })
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
   @Prop() readonly startExpanded!: boolean;
-  expanded = this.startExpanded ? this.startExpanded : false;
+  expanded = this.startExpanded ? true : false;
 
   get credMin(): string {
     return (
@@ -248,8 +265,14 @@ export default class CourseCard extends Vue {
 
   toggleExpanded(): void {
     this.expanded = !this.expanded;
+    this.expandSections();
+  }
+
+  expandSections(instant?: boolean): void {
     const growDiv = document.getElementById("section-grow-" + this.course.id);
     if (growDiv) {
+      if (instant) growDiv.classList.remove("animate-grow");
+      else growDiv.classList.add("animate-grow");
       if (!this.expanded) {
         growDiv.style.height = "0";
       } else {
@@ -280,9 +303,12 @@ export default class CourseCard extends Vue {
 }
 
 .section-grow {
-  transition: height 0.5s;
   height: 0;
   overflow: hidden;
+}
+
+.animate-grow {
+  transition: height 0.5s;
 }
 
 .opened_icon {
@@ -346,5 +372,9 @@ export default class CourseCard extends Vue {
 }
 .hidden {
   display: none;
+}
+
+.course-link {
+  font-size: 2rem;
 }
 </style>

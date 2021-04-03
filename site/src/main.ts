@@ -32,6 +32,7 @@ import {
   faTrash,
   faUser,
   faUserSlash,
+  faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faDiscord,
@@ -56,7 +57,8 @@ library.add(
   faPlus,
   faTrash,
   faUser,
-  faUserSlash
+  faUserSlash,
+  faLink
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
