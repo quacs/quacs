@@ -25,7 +25,7 @@ async def get_years() -> List[Tuple[str, str, str]]:
             homepage_text = await homepage.text()
             home_soup = BeautifulSoup(homepage_text.encode("utf8"), "lxml")
             dropdown_entries = home_soup.find(
-                "select", {"title": "Select a Catalog"}
+                "select", {"name": "catalog"}
             ).findChildren("option", recursive=False)
 
             dropdown_mapped = map(lambda x: (x["value"], x.string), dropdown_entries)

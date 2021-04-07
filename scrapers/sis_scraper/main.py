@@ -282,7 +282,7 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                     credit_max = float(getContent(td[6]).split("-")[1])
 
                 section_data = {
-                    # "select":getContentFromChild(td[0], 'abbr'),
+                    "closed":getContentFromChild(td[0], 'abbr'),
                     "crn": int(getContentFromChild(td[1], "a")),
                     "subj": getContent(td[2]),
                     "crse": int(getContent(td[3])),
