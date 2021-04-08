@@ -28,6 +28,7 @@ export interface CourseSection {
 
   timeslots: Timeslot[];
   attribute: string;
+  closed: boolean;
 }
 
 export interface Course {

@@ -282,7 +282,6 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                     credit_max = float(getContent(td[6]).split("-")[1])
 
                 section_data = {
-                    "closed":getContentFromChild(td[0], 'abbr'),
                     "crn": int(getContentFromChild(td[1], "a")),
                     "subj": getContent(td[2]),
                     "crse": int(getContent(td[3])),
@@ -303,6 +302,11 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                     "attribute": getContent(td[22]) if 22 < len(td) else "",
                     "timeslots": [timeslot_data],
                 }
+
+                status = getContentFromChild(td[0], "abbr")
+
+                if status in ["C", "NR"]:
+                    section_data["closed"] = True
 
                 if (
                     section_data["subj"] == last_subject

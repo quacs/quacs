@@ -75,7 +75,7 @@
           <span
             class="padding-left prerequisiteError"
             :class="{
-              hidden: !(section.rem <= 0),
+              hidden: !(section.rem <= 0) || section.closed,
             }"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
@@ -87,6 +87,22 @@
             ></font-awesome-icon>
             Full Section</span
           >
+
+          <span
+            class="padding-left prerequisiteError"
+            :class="{
+              hidden: !section.closed,
+            }"
+            v-on:click.stop.prevent
+            v-on:keyup.enter.stop.prevent
+            @click="showSectionModal(section.crn)"
+            @keyup.enter="showSectionModal(section.crn)"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'exclamation-triangle']"
+            ></font-awesome-icon>
+            Closed
+          </span>
           <span title="Professor(s)">
             | {{ section.timeslots[0].instructor }} |
           </span>
