@@ -75,7 +75,7 @@
           <span
             class="padding-left prerequisiteError"
             :class="{
-              hidden: !(section.rem <= 0) || section.closed,
+              hidden: !(section.rem <= 0),
             }"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
@@ -91,7 +91,7 @@
           <span
             class="padding-left prerequisiteError"
             :class="{
-              hidden: !section.closed,
+              hidden: section.rem <= 0 || !section.closed,
             }"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
