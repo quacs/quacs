@@ -7,7 +7,8 @@
     "build": "./scripts/build_entry.sh -b",
     "debug-build": "./scripts/build_entry.sh -d -b",
     "lint": "./scripts/lint.sh",
-    "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh"
+    "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh",
+    "postinstall": "cd .. && husky install site/.husky"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
@@ -50,6 +51,7 @@
     "eslint": "^7.24.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.9.0",
+    "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
     "sass": "^1.32.8",
@@ -95,11 +97,6 @@
     "last 2 versions",
     "not dead"
   ],
-  "gitHooks": {
-    "post-checkout": "yarn install --frozen-lockfile",
-    "post-merge": "yarn install --frozen-lockfile",
-    "pre-commit": "yarn install --frozen-lockfile && lint-staged"
-  },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [
       "vue-cli-service lint --max-warnings 0"
