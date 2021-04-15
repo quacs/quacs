@@ -3,7 +3,7 @@ import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import Vue from "vue";
 import { CourseSection, CourseSets } from "@/typings";
 
-import type { Context as ScheduleGenContext } from "@/quacs-rs";
+import type { WasmContext as ScheduleGenContext } from "@/quacs-rs";
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
@@ -32,7 +32,7 @@ export default class Schedule extends VuexModule {
     if (this._scheduleGenContext === null) {
       const wasm = await import("@/quacs-rs");
       wasm.init();
-      this.context.commit("_setScheduleGenContext", new wasm.Context());
+      this.context.commit("_setScheduleGenContext", new wasm.WasmContext());
       this.context.commit("setWasmLoaded", true);
     }
     // @ts-expect-error: Force `ScheduleGenContext | null` into `ScheduleGenContext`
