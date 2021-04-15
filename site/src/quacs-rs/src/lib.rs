@@ -53,15 +53,11 @@ impl Context {
 
             bm_start!("generate schedules");
             self.curr_times = [u64::MAX; BIT_VEC_LEN];
-            let schedules =
+            self.schedules =
                 Self::generate_schedules_driver(&mut selected_courses, &mut self.curr_times);
             bm_end!("generate schedules");
 
-            let schedules_len = schedules.len();
-
-            self.schedules = schedules;
-
-            schedules_len
+            self.schedules.len()
         };
 
         console_log!("Generated {} schedules", schedules_len);
