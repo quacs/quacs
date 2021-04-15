@@ -54,20 +54,29 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
+  _switchCurrentCourseSet(p: string): void {
+    this.currentCourseSet = p;
+  }
+
+  @Action
   async switchCurrentCourseSet(p: { name: string }): Promise<void> {
-    for (const sec in this.courseSets[this.currentTerm][
-      this.currentCourseSet
+    for (const sec in this.context.getters["getCourseSets"][
+      this.context.getters["currentCourseSet"]
     ]) {
       (await this.context.dispatch("getScheduleGenContext")).setSelected(
         parseInt(sec),
         false
       );
     }
-    this.currentCourseSet = p.name;
+    this.context.commit("_switchCurrentCourseSet", p.name);
     for (const sec in this.courseSets[this.currentTerm][
-      this.currentCourseSet
+      this.context.getters["currentCourseSet"]
     ]) {
-      if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
+      if (
+        this.context.getters["getCourseSets"][this.currentTerm][
+          this.context.getters["currentCourseSet"]
+        ][sec]
+      ) {
         (await this.context.dispatch("getScheduleGenContext")).setSelected(
           parseInt(sec),
           true
@@ -88,7 +97,7 @@ export default class Schedule extends VuexModule {
       return false;
     }
     this.context.commit("createNewCourseSet", p);
-    this.context.commit("switchCurrentCourseSet", p);
+    this.context.dispatch("switchCurrentCourseSet", p);
     return true;
   }
 
@@ -104,7 +113,7 @@ export default class Schedule extends VuexModule {
     }
     this.context.commit("deleteCourseSet", p);
     if (this.currentCourseSet === p.name) {
-      this.context.commit("switchCurrentCourseSet", {
+      this.context.dispatch("switchCurrentCourseSet", {
         name: Object.keys(this.courseSets[this.currentTerm])[0],
       });
       this.context.dispatch("generateSchedulesAndConflicts");

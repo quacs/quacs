@@ -175,7 +175,7 @@ export default class CourseSetEdit extends Vue {
   switchCurrentCourseSet(name: string): void {
     trackEvent("Change active course set", "course-set");
 
-    this.$store.commit("schedule/switchCurrentCourseSet", {
+    this.$store.dispatch("schedule/switchCurrentCourseSet", {
       name: name,
     });
     this.$store.dispatch("schedule/generateSchedulesAndConflicts");
