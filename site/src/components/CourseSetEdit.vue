@@ -160,7 +160,7 @@ export default class CourseSetEdit extends Vue {
     this.$store.dispatch("schedule/addCourseSet", {
       name: this.newCourseSetName,
     });
-    this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+    this.$store.dispatch("schedule/generateSchedulesAndConflicts");
     this.newCourseSetName = "";
   }
 
@@ -175,10 +175,10 @@ export default class CourseSetEdit extends Vue {
   switchCurrentCourseSet(name: string): void {
     trackEvent("Change active course set", "course-set");
 
-    this.$store.commit("schedule/switchCurrentCourseSet", {
+    this.$store.dispatch("schedule/switchCurrentCourseSet", {
       name: name,
     });
-    this.$store.dispatch("schedule/generateCurrentSchedulesAndConflicts");
+    this.$store.dispatch("schedule/generateSchedulesAndConflicts");
   }
 }
 </script>

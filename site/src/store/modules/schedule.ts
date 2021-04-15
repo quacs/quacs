@@ -1,11 +1,9 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
-import * as quacsWorker from "@/workers/schedule.worker";
 import Vue from "vue";
 import { CourseSection, CourseSets } from "@/typings";
 
-// yay typescript fun
-const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
+import type { Context as ScheduleGenContext } from "@/quacs-rs";
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
@@ -19,9 +17,27 @@ export default class Schedule extends VuexModule {
   courseSets: {
     [term: number]: CourseSets;
   } = { 202009: { "Course Set 1": {} } };
+  _scheduleGenContext: ScheduleGenContext | null = null;
 
   wasmLoaded = false;
   lastNewSchedule = 0;
+
+  @Mutation
+  _setScheduleGenContext(ctx: ScheduleGenContext): void {
+    this._scheduleGenContext = ctx;
+  }
+
+  @Action
+  async getScheduleGenContext(): Promise<ScheduleGenContext> {
+    if (this._scheduleGenContext === null) {
+      const wasm = await import("@/quacs-rs");
+      wasm.init();
+      this.context.commit("_setScheduleGenContext", new wasm.Context());
+      this.context.commit("setWasmLoaded", true);
+    }
+    // @ts-expect-error: Force `ScheduleGenContext | null` into `ScheduleGenContext`
+    return this._scheduleGenContext;
+  }
 
   @Mutation
   initializeStore(): void {
@@ -38,18 +54,33 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
-  switchCurrentCourseSet(p: { name: string }): void {
-    for (const sec in this.courseSets[this.currentTerm][
-      this.currentCourseSet
+  _switchCurrentCourseSet(p: string): void {
+    this.currentCourseSet = p;
+  }
+
+  @Action
+  async switchCurrentCourseSet(p: { name: string }): Promise<void> {
+    for (const sec in this.context.getters["getCourseSets"][
+      this.context.getters["currentCourseSet"]
     ]) {
-      worker.setSelected(sec, false);
+      (await this.context.dispatch("getScheduleGenContext")).setSelected(
+        parseInt(sec),
+        false
+      );
     }
-    this.currentCourseSet = p.name;
+    this.context.commit("_switchCurrentCourseSet", p.name);
     for (const sec in this.courseSets[this.currentTerm][
-      this.currentCourseSet
+      this.context.getters["currentCourseSet"]
     ]) {
-      if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
-        worker.setSelected(sec, true);
+      if (
+        this.context.getters["getCourseSets"][this.currentTerm][
+          this.context.getters["currentCourseSet"]
+        ][sec]
+      ) {
+        (await this.context.dispatch("getScheduleGenContext")).setSelected(
+          parseInt(sec),
+          true
+        );
       }
     }
   }
@@ -66,7 +97,7 @@ export default class Schedule extends VuexModule {
       return false;
     }
     this.context.commit("createNewCourseSet", p);
-    this.context.commit("switchCurrentCourseSet", p);
+    this.context.dispatch("switchCurrentCourseSet", p);
     return true;
   }
 
@@ -82,22 +113,25 @@ export default class Schedule extends VuexModule {
     }
     this.context.commit("deleteCourseSet", p);
     if (this.currentCourseSet === p.name) {
-      this.context.commit("switchCurrentCourseSet", {
+      this.context.dispatch("switchCurrentCourseSet", {
         name: Object.keys(this.courseSets[this.currentTerm])[0],
       });
-      this.context.dispatch("generateCurrentSchedulesAndConflicts");
+      this.context.dispatch("generateSchedulesAndConflicts");
     }
     return true;
   }
 
-  @Mutation
-  setSelected(p: { crn: string; selected: boolean }): void {
+  @Action
+  async setSelected(p: { crn: string; selected: boolean }): Promise<void> {
     Vue.set(
       this.courseSets[this.currentTerm][this.currentCourseSet],
       p.crn,
       p.selected
     );
-    worker.setSelected(p.crn, p.selected);
+    (await this.context.dispatch("getScheduleGenContext")).setSelected(
+      parseInt(p.crn),
+      p.selected
+    );
   }
 
   @Mutation
@@ -111,20 +145,15 @@ export default class Schedule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async init(initWasm = true): Promise<void> {
-    if (initWasm) {
-      // eslint-disable-next-line
-      console.log("initializing worker");
-      await worker.init();
-      // eslint-disable-next-line
-      console.log("worker initialized");
-    }
-
+  async init(): Promise<void> {
     for (const sec in this.courseSets[this.currentTerm][
       this.currentCourseSet
     ]) {
       if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
-        await worker.setSelected(sec, true);
+        (await this.context.dispatch("getScheduleGenContext")).setSelected(
+          parseInt(sec),
+          true
+        );
       }
     }
 
@@ -135,9 +164,7 @@ export default class Schedule extends VuexModule {
       });
     }
 
-    this.context.dispatch("generateCurrentSchedulesAndConflicts");
-
-    this.context.commit("setWasmLoaded", true);
+    this.context.dispatch("generateSchedulesAndConflicts");
 
     if (shouldSetWarningMessage) {
       this.context.commit("setWarningMessage", "", {
@@ -146,8 +173,8 @@ export default class Schedule extends VuexModule {
     }
   }
 
-  @Mutation
-  initSelectedSetions(): void {
+  @Action
+  async initSelectedSetions(): Promise<void> {
     //initialize courseSets if they are empty. There should never be an empty courseSet
     // if (Object.keys(this.courseSets).length === 0) {
     //   Vue.set(this.courseSets, this.currentTerm, {});
@@ -160,15 +187,18 @@ export default class Schedule extends VuexModule {
     for (const section in this.courseSets[this.currentTerm][
       this.currentCourseSet
     ]) {
-      worker.setSelected(
-        section,
+      (await this.context.dispatch("getScheduleGenContext")).setSelected(
+        parseInt(section),
         this.courseSets[this.currentTerm][this.currentCourseSet][section]
       );
     }
   }
 
-  get getInConflict(): (crn: number) => Promise<boolean> {
-    return (crn: number) => worker.getInConflict(crn);
+  @Action
+  async isInConflict(crn: number): Promise<boolean> {
+    return (await this.context.dispatch("getScheduleGenContext")).isInConflict(
+      crn
+    );
   }
 
   get isSelected(): (crn: string) => boolean {
@@ -176,25 +206,26 @@ export default class Schedule extends VuexModule {
       this.courseSets[this.currentTerm][this.currentCourseSet][crn] === true;
   }
 
-  get getSchedule() {
-    return async (idx: number): Promise<CourseSection[]> => {
-      const scheduleCrns = await worker.getSchedule(idx);
+  @Action
+  async getSchedule(idx: number): Promise<CourseSection[]> {
+    const scheduleCrns = (
+      await this.context.dispatch("getScheduleGenContext")
+    ).getSchedule(idx);
 
-      // TODO: Is it possible to refactor this to not require a triple-nested loop?
-      const scheduleSections: CourseSection[] = [];
+    // TODO: Is it possible to refactor this to not require a triple-nested loop?
+    const scheduleSections: CourseSection[] = [];
 
-      for (const dept of this.context.rootState.departments) {
-        for (const course of dept.courses) {
-          for (const section of course.sections) {
-            if (scheduleCrns.includes(section.crn)) {
-              scheduleSections.push(section);
-            }
+    for (const dept of this.context.rootState.departments) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          if (scheduleCrns.includes(section.crn)) {
+            scheduleSections.push(section);
           }
         }
       }
+    }
 
-      return scheduleSections;
-    };
+    return scheduleSections;
   }
 
   get numSchedules(): number {
@@ -225,7 +256,7 @@ export default class Schedule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async generateCurrentSchedulesAndConflicts(): Promise<void> {
+  async generateSchedulesAndConflicts(): Promise<void> {
     this.context.commit("setNeedToGenerateSchedules", true);
 
     if (this.context.getters.currentlyGeneratingSchedules) {
@@ -246,7 +277,9 @@ export default class Schedule extends VuexModule {
 
       this.context.commit(
         "setNumSchedules",
-        await worker.generateCurrentSchedulesAndConflicts()
+        (
+          await this.context.dispatch("getScheduleGenContext")
+        ).generateSchedulesAndConflicts()
       );
 
       this.context.commit("setLastNewSchedule", Date.now());
