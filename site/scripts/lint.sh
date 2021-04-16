@@ -18,5 +18,9 @@ echo "Linting quacs-rs"
 cargo clippy --manifest-path src/quacs-rs/Cargo.toml -- -D warnings
 
 echo "Running tests for quacs-rs"
+echo "Running cargo test"
 cargo test --manifest-path src/quacs-rs/Cargo.toml
+echo "Running wasm-pack test --node"
 wasm-pack test --node src/quacs-rs
+echo "Running wasm-pack test --node -- --all-features"
+wasm-pack test --node src/quacs-rs -- --all-features
