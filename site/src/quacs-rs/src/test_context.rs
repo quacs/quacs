@@ -58,13 +58,7 @@ fn test_empty_diag_one_section_basic() {
     }
 
     // Get schedules
-    let num_schedules = 4;
-    assert_eq!(ctx.generate_schedules_and_conflicts(), num_schedules);
-    let schedules = (0..num_schedules)
-        .map(|i| ctx.get_schedule(i).to_vec())
-        .collect::<BTreeSet<Vec<u32>>>()
-        .into_iter()
-        .collect::<Vec<Vec<u32>>>();
+    let schedules = get_sorted_schedules(&mut ctx);
     assert_eq!(schedules, [[0], [1], [2], [3]]);
 
     // Deselect sections
