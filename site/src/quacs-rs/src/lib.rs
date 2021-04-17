@@ -3,6 +3,7 @@ mod utils;
 mod context;
 mod data;
 mod semester_data;
+mod test_context;
 mod wasm_context;
 
 use wasm_bindgen::prelude::*;
