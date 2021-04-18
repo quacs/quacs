@@ -392,12 +392,6 @@ jobs:
           git add data/meta.json
           git commit --amend --no-edit
           git push --force
-
-      - name: Deploy updated website
-        working-directory: ./scrapers
-        if: ${{ success() }}
-        run: |
-          cd data
           curl -H "Accept: application/vnd.github.everest-preview+json" \
               -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
               --request POST \
