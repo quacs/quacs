@@ -60,29 +60,30 @@ export default class Schedule extends VuexModule {
 
   @Action
   async switchCurrentCourseSet(p: { name: string }): Promise<void> {
-    for (const sec in this.context.getters["getCourseSets"][
-      this.context.getters["currentCourseSet"]
+    // Remove old course set's selected sections
+    for (const sec in this.courseSets[this.currentTerm][
+      this.currentCourseSet
     ]) {
       (await this.context.dispatch("getScheduleGenContext")).setSelected(
         parseInt(sec),
         false
       );
     }
+    // Update course set name
     this.context.commit("_switchCurrentCourseSet", p.name);
+    // Add new course set's selected sections
     for (const sec in this.courseSets[this.currentTerm][
-      this.context.getters["currentCourseSet"]
+      this.currentCourseSet
     ]) {
-      if (
-        this.context.getters["getCourseSets"][this.currentTerm][
-          this.context.getters["currentCourseSet"]
-        ][sec]
-      ) {
+      if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
         (await this.context.dispatch("getScheduleGenContext")).setSelected(
           parseInt(sec),
           true
         );
       }
     }
+    // Regnerate schedules
+    this.context.dispatch("generateSchedulesAndConflicts");
   }
 
   @Mutation
@@ -116,7 +117,6 @@ export default class Schedule extends VuexModule {
       this.context.dispatch("switchCurrentCourseSet", {
         name: Object.keys(this.courseSets[this.currentTerm])[0],
       });
-      this.context.dispatch("generateSchedulesAndConflicts");
     }
     return true;
   }
