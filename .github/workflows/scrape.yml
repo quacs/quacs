@@ -351,10 +351,6 @@ jobs:
         with:
           path: scrapers
 
-      - name: Generate meta json file
-        working-directory: ./scrapers
-        run: echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > data/meta.json
-
       - name: Commit new data
         working-directory: ./scrapers
         run: |
@@ -390,10 +386,11 @@ jobs:
           done
 
           git config user.name "QuACS" && git config user.email "github@quacs.org"
-
           git add .
-
-          git commit -m "$(date -u)"
+          git commit -m "$(date -u)" || exit 0
+          echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > data/meta.json
+          git add data/meta.json
+          git commit --amend --no-edit
           git push --force
 
       - name: Deploy updated website
