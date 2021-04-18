@@ -220,6 +220,8 @@ impl<'a, const N: usize> Context<'a, N> {
         let course_name = self.data.crn_courses.get(&crn).unwrap();
 
         if self.selected_courses.get(course_name).is_some() {
+            console_log!("Checking if crn {} conflicts with global schedule", crn);
+
             // Assuming we didn't have other sections from this course selected, do we conflict?
             // This check stops us from saying that every section of a course conflicts if we've
             // just selected one, since courses usually have a common timeslot (e.g. test slots).

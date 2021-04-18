@@ -273,9 +273,31 @@ fn test_freshman_cs() {
     assert_eq!(ctx.get_schedule(0), Vec::new().into_boxed_slice());
     assert_eq!(ctx.get_schedule(1), Vec::new().into_boxed_slice());
 
-    // Select all sections
-    for crn in crn_courses.keys() {
+    // No sections conflict
+    assert!(crn_times.keys().all(|crn| !ctx.is_in_conflict(*crn)));
+
+    // Select all sections, recomputing all conflicts after each section
+    for (i, crn) in crn_times.keys().enumerate() {
         ctx.set_selected(*crn, true);
+
+        // Compute conflicts
+        let conflicts = crn_times
+            .keys()
+            .map(|crn| ctx.is_in_conflict(*crn))
+            .collect::<Vec<bool>>();
+
+        println!("{}: {}", i, crn);
+
+        if i == 0 || i == 9 {
+            // No sections conflict
+            assert!(conflicts.iter().all(|b| !b));
+        } else {
+            // Some sections conflict
+            assert!(conflicts.iter().any(|b| *b));
+
+            // Some sections don't conflict
+            assert!(conflicts.iter().any(|b| !b));
+        }
     }
 
     // Get schedules
@@ -319,6 +341,18 @@ fn test_freshman_cs() {
             [50045, 50052, 52134, 52515]
         ]
     );
+
+    // Compute conflicts
+    let conflicts = crn_times
+        .keys()
+        .map(|crn| ctx.is_in_conflict(*crn))
+        .collect::<Vec<bool>>();
+
+    // Some sections conflict
+    assert!(conflicts.iter().any(|b| *b));
+
+    // Some sections don't conflict
+    assert!(conflicts.iter().any(|b| !b));
 }
 
 // TODO: Remove `#[should_panic]` and add `#[wasm_bindgen_test]`
