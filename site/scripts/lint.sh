@@ -16,11 +16,3 @@ cp src/store/data/semester_data/$curr_semester/*.rs src/quacs-rs/src/data
 
 echo "Linting quacs-rs"
 cargo clippy --manifest-path src/quacs-rs/Cargo.toml -- -D warnings
-
-echo "Running tests for quacs-rs"
-echo "Running cargo test"
-cargo test --release --manifest-path src/quacs-rs/Cargo.toml
-echo "Running wasm-pack test --node"
-time wasm-pack test --release --node src/quacs-rs
-echo "Running wasm-pack test --node -- --all-features"
-time wasm-pack test --release --node src/quacs-rs -- --all-features > /dev/null
