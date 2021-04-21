@@ -3,7 +3,8 @@ import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import Vue from "vue";
 import { CourseSection, CourseSets } from "@/typings";
 
-import type { WasmContext as ScheduleGenContext } from "@/quacs-rs";
+import * as quacsWorker from "@/workers/schedule.worker";
+const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
@@ -17,27 +18,9 @@ export default class Schedule extends VuexModule {
   courseSets: {
     [term: number]: CourseSets;
   } = { 202009: { "Course Set 1": {} } };
-  _scheduleGenContext: ScheduleGenContext | null = null;
 
   wasmLoaded = false;
   lastNewSchedule = 0;
-
-  @Mutation
-  _setScheduleGenContext(ctx: ScheduleGenContext): void {
-    this._scheduleGenContext = ctx;
-  }
-
-  @Action
-  async getScheduleGenContext(): Promise<ScheduleGenContext> {
-    if (this._scheduleGenContext === null) {
-      const wasm = await import("@/quacs-rs");
-      wasm.init();
-      this.context.commit("_setScheduleGenContext", new wasm.WasmContext());
-      this.context.commit("setWasmLoaded", true);
-    }
-    // @ts-expect-error: Force `ScheduleGenContext | null` into `ScheduleGenContext`
-    return this._scheduleGenContext;
-  }
 
   @Mutation
   initializeStore(): void {
@@ -64,10 +47,7 @@ export default class Schedule extends VuexModule {
     for (const sec in this.courseSets[this.currentTerm][
       this.currentCourseSet
     ]) {
-      (await this.context.dispatch("getScheduleGenContext")).setSelected(
-        parseInt(sec),
-        false
-      );
+      worker.setSelected(sec, false);
     }
     // Update course set name
     this.context.commit("_switchCurrentCourseSet", p.name);
@@ -76,10 +56,7 @@ export default class Schedule extends VuexModule {
       this.currentCourseSet
     ]) {
       if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
-        (await this.context.dispatch("getScheduleGenContext")).setSelected(
-          parseInt(sec),
-          true
-        );
+        worker.setSelected(sec, true);
       }
     }
     // Regnerate schedules
@@ -128,10 +105,7 @@ export default class Schedule extends VuexModule {
       p.crn,
       p.selected
     );
-    (await this.context.dispatch("getScheduleGenContext")).setSelected(
-      parseInt(p.crn),
-      p.selected
-    );
+    worker.setSelected(p.crn, p.selected);
   }
 
   @Mutation
@@ -145,15 +119,17 @@ export default class Schedule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async init(): Promise<void> {
+  async init(initWasm = true): Promise<void> {
+    if (initWasm) {
+      await worker.init();
+      this.context.commit("setWasmLoaded", true);
+    }
+
     for (const sec in this.courseSets[this.currentTerm][
       this.currentCourseSet
     ]) {
       if (this.courseSets[this.currentTerm][this.currentCourseSet][sec]) {
-        (await this.context.dispatch("getScheduleGenContext")).setSelected(
-          parseInt(sec),
-          true
-        );
+        await worker.setSelected(sec, true);
       }
     }
 
@@ -187,8 +163,8 @@ export default class Schedule extends VuexModule {
     for (const section in this.courseSets[this.currentTerm][
       this.currentCourseSet
     ]) {
-      (await this.context.dispatch("getScheduleGenContext")).setSelected(
-        parseInt(section),
+      worker.setSelected(
+        section,
         this.courseSets[this.currentTerm][this.currentCourseSet][section]
       );
     }
@@ -196,9 +172,7 @@ export default class Schedule extends VuexModule {
 
   @Action
   async isInConflict(crn: number): Promise<boolean> {
-    return (await this.context.dispatch("getScheduleGenContext")).isInConflict(
-      crn
-    );
+    return worker.isInConflict(crn);
   }
 
   get isSelected(): (crn: string) => boolean {
@@ -208,9 +182,7 @@ export default class Schedule extends VuexModule {
 
   @Action
   async getSchedule(idx: number): Promise<CourseSection[]> {
-    const scheduleCrns = (
-      await this.context.dispatch("getScheduleGenContext")
-    ).getSchedule(idx);
+    const scheduleCrns = await worker.getSchedule(idx);
 
     // TODO: Is it possible to refactor this to not require a triple-nested loop?
     const scheduleSections: CourseSection[] = [];
@@ -277,9 +249,7 @@ export default class Schedule extends VuexModule {
 
       this.context.commit(
         "setNumSchedules",
-        (
-          await this.context.dispatch("getScheduleGenContext")
-        ).generateSchedulesAndConflicts()
+        await worker.generateSchedulesAndConflicts()
       );
 
       this.context.commit("setLastNewSchedule", Date.now());
