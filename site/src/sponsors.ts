@@ -4,4 +4,8 @@ export const advertisers: Advert[] = [];
 
 export const roboMallardPatrons: LinkedSponsor[] = [];
 
-export const rubberDuckPatrons: string[] = ["Enis Aras", "Chris Jerrett"];
+export const rubberDuckPatrons: string[] = [
+  "Enis Aras",
+  "Chris Jerrett",
+  "Bill Ni",
+];
