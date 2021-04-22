@@ -6,6 +6,7 @@ on:
     branches:
       - master
       - staging
+concurrency: site-deploy-lock
 jobs:
   gh-pages-deploy:
     name: Deploying to gh-pages
