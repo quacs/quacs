@@ -1,15 +1,10 @@
 import type { WasmContext } from "@/quacs-rs";
 
-type WasmType = typeof import("@/quacs-rs");
-
 // @ts-expect-error: after initialization, this won't be null
 let ctx: WasmContext = null;
-// @ts-expect-error: after initialization, this won't be null
-let wasm: WasmType = null;
 
 async function waitForInitialization(): Promise<void> {
   while (
-    wasm === null ||
     ctx === null ||
     // @ts-expect-error: For some reason, the wasm context is able to be constructed before
     // it's fully initialized... We need to check for that here by digging into its internals.
@@ -24,7 +19,7 @@ async function waitForInitialization(): Promise<void> {
 export async function init(): Promise<void> {
   const start = Date.now();
 
-  wasm = await import("@/quacs-rs");
+  const wasm = await import("@/quacs-rs");
   wasm.init();
   ctx = new wasm.WasmContext();
   const end = Date.now();
@@ -36,7 +31,7 @@ export async function init(): Promise<void> {
 export async function generateSchedulesAndConflicts(): Promise<number> {
   await waitForInitialization();
 
-  return wasm.generateSchedulesAndConflicts(ctx);
+  return ctx.generateSchedulesAndConflicts();
 }
 
 export async function setSelected(
@@ -45,17 +40,17 @@ export async function setSelected(
 ): Promise<void> {
   await waitForInitialization();
 
-  return wasm.setSelected(ctx, parseInt(crn), selected);
+  return ctx.setSelected(parseInt(crn), selected);
 }
 
 export async function isInConflict(crn: number): Promise<boolean> {
   await waitForInitialization();
 
-  return wasm.isInConflict(ctx, crn);
+  return ctx.isInConflict(crn);
 }
 
 export async function getSchedule(idx: number): Promise<Uint32Array> {
   await waitForInitialization();
 
-  return wasm.getSchedule(ctx, idx);
+  return ctx.getSchedule(idx);
 }

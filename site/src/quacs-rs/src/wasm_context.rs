@@ -20,23 +20,28 @@ impl WasmContext {
         Default::default()
     }
 
-    pub(crate) fn generate_schedules_and_conflicts(&mut self) -> usize {
+    #[wasm_bindgen(js_name = "generateSchedulesAndConflicts")]
+    pub fn generate_schedules_and_conflicts(&mut self) -> usize {
         self.0.generate_schedules_and_conflicts()
     }
 
-    pub(crate) fn set_selected(&mut self, crn: u32, selected: bool) {
+    #[wasm_bindgen(js_name = "setSelected")]
+    pub fn set_selected(&mut self, crn: u32, selected: bool) {
         self.0.set_selected(crn, selected)
     }
 
-    pub(crate) fn everything_conflicts(&self) -> bool {
+    #[wasm_bindgen(js_name = "everythingConflicts")]
+    pub fn everything_conflicts(&self) -> bool {
         self.0.everything_conflicts()
     }
 
-    pub(crate) fn is_in_conflict(&self, crn: u32) -> bool {
+    #[wasm_bindgen(js_name = "isInConflict")]
+    pub fn is_in_conflict(&self, crn: u32) -> bool {
         self.0.is_in_conflict(crn)
     }
 
-    pub(crate) fn get_schedule(&self, idx: usize) -> Box<[u32]> {
+    #[wasm_bindgen(js_name = "getSchedule")]
+    pub fn get_schedule(&self, idx: usize) -> Box<[u32]> {
         self.0.get_schedule(idx)
     }
 }
