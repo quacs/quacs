@@ -124,9 +124,8 @@ export default class Calendar extends Vue {
 
     for (const section of this.sections) {
       for (const timeslot of section.timeslots) {
-        const [timeslotStartDate, timeslotEndDate] = timeslotStartEndUnix(
-          timeslot
-        );
+        const [timeslotStartDate, timeslotEndDate] =
+          timeslotStartEndUnix(timeslot);
 
         if (timeslotStartDate === null || timeslotEndDate === null) {
           continue;
@@ -168,9 +167,8 @@ export default class Calendar extends Vue {
 
       for (const section of this.sections) {
         for (const timeslot of section.timeslots) {
-          const [timeslotStartDate, timeslotEndDate] = timeslotStartEndUnix(
-            timeslot
-          );
+          const [timeslotStartDate, timeslotEndDate] =
+            timeslotStartEndUnix(timeslot);
 
           if (
             // Filter for timeslots which include this day

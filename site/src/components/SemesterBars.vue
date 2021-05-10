@@ -408,13 +408,11 @@ export default class SemesterBars extends Vue {
     this.currentSubsem =
       (subsemIdx + this.subsemSegments.length) % this.subsemSegments.length;
 
-    this.percentageBeforeCurrentSubsem = this.subsemSegments[
-      this.currentSubsem
-    ].startPercentage;
+    this.percentageBeforeCurrentSubsem =
+      this.subsemSegments[this.currentSubsem].startPercentage;
 
-    this.percentageOfCurrentSubsem = this.subsemSegments[
-      this.currentSubsem
-    ].fillPercentage;
+    this.percentageOfCurrentSubsem =
+      this.subsemSegments[this.currentSubsem].fillPercentage;
 
     const subsemCenter =
       this.percentageBeforeCurrentSubsem + this.percentageOfCurrentSubsem / 2;

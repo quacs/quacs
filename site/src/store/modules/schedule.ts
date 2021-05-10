@@ -4,7 +4,9 @@ import Vue from "vue";
 import { CourseSection, CourseSets } from "@/typings";
 
 import * as quacsWorker from "@/workers/schedule.worker";
-const worker = ((quacsWorker as unknown) as () => typeof quacsWorker)() as typeof quacsWorker;
+const worker = (
+  quacsWorker as unknown as () => typeof quacsWorker
+)() as typeof quacsWorker;
 
 @Module({ namespaced: true })
 export default class Schedule extends VuexModule {
