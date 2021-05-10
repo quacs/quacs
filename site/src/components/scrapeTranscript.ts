@@ -28,11 +28,10 @@ export interface StudentData {
   terms: Term[];
 }
 
-const transcriptGetter = (transcriptRows: HTMLTableRowElement[]) => (
-  rowIdx: number,
-  childIdx: number
-): string =>
-  (transcriptRows[rowIdx].children[childIdx] as HTMLElement).innerText.trim();
+const transcriptGetter =
+  (transcriptRows: HTMLTableRowElement[]) =>
+  (rowIdx: number, childIdx: number): string =>
+    (transcriptRows[rowIdx].children[childIdx] as HTMLElement).innerText.trim();
 
 export async function scrapeTranscript(fileId: string): Promise<StudentData> {
   const element = document.getElementById(fileId) as HTMLInputElement | null;
