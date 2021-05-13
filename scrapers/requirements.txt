@@ -1,6 +1,6 @@
-beautifulsoup4
-tqdm
-requests
-python-dotenv
-lxml
-aiohttp
+aiohttp==3.7.4.post0
+beautifulsoup4==4.9.3
+lxml==4.6.3
+python-dotenv==0.17.1
+requests==2.25.1
+tqdm==4.60.0
