@@ -276,10 +276,15 @@ with requests.Session() as s:  # We purposefully don't use aiohttp here since SI
                     )
                     continue
 
-                credit_min = float(getContent(td[6]).split("-")[0])
+                raw_cred = getContent(td[6])
+                raw_cred = (
+                    raw_cred.split("-") if "-" in raw_cred else raw_cred.split("/")
+                )
+
+                credit_min = float(raw_cred[0])
                 credit_max = credit_min
-                if len(getContent(td[6]).split("-")) > 1:
-                    credit_max = float(getContent(td[6]).split("-")[1])
+                if len(raw_cred) > 1:
+                    credit_max = float(raw_cred[1])
 
                 section_data = {
                     "crn": int(getContentFromChild(td[1], "a")),
