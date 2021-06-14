@@ -3,4 +3,4 @@ beautifulsoup4==4.9.3
 lxml==4.6.3
 python-dotenv==0.17.1
 requests==2.25.1
-tqdm==4.61.0
+tqdm==4.61.1
