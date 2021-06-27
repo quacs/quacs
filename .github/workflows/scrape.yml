@@ -386,11 +386,11 @@ jobs:
           done
 
           git config user.name "QuACS" && git config user.email "github@quacs.org"
-          git add .
-          git commit -m "$(date -u)" || exit 0
           echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > meta.json
-          git add meta.json
-          git commit --amend --no-edit
+          git add .
+          git commit -m "$(date -u)" # || exit 0
+          #git add meta.json
+          #git commit --amend --no-edit
           git push --force
           curl -H "Accept: application/vnd.github.everest-preview+json" \
               -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
