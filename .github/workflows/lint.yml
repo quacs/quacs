@@ -36,8 +36,6 @@ jobs:
           cargo test --release --manifest-path src/quacs-rs/Cargo.toml
           echo "Running wasm-pack test --node"
           time wasm-pack test --release --node src/quacs-rs
-          echo "Running wasm-pack test --node -- --all-features"
-          time wasm-pack test --release --node src/quacs-rs -- --all-features > /dev/null
 
       - name: Run build
         working-directory: ./site
