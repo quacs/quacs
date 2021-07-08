@@ -6,6 +6,7 @@ use crate::semester_data::SemesterData;
 use std::collections::BTreeSet;
 
 use phf::phf_map;
+use std::iter::FromIterator;
 use wasm_bindgen_test::*;
 
 /// Helper function to generate a sorted list of possible schedules
@@ -277,8 +278,15 @@ fn test_freshman_cs() {
     assert!(crn_times.keys().all(|crn| !ctx.is_in_conflict(*crn)));
 
     // Select all sections, recomputing all conflicts after each section
-    for (i, crn) in crn_times.keys().enumerate() {
-        ctx.set_selected(*crn, true);
+    for (i, crn) in {
+        let mut keys = Vec::from_iter(crn_times.keys());
+        keys.sort();
+        keys
+    }
+    .iter()
+    .enumerate()
+    {
+        ctx.set_selected(**crn, true);
 
         // Compute conflicts
         let conflicts = crn_times
@@ -288,7 +296,7 @@ fn test_freshman_cs() {
 
         println!("{}: {}", i, crn);
 
-        if i == 0 || i == 9 {
+        if i < 3 {
             // No sections conflict
             assert!(conflicts.iter().all(|b| !b));
         } else {
