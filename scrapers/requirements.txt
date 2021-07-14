@@ -2,5 +2,5 @@ aiohttp==3.7.4.post0
 beautifulsoup4==4.9.3
 lxml==4.6.3
 python-dotenv==0.18.0
-requests==2.25.1
+requests==2.26.0
 tqdm==4.61.2
