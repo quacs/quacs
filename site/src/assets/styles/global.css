@@ -2,91 +2,99 @@
 for example use this file to give text the color black. Then we can overwrite it using
 a color in colors.css*/
 
-body{
-  background: var(--background);
-  color: var(--global-text);
+body {
+    background: var(--background);
+    color: var(--global-text);
 }
 
-.card-body{
-  background: var(--card-body-background);
-  color: var(--card-body-text);
+.card-body {
+    background: var(--card-body-background);
+    color: var(--card-body-text);
 }
 
-.card-header{
-  background: var(--card-header-background);
-  color: var(--card-header-text);
+.card-header {
+    background: var(--card-header-background);
+    color: var(--card-header-text);
 }
 
-.navbar.bg-light{
-  background: var(--navbar-background)!important;
+.navbar.bg-light {
+    background: var(--navbar-background)!important;
 }
 
-.b-overlay > .bg-light{
-  background: var(--overlay-background)!important;
+.b-overlay>.bg-light {
+    background: var(--overlay-background)!important;
 }
 
-.navbar-light .navbar-nav .nav-link{
-  color: var(--navbar-unselected-text);
+.navbar-light .navbar-nav .nav-link {
+    color: var(--navbar-unselected-text);
 }
 
-.navbar-light .navbar-nav .nav-link:hover{
-  color: var(--navbar-unselected-text-hover);
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--navbar-unselected-text-hover);
 }
 
-.navbar-light .navbar-nav .nav-link.disabled{
-  color: var(--navbar-text-disabled);
+.navbar-light .navbar-nav .nav-link.disabled {
+    color: var(--navbar-text-disabled);
 }
 
-.navbar-light .navbar-nav .nav-link.active{
-  color: var(--navbar-text-active);
+.navbar-light .navbar-nav .nav-link.active {
+    color: var(--navbar-text-active);
 }
 
-.navbar-light .navbar-nav .nav-link:focus{
-  color: var(--navbar-text-focus);
+.navbar-light .navbar-nav .nav-link:focus {
+    color: var(--navbar-text-focus);
 }
 
-.navbar-light .navbar-nav .show > .nav-link{
-  color: var(--navbar-text-show);
+.navbar-light .navbar-nav .show>.nav-link {
+    color: var(--navbar-text-show);
 }
 
-.modal-header, .close{
+.modal-header,
+.close {
     background: var(--modal-header-background);
     color: var(--modal-header-text);
 }
 
-.close:hover{
-  color: var(--modal-close-x-hover);
+.close:hover {
+    color: var(--modal-close-x-hover);
 }
 
-.modal-body{
+.modal-body {
     background: var(--modal-body-background);
     color: var(--modal-body-text);
 }
 
-.modal-footer{
+.modal-footer {
     background: var(--modal-footer-background);
     color: var(--modal-footer-text);
 }
 
-.btn-primary{
-  background: var(--btn-primary-background);
-  border-color: var(--btn-primary-background);
-  color: var(--btn-primary-text);
+.btn-primary {
+    background: var(--btn-primary-background);
+    border-color: var(--btn-primary-background, blue);
+    color: var(--btn-primary-text);
+    border-radius: var(--btn-border-radius, 0px);
+    border: var(--btn-border, medium none color);
 }
 
-.custom-select{
-  background: var(--select-background);
-  color: var(--select-text);
+.btn-primary:hover {
+    box-shadow: var(--btn-box-shadow, none);
+    transition: var(--btn-transition, all 0s ease 0s);
 }
 
-.custom-select:focus{
-  color: var(--select-text);
+.custom-select {
+    background: var(--select-background);
+    color: var(--select-text);
+}
+
+.custom-select:focus {
+    color: var(--select-text);
 }
 
 .table {
-  color: var(--table-text);
+    color: var(--table-text);
 }
 
-.list-group-item{
-  background: var(--list-group-item-background)
+.list-group-item {
+    background: var(--list-group-item-background)
 }
