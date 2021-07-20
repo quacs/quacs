@@ -34,7 +34,7 @@
     "vue-router": "^3.5.2",
     "vue-visjs": "^0.6.0",
     "vuex": "^3.6.2",
-    "vuex-persistedstate": "^3.2.0",
+    "vuex-persistedstate": "^4.0.0",
     "xss": "^1.0.9"
   },
   "devDependencies": {

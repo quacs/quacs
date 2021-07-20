@@ -6959,10 +6959,10 @@ shell-quote@^1.6.1:
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
 
-shvl@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/shvl/-/shvl-2.0.2.tgz#eca7decb9bbd4e8dd93f06ea9ab94036319cd351"
-  integrity sha512-G3KkIXPza3dgkt6Bo8zIl5K/KvAAhbG6o9KfAjhPvrIIzzAhnfc2ztv1i+iPTbNNM43MaBUqIaZwqVjkSgY/rw==
+shvl@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/shvl/-/shvl-2.0.3.tgz#eb4bd37644f5684bba1fc52c3010c96fb5e6afd1"
+  integrity sha512-V7C6S9Hlol6SzOJPnQ7qzOVEWUQImt3BNmmzh40wObhla3XOYMe4gGiYzLrJd5TFa+cI2f9LKIRJTTKZSTbWgw==
 
 signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.3"
@@ -8111,13 +8111,13 @@ vuex-module-decorators@^1.0.1:
   resolved "https://registry.yarnpkg.com/vuex-module-decorators/-/vuex-module-decorators-1.0.1.tgz#d34dafb5428a3636f1c26d3d014c15fc9659ccd0"
   integrity sha512-FLWZsXV5XAtl/bcKUyQFpnSBtpc3wK/7zSdy9oKbyp71mZd4ut5y2zSd219wWW9OG7WUOlVwac4rXFFDVnq7ug==
 
-vuex-persistedstate@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/vuex-persistedstate/-/vuex-persistedstate-3.2.0.tgz#41d3ea304404769ac653ec020de80c95ce16243d"
-  integrity sha512-1Q4zV9cNaJtl59jN6rXbndemEtXKywZr0OFZnqgpYdwvdyy+64KNsEltKldQW+i03st5LuDwHsdOEevXIZUgdg==
+vuex-persistedstate@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/vuex-persistedstate/-/vuex-persistedstate-4.0.0.tgz#ed82f266ca98c869a2aad9cb9880c2f608c05f3a"
+  integrity sha512-jDs+awbV9YD2A2F6S5zgtYq1Bjd8v0YldOK6HPv1EJZzGMse0FtZTREfXvA7zlVfq9MpmSZJNmYQVylfpZ5znQ==
   dependencies:
     deepmerge "^4.2.2"
-    shvl "^2.0.2"
+    shvl "^2.0.3"
 
 vuex@^3.6.2:
   version "3.6.2"
