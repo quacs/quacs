@@ -71,15 +71,15 @@ body {
 
 .btn-primary {
     background: var(--btn-primary-background);
-    border-color: var(--btn-primary-background, blue);
+    border-color: var(--btn-primary-background);
     color: var(--btn-primary-text);
-    border-radius: var(--btn-border-radius, 0px);
-    border: var(--btn-border, medium none color);
+    border-radius: var(--btn-border-radius);
+    border: var(--btn-border);
 }
 
 .btn-primary:hover {
-    box-shadow: var(--btn-box-shadow, none);
-    transition: var(--btn-transition, all 0s ease 0s);
+    box-shadow: var(--btn-box-shadow);
+    transition: var(--btn-transition);
 }
 
 .custom-select {

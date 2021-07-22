@@ -23,6 +23,8 @@
     --modal-footer-text: rgb(33, 37, 41);
     --btn-primary-background: #007bff;
     --btn-primary-text: #ffffff;
+    --btn-box-shadow: none;
+    --btn-transition: all 0s ease 0s;
     --department-link-hover: #d3d3d3;
     --select-background: #ffffff;
     --select-text: #495057;
