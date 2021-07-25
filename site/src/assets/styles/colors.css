@@ -25,6 +25,8 @@
     --btn-primary-text: #ffffff;
     --btn-box-shadow: none;
     --btn-transition: all 0s ease 0s;
+    --btn-border-radius: 0px;
+    --btn-border: medium none color;
     --department-link-hover: #d3d3d3;
     --select-background: #ffffff;
     --select-text: #495057;
@@ -49,25 +51,33 @@
     --taken-course: #228C3A;
     --not-taken-course: #dc3545;
     --overlay-background: #f8f9fa;
+
     --num-calendar-colors: 7;
+
     --calendar-bg-color-0: #ffe9cf;
     --calendar-border-color-0: #ff9332;
     --calendar-text-color-0: #000000;
+    
     --calendar-bg-color-1: #ffd4df;
     --calendar-border-color-1: #ff2066;
     --calendar-text-color-1: #000000;
+
     --calendar-bg-color-2: #ceeffc;
     --calendar-border-color-2: #00aff2;
     --calendar-text-color-2: #000000;
+
     --calendar-bg-color-3: #fff4d0;
     --calendar-border-color-3: #ffcb45;
     --calendar-text-color-3: #000000;
+
     --calendar-bg-color-4: #dcf7da;
     --calendar-border-color-4: #48da58;
     --calendar-text-color-4: #000000;
+
     --calendar-bg-color-5: #f7e2f7;
     --calendar-border-color-5: #d373da;
     --calendar-text-color-5: #000000;
+    
     --calendar-bg-color-6: #ede6df;
     --calendar-border-color-6: #a48363;
     --calendar-text-color-6: #000000;

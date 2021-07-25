@@ -12,6 +12,10 @@
         --selected-row: #c65353;
         --selected-row-hover: #d57f7f;
 
+        --btn-box-shadow: none;
+        --btn-transition: all 0s ease 0s;
+        --btn-border-radius: 0px;
+        --btn-border: medium none color;
 
         --calendar-text-color-0: #d9652b;
 
