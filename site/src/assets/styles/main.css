@@ -1,83 +1,87 @@
 .loading {
-        display: none;
+  display: none;
 }
 
 .loading-spinner {
-        display: block;
-        position: fixed;
-        z-index: 1031;
-        /* High z-index so it is on top of the page */
-        top: 40%;
-        right: 50%;
-        /* or: left: 50%; */
-        margin-top: -4rem;
-        /* half of the elements height */
-        margin-right: -4rem;
-        /* half of the elements widht */
+  display: block;
+  position: fixed;
+  z-index: 1031;
 
-        width: 8rem !important;
-        height: 8rem !important;
-        font-size: 3rem;
+  /* High z-index so it is on top of the page */
+  top: 40%;
+  right: 50%;
+
+  /* or: left: 50%; */
+  margin-top: -4rem;
+
+  /* half of the elements height */
+  margin-right: -4rem;
+
+  /* half of the elements widht */
+
+  width: 8rem !important;
+  height: 8rem !important;
+  font-size: 3rem;
 }
 
 #loading-icon {
-        position: absolute;
-        margin: auto;
-        left: 0;
-        right: 0;
-        top: 25%;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 25%;
 }
 
 .week-day-time {
-        font-size: 10pt;
-        padding: 1px !important;
+  font-size: 10pt;
+  padding: 1px !important;
 }
 
 .list-group {
-        border-radius: 0px;
+  border-radius: 0;
 }
 
 .list-group-item,
 .card-header {
-        padding: 10px;
+  padding: 10px;
 }
 
 .card-column {
-        column-count: 1;
-        margin-bottom: 0.75rem;
+  column-count: 1;
+  margin-bottom: 0.75rem;
 }
 
 @media (min-width: 992px) {
-        .autocomplete {
-                width: 500px;
-        }
+  .autocomplete {
+    width: 500px;
+  }
 }
 
 .desktop-only {
-        display: none;
+  display: none;
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-        .desktop-only {
-                display: block;
-        }
+  .desktop-only {
+    display: block;
+  }
 
-        td.desktop-only,
-        th.desktop-only {
-                display: table-cell;
-        }
+  td.desktop-only,
+  th.desktop-only {
+    display: table-cell;
+  }
 }
 
 .mobile-only {
-        display: block;
+  display: block;
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-        .mobile-only {
-                display: none;
-        }
+  .mobile-only {
+    display: none;
+  }
 }
 
 .trash-btn {

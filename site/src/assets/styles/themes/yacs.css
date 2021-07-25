@@ -1,33 +1,29 @@
 [data-theme="yacs"] {
-        --navbar-background: #c65353;
-        --navbar-unselected-text: #ffffff;
-        --navbar-unselected-text-hover: #ffffff;
-        --navbar-text-focus: #ffffff;
-        --navbar-text-disabled: #ffffff;
-        --navbar-text-active: #ffffff;
-        --navbar-text-show: #ffffff;
-        --course-row-hover: #d57f7f;
-        --conflict-row: #ffffff;
-        --conflict-row-hover: #d57f7f;
-        --selected-row: #c65353;
-        --selected-row-hover: #d57f7f;
+  --navbar-background: #c65353;
+  --navbar-unselected-text: #fff;
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: #fff;
+  --navbar-text-active: #fff;
+  --navbar-text-show: #fff;
+  --course-row-hover: #d57f7f;
+  --conflict-row: #fff;
+  --conflict-row-hover: #d57f7f;
+  --selected-row: #c65353;
+  --selected-row-hover: #d57f7f;
 
-        --btn-box-shadow: none;
-        --btn-transition: all 0s ease 0s;
-        --btn-border-radius: 0px;
-        --btn-border: medium none color;
+  /* Button style */
+  --btn-box-shadow: none;
+  --btn-transition: all 0s ease 0s;
+  --btn-border-radius: 0;
+  --btn-border: medium none color;
 
-        --calendar-text-color-0: #d9652b;
-
-        --calendar-text-color-1: #d1265d;
-
-        --calendar-text-color-2: #1577aa;
-
-        --calendar-text-color-3: #bf8a2e;
-
-        --calendar-text-color-4: #008a2e;
-
-        --calendar-text-color-5: #853d80;
-
-        --calendar-text-color-6: #9d5733;
+  /* Calendar class color overrides */
+  --calendar-text-color-0: #d9652b;
+  --calendar-text-color-1: #d1265d;
+  --calendar-text-color-2: #1577aa;
+  --calendar-text-color-3: #bf8a2e;
+  --calendar-text-color-4: #008a2e;
+  --calendar-text-color-5: #853d80;
+  --calendar-text-color-6: #9d5733;
 }

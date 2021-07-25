@@ -1,33 +1,32 @@
 .week-day {
-        width: fit-content;
-        text-align: center;
+  width: fit-content;
+  text-align: center;
 }
 
 .select-section {
-        cursor: pointer;
+  cursor: pointer;
 }
 
 .select-section:hover {
-        background: var(--course-row-hover);
+  background: var(--course-row-hover);
 }
 
 .conflict {
-        text-decoration: line-through;
-        background: var(--conflict-row);
+  text-decoration: line-through;
+  background: var(--conflict-row);
 }
 
 .conflict:hover {
-        background: var(--conflict-row-hover);
+  background: var(--conflict-row-hover);
 }
 
 .selected {
-        background: var(--selected-row);
+  background: var(--selected-row);
 }
 
 .selected:hover {
-        background: var(--selected-row-hover);
+  background: var(--selected-row-hover);
 }
-
 
 .invisible {
   visibility: hidden;
