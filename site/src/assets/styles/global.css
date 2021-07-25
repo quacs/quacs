@@ -1,100 +1,100 @@
 /* This file should be for setting the css of stuff that already looks fine by default
 for example use this file to give text the color black. Then we can overwrite it using
-a color in colors.css*/
+a color in colors.css */
 
 body {
-    background: var(--background);
-    color: var(--global-text);
+  background: var(--background);
+  color: var(--global-text);
 }
 
 .card-body {
-    background: var(--card-body-background);
-    color: var(--card-body-text);
+  background: var(--card-body-background);
+  color: var(--card-body-text);
 }
 
 .card-header {
-    background: var(--card-header-background);
-    color: var(--card-header-text);
+  background: var(--card-header-background);
+  color: var(--card-header-text);
 }
 
 .navbar.bg-light {
-    background: var(--navbar-background)!important;
+  background: var(--navbar-background) !important;
 }
 
-.b-overlay>.bg-light {
-    background: var(--overlay-background)!important;
+.b-overlay > .bg-light {
+  background: var(--overlay-background) !important;
 }
 
 .navbar-light .navbar-nav .nav-link {
-    color: var(--navbar-unselected-text);
+  color: var(--navbar-unselected-text);
 }
 
 .navbar-light .navbar-nav .nav-link:hover {
-    color: var(--navbar-unselected-text-hover);
+  color: var(--navbar-unselected-text-hover);
 }
 
 .navbar-light .navbar-nav .nav-link.disabled {
-    color: var(--navbar-text-disabled);
+  color: var(--navbar-text-disabled);
 }
 
 .navbar-light .navbar-nav .nav-link.active {
-    color: var(--navbar-text-active);
+  color: var(--navbar-text-active);
 }
 
 .navbar-light .navbar-nav .nav-link:focus {
-    color: var(--navbar-text-focus);
+  color: var(--navbar-text-focus);
 }
 
-.navbar-light .navbar-nav .show>.nav-link {
-    color: var(--navbar-text-show);
+.navbar-light .navbar-nav .show > .nav-link {
+  color: var(--navbar-text-show);
 }
 
 .modal-header,
 .close {
-    background: var(--modal-header-background);
-    color: var(--modal-header-text);
+  background: var(--modal-header-background);
+  color: var(--modal-header-text);
 }
 
 .close:hover {
-    color: var(--modal-close-x-hover);
+  color: var(--modal-close-x-hover);
 }
 
 .modal-body {
-    background: var(--modal-body-background);
-    color: var(--modal-body-text);
+  background: var(--modal-body-background);
+  color: var(--modal-body-text);
 }
 
 .modal-footer {
-    background: var(--modal-footer-background);
-    color: var(--modal-footer-text);
+  background: var(--modal-footer-background);
+  color: var(--modal-footer-text);
 }
 
 .btn-primary {
-    background: var(--btn-primary-background);
-    border-color: var(--btn-primary-background);
-    color: var(--btn-primary-text);
-    border-radius: var(--btn-border-radius);
-    border: var(--btn-border);
+  background: var(--btn-primary-background);
+  border-color: var(--btn-primary-background);
+  color: var(--btn-primary-text);
+  border-radius: var(--btn-border-radius);
+  border: var(--btn-border);
 }
 
 .btn-primary:hover {
-    box-shadow: var(--btn-box-shadow);
-    transition: var(--btn-transition);
+  box-shadow: var(--btn-box-shadow);
+  transition: var(--btn-transition);
 }
 
 .custom-select {
-    background: var(--select-background);
-    color: var(--select-text);
+  background: var(--select-background);
+  color: var(--select-text);
 }
 
 .custom-select:focus {
-    color: var(--select-text);
+  color: var(--select-text);
 }
 
 .table {
-    color: var(--table-text);
+  color: var(--table-text);
 }
 
 .list-group-item {
-    background: var(--list-group-item-background)
+  background: var(--list-group-item-background);
 }
