@@ -5,6 +5,9 @@ set -eu
 echo "Running vue linter"
 vue-cli-service lint "$@"
 
+echo "Running stylelint to lint CSS"
+stylelint "**/*.css"
+
 echo "Retrieving latest quacs-data for quacs-rs"
 git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=1 src/store/data || exit 1
 

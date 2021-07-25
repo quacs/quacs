@@ -25,6 +25,8 @@
     "ics": "^2.29.0",
     "register-service-worker": "^1.7.2",
     "simple-web-worker": "^1.2.0",
+    "stylelint": "^13.13.1",
+    "stylelint-config-standard": "^22.0.0",
     "tslib": "^2.3.0",
     "vue": "^2.6.14",
     "vue-async-computed": "^3.9.0",
@@ -97,9 +99,15 @@
     "last 2 versions",
     "not dead"
   ],
+  "stylelint": {
+    "extends": "stylelint-config-standard"
+  },
   "lint-staged": {
-    "*.{js,jsx,vue,ts,tsx}": [
+    "*.{js,jsx,vue,ts,tsx,json}": [
       "vue-cli-service lint --max-warnings 0"
+    ],
+    "*.css": [
+      "stylelint --fix"
     ]
   }
 }
