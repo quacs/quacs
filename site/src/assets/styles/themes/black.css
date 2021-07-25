@@ -2,4 +2,8 @@
         --background: #000000;
         --card-body-background: #000000;
         --footer-background: #000000;
+        --btn-box-shadow: none;
+        --btn-transition: all 0s ease 0s;
+        --btn-border-radius: 0px;
+        --btn-border: medium none color;
 }

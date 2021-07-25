@@ -117,6 +117,7 @@ export default class Settings extends Vue {
     { value: "dark black", text: "Black" },
     { value: "light colorful", text: "Splash of Color" },
     { value: "yacs", text: "YACS" },
+    { value: "flowing", text: "Flowing" },
   ];
 
   trackSettingChange(settingName: string, value: string): void {
