@@ -8,4 +8,5 @@ export const rubberDuckPatrons: string[] = [
   "Enis Aras",
   "Chris Jerrett",
   "Bill Ni",
+  "Brian Hotopp",
 ];
