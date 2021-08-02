@@ -4373,12 +4373,12 @@ iconv-lite@0.4.24, iconv-lite@^0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
-ics@^2.29.0:
-  version "2.29.0"
-  resolved "https://registry.yarnpkg.com/ics/-/ics-2.29.0.tgz#85d3bef5d17c5c3b9ee2e8986042549d8dcd1834"
-  integrity sha512-8483825h0tqTRb3nY/ASXL6QIgdlpOJyODOHF6UolSzw7R2JgjxJOpVMvBjheF63gS9Nbdj4SScZWHmDFqxuKg==
+ics@^2.31.0:
+  version "2.31.0"
+  resolved "https://registry.yarnpkg.com/ics/-/ics-2.31.0.tgz#4c26b755d017ee64c963cfbaa5ea9766e604ceec"
+  integrity sha512-3pW62uD097nl6LfFXIt92eBZtbwDESXsaRcgZPn3NO01zpUUM+L2G6fjf6qXhiyFcGIrJjsGuNB/y3AV58CvFg==
   dependencies:
-    uuid "^3.3.3"
+    nanoid "^3.1.23"
     yup "^0.32.9"
 
 icss-utils@^4.0.0, icss-utils@^4.1.1:
@@ -5736,6 +5736,11 @@ nanoclone@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/nanoclone/-/nanoclone-0.2.1.tgz#dd4090f8f1a110d26bb32c49ed2f5b9235209ed4"
   integrity sha512-wynEP02LmIbLpcYw8uBKpcfF6dmg2vcpKqxeH5UcoKEYdExslsdUA4ugFauuaeYdTB76ez6gJW8XAZ6CgkXYxA==
+
+nanoid@^3.1.23:
+  version "3.1.23"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.23.tgz#f744086ce7c2bc47ee0a8472574d5c78e4183a81"
+  integrity sha512-FiB0kzdP0FFVGDKlRLEQ1BgDzU87dy5NnzjeW9YZNt+/c3+q82EQDUwniSAUxp/F0gFNI1ZhKU1FqYsMuqZVnw==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -8754,7 +8759,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.3.2, uuid@^3.3.3, uuid@^3.4.0:
+uuid@^3.3.2, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
