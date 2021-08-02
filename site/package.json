@@ -50,7 +50,7 @@
     "@vue/cli-service": "~4.5.13",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
-    "eslint": "^7.31.0",
+    "eslint": "^7.32.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.15.0",
     "husky": "^7.0.1",
