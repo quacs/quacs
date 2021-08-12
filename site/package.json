@@ -27,7 +27,7 @@
     "simple-web-worker": "^1.2.0",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
-    "tslib": "^2.3.0",
+    "tslib": "^2.3.1",
     "vue": "^2.6.14",
     "vue-async-computed": "^3.9.0",
     "vue-axios": "^3.2.5",
