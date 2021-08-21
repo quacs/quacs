@@ -35,6 +35,8 @@
                 <template v-if="idx !== 0">, </template>
                 <span
                   class="crn"
+                  v-b-tooltip.hover.top
+                  :title="'Click to copy the CRN for ' + section.title"
                   :key="section.crn"
                   v-on:click="copyToClipboard(section.crn)"
                   >{{ section.crn }}</span
@@ -106,6 +108,7 @@ import {
   BIconChevronRight,
   BOverlay,
   BSpinner,
+  VBTooltip,
 } from "bootstrap-vue";
 import Calendar from "@/components/Calendar.vue";
 import { Course, CourseSection } from "@/typings";
@@ -114,6 +117,8 @@ import { EventAttributes, createEvents, DateArray } from "ics";
 import { saveAs } from "file-saver";
 import { shortSemToLongSem, trackEvent } from "@/utilities";
 import { Timeslot } from "@/typings";
+
+Vue.directive("b-tooltip", VBTooltip);
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
