@@ -367,7 +367,7 @@ export default class Schedule extends Vue {
             date.getMonth() + 1,
             date.getDate(),
             date.getHours(),
-            date.getSeconds(),
+            date.getMinutes(),
           ];
         };
         // TODO convert this to using a config file where you can set the default timezone
