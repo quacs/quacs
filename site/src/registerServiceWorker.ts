@@ -22,6 +22,10 @@ if (process.env.NODE_ENV === "production") {
     },
     updated() {
       console.log("New content is available; please refresh.");
+      // The 'reload' function in location has a non-standard 'forceGet' operator
+      // which clears the cache. Typescript doesn't like this; however, in browsers
+      // that don't support it, the extra argument is harmless.
+      // @ts-expect-error: see above
       window.location.reload(true); //Force refresh as soon as there are updates
       store.commit("toggleUpdateNotice", true);
     },
