@@ -293,6 +293,10 @@ export default class App extends Vue {
   }
 
   reloadPage(): void {
+    // The 'reload' function in location has a non-standard 'forceGet' operator
+    // which clears the cache. Typescript doesn't like this; however, in browsers
+    // that don't support it, the extra argument is harmless.
+    // @ts-expect-error: see above
     window.location.reload(true);
   }
 
