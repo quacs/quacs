@@ -8843,10 +8843,12 @@ vue-async-computed@^3.9.0:
   resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.9.0.tgz#af3181c25168bfe9d86d8ffbc7033bf9e484fe84"
   integrity sha512-ac6m/9zxHHNGGKNOU1en8qNk+fAmEbJLuWL7qyQTFuH3vjv3V4urv//QHcVzCobROM6btnaDG2b+XYMncF/ETA==
 
-vue-axios@^3.2.5:
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/vue-axios/-/vue-axios-3.2.5.tgz#b3bd0c82a44cc9164aeca0efa071ac103e15767f"
-  integrity sha512-V7XUzu0v3WOzd8PEF9m/ZoVivap+ToBPOXrhI8AsnczD93YXvGG+HkeQhJHAF/jeav8CsPDF3X/Z2vCqBbjsMQ==
+vue-axios@^3.3.6:
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/vue-axios/-/vue-axios-3.3.6.tgz#ebd5eaa079c798308904b5550c6bdab6c6bc62cc"
+  integrity sha512-CnAnbyVqD4b1/IBz9lJQDOnBFX+AZLi0ZsPGy7i9Vo5z4QnquiN2FhCX1HDFGd5RNVwAhZrNY+PycRa6jrUmFw==
+  dependencies:
+    merge-stream "^2.0.0"
 
 vue-class-component@^7.2.6:
   version "7.2.6"
