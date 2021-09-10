@@ -24,6 +24,9 @@ def get_terms() -> List[str]:
     terms.sort()
     return terms[-NUMBER_OF_TERMS:]
 
+def round_down(num, divisor=1000):
+    return num - (num%divisor)
+
 
 tags = {}
 if(os.environ.get("GITHUB_ACTIONS")):
@@ -38,13 +41,16 @@ for term in get_terms():
             for department in courses:
                 tags['department']=department["code"]
                 for course in department["courses"]:
-                    tags['course']=course["crse"]
+                    tags['course']=f'{course["subj"]}-{course["crse"]}'
+                    tags['level']=round_down(course["crse"])
                     for section in course["sections"]:
                         tags['title']=section["title"]
                         tags['crn']=section["crn"]
                         tags['section_number']=section["sec"]
                         tags['credits_min']=section['credMin']
                         tags['credits_max']=section['credMax']
+                        tags['credits_max']=section['credMax']
+
                         print(get_tag_list(tags), "Actual:", section['act'], "Remaining:", section['rem'], "Capacity:", section['cap'])
                         statsd.gauge('quacs.section.actual', section['act'], tags=get_tag_list(tags))
                         statsd.gauge('quacs.section.remaining', section['rem'], tags=get_tag_list(tags))
