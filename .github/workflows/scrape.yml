@@ -14,10 +14,9 @@ jobs:
     # needs:
     #   - commit-data
     steps:
-      - name: Datadog
-        uses: masci/datadog@v1
-        with:
-          api-key: ${{ secrets.DATADOG_API_KEY }}
+      - name: Install Datadog agent
+        run: |
+          DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=${{ secrets.DATADOG_API_KEY }} DD_SITE="datadoghq.com" bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
 
       - name: Checkout branch
         uses: actions/checkout@v2
