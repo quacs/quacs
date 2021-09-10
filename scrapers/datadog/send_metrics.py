@@ -49,7 +49,6 @@ for term in get_terms():
                         tags['section_number']=section["sec"]
                         tags['credits_min']=section['credMin']
                         tags['credits_max']=section['credMax']
-                        tags['credits_max']=section['credMax']
 
                         print(get_tag_list(tags), "Actual:", section['act'], "Remaining:", section['rem'], "Capacity:", section['cap'])
                         statsd.gauge('quacs.section.actual', section['act'], tags=get_tag_list(tags))
