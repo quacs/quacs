@@ -59,11 +59,6 @@ jobs:
           repository: quacs/quacs-data
           path: quacs-data
 
-      - name: Add Fall 2021 schools
-        run: |
-          mkdir scrapers/data/202109
-          cp quacs-data/semester_data/202109/schools.json scrapers/data/202109
-
       - name: Upload data
         uses: actions/upload-artifact@v2
         with:
