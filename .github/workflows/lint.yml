@@ -18,16 +18,29 @@ jobs:
       - name: Update submodules
         run: git submodule update --remote --recursive
 
-      - name: Clean install dependencies
+      - name: Clean install JS dependencies
         working-directory: ./site
         run: yarn install --frozen-lockfile
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Run linter
+      - name: Run JS linter
         working-directory: ./site
         run: yarn lint --no-fix --max-warnings 0
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install pip requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scrapers/requirements.txt
+
+      - name: Run Python linter
+        run: black . --check
 
       - name: Rust tests
         working-directory: ./site
