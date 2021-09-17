@@ -26,28 +26,37 @@ import requests
 import json
 import math
 
-def createprofessorlist():#creates List object that include basic information on all Professors from the IDed University
+
+def createprofessorlist():  # creates List object that include basic information on all Professors from the IDed University
     tempprofessorlist = []
     num_of_prof = GetNumOfProfessors(UniversityId)
     num_of_pages = math.ceil(num_of_prof / 20)
     i = 1
-    while (i <= num_of_pages):# the loop insert all professor into list
-        page = requests.get("http://www.ratemyprofessors.com/filter/professor/?&page=" + str(
-            i) + "&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid=" + str(
-            UniversityId))
+    while i <= num_of_pages:  # the loop insert all professor into list
+        page = requests.get(
+            "http://www.ratemyprofessors.com/filter/professor/?&page="
+            + str(i)
+            + "&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid="
+            + str(UniversityId)
+        )
         temp_jsonpage = json.loads(page.content)
-        temp_list = temp_jsonpage['professors']
+        temp_list = temp_jsonpage["professors"]
         tempprofessorlist.extend(temp_list)
         i += 1
     return tempprofessorlist
 
-def GetNumOfProfessors(id):  # function returns the number of professors in the university of the given ID.
+
+def GetNumOfProfessors(
+    id,
+):  # function returns the number of professors in the university of the given ID.
     page = requests.get(
-        "http://www.ratemyprofessors.com/filter/professor/?&page=1&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid=" + str(
-            id))  # get request for page
+        "http://www.ratemyprofessors.com/filter/professor/?&page=1&filter=teacherlastname_sort_s+asc&query=*%3A*&queryoption=TEACHER&queryBy=schoolId&sid="
+        + str(id)
+    )  # get request for page
     temp_jsonpage = json.loads(page.content)
-    num_of_prof = temp_jsonpage[
-                      'remaining'] + 20  # get the number of professors at William Paterson University
+    num_of_prof = (
+        temp_jsonpage["remaining"] + 20
+    )  # get the number of professors at William Paterson University
     return num_of_prof
 
 
@@ -56,4 +65,4 @@ rpiProfessorlist = createprofessorlist()
 
 print(json.dumps(rpiProfessorlist, indent=4, sort_keys=True))
 with open(f"rmp.json", "w") as outfile:  # -{os.getenv("CURRENT_TERM")}
-    json.dump(rpiProfessorlist , outfile, sort_keys=False, indent=2)
+    json.dump(rpiProfessorlist, outfile, sort_keys=False, indent=2)
