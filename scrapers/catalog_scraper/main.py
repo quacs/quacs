@@ -173,6 +173,9 @@ async def get_schools(s, url):
 
             for dept in strings[1:]:
                 first_space = dept.index(" ")
+                nbsp_idx = dept.index("\u00a0")
+                if nbsp_idx > 0 and nbsp_idx < first_space:
+                    first_space = nbsp_idx
                 code = dept[:first_space]
                 name = dept[first_space + 1 :]
                 if code not in departments:
