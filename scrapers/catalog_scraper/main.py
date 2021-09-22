@@ -173,7 +173,10 @@ async def get_schools(s, url):
 
             for dept in strings[1:]:
                 first_space = dept.index(" ")
-                nbsp_idx = dept.index("\u00a0")
+                try:
+                    nbsp_idx = dept.index("\u00a0")
+                except ValueError:
+                    nbsp_idx = -1
                 if nbsp_idx > 0 and nbsp_idx < first_space:
                     first_space = nbsp_idx
                 code = dept[:first_space]
