@@ -199,7 +199,7 @@ async def get_year(year_data):
             data = list(map(lambda x: {"name": x[0], "depts": x[1]}, data.items()))
 
         years = year.split("-")
-        for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
+        for directory in (f"{years[0]}09", f"{years[1]}01"):
             directory = "data/" + directory
             os.makedirs(directory, exist_ok=True)
             with open(f"{directory}/{sys.argv[1]}.json", "w") as outfile:
