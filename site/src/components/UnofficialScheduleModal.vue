@@ -12,7 +12,7 @@
     hide-header-close
   >
     <span>
-      QuACS is currently based off of a pre-release schedule for the fall
+      QuACS is currently based off of a pre-release schedule for the spring
       semester. Course offerings and associated faculty are subject to change,
       and prerequisite checking is not available.
     </span>
