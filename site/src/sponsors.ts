@@ -8,8 +8,8 @@ export const advertisers: Advert[] = [
     altText: "Modern homes, brought to you by Bunkabl",
     backgroundColor: "#2e755d",
     desktop_path: "/bunkabl/desktop.png",
-    tablet_path: "/bunkabl/desktop.png",
-    mobile_path: "/bunkabl/desktop.png",
+    tablet_path: "/bunkabl/tablet.png",
+    mobile_path: "/bunkabl/mobile.png",
   },
 ];
 
