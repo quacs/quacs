@@ -33,6 +33,18 @@ async def get_section_information(section_url):
         except:
             pass
 
+        # Get credit amount
+        credit_data = (
+            re.search(r"<br/>\n(.*?) Credits\n<br/>", str(soup)).group(1).strip()
+        )
+        if "-" in credit_data:
+            credit_min, credit_max = (float(x) for x in credit_data.split(" - "))
+        else:
+            credit_min = credit_max = float(credit_data)
+
+        section_dict["credMin"] = credit_min
+        section_dict["credMax"] = credit_max
+
         # Unfortantely, it isn't as simple as split by "-" to retrieve all the data
         # Some classes actually have the dash in their title
         # Thus we need to locate the CRN and make everything before it be the title
