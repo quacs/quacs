@@ -29,7 +29,7 @@ async def get_section_information(section_url):
         soup = BeautifulSoup(await data.text())
         # Parse any prereqs
         try:
-            section_dict["prereqs"] = await prerequisites.get_prereq_string(soup)
+            section_dict["prereqs"] = prerequisites.get_prereq_string(soup)
         except:
             pass
 
@@ -236,14 +236,19 @@ async def scrape_term(term):
                 except:
                     pass
     with open(f"data/{term}/courses.json", "w") as outfile:
-        json.dump(courses, outfile, indent=4)
+        json.dump(courses, outfile, indent=2)
     with open(f"data/{term}/prerequisites.json", "w") as outfile:
-        json.dump(prerequisites, outfile, indent=4)
+        json.dump(prerequisites, outfile, indent=2)
     with open(f"data/{term}/schools.json", "r") as all_schools_f:
         all_schools = json.load(all_schools_f)
 
+    # Ensure schools.json is populated properly
+    matched_subjects = set()
     schools = []
     for possible_school in all_schools:
+        # ignore the "Uncategorized" category to avoid duplicate matching if the catalog is later changed
+        if possible_school["name"] == "Uncategorized":
+            continue
         res_school = {"name": possible_school["name"], "depts": []}
         for target_dept in possible_school["depts"]:
             matching_depts = list(
@@ -252,7 +257,27 @@ async def scrape_term(term):
             if matching_depts:
                 res_school["depts"].append(target_dept)
         if res_school["depts"]:
+            matched_subjects.update(d["code"] for d in res_school["depts"])
             schools.append(res_school)
+    # Determine if any department is missing from schools.json list and
+    # put missing ones into an "Uncategorized" school. This has happened a few times in the past,
+    # most notably when STSH and STSS merged to become STSO.
+    all_subjects = set(d["code"] for d in courses)
+    unmatched_subjects = all_subjects - matched_subjects
+    schools.append(
+        {
+            "name": "Uncategorized",
+            "depts": list(
+                {
+                    "code": code,
+                    "name": list(filter(lambda dept: dept["code"] == code, courses))[0][
+                        "name"
+                    ],
+                }
+                for code in unmatched_subjects
+            ),
+        }
+    )
 
     school_columns = util.optimize_column_ordering(schools)
     with open(f"data/{term}/schools.json", "w") as schools_f:

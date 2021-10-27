@@ -104,7 +104,7 @@ def parse(prereqs: str):
     return result
 
 
-async def get_prereq_string(soup):
+def get_prereq_string(soup):
     el = soup.find(
         attrs={"summary": "This layout table is used to present the seating numbers."}
     )
