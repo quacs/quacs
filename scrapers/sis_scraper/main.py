@@ -208,6 +208,12 @@ async def scrape_term(term):
         *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
     )
 
+    # Filter any defunct / empty departments from the list
+    courses = list(filter(lambda dept: len(dept["courses"]) > 0, courses))
+    # If semester is too far in the future, don't do anything.
+    if len(courses) == 0:
+        return
+
     prerequisites = {}
     for dept in courses:
         for course in dept["courses"]:
