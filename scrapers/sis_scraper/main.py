@@ -37,8 +37,8 @@ async def get_section_information(section_url):
         credit_data = (
             re.search(r"<br/>\n(.*?) Credits\n<br/>", str(soup)).group(1).strip()
         )
-        if "-" in credit_data:
-            credit_min, credit_max = (float(x) for x in credit_data.split(" - "))
+        if "TO" in credit_data:
+            credit_min, credit_max = (float(x.strip()) for x in credit_data.split("TO"))
         else:
             credit_min = credit_max = float(credit_data)
 
@@ -239,6 +239,24 @@ async def scrape_term(term):
         json.dump(courses, outfile, indent=4)
     with open(f"data/{term}/prerequisites.json", "w") as outfile:
         json.dump(prerequisites, outfile, indent=4)
+    with open(f"data/{term}/schools.json", "r") as all_schools_f:
+        all_schools = json.load(all_schools_f)
+
+    schools = []
+    for possible_school in all_schools:
+        res_school = {"name": possible_school["name"], "depts": []}
+        for target_dept in possible_school["depts"]:
+            matching_depts = list(
+                filter(lambda d: d["code"] == target_dept["code"], courses)
+            )
+            if matching_depts:
+                res_school["depts"].append(target_dept)
+        if res_school["depts"]:
+            schools.append(res_school)
+
+    school_columns = util.optimize_column_ordering(schools)
+    with open(f"data/{term}/schools.json", "w") as schools_f:
+        json.dump(school_columns, schools_f, sort_keys=False, indent=2)
     conflict_logic.gen(term, courses)
     print("Done")
 
