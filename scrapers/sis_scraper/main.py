@@ -13,6 +13,7 @@ import requests
 # Project
 import util
 import conflict_logic
+import prerequisites
 
 # Wrapper for BeautifulSoup that specifies a specific parser
 BeautifulSoup = lambda data: bs4.BeautifulSoup(data, features="lxml")
@@ -26,6 +27,11 @@ async def get_section_information(section_url):
     # print(f"Parsing {section_url}")
     async with session.get(section_url) as data:
         soup = BeautifulSoup(await data.text())
+        # Parse any prereqs
+        try:
+            section_dict["prereqs"] = await prerequisites.get_prereq_string(soup)
+        except:
+            pass
 
         # Unfortantely, it isn't as simple as split by "-" to retrieve all the data
         # Some classes actually have the dash in their title
@@ -197,17 +203,29 @@ async def get_subjects_for_term(term):
 
 
 async def scrape_term(term):
+    print(f"Scraping {term}")
     courses = await asyncio.gather(
         *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
     )
-    # TODO: FIXME proper json dump
-    json.dump(courses, open("courses.json", "w"), indent=4, sort_keys=True)
+
+    prerequisites = {}
+    for dept in courses:
+        for course in dept["courses"]:
+            for section in course["sections"]:
+                try:
+                    prerequisites[section["crn"]] = section["prereqs"]
+                    del section["prereqs"]
+                except:
+                    pass
+    with open(f"data/{term}/courses.json", "w") as outfile:
+        json.dump(courses, outfile, indent=4)
+    with open(f"data/{term}/prerequisites.json", "w") as outfile:
+        json.dump(prerequisites, outfile, indent=4)
     conflict_logic.gen(term, courses)
+    print("Done")
 
 
 async def main():
-    print(get_semesters())
-    exit(0)
     global session
     async with aiohttp.ClientSession(
         connector=aiohttp.TCPConnector(limit=5)

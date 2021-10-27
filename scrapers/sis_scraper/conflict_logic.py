@@ -185,7 +185,7 @@ pub static CRN_TIMES: Map<u32, [u64; BIT_VEC_LEN]> = phf_map! {
 """
         )
 
-        for crn, conflict in sorted(conflicts.items()):
+        for crn, conflict in conflicts.items():
             rust_array = f"\t{crn}u32 => ["
             for i in range(0, BIT_VEC_SIZE * 64, 64):
                 if i != 0:
@@ -202,6 +202,6 @@ pub static CRN_COURSES: Map<u32, &'static str> = phf_map! {
 """
         )
 
-        for crn, course in sorted(crn_to_courses.items()):
+        for crn, course in crn_to_courses.items():
             f.write(f'\t{crn}u32 => "{course}",\n')
         f.write("};")

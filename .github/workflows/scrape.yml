@@ -84,10 +84,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
-      - name: Populate env
-        working-directory: ./scrapers
-        run: printf "RIN=${{ secrets.RIN }}\nPASSWORD=${{ secrets.PASSWORD }}" > sis_scraper/.env
-
       - name: Get semester data
         uses: actions/download-artifact@v2
         with:
@@ -97,10 +93,6 @@ jobs:
       - name: Scrape courses
         working-directory: ./scrapers
         run: python3 sis_scraper/main.py
-
-      - name: Scrape prerequisites
-        working-directory: ./scrapers
-        run: python3 prerequisites_scraper/main.py
 
       - name: Upload semester-specific data
         uses: actions/upload-artifact@v2
