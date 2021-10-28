@@ -5,13 +5,6 @@ import math
 import time
 
 
-def get_date(input_str):
-    """
-    Converts a date from SIS into the Python representation
-    """
-    return date.fromtimestamp(time.mktime(time.strptime(input_str, "%b %d, %Y")))
-
-
 def gen(term, data):
     divide = range(1, 61)
     unique_ranges = set()
@@ -21,8 +14,8 @@ def gen(term, data):
         for course in dept["courses"]:
             for section in course["sections"]:
                 for timeslot in section["timeslots"]:
-                    end_date = max(end_date, get_date(timeslot["dateEnd"]))
-                    start_date = get_date(timeslot["dateStart"])
+                    end_date = max(end_date, timeslot["dateEnd"])
+                    start_date = timeslot["dateStart"]
                     unique_ranges.add(start_date)
                     divide = filter(
                         lambda x: timeslot["timeStart"] % x
@@ -64,10 +57,8 @@ def gen(term, data):
             for section in course["sections"]:
                 conflict = [0] * BIT_VEC_SIZE
                 for time in section["timeslots"]:
-                    end = time["dateEnd"]
-                    start = time["dateStart"]
-                    my_end = get_date(end)
-                    my_start = get_date(start)
+                    my_end = time["dateEnd"]
+                    my_start = time["dateStart"]
                     for i, date_range in enumerate(unique_ranges):
                         # check to see if we are in this range
                         if my_end < date_range:

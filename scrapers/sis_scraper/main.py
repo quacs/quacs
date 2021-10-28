@@ -145,8 +145,8 @@ async def get_class_information(class_url):
                         "timeEnd": timeEnd,
                         "instructor": instructor,
                         "location": location,
-                        "dateStart": date[0],
-                        "dateEnd": date[1],
+                        "dateStart": util.get_date(date[0]),
+                        "dateEnd": util.get_date(date[1]),
                     }
                 )
 
@@ -226,19 +226,6 @@ async def scrape_term(term):
     if len(courses) == 0:
         return
 
-    prerequisites = {}
-    for dept in courses:
-        for course in dept["courses"]:
-            for section in course["sections"]:
-                try:
-                    prerequisites[section["crn"]] = section["prereqs"]
-                    del section["prereqs"]
-                except:
-                    pass
-    with open(f"data/{term}/courses.json", "w") as outfile:
-        json.dump(courses, outfile, indent=2)
-    with open(f"data/{term}/prerequisites.json", "w") as outfile:
-        json.dump(prerequisites, outfile, indent=2)
     with open(f"data/{term}/schools.json", "r") as all_schools_f:
         all_schools = json.load(all_schools_f)
 
@@ -280,9 +267,29 @@ async def scrape_term(term):
     )
 
     school_columns = util.optimize_column_ordering(schools)
+    # Write out all the results of the scraper
+    conflict_logic.gen(term, courses)
+    # Replace all the dateStart/dateEnd with the MM/DD format used by the quacs frontend
+    # Additionally, split out the prereq field into a separate json
+    prerequisites = {}
+    date_to_quacs = lambda date: f"{str(date.month).zfill(2)}/{str(date.day).zfill(2)}"
+    for dept in courses:
+        for course in dept["courses"]:
+            for section in course["sections"]:
+                try:
+                    prerequisites[section["crn"]] = section["prereqs"]
+                    del section["prereqs"]
+                except:
+                    pass
+                for timeslot in section["timeslots"]:
+                    timeslot["dateStart"] = date_to_quacs(timeslot["dateStart"])
+                    timeslot["dateEnd"] = date_to_quacs(timeslot["dateEnd"])
     with open(f"data/{term}/schools.json", "w") as schools_f:
         json.dump(school_columns, schools_f, sort_keys=False, indent=2)
-    conflict_logic.gen(term, courses)
+    with open(f"data/{term}/courses.json", "w") as outfile:
+        json.dump(courses, outfile, indent=2)
+    with open(f"data/{term}/prerequisites.json", "w") as outfile:
+        json.dump(prerequisites, outfile, indent=2)
     print("Done")
 
 

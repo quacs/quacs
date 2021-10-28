@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Python standard library
-import datetime
 from copy import deepcopy
+import datetime
+import time
 
 # "COMPUTER SCIENCE I" => "Computer Science I"
 def normalize_class_name(name):
@@ -120,3 +121,12 @@ def optimize_column_ordering(data, num_columns=3):
         flattened.extend(column)
 
     return flattened
+
+
+def get_date(input_str):
+    """
+    Converts a date from SIS into the Python representation
+    """
+    return datetime.date.fromtimestamp(
+        time.mktime(time.strptime(input_str, "%b %d, %Y"))
+    )
