@@ -8,7 +8,7 @@ jobs:
       - name: Setup Node.js for use with actions
         uses: actions/setup-node@v1.4.4
         with:
-          version:  15.x
+          version:  16.x
 
       - name: Checkout branch
         uses: actions/checkout@v2
