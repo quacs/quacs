@@ -288,7 +288,7 @@ async def scrape_term(term):
                     prerequisites[section["crn"]] = section["prereqs"]
                     del section["prereqs"]
                 except:
-                    pass
+                    prerequisites[section["crn"]] = {}
                 for timeslot in section["timeslots"]:
                     timeslot["dateStart"] = date_to_quacs(timeslot["dateStart"])
                     timeslot["dateEnd"] = date_to_quacs(timeslot["dateEnd"])
