@@ -103,11 +103,18 @@ async def get_class_information(class_url):
                 "summary": "This table lists the scheduled meeting times and assigned instructors for this class..",
             },
         )
+
+        # Pad out meeting times for classes with no meeting times
+        # This is pretty much just for independent study courses
+        while len(meeting_times) < len(section_data):
+            meeting_times.append(None)
+
         for section, time in zip(section_data, meeting_times):
             section_url = section.find("a")["href"]
             section_data = await get_section_information(
                 f"https://sis.rpi.edu{section_url}"
             )
+            sections.append(section_data)
             # Parse attributes (if applicable)
             # This is really hacky (but so is the rest of the code)
             # But I found this was the best way to approach it
@@ -122,6 +129,9 @@ async def get_class_information(class_url):
             # We need to parse section time information here
             # As it isn't present on the per-section advanced page
             timeslots = section_data["timeslots"] = []
+
+            if time == None:
+                continue
             for meeting in time.findAll("tr")[
                 1:
             ]:  # skip the first entry as its just the elabels
@@ -147,8 +157,6 @@ async def get_class_information(class_url):
                     }
                 )
 
-            sections.append(section_data)
-
         # Add main course data from first section
         if len(sections) == 0:
             print(f"=== ERROR: {class_url} has no sections!")
@@ -167,6 +175,9 @@ def parse_semester_page(text):
     for s in soup:
         if (link_data := s.find("a")) != None:
             link = link_data["href"]
+            # These links are confused for classes
+            if "p_disp_catalog_syllabus" in link:
+                continue
             if link == "javascript:history.go(-1)":
                 break
             yield link_data["href"]
