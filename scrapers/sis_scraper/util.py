@@ -4,17 +4,6 @@ from copy import deepcopy
 import datetime
 import time
 
-# "COMPUTER SCIENCE I" => "Computer Science I"
-def normalize_class_name(name):
-    name = list(name)
-
-    for i in range(1, len(name)):
-        if name[i - 1] == " ":
-            continue
-        name[i] = name[i].lower()
-    return "".join(name)
-
-
 # "11:00 AM - 1:00 PM" -> 1100,1300
 def timeToMilitary(time):
     def __time_offset(time):

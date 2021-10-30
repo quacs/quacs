@@ -24,7 +24,6 @@ session = None
 async def get_section_information(section_url):
     global session
     section_dict = {}
-    # print(f"Parsing {section_url}")
     async with session.get(section_url) as data:
         soup = BeautifulSoup(await data.text())
         # Parse any prereqs
@@ -63,7 +62,7 @@ async def get_section_information(section_url):
         section_dict["crse"] = int(crse)
         section_dict["subj"] = subject_name
         section_dict["sec"] = section_number
-        section_dict["title"] = util.normalize_class_name(raw_title)
+        section_dict["title"] = raw_title.title()
 
         # Get seat data
         seating = soup.find(
@@ -88,7 +87,6 @@ async def get_section_information(section_url):
 
 async def get_class_information(class_url):
     global session
-    # print(f"Parsing {class_url}")
 
     sections = []
     course_data = {}
@@ -137,7 +135,6 @@ async def get_class_information(class_url):
                 date = meeting_data[4].split(" - ")
                 instructor = util.get_instructor_string(meeting_data[6])
 
-                # print(meeting_data)
                 timeslots.append(
                     {
                         "days": days,
@@ -287,9 +284,9 @@ async def scrape_term(term):
     with open(f"data/{term}/schools.json", "w") as schools_f:
         json.dump(school_columns, schools_f, sort_keys=False, indent=2)
     with open(f"data/{term}/courses.json", "w") as outfile:
-        json.dump(courses, outfile, indent=2)
+        json.dump(courses, outfile, sort_keys=True, indent=2)
     with open(f"data/{term}/prerequisites.json", "w") as outfile:
-        json.dump(prerequisites, outfile, indent=2)
+        json.dump(prerequisites, outfile, sort_keys=True, indent=2)
     print("Done")
 
 
