@@ -349,8 +349,6 @@ jobs:
 
           rsync -avz courses/ data/semester_data/
 
-          rsync -avz schools/ data/semester_data/
-
           cp prereq_graph/prereq_graph.json data/
 
           rsync -avzh --ignore-missing-args faculty/faculty.json data || true
