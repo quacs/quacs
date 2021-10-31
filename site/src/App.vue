@@ -6,7 +6,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img
-            src="@/assets/images/quacs_logo_white_duck.svg"
+            src="@/assets/images/quacs_logo_halloween.svg"
             alt="QuACS Home"
             style="height: 27px"
         /></router-link>
