@@ -262,7 +262,7 @@ async def scrape_term(term):
     schools.append(
         {
             "name": "Uncategorized",
-            "depts": list(
+            "depts": sorted(
                 {
                     "code": code,
                     "name": list(filter(lambda dept: dept["code"] == code, courses))[0][
