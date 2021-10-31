@@ -17,14 +17,16 @@ def gen(term, data):
                     end_date = max(end_date, timeslot["dateEnd"])
                     start_date = timeslot["dateStart"]
                     unique_ranges.add(start_date)
+                    """
                     divide = filter(
                         lambda x: timeslot["timeStart"] % x
                         == timeslot["timeEnd"] % x
                         == 0,
                         divide,
                     )
+                    """
 
-    MINUTE_GRANULARITY = max(divide)
+    MINUTE_GRANULARITY = 1
     NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
 
     # Generate binary conflict output
@@ -82,10 +84,12 @@ def gen(term, data):
                                         )
                                         conflict[index] = 1
                                         sem_conflict_table[index].append(section["crn"])
+
                 if sum(conflict) == 0:
                     continue
                 crn_to_courses[section["crn"]] = course["id"]
                 conflicts[section["crn"]] = conflict
+
     # Compute unnecessary conflict bits - where a bit is defined as unnecessary if its removal does not affect the result conflict checking
     # The following code computes a list of candidates that fit this criteria
     unnecessary_indices = set()
