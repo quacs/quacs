@@ -5,4 +5,4 @@ python-dotenv==0.19.1
 requests==2.26.0
 tqdm==4.62.3
 datadog==0.42.0
-black==21.9b0
+black==21.10b0
