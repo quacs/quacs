@@ -131,12 +131,24 @@ async def get_class_information(class_url):
             timeslots = section_data["timeslots"] = []
 
             if time == None:
+                # Append an empty timeslot to make QuACS display the CRN
+                timeslots.append(
+                    {
+                        "days": [],
+                        "timeStart": -1,
+                        "timeEnd": -1,
+                        "instructor": "",
+                        "location": "",
+                        "dateStart": None,
+                        "dateEnd": None,
+                    }
+                )
                 continue
             for meeting in time.findAll("tr")[
                 1:
             ]:  # skip the first entry as its just the elabels
                 meeting_data = [x.text for x in meeting.findAll("td")]
-                timeStart, timeEnd = util.timeToMilitary(meeting_data[1])
+                timeStart, timeEnd = util.time_to_military(meeting_data[1])
                 days = list(meeting_data[2])
                 # Empty days comes up as '\xa0', so remove that if applicable
                 if len(days) > 0 and days[0] == "\xa0":

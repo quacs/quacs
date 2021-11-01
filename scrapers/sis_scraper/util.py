@@ -5,7 +5,7 @@ import datetime
 import time
 
 # "11:00 AM - 1:00 PM" -> 1100,1300
-def timeToMilitary(time):
+def time_to_military(time):
     def __time_offset(time):
         offset = 0
         if "pm" in time and "12:" not in time:
@@ -116,6 +116,9 @@ def get_date(input_str):
     """
     Converts a date from SIS into the Python representation
     """
+
+    if input_str == None:
+        return ""
     return datetime.date.fromtimestamp(
         time.mktime(time.strptime(input_str, "%b %d, %Y"))
     )
