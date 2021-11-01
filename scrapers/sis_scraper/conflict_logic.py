@@ -14,8 +14,10 @@ def gen(term, data):
         for course in dept["courses"]:
             for section in course["sections"]:
                 for timeslot in section["timeslots"]:
-                    end_date = max(end_date, timeslot["dateEnd"])
                     start_date = timeslot["dateStart"]
+                    if start_date == None:
+                        continue
+                    end_date = max(end_date, timeslot["dateEnd"])
                     unique_ranges.add(start_date)
                     """
                     divide = filter(
