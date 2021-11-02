@@ -8,6 +8,7 @@ from lxml import etree
 
 # The api key is public so it does not need to be hidden in a .env file
 BASE_URL = "http://rpi.apis.acalog.com/v1/"
+# It is ok to publish this key because I found it online already public
 DEFAULT_QUERY_PARAMS = "?key=3eef8a28f26fb2bcc514e6f1938929a1f9317628&format=xml"
 CHUNK_SIZE = 500
 
@@ -62,7 +63,14 @@ def get_catalog_description(fields, course_name):
         else:
             description = field.xpath(".//*/text()")
             if description:
-                return " ".join(" ".join(description).split())
+                clean_description = " ".join(" ".join(description).split())
+                # Short descriptions are usually false positives
+                if clean_description.startswith("Prerequisite"):
+                    return ""
+                elif len(clean_description) > 10:
+                    return clean_description
+
+    return ""
 
 
 def get_course_data(course_ids):
@@ -88,7 +96,6 @@ def get_course_data(course_ids):
                 "crse": crse,
                 "name": course.xpath("./content/name/text()")[0].strip(),
                 "description": get_catalog_description(fields, course_name),
-                "raw_xml": etree.tostring(course).decode("utf8")  # used for debugging
             }
 
     return data
@@ -121,6 +128,6 @@ if __name__ == "__main__":
         save_catalog(data, year)
 
         # Save the final catalog for the next year to account for delays in uploading the catalog
-        if index == len(catalogs) - 1:
+        if index == 0:
             years = year.split("-")
             save_catalog(data, f"{int(years[0])+1}-{int(years[1])+1}")
