@@ -63,6 +63,9 @@ def gen(term, data):
                 for time in section["timeslots"]:
                     my_end = time["dateEnd"]
                     my_start = time["dateStart"]
+
+                    if my_end == my_start == None:
+                        continue
                     for i, date_range in enumerate(unique_ranges):
                         # check to see if we are in this range
                         if my_end < date_range:
