@@ -275,13 +275,16 @@ async def scrape_term(term):
         {
             "name": "Uncategorized",
             "depts": sorted(
-                {
-                    "code": code,
-                    "name": list(filter(lambda dept: dept["code"] == code, courses))[0][
-                        "name"
-                    ],
-                }
-                for code in unmatched_subjects
+                (
+                    {
+                        "code": code,
+                        "name": list(
+                            filter(lambda dept: dept["code"] == code, courses)
+                        )[0]["name"],
+                    }
+                    for code in unmatched_subjects
+                ),
+                key=lambda x: x["code"],
             ),
         }
     )
