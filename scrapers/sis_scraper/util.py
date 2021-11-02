@@ -116,9 +116,6 @@ def get_date(input_str):
     """
     Converts a date from SIS into the Python representation
     """
-
-    if input_str == None:
-        return ""
     return datetime.date.fromtimestamp(
         time.mktime(time.strptime(input_str, "%b %d, %Y"))
     )
