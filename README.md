@@ -59,15 +59,3 @@ Please replace `dark` with your theme name
 2. Replace `:root {` on line 1 in the new css file with `[data-theme="dark"] {`
 3. Go to `site/src/components/Settings.vue` and add your theme to `themeOptions` in the format `{ value: "dark", text: "Dark" },`
 4. Edit the colors in your new css file and when you are ready, make a pull request!
-
-## Redeploy GitHub Pages
-NOTE: You must be a collaborator on this repo for this command to work
-1. Generate a github token with the repo scope. [Learn More](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-2. Run this curl command with your token
-```bash
-curl -H "Accept: application/vnd.github.everest-preview+json" \
-    -H "Authorization: token <your-token-here>" \
-    --request POST \
-    --data '{"event_type": "deploy"}' \
-    https://api.github.com/repos/quacs/quacs/dispatches
-```
