@@ -12,6 +12,8 @@ function shortSemToURL(shortSem) {
     sem = "fall";
   } else if (semNum === "05") {
     sem = "summer";
+  } else if (semNum === "12") {
+    sem = "winter-enrichment";
   } else {
     sem = semNum;
   }

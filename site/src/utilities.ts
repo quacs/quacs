@@ -303,6 +303,8 @@ export function shortSemToLongSem() {
       sem = "Fall";
     } else if (semNum === "05") {
       sem = "Summer";
+    } else if (semNum === "12") {
+      sem = "Winter Enrichment";
     } else {
       sem = semNum;
     }
@@ -326,6 +328,8 @@ export function shortSemToURL() {
       sem = "fall";
     } else if (semNum === "05") {
       sem = "summer";
+    } else if (senNum === "12") {
+      sem = "winter-enrichment";
     } else {
       sem = semNum;
     }
