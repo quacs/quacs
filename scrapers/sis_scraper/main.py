@@ -2,6 +2,7 @@
 
 # Python standard library
 import asyncio
+from operator import itemgetter
 import re
 import json
 
@@ -274,20 +275,21 @@ async def scrape_term(term):
     schools.append(
         {
             "name": "Uncategorized",
-            "depts": sorted(
-                (
-                    {
-                        "code": code,
-                        "name": list(
-                            filter(lambda dept: dept["code"] == code, courses)
-                        )[0]["name"],
-                    }
-                    for code in unmatched_subjects
-                ),
-                key=lambda x: x["code"],
-            ),
+            "depts": [
+                {
+                    "code": code,
+                    "name": list(filter(lambda dept: dept["code"] == code, courses))[0][
+                        "name"
+                    ],
+                }
+                for code in unmatched_subjects
+            ],
         }
     )
+
+    # Sort the departments in each school
+    for school in schools:
+        school["depts"] = sorted(school["depts"], key=itemgetter("code"))
 
     school_columns = util.optimize_column_ordering(schools)
     # Write out all the results of the scraper
