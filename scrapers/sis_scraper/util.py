@@ -40,7 +40,11 @@ def normalize_class_name(input):
 
 
 def get_semesters_to_scrape():
-    RPI_SEMESTER_MONTH_OFFSETS = {1, 5, 9}
+    # 1 = Spring
+    # 5 = Arch
+    # 9 = Fall
+    # 12 = Winter Enrinchement
+    RPI_SEMESTER_MONTH_OFFSETS = {1, 5, 9, 12}
     semesters = []
     date = datetime.date.today()
     month = date.month
@@ -104,7 +108,8 @@ def optimize_column_ordering(data, num_columns=3):
     we need to re-order departments in such a way that once they're laid out
     in multiple columns, each column is a similar height.
     """
-
+    if len(data) == 1:
+        return data
     columns = [[] for _ in range(num_columns)]
     best_result = [[]]
 

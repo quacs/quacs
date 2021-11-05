@@ -3,6 +3,7 @@
 # Python standard library
 import asyncio
 from operator import itemgetter
+import os
 import re
 import json
 
@@ -249,8 +250,16 @@ async def scrape_term(term):
     if len(courses) == 0:
         return
 
-    with open(f"data/{term}/schools.json", "r") as all_schools_f:
-        all_schools = json.load(all_schools_f)
+    # Ensure data/{term} exists
+    os.makedirs(f"data/{term}", exist_ok=True)
+    try:
+        with open(f"data/{term}/schools.json", "r") as all_schools_f:
+            all_schools = json.load(all_schools_f)
+    except:
+        print(
+            f"Failed to load data/{term}/schools.json. Generating an empty one -- all courses will be uncategorized!"
+        )
+        all_schools = []
 
     # Ensure schools.json is populated properly
     matched_subjects = set()
