@@ -328,7 +328,7 @@ export function shortSemToURL() {
       sem = "fall";
     } else if (semNum === "05") {
       sem = "summer";
-    } else if (senNum === "12") {
+    } else if (semNum === "12") {
       sem = "winter-enrichment";
     } else {
       sem = semNum;
