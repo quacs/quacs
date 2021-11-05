@@ -62,7 +62,7 @@ async def get_section_information(section_url):
         section_dict["crse"] = int(crse)
         section_dict["subj"] = subject_name
         section_dict["sec"] = section_number
-        section_dict["title"] = raw_title.title()
+        section_dict["title"] = util.normalize_class_name(raw_title)
 
         # Get seat data
         seating = soup.find(
