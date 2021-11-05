@@ -25,6 +25,20 @@ def get_instructor_string(input):
     )
 
 
+# COMPUTER SCIENCE II => Computer Science II
+def normalize_class_name(input):
+    text = list(input)
+
+    for i in range(1, len(text)):
+        # Capitalize the character if there is a space or a capital 'I' next to another 'I'
+        # This gives basic support for any roman numerals we encounter
+        if (text[i - 1] == " ") or (text[i - 1] == text[i] == "I"):
+            continue
+        text[i] = text[i].lower()
+
+    return "".join(text)
+
+
 def get_semesters_to_scrape():
     RPI_SEMESTER_MONTH_OFFSETS = {1, 5, 9}
     semesters = []
