@@ -87,9 +87,10 @@
             ></font-awesome-icon>
             Full Section</span
           >
-          /* Show the XL-full message if: 1. The section is not already full
-          (avoids duplicate full section/full course) - AND - 2. The course is
-          an XL course and is out of XL seats. */
+          <!-- Show the XL-full message if:
+            1. The section is not already full (avoids duplicate full section/full course)
+              - AND - 
+            2. The course is an XL course and is out of XL seats. -->
           <span
             class="padding-left prerequisiteError"
             :class="{
