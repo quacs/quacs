@@ -28,8 +28,8 @@
       <div class="font-weight-bold">Seats:</div>
       <div>
         There are
-        {{ formatCourseSize(section) }}
-        . Check SIS for more up to date information.
+        {{ formatCourseSize(section) }}. Check SIS for more up to date
+        information.
       </div>
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()"> Close </b-button>
