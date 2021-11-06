@@ -25,10 +25,10 @@ export interface CourseSection {
 
   cap: number;
   rem: number;
+  xl_rem: number;
 
   timeslots: Timeslot[];
   attribute: string;
-  closed: boolean;
 }
 
 export interface Course {

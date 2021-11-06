@@ -39,8 +39,8 @@
         <div class="font-weight-bold">Visualize Prerequisites:</div>
         <PrereqGraph :course="courseCode"></PrereqGraph>
       </template>
-      <template v-if="section.closed">
-        <b>This section is currently closed.</b>
+      <template v-if="section.rem <= 0 || section.xl_rem <= 0">
+        <b>This section is currently full.</b>
         In order to register, you must submit a signed
         <a
           href="https://www.rpi.edu/dept/srfs/AuthorizationFrm.pdf"

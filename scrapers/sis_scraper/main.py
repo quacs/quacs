@@ -81,6 +81,8 @@ async def get_section_information(section_url):
                 section_dict["cap"] = capacity
                 section_dict["act"] = actual
                 section_dict["rem"] = remaining
+            elif kind == "Cross List Seats":
+                section_dict["xl_rem"] = remaining
 
             # NOTE: Can implement logic for Waitlists / Crosslists here
     return section_dict
