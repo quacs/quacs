@@ -103,15 +103,6 @@
             Hybrid Course
           </span>
         </span>
-
-        <span v-if="this.fullSections != 2 && closed">
-          <span class="padding-left prerequisiteError prerequisiteBkgError">
-            <font-awesome-icon
-              :icon="['fas', 'exclamation-triangle']"
-            ></font-awesome-icon>
-            Closed
-          </span>
-        </span>
       </div>
       <!-- <br> -->
       {{ getDescription(course.subj, course.crse) }}
@@ -172,7 +163,7 @@ Vue.use(ModalPlugin);
       let fullCount = 0;
       // @ts-expect-error: no u typescript, this does exist
       for (const section of this.course.sections) {
-        if (section.rem <= 0) {
+        if (section.rem <= 0 || section.xl_rem <= 0) {
           fullCount++;
         }
       }
@@ -236,12 +227,6 @@ export default class CourseCard extends Vue {
 
   get hybrid(): boolean {
     return this.course.sections[0].attribute.includes("Hybrid");
-  }
-
-  get closed(): boolean {
-    return this.course.sections.every(function (section) {
-      return section.closed;
-    });
   }
 
   getDescription(subject: string, code: string): string {

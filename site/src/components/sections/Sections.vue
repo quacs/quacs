@@ -87,11 +87,16 @@
             ></font-awesome-icon>
             Full Section</span
           >
-
+          /* Show the XL-full message if: 1. The section is not already full
+          (avoids duplicate full section/full course) - AND - 2. The course is
+          an XL course and is out of XL seats. */
           <span
             class="padding-left prerequisiteError"
             :class="{
-              hidden: section.rem <= 0 || !section.closed,
+              hidden:
+                section.xl_rem === undefined ||
+                section.xl_rem > 0 ||
+                section.rem <= 0,
             }"
             v-on:click.stop.prevent
             v-on:keyup.enter.stop.prevent
@@ -99,10 +104,10 @@
             @keyup.enter="showSectionModal(section.crn)"
           >
             <font-awesome-icon
-              :icon="['fas', 'exclamation-triangle']"
+              :icon="['fas', 'user-slash']"
             ></font-awesome-icon>
-            Closed
-          </span>
+            Full Section (No cross-list seats remaining)</span
+          >
           <span title="Professor(s)">
             | {{ section.timeslots[0].instructor }} |
           </span>
