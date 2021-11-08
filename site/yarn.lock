@@ -628,7 +628,7 @@
   optionalDependencies:
     vue-loader-v16 "npm:vue-loader@^16.1.0"
 
-"@vue/cli-shared-utils@^4.5.14", "@vue/cli-shared-utils@^4.5.15", "@vue/cli-shared-utils@^4.5.7":
+"@vue/cli-shared-utils@^4.5.15", "@vue/cli-shared-utils@^4.5.7":
   version "4.5.15"
   resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.5.15.tgz#dba3858165dbe3465755f256a4890e69084532d6"
   integrity sha512-SKaej9hHzzjKSOw1NlFmc6BSE0vcqUQMQiv1cxQ2DhVyy4QxZXBmzmiLBUBe+hYZZs1neXW7n//udeN9bCAY+Q==
@@ -8360,10 +8360,10 @@ vue-async-computed@^3.9.0:
   resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.9.0.tgz#af3181c25168bfe9d86d8ffbc7033bf9e484fe84"
   integrity sha512-ac6m/9zxHHNGGKNOU1en8qNk+fAmEbJLuWL7qyQTFuH3vjv3V4urv//QHcVzCobROM6btnaDG2b+XYMncF/ETA==
 
-vue-axios@^3.3.7:
-  version "3.3.7"
-  resolved "https://registry.yarnpkg.com/vue-axios/-/vue-axios-3.3.7.tgz#1958b6fb712eb4011ab21db433b2350e2a6d684f"
-  integrity sha512-SmNFJIkM5YF4eWfaWfmCmORy52ZP5b8ml9PCTi7C0VsuQK4vwZON6ToNWuyFGCL6U/Fp/pzfIgdLLh/O/qKzYQ==
+vue-axios@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/vue-axios/-/vue-axios-3.4.0.tgz#059d7fcbe83f786cda24e9501317174736927b37"
+  integrity sha512-S3YTCJeEndzmtaYzyz919Z54wY1D2OftWEhioGbHED3VUSta8ti0OHjDipTPkb1StxOzQLAAO2hSUq830i14KA==
 
 vue-class-component@^7.2.6:
   version "7.2.6"
