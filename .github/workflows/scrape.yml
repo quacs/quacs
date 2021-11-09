@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       scrape_all:
-        description: 'Scrape all semesters (all|current)'
+        description: 'Scrape all semesters (ALL_YEARS|CURRENT_YEAR)'
         required: true
-        default: 'current'
+        default: 'CURRENT_YEAR'
 
 jobs:
   scrape-courses-and-prerequisites:
@@ -313,7 +313,7 @@ jobs:
           rsync -avzh --ignore-missing-args transfer/transfer.json data || true
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
-
+          tree
           cd data
 
           # Merge any hard_coded data into the final values
@@ -343,12 +343,14 @@ jobs:
           git commit -m "$(date -u)" # || exit 0
           #git add meta.json
           #git commit --amend --no-edit
-          git push --force
-          curl -H "Accept: application/vnd.github.everest-preview+json" \
-              -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
-              --request POST \
-              --data '{"event_type": "deploy", "client_payload": {"build_args": "-d"}}' \
-              https://api.github.com/repos/quacs/quacs/dispatches
+
+          # TODO add this back in
+          # git push --force
+          # curl -H "Accept: application/vnd.github.everest-preview+json" \
+          #     -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
+          #     --request POST \
+          #     --data '{"event_type": "deploy", "client_payload": {"build_args": "-d"}}' \
+          #     https://api.github.com/repos/quacs/quacs/dispatches
 
 
   # datadog-metrics:

@@ -113,14 +113,16 @@ def save_catalog(data, year):
 
 if __name__ == "__main__":
     if sys.argv[-1] == "help":
-        print(f"USAGE: python3 {sys.argv[0]} [LATEST_YEAR]")
+        print(f"USAGE: python3 {sys.argv[0]} [ALL_YEARS]")
         sys.exit(1)
 
     catalogs = get_catalogs()
 
-    if sys.argv[-1] == "LATEST_YEAR":
+    if sys.argv[-1] != "ALL_YEARS":
         print("Parsing single year")
         catalogs = catalogs[:1]
+    else:
+        print("Parsing all years")
 
     for index, (year, catalog_id) in enumerate(tqdm(catalogs)):
         course_ids = get_course_ids(catalog_id)
