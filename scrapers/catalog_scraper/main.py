@@ -107,13 +107,13 @@ def save_catalog(data, year):
     for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
         directory = "data/" + directory
         os.makedirs(directory, exist_ok=True)
-        with open(f"{directory}/{sys.argv[1]}.json", "w") as outfile:
+        with open(f"{directory}/catalog.json", "w") as outfile:
             json.dump(data, outfile, sort_keys=True, indent=2, ensure_ascii=False)
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        print(f"USAGE: python3 {sys.argv[0]} (catalog|schools)")
+        print(f"USAGE: python3 {sys.argv[0]} [LATEST_YEAR]")
         sys.exit(1)
 
     catalogs = get_catalogs()

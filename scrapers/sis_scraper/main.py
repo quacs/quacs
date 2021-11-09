@@ -6,6 +6,7 @@ from operator import itemgetter
 import os
 import re
 import json
+import sys
 
 # External dependnecies
 import aiohttp
@@ -252,14 +253,9 @@ async def scrape_term(term):
 
     # Ensure data/{term} exists
     os.makedirs(f"data/{term}", exist_ok=True)
-    try:
-        with open(f"data/{term}/schools.json", "r") as all_schools_f:
-            all_schools = json.load(all_schools_f)
-    except:
-        print(
-            f"Failed to load data/{term}/schools.json. Generating an empty one -- all courses will be uncategorized!"
-        )
-        all_schools = []
+
+    with open(f"all_schools.json", "r") as all_schools_f:
+        all_schools = json.load(all_schools_f)
 
     # Ensure schools.json is populated properly
     matched_subjects = set()
@@ -338,7 +334,14 @@ async def main():
     async with aiohttp.ClientSession(
         connector=aiohttp.TCPConnector(limit=5)
     ) as session:
-        for semester in util.get_semesters_to_scrape():
+        semesters = util.get_semesters_to_scrape()
+
+        if(sys.argv[-1] == "all"):
+            for term in os.listdir("data/"):
+                if(term not in semesters):
+                    semesters.append(term)
+
+        for semester in semesters:
             await scrape_term(semester)
 
 
