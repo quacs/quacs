@@ -1,3 +1,4 @@
+from typing import Dict, List, Tuple
 import requests
 import sys
 from lxml import html
@@ -14,9 +15,7 @@ CHUNK_SIZE = 500
 
 # returns the list of catalogs with the newest one being first
 # each catalog is a tuple (year, catalog_id) ex: ('2020-2021', 21)
-
-
-def get_catalogs():
+def get_catalogs() -> List[Tuple[str, int]]:
     catalogs_xml = html.fromstring(
         requests.get(
             f"{BASE_URL}content{DEFAULT_QUERY_PARAMS}&method=getCatalogs"
@@ -24,13 +23,13 @@ def get_catalogs():
     )
     catalogs = catalogs_xml.xpath("//catalogs/catalog")
 
-    ret = []
+    ret: List[Tuple[str, int]] = []
     # For each catalog get its year and id and add that as as tuples to ret
     for catalog in catalogs:
-        catalog_id = catalog.xpath("@id")[0].split("acalog-catalog-")[1]
-        catalog_year = catalog.xpath(".//title/text()")[0].split("Rensselaer Catalog ")[
-            1
-        ]
+        catalog_id: int = catalog.xpath("@id")[0].split("acalog-catalog-")[1]
+        catalog_year: str = catalog.xpath(".//title/text()")[0].split(
+            "Rensselaer Catalog "
+        )[1]
         ret.append((catalog_year, catalog_id))
 
     # sort so that the newest catalog is always first
@@ -39,7 +38,7 @@ def get_catalogs():
 
 
 # Returns a list of course ids for a given catalog
-def get_course_ids(catalog_id):
+def get_course_ids(catalog_id: str) -> List[str]:
     courses_xml = html.fromstring(
         requests.get(
             f"{BASE_URL}search/courses{DEFAULT_QUERY_PARAMS}&method=listing&options[limit]=0&catalog={catalog_id}"
@@ -49,8 +48,6 @@ def get_course_ids(catalog_id):
 
 
 # Finds and returns a cleaned up description of the course
-
-
 def get_catalog_description(fields, course_name):
     found_name = False
     # The description is always the next full field after the course name field
@@ -73,7 +70,7 @@ def get_catalog_description(fields, course_name):
     return ""
 
 
-def get_course_data(course_ids):
+def get_course_data(course_ids: List[str]) -> Dict:
     data = {}
     # Break the courses into chunks of CHUNK_SIZE to make the api happy
     course_chunks = [
@@ -102,7 +99,7 @@ def get_course_data(course_ids):
 
 
 # Saves the catalog to the 3 semesters for that year
-def save_catalog(data, year):
+def save_catalog(data: Dict, year: str):
     years = year.split("-")
     for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
         directory = "data/" + directory
@@ -112,10 +109,6 @@ def save_catalog(data, year):
 
 
 if __name__ == "__main__":
-    if sys.argv[-1] == "help":
-        print(f"USAGE: python3 {sys.argv[0]} [ALL_YEARS]")
-        sys.exit(1)
-
     catalogs = get_catalogs()
 
     if sys.argv[-1] != "ALL_YEARS":
