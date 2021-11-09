@@ -6,8 +6,8 @@ on:
   # push:
   #   branches:
   #     - master
-  schedule:
-    - cron: '0 * * * *'
+  # schedule:
+  #   - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       scrape_all:
@@ -299,7 +299,7 @@ jobs:
         run: |
           for directory in $(find courses/* -type d -print0 | xargs -0); do
             DIR_BASENAME=$(basename "$directory")
-            cp -r catalog/$DIR_BASENAME/* "$directory"
+            cp -r catalog/$DIR_BASENAME/* "$directory" | true
           done
 
           rsync -avz courses/ data/semester_data/
