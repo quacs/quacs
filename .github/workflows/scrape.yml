@@ -299,7 +299,7 @@ jobs:
         run: |
           for directory in $(find courses/* -type d -maxdepth 0 -print0 | xargs -0); do
             DIR_BASENAME=$(basename "$directory")
-            cp -r catalog/$DIR_BASENAME/* "$directory" | true
+            rsync -avzh --ignore-missing-args catalog/$DIR_BASENAME/* "$directory" || true
           done
 
           rsync -avz courses/ data/semester_data/
