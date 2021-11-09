@@ -261,13 +261,14 @@ jobs:
           pip install -r scrapers/requirements.txt
 
       - name: Scrape catalog
+        working-directory: ./scrapers
         run: python3 catalog_scraper/main.py
 
       - name: Upload data
         uses: actions/upload-artifact@v2
         with:
           name: catalog
-          path: data/
+          path: scrapers/data
 
   commit-data:
     name: Commit changes
