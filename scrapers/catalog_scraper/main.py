@@ -112,7 +112,7 @@ def save_catalog(data, year):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
+    if sys.argv[-1] == "help":
         print(f"USAGE: python3 {sys.argv[0]} [LATEST_YEAR]")
         sys.exit(1)
 

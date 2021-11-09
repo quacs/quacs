@@ -41,9 +41,7 @@ jobs:
 
       - name: Copy all_schools.json to correct location
         working-directory: ./scrapers/quacs-data
-        run: cp all_schools.json ../catalog_scraper/all_schools.json
-
-
+        run: cp all_schools.json ../all_schools.json
 
       - name: Scrape courses
         working-directory: ./scrapers
