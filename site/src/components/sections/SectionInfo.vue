@@ -79,7 +79,7 @@ export default class SectionInfo extends Vue {
   @Prop() readonly section!: CourseSection;
 
   get modalTitle(): string {
-    return `Section Info: ${this.section.sec} - ${this.section.title}`;
+    return `Section Info: ${this.section.sec} - ${this.section.title} (CRN ${this.section.crn})`;
   }
 
   get courseCode(): string {
