@@ -39,9 +39,11 @@ jobs:
           repository: quacs/quacs-data
           path: scrapers/quacs-data
 
-      - name: Copy all_schools.json to correct location
+      - name: Copy quacs-data files to correct locations
         working-directory: ./scrapers/quacs-data
-        run: cp all_schools.json ../all_schools.json
+        run: |
+          cp all_schools.json ../all_schools.json
+          cp semester_data ../data -r
 
       - name: Scrape courses
         working-directory: ./scrapers

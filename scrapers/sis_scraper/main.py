@@ -298,6 +298,8 @@ async def scrape_term(term):
     for school in schools:
         school["depts"] = sorted(school["depts"], key=itemgetter("code"))
 
+    os.makedirs(f"data/{term}", exist_ok=True)
+
     school_columns = util.optimize_column_ordering(schools)
     # Write out all the results of the scraper
     conflict_logic.gen(term, courses)
