@@ -336,9 +336,9 @@ async def main():
     ) as session:
         semesters = util.get_semesters_to_scrape()
 
-        if(sys.argv[-1] == "all"):
+        if sys.argv[-1] == "all":
             for term in os.listdir("data/"):
-                if(term not in semesters):
+                if term not in semesters:
                     semesters.append(term)
 
         for semester in semesters:
