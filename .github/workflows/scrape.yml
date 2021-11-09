@@ -297,7 +297,7 @@ jobs:
       - name: Commit new data
         working-directory: ./scrapers
         run: |
-          for directory in $(find courses/* -type d -print0 | xargs -0); do
+          for directory in $(find courses/* -type d -maxdepth 0 -print0 | xargs -0); do
             DIR_BASENAME=$(basename "$directory")
             cp -r catalog/$DIR_BASENAME/* "$directory" | true
           done
@@ -313,7 +313,7 @@ jobs:
           rsync -avzh --ignore-missing-args transfer/transfer.json data || true
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
-          tree
+
           cd data
 
           # Merge any hard_coded data into the final values
