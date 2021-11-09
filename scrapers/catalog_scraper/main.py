@@ -109,6 +109,10 @@ def save_catalog(data: Dict, year: str):
 
 
 if __name__ == "__main__":
+    if sys.argv[-1] == "help" or sys.argv[-1] == "--help":
+        print(f"USAGE: python3 {sys.argv[0]} [ALL_YEARS]")
+        sys.exit(1)
+
     catalogs = get_catalogs()
 
     if sys.argv[-1] != "ALL_YEARS":
