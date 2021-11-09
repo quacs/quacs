@@ -332,6 +332,10 @@ async def scrape_term(term):
 
 
 async def main():
+    if sys.argv[-1] == "help" or sys.argv[-1] == "--help":
+        print(f"USAGE: python3 {sys.argv[0]} [ALL_YEARS]")
+        sys.exit(1)
+
     global session
     async with aiohttp.ClientSession(
         connector=aiohttp.TCPConnector(limit=5)
