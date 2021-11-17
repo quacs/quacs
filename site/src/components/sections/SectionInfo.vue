@@ -3,6 +3,20 @@
     <b-modal :id="'section-info' + section.crn" :title="modalTitle">
       <div class="font-weight-bold">Prerequisites:</div>
       <span v-html="formatPrerequisites(section.crn) || 'None'"></span>
+      <template v-if="prerequisiteData.corequisites">
+        <div class="font-weight-bold">Corequisites:</div>
+        <span
+          v-for="course in prerequisiteData.corequisites"
+          :key="course"
+          class="course"
+          :class="{
+            takenCourse:
+              course.replace(' ', '-') in
+              $store.getters['prerequisites/getPriorCourses'](),
+          }"
+          >{{ course }}
+        </span>
+      </template>
       <template v-if="prerequisiteData.cross_list_courses">
         <div class="font-weight-bold">Cross listed with:</div>
         <span
