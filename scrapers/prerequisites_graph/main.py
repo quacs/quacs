@@ -12,12 +12,12 @@ import argparse
 from typing import Dict, List, TypedDict
 
 
-class Adj(TypedDict):
+class CoursePrereqs(TypedDict):
     title: str
     prereqs: List[str]
 
 
-def sem_add_courses(sem_dir: str, adj_list: Dict[str, Adj]):
+def sem_add_courses(sem_dir: str, adj_list: Dict[str, CoursePrereqs]):
     """
     Using the semester in the `sem_dir` directory,
     update the graph in `adj_list`.
@@ -81,7 +81,7 @@ def generate(semester_data_path: str):
 
     # Map from course ID to title and prereqs.
     # This is an adjacency list.
-    adj_list: Dict[str, Adj] = dict()
+    adj_list: Dict[str, CoursePrereqs] = dict()
 
     # List of semester paths
     sem_dirs = list(
