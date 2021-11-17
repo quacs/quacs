@@ -9,9 +9,15 @@ import os
 import functools
 import operator
 import argparse
+from typing import Dict, List, TypedDict
 
 
-def sem_add_courses(sem_dir: str, adj_list):
+class Adj(TypedDict):
+    title: str
+    prereqs: List[str]
+
+
+def sem_add_courses(sem_dir: str, adj_list: Dict[str, Adj]):
     """
     Using the semester in the `sem_dir` directory,
     update the graph in `adj_list`.
@@ -36,27 +42,13 @@ def sem_add_courses(sem_dir: str, adj_list):
                 sem_prereqs[str(course["sections"][0]["crn"])]
             )
 
-            # Only add courses that have prereqs, to make the json smaller
-            if len(prereqs) == 0:
-                # This course has no prereqs,
-                # but may have had prereqs in the past,
-                # so try to delete the course.
-                # Semester iteration order is from older to newer,
-                # so this should work okay.
-                adj_list.pop(course_id, None)
-            else:
-                # Since this is a dict and iteration order is from older to newer,
-                # this should have the most updated data.
-                # NOTE: Some sections have different prereqs.
-                # This is more uncommon than common,
-                # so hopefully this will never be an issue.
-                adj_list[course_id] = {
-                    "title": course["title"],
-                    "prereqs": prereqs,
-                }
+            adj_list[course_id] = {
+                "title": course["title"],
+                "prereqs": prereqs,
+            }
 
 
-def get_prereq_course_ids(prereqs):
+def get_prereq_course_ids(prereqs) -> List[str]:
     """
     Given the `prereqs` of a course in the format of the courses.json file,
     return a list of all prerequisite courses mentioned.
@@ -65,7 +57,7 @@ def get_prereq_course_ids(prereqs):
 
     prereqs = prereqs.get("prerequisites", prereqs)
     try:
-        typ = prereqs["type"]
+        typ: str = prereqs["type"]
     except KeyError:
         return []
     if typ == "course":
@@ -78,6 +70,7 @@ def get_prereq_course_ids(prereqs):
                 )
             )
         )
+    return []
 
 
 def generate(semester_data_path: str):
@@ -88,7 +81,7 @@ def generate(semester_data_path: str):
 
     # Map from course ID to title and prereqs.
     # This is an adjacency list.
-    adj_list = dict()
+    adj_list: Dict[str, Adj] = dict()
 
     # List of semester paths
     sem_dirs = list(

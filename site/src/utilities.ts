@@ -245,7 +245,13 @@ function getPrerequisiteFormatHtml(
     } else {
       output += `<span style="color: var(--not-taken-course);">`;
     }
+
+    const title = store.state.prereqGraph[prereq.course]?.title;
     output += prereq.course.replace(" ", "-");
+    if (title) {
+      output += " " + title;
+    }
+
     output += "</span>";
   } else {
     if (!topLevel) {
@@ -354,7 +360,12 @@ export function trackEvent(event_value: string, event_type: string): void {
     return;
   }
 
-  umami.trackEvent(event_value, event_type);
+  try {
+    umami.trackEvent(event_value, event_type);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
 }
 
 export function trackView(url: string, referrer?: string): void {
@@ -364,5 +375,10 @@ export function trackView(url: string, referrer?: string): void {
     return;
   }
 
-  umami.trackView(url, referrer);
+  try {
+    umami.trackView(url, referrer);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
 }
