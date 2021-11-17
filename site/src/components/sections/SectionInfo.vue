@@ -15,6 +15,7 @@
               $store.getters['prerequisites/getPriorCourses'](),
           }"
           >{{ course }}
+          {{ courseName(course) }}
         </span>
       </template>
       <template v-if="prerequisiteData.cross_list_courses">
@@ -29,6 +30,7 @@
               $store.getters['prerequisites/getPriorCourses'](),
           }"
           >{{ course }}
+          {{ courseName(course) }}
         </span>
       </template>
       <br />
@@ -98,6 +100,14 @@ export default class SectionInfo extends Vue {
 
   get courseCode(): string {
     return `${this.section.subj} ${this.section.crse}`;
+  }
+
+  get courseName(): (course: string) => string {
+    return (course: string): string => {
+      return course
+        ? this.$store.state.prereqGraph[course.replace("-", " ")]?.title ?? ""
+        : "";
+    };
   }
 }
 </script>
