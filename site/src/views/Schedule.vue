@@ -324,6 +324,16 @@ export default class Schedule extends Vue {
           continue;
         }
 
+        const startMonth = timeslot.dateStart.split("/")[0];
+        const [endMonth, endDay] = timeslot.dateEnd.split("/");
+
+        // If the end month is before the start, increment the year. This handles cross-year sessions assuming they don't wrap more than once
+        let effectiveEndDate = new Date(
+          `${endMonth < startMonth ? year + 1 : year}/${endMonth}/${endDay}`
+        );
+        // Add one day to include the last day of the semester
+        effectiveEndDate.setDate(effectiveEndDate.getDate() + 1);
+
         let recurrenceRule = "FREQ=WEEKLY;BYDAY=";
         for (let i = 0; i < timeslot.days.length; i++) {
           if (i) {
@@ -331,9 +341,10 @@ export default class Schedule extends Vue {
           }
           recurrenceRule += recurrenceDays[timeslot.days[i]];
         }
-        recurrenceRule += ";INTERVAL=1;UNTIL=";
-        recurrenceRule += year;
-        recurrenceRule += timeslot.dateEnd.replace("/", "");
+        recurrenceRule += `;INTERVAL=1;UNTIL=${effectiveEndDate
+          .toISOString()
+          .split("T")[0]
+          .replaceAll("-", "")}`;
 
         // Make a js dates for start time
         const monthStart = timeslot.dateStart.split("/")[0];
