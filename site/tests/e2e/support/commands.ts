@@ -23,3 +23,44 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+// NOTE: When adding new commands, to make typescript happy the command must also be added in:
+// quacs/site/tests/e2e/support/index.ts
+
+function getSubject(subject?: string) {
+  return subject ? cy.wrap(subject) : cy;
+}
+
+Cypress.Commands.add(
+  "getOne",
+  {
+    prevSubject: "optional",
+  },
+  (subject, label) => {
+    return getSubject(subject)
+      .get(label)
+      .should("have.length", 1)
+      .should("be.visible");
+  }
+);
+
+Cypress.Commands.add(
+  "containsOne",
+  {
+    prevSubject: "optional",
+  },
+  (subject, label) => {
+    return getSubject(subject)
+      .contains(label)
+      .should("have.length", 1)
+      .should("be.visible");
+  }
+);
+
+Cypress.Commands.add("getBody", () => {
+  return cy.getOne("div.container-fluid");
+});
+
+Cypress.Commands.add("getNav", () => {
+  return cy.getOne("nav");
+});

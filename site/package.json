@@ -42,6 +42,7 @@
     "xss": "^1.0.10"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^5.10.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "@vue/cli-plugin-e2e-cypress": "~4.5.0",
