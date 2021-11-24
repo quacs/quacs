@@ -13,21 +13,29 @@ git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --de
 CURR_DIR=$(dirname "${BASH_SOURCE[0]}")
 
 BUILD_ALL=false
+BUILD_FOR_TESTS=false
 
 OUTPUT_DIR=site
-while getopts ao:d option; do
+while getopts ao:dt option; do
 	case "${option}" in
 
 	a) BUILD_ALL=true ;;
 	o) OUTPUT_DIR=${OPTARG} ;;
 	d) DIFF_BUILD=true ;;
+	t) BUILD_FOR_TESTS=true ;;
 	*) ;; # ignore other flags
 	esac
 done
 
 if test "$BUILD_ALL" != "true"; then
 	# We're only building one semester
-	SEMESTER=$(basename "$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
+	if test "$BUILD_FOR_TESTS" != "true"; then
+		SEMESTER=$(basename "$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
+	else
+		echo "Setting semester to testing semester so tests are consistent"
+		# Choose an arch semester for tests because arch semesters have more features to test
+		SEMESTER="202105"
+	fi
 	echo "Building $SEMESTER..."
 	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
 

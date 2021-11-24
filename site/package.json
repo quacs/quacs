@@ -5,6 +5,8 @@
   "scripts": {
     "serve": "./scripts/build_entry.sh -d",
     "build": "./scripts/build_entry.sh -b",
+    "test:serve": "./scripts/build_entry.sh -d -t",
+    "test:e2e": "vue-cli-service test:e2e",
     "debug-build": "./scripts/build_entry.sh -d -b",
     "lint": "./scripts/lint.sh",
     "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh",
@@ -42,6 +44,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
+    "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.7",
     "@vue/cli-plugin-pwa": "~4.5.15",
     "@vue/cli-plugin-router": "~4.5.15",
