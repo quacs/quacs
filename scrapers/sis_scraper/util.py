@@ -51,16 +51,20 @@ def get_semesters_to_scrape():
     # roll back to nearest RPI start month
     # We can get away with not needing time deltas since we can't wrap years
     # due to January being a semester start month
+    # If we're in a start month, back up a bit so we don't miss data from the immediate prior semester
+    # This is important for fall -> winter enrichment and spring -> arch transitions
+    if month in RPI_SEMESTER_MONTH_OFFSETS:
+        month -= 1
     while month not in RPI_SEMESTER_MONTH_OFFSETS:
         month -= 1
 
     date = datetime.date(date.year, month, 1)
     semesters.append(date)
 
-    for _ in range(2):
-        # Now roll forward until we find two more semesters
+    for _ in range(len(RPI_SEMESTER_MONTH_OFFSETS) - 1):
+        # Now roll forward until we find the remaining semesters
         # Since the maximum amount of days in a month is 31,
-        # we can add 32 to guarentee a jump, since timedelta has no months option :(
+        # we need to add 32 to guarentee a jump, since timedelta has no months option :(
         date += datetime.timedelta(days=32)
         # Avoid overflowing months, just reset the day back to 1
         date = date.replace(day=1)

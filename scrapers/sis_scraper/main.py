@@ -248,6 +248,7 @@ async def scrape_term(term):
     courses = list(filter(lambda dept: len(dept["courses"]) > 0, courses))
     # If semester is too far in the future, don't do anything.
     if len(courses) == 0:
+        print("Semester is empty - skipping it!")
         return
 
     # Ensure data/{term} exists
