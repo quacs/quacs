@@ -373,6 +373,15 @@ jobs:
             fi
           done
 
+          # Generate catalogs for any folders missing catalogs
+          # This is to minimize build failures when a semester transition occurs.
+          for directory in $(find semester_data/* -type d | xargs -0); do
+            if [ ! -f "$directory/catalog.json" ]; then
+              echo "Generating $directory/catalog.json"
+              echo "{}" > $directory/catalog.json
+            fi
+          done
+
           git config user.name "QuACS" && git config user.email "github@quacs.org"
           echo {\"last_updated\":\"$(date --iso-8601=seconds -u)\"} > meta.json
           git add .
