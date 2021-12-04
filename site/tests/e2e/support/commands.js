@@ -24,10 +24,7 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-// NOTE: When adding new commands, to make typescript happy the command must also be added in:
-// quacs/site/tests/e2e/support/index.ts
-
-function getSubject(subject?: string) {
+function getSubject(subject) {
   return subject ? cy.wrap(subject) : cy;
 }
 

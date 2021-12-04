@@ -16,20 +16,9 @@
 
 import "./commands";
 
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      getOne(label: string): Chainable<Element>;
-      containsOne(label: string | RegExp): Chainable<Element>;
-      getBody(): Chainable<Element>;
-      getNav(): Chainable<Element>;
-    }
-  }
-}
-
 export const SEMESTER = "202105";
 
-export const SCHOOLS: { [school: string]: number } = {
+export const SCHOOLS = {
   Architecture: 2,
   "Information Technology and Web Science": 1,
   Engineering: 10,

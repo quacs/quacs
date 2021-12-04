@@ -30,6 +30,13 @@ describe("Test department page", () => {
               cy.containsOne("4/30 seats available");
               cy.getOne(".time-cell-M").containsOne("10:30a-12:10p");
               cy.getOne(".time-cell-T").find("span").should("have.length", 0);
+              cy.getOne(".time-cell-W").containsOne("10:30a-12:35p");
+              cy.getOne(".time-cell-R").containsOne("10:30a-12:10p");
+              cy.getOne(".time-cell-R").containsOne("4:10p-6:15p");
+              cy.getOne(".time-cell-F").find("span").should("have.length", 0);
+
+              // Open the section info modal
+              cy.getOne(".info-icon").click();
             });
         });
       });

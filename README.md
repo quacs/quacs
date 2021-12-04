@@ -33,7 +33,7 @@ QuACS is not affiliated with YACS. The work they have done has been invaluable t
 
 # Development info
 
-The following commands should be run within the `site/` directory:
+**NOTE:** The following commands **MUST** be run within the `site/` directory:
 
 ## Project setup
 ```
@@ -50,6 +50,20 @@ yarn serve
 ### Lints and fixes files
 ```
 yarn lint
+```
+
+### Run e2e tests
+To start a local test server running on the correct semester for the e2e tests run:
+```
+yarn test:serve
+```
+Once the server is up and running you can launch cypress and run the tests with:
+```
+yarn test:e2e
+```
+Or run it headlessly with:
+```
+yarn test:e2e:headless
 ```
 
 ## Contributing a theme
