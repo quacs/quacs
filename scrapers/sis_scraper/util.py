@@ -52,11 +52,16 @@ def get_semesters_to_scrape():
     # We can get away with not needing time deltas since we can't wrap years
     # due to January being a semester start month
     # If we're in a start month, back up a bit so we don't miss data from the immediate prior semester
-    # This is important for fall -> winter enrichment and spring -> arch transitions
+    # This is important for back-to-back semester transitions as otherwise we'd miss
+    # the final weeks worth of data
     if month in RPI_SEMESTER_MONTH_OFFSETS:
         month -= 1
     while month not in RPI_SEMESTER_MONTH_OFFSETS:
         month -= 1
+        # Wrap around if necessary
+        if month == 0:
+            month = max(RPI_SEMESTER_MONTH_OFFSETS)
+            break
 
     date = datetime.date(date.year, month, 1)
     semesters.append(date)
