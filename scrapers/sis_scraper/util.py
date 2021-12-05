@@ -47,6 +47,7 @@ def get_semesters_to_scrape():
     RPI_SEMESTER_MONTH_OFFSETS = {1, 5, 9, 12}
     semesters = []
     date = datetime.date.today()
+    year = date.year
     month = date.month
     # roll back to nearest RPI start month
     # We can get away with not needing time deltas since we can't wrap years
@@ -54,16 +55,18 @@ def get_semesters_to_scrape():
     # If we're in a start month, back up a bit so we don't miss data from the immediate prior semester
     # This is important for back-to-back semester transitions as otherwise we'd miss
     # the final weeks worth of data
-    if month in RPI_SEMESTER_MONTH_OFFSETS:
-        month -= 1
-    while month not in RPI_SEMESTER_MONTH_OFFSETS:
+    # Emulate a do-while loop here
+    do = True
+    while do or (month not in RPI_SEMESTER_MONTH_OFFSETS):
+        do = False
         month -= 1
         # Wrap around if necessary
         if month == 0:
             month = max(RPI_SEMESTER_MONTH_OFFSETS)
+            year -= 1
             break
 
-    date = datetime.date(date.year, month, 1)
+    date = date.replace(year=year, month=month, day=1)
     semesters.append(date)
 
     for _ in range(len(RPI_SEMESTER_MONTH_OFFSETS) - 1):
