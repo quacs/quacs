@@ -100,6 +100,7 @@ def bitpack_section_conflict(bp1, bp2):
 # courses. This compares the bitpack results to the results from neieve comparision
 def test_conflict_bitpacks():
     for term in os.listdir("data"):
+        print(f"Testing {term}")
         bitpacks = get_bitpacks(f"data/{term}/mod.rs")
         sections = []
         with open(f"data/{term}/courses.json") as f:
@@ -119,7 +120,18 @@ def test_conflict_bitpacks():
                 bitpack_conflict = bitpack_section_conflict(
                     bitpacks[section1["crn"]], bitpacks[section2["crn"]]
                 )
-            assert naive_conflict == bitpack_conflict
+            if naive_conflict != bitpack_conflict:
+                print(
+                    f"""ERROR!
+                    Naive algorithm says that {section1["crn"]} and {section2["crn"]} {"do" if naive_conflict else "do not"} have a conflict.
+                    ... but bitpacks indicate they {"do" if bitpack_conflict else "do not"}!
+
+                    Section 1 data:\n{section1}
+                    --------------------------
+                    Section 2 data:\n{section2}
+                    """
+                )
+                exit(1)
 
 
 if __name__ == "__main__":
