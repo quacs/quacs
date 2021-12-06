@@ -27,7 +27,8 @@ def gen(term, data):
                         divide,
                     )
                     """
-
+    # Sort to ensure deterministic ordering
+    unique_ranges = sorted(unique_ranges)
     MINUTE_GRANULARITY = 1
     NUM_MIN_PER_HOUR = 60 // MINUTE_GRANULARITY
 
@@ -141,15 +142,16 @@ def gen(term, data):
         # This part essentially tries to see if some other bit(s) other than the current one will create a conflict
         # for the conflicting classes in pair_list
         # If there is, we can safely discard this bit.
-        pairs_to_delete = set()
+        redundant_pairs = 0
         for pair in pair_list:
             table1 = sem_conflict_dict[pair[0]]
             table2 = sem_conflict_dict[pair[1]]
             for x in table1:
                 if x != index1 and x in table2:
-                    pairs_to_delete.add(pair)
+                    redundant_pairs += 1
+                    break
 
-        if len(pairs_to_delete) == len(pair_list):
+        if redundant_pairs == len(pair_list):
             for pair in pair_list:
                 table1 = sem_conflict_dict[pair[0]]
                 table2 = sem_conflict_dict[pair[1]]
@@ -173,7 +175,7 @@ def gen(term, data):
 
     # Compute the proper bit vec length for quacs-rs
     BIT_VEC_SIZE = math.ceil((BIT_VEC_SIZE - len(unnecessary_indices)) / 64)
-    with open(f"data/{term}/mod.rs", "w") as f:  # -{os.getenv("CURRENT_TERM")}
+    with open(f"data/{term}/mod.rs", "w") as f:
         f.write(
             """\
 //This file was automatically generated. Please do not modify it directly
