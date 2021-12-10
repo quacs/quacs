@@ -139,3 +139,4 @@ scrapers/*/*.rs
 
 # Python
 *.pyc
+site/tests/e2e/videos/*.js.mp4

@@ -89,7 +89,7 @@
           >
           <!-- Show the XL-full message if:
             1. The section is not already full (avoids duplicate full section/full course)
-              - AND - 
+              - AND -
             2. The course is an XL course and is out of XL seats. -->
           <span
             class="padding-left prerequisiteError"
@@ -153,6 +153,7 @@
           v-for="day in getDays()"
           v-bind:key="day"
           class="time-cell desktop-only"
+          :class="'time-cell-' + day"
         >
           <!-- TODO: fix different instructors for same timeslot -->
           <span
