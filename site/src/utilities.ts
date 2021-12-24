@@ -386,3 +386,46 @@ export function trackView(url: string, referrer?: string): void {
     console.error(e);
   }
 }
+
+export function getLogo(): string {
+  const baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/img/logos/`;
+  const defaultLogo = ["quacs_logo.svg", "quacs_logo_white_duck.svg"];
+
+  // Returns a date in the current year with the specified month and day
+  // Note: Uses 1-indexing for months (e.g. 1=January, 12=December).
+  const createDate = (month: number, day: number): Date => {
+    const date = new Date();
+    date.setMonth(month - 1);
+    date.setDate(day);
+    return date;
+  };
+
+  // The holidayRange is an array of tuples that contain:
+  // 1. a start date
+  // 2. an end date
+  // 3. a list of logos that can be used
+  const holidayRange: [Date, Date, string[]][] = [
+    [createDate(12, 20), createDate(12, 31), ["quacs_logo_christmas.svg"]], // christmas
+    [createDate(11, 20), createDate(11, 31), ["quacs_logo_thanksgiving.svg"]], // thanksgiving
+    [createDate(10, 20), createDate(11, 2), ["quacs_logo_halloween.svg"]], // halloween
+  ];
+
+  // Find a fitting range
+  let logos = defaultLogo;
+  const today = new Date();
+
+  for (let i = 0; i < holidayRange.length; ++i) {
+    const holiday = holidayRange[i];
+    const start = holiday[0];
+    const end = holiday[1];
+
+    if (start <= today && today <= end) {
+      logos = holiday[2];
+      break;
+    }
+  }
+
+  // Randomly shuffle and select the first element
+  shuffleArray(logos);
+  return `${baseUrl}${logos[0]}`;
+}
