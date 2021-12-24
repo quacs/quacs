@@ -5,10 +5,7 @@
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
-          ><img
-            src="@/assets/images/quacs_logo_christmas.svg"
-            alt="QuACS Home"
-            style="height: 27px"
+          ><img :src="getLogo" alt="QuACS Home" style="height: 27px"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -187,7 +184,12 @@ import {
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
 import UnofficialScheduleModal from "@/components/UnofficialScheduleModal.vue";
-import { shortSemToLongSem, shortSemToURL, trackEvent } from "@/utilities";
+import {
+  getLogo,
+  shortSemToLongSem,
+  shortSemToURL,
+  trackEvent,
+} from "@/utilities";
 
 @Component({
   components: {
@@ -216,6 +218,7 @@ import { shortSemToLongSem, shortSemToURL, trackEvent } from "@/utilities";
     ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
     shortSemToURL,
     shortSemToLongSem,
+    getLogo,
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
