@@ -280,20 +280,21 @@ async def scrape_term(term):
     # most notably when STSH and STSS merged to become STSO.
     all_subjects = set(d["code"] for d in courses)
     unmatched_subjects = all_subjects - matched_subjects
-    schools.append(
-        {
-            "name": "Uncategorized",
-            "depts": [
-                {
-                    "code": code,
-                    "name": list(filter(lambda dept: dept["code"] == code, courses))[0][
-                        "name"
-                    ],
-                }
-                for code in unmatched_subjects
-            ],
-        }
-    )
+    if unmatched_subjects:
+        schools.append(
+            {
+                "name": "Uncategorized",
+                "depts": [
+                    {
+                        "code": code,
+                        "name": list(
+                            filter(lambda dept: dept["code"] == code, courses)
+                        )[0]["name"],
+                    }
+                    for code in unmatched_subjects
+                ],
+            }
+        )
 
     # Sort the departments in each school
     for school in schools:
