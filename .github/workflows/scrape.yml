@@ -9,20 +9,17 @@ on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
+    inputs:
+      scrape_all:
+        description: 'Scrape all semesters (ALL_YEARS|CURRENT_YEAR)'
+        required: true
+        default: 'CURRENT_YEAR'
 
 jobs:
-  scrape-schools:
-    name: Scrapes schools per year
+  scrape-courses-and-prerequisites:
+    name: Scrapes courses and prerequisites
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.6.0
-        with:
-          access_token: ${{ github.token }}
-
-      - name: Print event name
-        run: echo $GITHUB_EVENT_NAME
-
       - name: Checkout branch
         uses: actions/checkout@v2
 
@@ -35,64 +32,22 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
-
-      - name: Scrape schools
-        working-directory: ./scrapers
-        run: python3 catalog_scraper/main.py schools LATEST_YEAR
-
-      - name: Output semesters
-        working-directory: ./scrapers
-        run: |
-          echo -n "::set-output name=semesters::["
-          ITER=0
-          for directory in $(find data -print0 | xargs -0); do
-            if test $ITER -ne 0; then
-              echo -n ","
-            fi
-            echo -n "\"$directory\""
-            ITER=$((ITER + 1))
-          done
-          echo "]"
 
       - name: Clone QuACS Data
         uses: actions/checkout@v2
         with:
           repository: quacs/quacs-data
-          path: quacs-data
+          path: scrapers/quacs-data
 
-      - name: Upload data
-        uses: actions/upload-artifact@v2
-        with:
-          name: schools
-          path: scrapers/data/
-
-  scrape-courses-and-prerequisites:
-    name: Scrapes courses and prerequisites
-    runs-on: ubuntu-latest
-    needs: [scrape-schools]
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install pip requirements
+      - name: Copy quacs-data files to correct locations
+        working-directory: ./scrapers/quacs-data
         run: |
-          python -m pip install --upgrade pip
-          pip install -r scrapers/requirements.txt
-
-      - name: Get semester data
-        uses: actions/download-artifact@v2
-        with:
-          name: schools
-          path: scrapers/data
+          cp all_schools.json ../all_schools.json
+          cp semester_data ../data -r
 
       - name: Scrape courses
         working-directory: ./scrapers
-        run: python3 sis_scraper/main.py
+        run: python3 sis_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload semester-specific data
         uses: actions/upload-artifact@v2
@@ -288,33 +243,32 @@ jobs:
           path: scrapers/transfer_guides
 
   # This may need to be updated now that the scrapers have been moved into the same repo as the site
-  # scrape-catalog:
-  #   name: Scrapes catalog by year
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout scrapers
-  #       uses: actions/checkout@v2
-  #       with:
-  #         ref: 'master'
+  scrape-catalog:
+    name: Scrapes catalog by year
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
 
-  #     - name: Set up python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: '3.x'
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-  #     - name: Install pip requirements
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.txt
+      - name: Install pip requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scrapers/requirements.txt
 
-  #     - name: Scrape catalog
-  #       run: python3 catalog_scraper/main.py catalog LATEST_YEAR
+      - name: Scrape catalog
+        working-directory: ./scrapers
+        run: python3 catalog_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
-  #     - name: Upload data
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: catalog
-  #         path: data/
+      - name: Upload data
+        uses: actions/upload-artifact@v2
+        with:
+          name: catalog
+          path: scrapers/data
 
   commit-data:
     name: Commit changes
@@ -324,6 +278,7 @@ jobs:
       - scrape-faculty
       # - scrape-hass-pathways
       - scrape-prereq-graph
+      - scrape-catalog
     steps:
       - name: Checkout data repository
         uses: actions/checkout@v2
@@ -342,10 +297,10 @@ jobs:
       - name: Commit new data
         working-directory: ./scrapers
         run: |
-          # for directory in $(find courses/* -type d -print0 | xargs -0); do
-          #   DIR_BASENAME=$(basename "$directory")
-          #   cp -r catalog/$DIR_BASENAME/* "$directory"
-          # done
+          for directory in $(find courses/* -type d -maxdepth 0 -print0 | xargs -0); do
+            DIR_BASENAME=$(basename "$directory")
+            rsync -avzh --ignore-missing-args catalog/$DIR_BASENAME/* "$directory" || true
+          done
 
           rsync -avz courses/ data/semester_data/
 
@@ -388,6 +343,7 @@ jobs:
           git commit -m "$(date -u)" # || exit 0
           #git add meta.json
           #git commit --amend --no-edit
+
           git push --force
           curl -H "Accept: application/vnd.github.everest-preview+json" \
               -H "Authorization: token ${{ secrets.GITHUBTOKEN }}" \
