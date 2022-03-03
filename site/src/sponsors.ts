@@ -11,17 +11,6 @@ export const advertisers: Advert[] = [
     tablet_path: "/bunkabl/tablet.png",
     mobile_path: "/bunkabl/mobile.png",
   },
-  {
-    advertiser: "Chi Phi",
-
-    url: "http://thetaofchiphi.org/",
-    altText:
-      "The Brothers of the Chi Phi Fraternity wish you a successful course registration!",
-    backgroundColor: "#ffffff00",
-    desktop_path: "/chi_phi/desktop.png",
-    tablet_path: "/chi_phi/tablet.png",
-    mobile_path: "/chi_phi/mobile.png",
-  },
 ];
 
 export const roboMallardPatrons: LinkedSponsor[] = [];
