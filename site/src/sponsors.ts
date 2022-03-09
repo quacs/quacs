@@ -14,7 +14,7 @@ export const advertisers: Advert[] = [
   {
     advertiser: "Nicole for GM",
 
-    url: "",
+    url: "https://nicoleforgm.com/",
     altText: "Vote Nicole for GM!",
     backgroundColor: "#ffffff",
     desktop_path: "/nicole_for_gm/desktop.png",
