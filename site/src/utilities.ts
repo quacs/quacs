@@ -1,9 +1,6 @@
 import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
 
-// eslint-disable-next-line
-declare const umami: any; // Not initialized here since it's declared in an imported file
-
 export const DAYS: Day[] = [
   {
     name: "Monday",
@@ -353,38 +350,6 @@ export function shuffleArray<T>(a: T[]): T[] {
     a[j] = x;
   }
   return a;
-}
-
-// All tracking should occur through these functions.  If the user has opted out of tracking,
-// they will just exit without logging anything.
-export function trackEvent(event_value: string, event_type: string): void {
-  // @ts-expect-error: For whatever reason, Vuex's typings don't include modules in the state so it doesn't realize we can access `settings` here.
-  const trackingEnabled = store.state.settings.enableTracking;
-  if (!trackingEnabled) {
-    return;
-  }
-
-  try {
-    umami.trackEvent(event_value, event_type);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e);
-  }
-}
-
-export function trackView(url: string, referrer?: string): void {
-  // @ts-expect-error: For whatever reason, Vuex's typings don't include modules in the state so it doesn't realize we can access `settings` here.
-  const trackingEnabled = store.state.settings.enableTracking;
-  if (!trackingEnabled) {
-    return;
-  }
-
-  try {
-    umami.trackView(url, referrer);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e);
-  }
 }
 
 export function getLogo(): string {

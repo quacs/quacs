@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Update Umami
-echo Updating Umami
-curl https://umami.quacs.org/umami.js >public/umami.js || exit 1
-# If umami crashes, the file will contain an nginx error instead of the js code
-if cat public/umami.js | grep -q nginx; then exit 1; fi
-
 # Update our local dependencies (quacs-rs), or clone if possible
 echo Retrieving latest quacs-data
 git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=2 src/store/data || exit 1
