@@ -116,8 +116,6 @@ site/src/quacs-rs/*.ts
 site/src/quacs-rs/*.js
 site/src/quacs-rs/*.wasm
 
-site/public/umami.js
-
 site/gh-pages-site/
 site/site/
 
