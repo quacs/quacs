@@ -60,7 +60,7 @@ impl<'a, const N: usize> Context<'a, N> {
 
     fn generate_schedules_driver(
         data: SemesterData<'a, N>,
-        courses: &mut Vec<&HashSet<u32>>,
+        courses: &mut [&HashSet<u32>],
         global_times: &mut [u64; N],
     ) -> Vec<Vec<u32>> {
         courses.sort_by_cached_key(|set| set.len());
@@ -138,7 +138,7 @@ impl<'a, const N: usize> Context<'a, N> {
         data: SemesterData<'a, N>,
         idx: usize,
         courses: &[HashSet<u32>],
-        current_courses: &mut Vec<u32>,
+        current_courses: &mut [u32],
         current_times: &mut [u64; N],
         overall_times: &mut [u64; N],
     ) -> Vec<Vec<u32>> {
