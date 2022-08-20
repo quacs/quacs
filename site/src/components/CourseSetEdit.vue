@@ -1,9 +1,6 @@
 <template>
   <div>
-    <b-nav-item-dropdown
-      left
-      title="Switch between saved course sets"
-    >
+    <b-nav-item-dropdown left title="Switch between saved course sets">
       <template v-slot:button-content>
         <em class="nav-text" style="font-style: normal">{{
           currentCourseSet

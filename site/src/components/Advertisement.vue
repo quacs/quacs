@@ -2,10 +2,7 @@
   <div class="sponsor">
     <AdvertImage :advertisement="currentAdvertisement" />
 
-    <a
-      href="https://patreon.com/quacs"
-      rel="noopener"
-      target="_blank"
+    <a href="https://patreon.com/quacs" rel="noopener" target="_blank"
       ><span>Want your ad here? Support us on Patreon!</span></a
     >
   </div>

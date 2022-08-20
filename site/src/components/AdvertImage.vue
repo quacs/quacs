@@ -1,9 +1,5 @@
 <template>
-  <a
-    :href="advertisement.url"
-    rel="noopener"
-    target="_blank"
-  >
+  <a :href="advertisement.url" rel="noopener" target="_blank">
     <div
       class="sponsor-img"
       :style="'background:' + advertisement.backgroundColor"

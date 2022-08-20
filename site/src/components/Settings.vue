@@ -26,10 +26,7 @@
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >
-      <b-form-checkbox
-        v-else
-        switch
-        v-model="hidePrerequisites"
+      <b-form-checkbox v-else switch v-model="hidePrerequisites"
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >

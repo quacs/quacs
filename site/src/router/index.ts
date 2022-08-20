@@ -47,7 +47,7 @@ const router = new VueRouter({
   },
 });
 
-let initialDataSent = false;
+const initialDataSent = false;
 
 router.afterEach((to, from) => {
   let to_path = to.fullPath.split("?")[0];

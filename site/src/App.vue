@@ -181,11 +181,7 @@ import {
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
 import UnofficialScheduleModal from "@/components/UnofficialScheduleModal.vue";
-import {
-  getLogo,
-  shortSemToLongSem,
-  shortSemToURL,
-} from "@/utilities";
+import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 @Component({
   components: {
