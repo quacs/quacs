@@ -3,7 +3,6 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Home from "@/views/Home.vue";
 import Search from "@/views/Search.vue";
 import Sponsors from "@/views/Sponsors.vue";
-import { trackView } from "@/utilities";
 
 Vue.use(VueRouter);
 
@@ -59,13 +58,6 @@ router.afterEach((to, from) => {
   }
 
   to_path = `${process.env.BASE_URL.slice(0, -1)}${to_path}`;
-  if (initialDataSent) {
-    // Don't track referrers for subsequent page changes
-    trackView(to_path, "");
-  } else {
-    initialDataSent = true;
-    trackView(to_path);
-  }
 });
 
 export default router;

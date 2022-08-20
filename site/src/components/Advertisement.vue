@@ -4,7 +4,6 @@
 
     <a
       href="https://patreon.com/quacs"
-      v-on:click="track('Visit Patreon', 'Advertiser pull')"
       rel="noopener"
       target="_blank"
       ><span>Want your ad here? Support us on Patreon!</span></a
@@ -14,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { shuffleArray, trackEvent } from "@/utilities";
+import { shuffleArray } from "@/utilities";
 import { Advert } from "@/typings";
 import { advertisers } from "@/sponsors";
 import AdvertImage from "@/components/AdvertImage.vue";
@@ -56,18 +55,6 @@ export default class Advertisement extends Vue {
   }
 
   scheduleAdvertIncrement(): void {
-    /*
-    // This will be called every time the advertisement changes
-    if (this.viewedAdvertisements[this.currentAdvertisementIdx] !== true) {
-      this.viewedAdvertisements[this.currentAdvertisementIdx] = true;
-
-      this.track(
-        "View Advertisement",
-        this.advertisements[this.currentAdvertisementIdx].advertiser
-      );
-    }
-    */
-
     setTimeout(() => {
       Vue.set(
         this,
@@ -81,10 +68,6 @@ export default class Advertisement extends Vue {
 
   get currentAdvertisement(): Advert {
     return this.advertisements[this.currentAdvertisementIdx];
-  }
-
-  track(event_value: string, event_type: string): void {
-    trackEvent(event_value, event_type);
   }
 }
 </script>

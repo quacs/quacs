@@ -115,7 +115,7 @@ import { Course, CourseSection } from "@/typings";
 import CourseCard from "@/components/CourseCard.vue";
 import { EventAttributes, createEvents, DateArray } from "ics";
 import { saveAs } from "file-saver";
-import { shortSemToLongSem, trackEvent } from "@/utilities";
+import { shortSemToLongSem } from "@/utilities";
 import { Timeslot } from "@/typings";
 
 Vue.directive("b-tooltip", VBTooltip);
@@ -273,8 +273,6 @@ export default class Schedule extends Vue {
   ////////////////////
 
   copyToClipboard(val: string): void {
-    trackEvent("Copy crn", "schedule");
-
     const tempInput = document.createElement("input");
     // @ts-expect-error: This works so ts is just being dumb
     tempInput.style = "position: absolute; left: -1000px; top: -1000px";
@@ -294,8 +292,6 @@ export default class Schedule extends Vue {
   }
 
   exportIcs(): void {
-    trackEvent("Export ics", "schedule");
-
     const recurrenceDays: { [day: string]: string } = {
       U: "SU",
       M: "MO",

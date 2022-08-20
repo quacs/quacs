@@ -127,7 +127,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapGetters, mapState } from "vuex";
 import { ModalPlugin } from "bootstrap-vue";
 import { Course } from "@/typings";
-import { hasMetAllPrerequisites, trackEvent } from "@/utilities";
+import { hasMetAllPrerequisites } from "@/utilities";
 import CourseInfo from "@/components/sections/CourseInfo.vue";
 
 import Sections from "./sections/Sections.vue";
@@ -268,7 +268,6 @@ export default class CourseCard extends Vue {
   }
 
   showCourseModal(crn: string): void {
-    trackEvent("Course modal", "info-modal");
     this.$bvModal.show("course-info" + crn);
   }
 }

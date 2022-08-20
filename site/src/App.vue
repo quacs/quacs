@@ -107,7 +107,6 @@
       <div class="footer-links">
         <a
           href="https://discord.gg/yXaHkwU"
-          v-on:click="track('Visit Discord', 'Footer')"
           rel="noopener"
           title="Join our development Discord server"
           aria-label="Join our development Discord server"
@@ -116,7 +115,6 @@
         </a>
         <a
           href="https://github.com/quacs/quacs"
-          v-on:click="track('Visit GitHub', 'Footer')"
           rel="noopener"
           title="Visit our GitHub"
           aria-label="Visit our GitHub"
@@ -132,7 +130,6 @@
         /-->
         <a
           href="https://patreon.com/quacs"
-          v-on:click="track('Visit Patreon', 'Footer')"
           rel="noopener"
           title="Sponsor us on Patreon!"
           aria-label="Sponsor us on Patreon!"
@@ -188,7 +185,6 @@ import {
   getLogo,
   shortSemToLongSem,
   shortSemToURL,
-  trackEvent,
 } from "@/utilities";
 
 @Component({
@@ -330,10 +326,6 @@ export default class App extends Vue {
         this.installEvent = null;
       });
     }
-  }
-
-  track(event_value: string, event_type: string): void {
-    trackEvent(event_value, event_type);
   }
 }
 </script>

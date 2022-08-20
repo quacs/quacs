@@ -196,7 +196,6 @@ import {
   BTabs,
   VBTooltip,
 } from "bootstrap-vue";
-import { trackEvent } from "@/utilities";
 
 @Component({
   components: {
@@ -233,10 +232,6 @@ import { trackEvent } from "@/utilities";
       },
       set() {
         const new_val = !this.$store.state.prerequisites.enableChecking;
-        trackEvent(
-          (new_val ? "Enable" : "Disable") + " prerequisites",
-          "prerequisites"
-        );
         this.$store.commit("prerequisites/togglePrerequisiteChecking", new_val);
       },
     },
@@ -258,13 +253,11 @@ export default class Prerequisites extends Vue {
   addCourse(): void {
     // @ts-expect-error: no u typescript, this does exist
     if (this.verifyNewCourse) {
-      trackEvent("Manual add course", "prerequisites");
       this.$store.commit("prerequisites/addPriorCourse", this.newCourse);
     }
   }
 
   removeCourse(course: string): void {
-    trackEvent("Remove course", "prerequisites");
     this.$store.commit("prerequisites/removePriorCourse", course);
   }
 
@@ -286,7 +279,6 @@ export default class Prerequisites extends Vue {
           return;
         }
 
-        trackEvent("Import transcript", "prerequisites");
         for (const term of transcript.terms) {
           for (const course of term.courses) {
             store.commit(
