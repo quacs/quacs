@@ -1,7 +1,6 @@
 <template>
   <a
     :href="advertisement.url"
-    v-on:click="track('Advertisement clicked', advertisement.advertiser)"
     rel="noopener"
     target="_blank"
   >
@@ -34,7 +33,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { shortSemToURL, trackEvent } from "@/utilities";
+import { shortSemToURL } from "@/utilities";
 import { Advert } from "@/typings";
 
 @Component
@@ -45,10 +44,6 @@ export default class AdvertImage extends Vue {
 
   get hasTablet(): boolean {
     return this.advertisement.tablet_path !== undefined;
-  }
-
-  track(event_value: string, event_type: string): void {
-    trackEvent(event_value, event_type);
   }
 }
 </script>

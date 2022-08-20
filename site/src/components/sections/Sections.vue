@@ -190,7 +190,6 @@ import {
   formatTimeslot,
   getSessions,
   hasMetAllPrerequisites,
-  trackEvent,
 } from "@/utilities";
 import { VBTooltip } from "bootstrap-vue";
 
@@ -278,19 +277,10 @@ export default class Section extends Vue {
 
     if (rePopulateConflicts) {
       this.$store.dispatch("schedule/generateSchedulesAndConflicts");
-    } else {
-      // This happens when we're individually changing sections
-      if (selected) {
-        trackEvent("Section added", this.course.subj);
-      } else {
-        trackEvent("Section removed", this.course.subj);
-      }
     }
   }
 
   toggleAll(): void {
-    trackEvent("All toggled", this.course.subj);
-
     let turnedOnAnySection = false;
     for (const section of this.course.sections) {
       if (!this.$store.getters["schedule/isSelected"](section.crn)) {
@@ -390,7 +380,6 @@ export default class Section extends Vue {
   }
 
   showSectionModal(crn: string): void {
-    trackEvent("Section modal", "info-modal");
     this.$bvModal.show("section-info" + crn);
   }
 }

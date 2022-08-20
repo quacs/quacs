@@ -3,7 +3,6 @@
     <b-nav-item-dropdown
       left
       title="Switch between saved course sets"
-      v-on:show="trackShow()"
     >
       <template v-slot:button-content>
         <em class="nav-text" style="font-style: normal">{{
@@ -111,7 +110,6 @@ import {
   VBModal,
 } from "bootstrap-vue";
 import { mapGetters, mapState } from "vuex";
-import { trackEvent } from "@/utilities";
 
 @Component({
   components: {
@@ -145,17 +143,11 @@ import { trackEvent } from "@/utilities";
 export default class CourseSetEdit extends Vue {
   newCourseSetName = "";
 
-  trackShow(): void {
-    trackEvent("Show course sets", "course-set");
-  }
-
   createNewCourseSet(): void {
     // @ts-expect-error: this is in the computed section above
     if (!this.newCourseSetExists) {
       return;
     }
-
-    trackEvent("Add course set", "course-set");
 
     this.$store.dispatch("schedule/addCourseSet", {
       name: this.newCourseSetName,
@@ -165,16 +157,12 @@ export default class CourseSetEdit extends Vue {
   }
 
   removeCourseSet(name: string): void {
-    trackEvent("Remove course set", "course-set");
-
     this.$store.dispatch("schedule/removeCourseSet", {
       name: name,
     });
   }
 
   switchCurrentCourseSet(name: string): void {
-    trackEvent("Change active course set", "course-set");
-
     this.$store.dispatch("schedule/switchCurrentCourseSet", {
       name: name,
     });

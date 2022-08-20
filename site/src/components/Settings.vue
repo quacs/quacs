@@ -6,7 +6,6 @@
         id="timePreference"
         v-model="timePreference"
         :options="timeOptions"
-        v-on:change="trackSettingChange('time-preference', $event)"
       ></b-form-select>
       <br />
       <br />
@@ -15,7 +14,6 @@
         id="colorTheme"
         v-model="colorTheme"
         :options="themeOptions"
-        v-on:change="trackSettingChange('color-theme', $event)"
       ></b-form-select>
       <br />
       <br />
@@ -32,14 +30,8 @@
         v-else
         switch
         v-model="hidePrerequisites"
-        v-on:change="
-          trackSettingChange('hide-prerequisites', $event.toString())
-        "
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
-      >
-      <b-form-checkbox switch v-model="enableTracking"
-        >Enable anonymized usage analytics?</b-form-checkbox
       >
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()"> Close </b-button>
@@ -51,7 +43,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
-import { trackEvent } from "@/utilities";
 
 @Component({
   components: {
@@ -82,23 +73,6 @@ import { trackEvent } from "@/utilities";
         );
       },
     },
-
-    enableTracking: {
-      get() {
-        return this.$store.state.settings.enableTracking;
-      },
-      set() {
-        this.$store.commit(
-          "settings/setTracking",
-          !this.$store.state.settings.trackingEnabled
-        );
-
-        // If we just disabled tracking, this won't actually log any event.
-        // For simplicity it's just hardcoded to enabling, since that's the
-        // only thing which should be tracked by this setting.
-        trackEvent("enable-tracking", "setting");
-      },
-    },
   },
 })
 export default class Settings extends Vue {
@@ -119,9 +93,5 @@ export default class Settings extends Vue {
     { value: "yacs", text: "YACS" },
     { value: "flowing", text: "Flowing" },
   ];
-
-  trackSettingChange(settingName: string, value: string): void {
-    trackEvent(`${settingName}: ${value}`, "setting");
-  }
 }
 </script>
