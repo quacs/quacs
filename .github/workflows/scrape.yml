@@ -275,7 +275,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - scrape-courses-and-prerequisites
-      - scrape-faculty
+      # - scrape-faculty
       # - scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
