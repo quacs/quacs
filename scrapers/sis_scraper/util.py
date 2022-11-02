@@ -127,12 +127,11 @@ def optimize_column_ordering(data, num_columns=3):
 
     optimize_ordering_inner(data, 0, columns, best_result)
 
-    best_result = best_result[0]
-
-    for i in range(len(best_result)):
-        best_result[i] = sorted(
-            best_result[i], key=lambda s: len(s["depts"]), reverse=True
-        )
+    best_result = [
+        sorted(column, key=lambda s: len(s["depts"]), reverse=True)
+        for column in best_result[0]
+        if column
+    ]
 
     best_result = sorted(best_result, key=lambda c: len(c[0]["depts"]), reverse=True)
 
