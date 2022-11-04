@@ -30,7 +30,7 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          apt-get install -y  libxml2-dev libxslt-dev
+          sudo apt-get install -y  libxml2-dev libxslt-dev
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
@@ -71,7 +71,7 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          apt-get install -y  libxml2-dev libxslt-dev
+          sudo apt-get install -y  libxml2-dev libxslt-dev
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
@@ -171,7 +171,7 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          apt-get install -y  libxml2-dev libxslt-dev
+          sudo apt-get install -y  libxml2-dev libxslt-dev
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
@@ -199,7 +199,7 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          apt-get install -y  libxml2-dev libxslt-dev
+          sudo apt-get install -y  libxml2-dev libxslt-dev
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
@@ -227,7 +227,7 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          apt-get install -y  libxml2-dev libxslt-dev
+          sudo apt-get install -y  libxml2-dev libxslt-dev
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
@@ -262,7 +262,7 @@ jobs:
 
       - name: Install pip requirements
         run: |
-          apt-get install -y  libxml2-dev libxslt-dev
+          sudo apt-get install -y  libxml2-dev libxslt-dev
           python -m pip install --upgrade pip
           pip install -r scrapers/requirements.txt
 
