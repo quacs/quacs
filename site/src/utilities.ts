@@ -259,7 +259,9 @@ function getPrerequisiteFormatHtml(
       .map((childPrereq) =>
         getPrerequisiteFormatHtml(priorCourses, childPrereq, false)
       )
-      .join(` ${prereq.type} `);
+      .join(
+              prereq.type == "and" ? " and "+(topLevel ? "<br />" : "") : " or "
+      );
 
     if (!topLevel) {
       output += ")";
