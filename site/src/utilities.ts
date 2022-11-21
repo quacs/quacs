@@ -259,7 +259,7 @@ function getPrerequisiteFormatHtml(
       .map((childPrereq) =>
         getPrerequisiteFormatHtml(priorCourses, childPrereq, false)
       )
-      .join(prereq.type);
+      .join(` ${prereq.type} `);
 
     if (!topLevel) {
       output += ")";
