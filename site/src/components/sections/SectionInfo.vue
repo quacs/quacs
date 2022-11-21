@@ -14,7 +14,7 @@
             <div class="font-weight-bold">{{ mode.display }}:</div>
             <ul>
               <li
-                v-for="course in prerequisiteData.corequisites"
+                v-for="course in prerequisiteData[mode.internal]"
                 :key="course"
                 class="course"
                 :class="{
@@ -29,6 +29,63 @@
             </ul>
           </template>
         </div>
+      </template>
+      <template v-if="prerequisiteData.restrictions">
+        <template
+          v-for="type in [
+            { internal: 'level', display: 'levels' },
+            { internal: 'campus', display: 'campuses' },
+            { internal: 'classification', display: 'classes' },
+            { internal: 'degree', display: 'degrees' },
+            { internal: 'college', display: 'schools' },
+            { internal: 'major', display: 'majors' },
+            {
+              internal: 'field_of_study',
+              display: 'fields of study (major or minor)',
+            },
+          ]"
+        >
+          <div :key="type">
+            <template v-if="prerequisiteData.restrictions[type.internal]">
+              <template
+                v-if="prerequisiteData.restrictions[type.internal].must_be"
+              >
+                <div class="font-weight-bold">
+                  Restricted to the following {{ type.display }}:
+                </div>
+                <ul>
+                  <li
+                    v-for="restriction in prerequisiteData.restrictions[
+                      type.internal
+                    ].must_be"
+                    :key="restriction"
+                    class="type.internal"
+                  >
+                    {{ restriction }}
+                  </li>
+                </ul>
+              </template>
+              <template
+                v-if="prerequisiteData.restrictions[type.internal].may_not_be"
+              >
+                <div class="font-weight-bold">
+                  Not allowed for the following {{ type.display }}:
+                </div>
+                <ul>
+                  <li
+                    v-for="restriction in prerequisiteData.restrictions[
+                      type.internal
+                    ].may_not_be"
+                    :key="restriction"
+                    class="restriction"
+                  >
+                    {{ restriction }}
+                  </li>
+                </ul>
+              </template>
+            </template>
+          </div>
+        </template>
       </template>
       <div class="font-weight-bold">Dates Offered:</div>
       <div>
