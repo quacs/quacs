@@ -3,6 +3,7 @@
     <b-modal :id="'section-info' + section.crn" :title="modalTitle">
       <div class="font-weight-bold">Prerequisites:</div>
       <span v-html="formatPrerequisites(section.crn) || 'None'"></span>
+      <br /><br />
       <template
         v-for="mode in [
           { internal: 'corequisites', display: 'Corequisites' },
