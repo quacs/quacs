@@ -197,7 +197,7 @@ def parse_semester_page(text):
             if "p_disp_catalog_syllabus" in link:
                 continue
             if link == "javascript:history.go(-1)":
-                break
+                return
             yield link_data["href"]
 
 

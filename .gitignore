@@ -129,10 +129,14 @@ scrapers/*/data
 
 scrapers/*.json
 scrapers/*/*.json
+scrapers/*/*/*.json
+scrapers/*/*/*/*.json
 scrapers/*.msgpack
 scrapers/*/*.msgpack
 scrapers/*.rs
 scrapers/*/*.rs
+scrapers/*/*/*.rs
+scrapers/*/*/*/*.rs
 
 
 # Python
