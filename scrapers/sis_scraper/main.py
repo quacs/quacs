@@ -190,7 +190,8 @@ def parse_semester_page(text):
     soup = BeautifulSoup(text).findAll("td", {"class": "ntdefault"})
 
     for s in soup:
-        if (link_data := s.find("a")) != None:
+        links = s.findAll("a")
+        for link_data in links:
             link = link_data["href"]
             # These links are confused for classes
             if "p_disp_catalog_syllabus" in link:
