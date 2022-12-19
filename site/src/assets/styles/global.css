@@ -17,6 +17,10 @@ body {
   color: var(--card-header-text);
 }
 
+.card {
+  border-color: var(--card-border-color);
+}
+
 .navbar.bg-light {
   background: var(--navbar-background) !important;
 }
@@ -93,6 +97,18 @@ body {
 
 .table {
   color: var(--table-text);
+}
+
+.table-bordered td {
+  border-color: var(--table-border);
+}
+
+.table thead th {
+  border-color: var(--table-border);
+}
+
+.table-bordered {
+  border-color: var(--table-border);
 }
 
 .list-group-item {

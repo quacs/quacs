@@ -7,6 +7,7 @@
   --card-body-background: #fff;
   --card-body-text: #000;
   --card-header-background: #f7f7f7;
+  --card-border-color: #dfdfdf;
   --footer-background: #d3d3d3;
   --navbar-background: #f8f9fa;
   --navbar-unselected-text: rgb(0 0 0 / 50%);
@@ -33,6 +34,7 @@
   --modal-close-x-hover: #000;
   --card-header-hover: #eaeaea;
   --table-text: #212529;
+  --table-border: #dee2e6;
   --course-row-hover: #f0f0f0;
   --conflict-row: #ff6060;
   --conflict-row-hover: #ff7b7b;
