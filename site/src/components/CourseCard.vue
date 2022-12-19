@@ -12,6 +12,7 @@
     <!-- header -->
     <div
       class="card-header course-card-header"
+      :class="{ header_expanded: expanded }"
       v-on:click="toggleExpanded()"
       v-on:keyup.enter="toggleExpanded()"
       tabindex="0"
@@ -123,12 +124,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters, mapState } from "vuex";
-import { ModalPlugin } from "bootstrap-vue";
+import CourseInfo from "@/components/sections/CourseInfo.vue";
 import { Course } from "@/typings";
 import { hasMetAllPrerequisites } from "@/utilities";
-import CourseInfo from "@/components/sections/CourseInfo.vue";
+import { ModalPlugin } from "bootstrap-vue";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { mapGetters, mapState } from "vuex";
 
 import Sections from "./sections/Sections.vue";
 
@@ -302,10 +303,21 @@ export default class CourseCard extends Vue {
 
 .course-card-header {
   cursor: pointer;
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) calc(0.25rem - 1px)
+    calc(0.25rem - 1px);
+  transition: border-radius 0.5s;
 }
 
 .card-header:hover {
   background: var(--card-header-hover);
+}
+
+.header_expanded {
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+}
+
+.section-grow {
+  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
 }
 
 .course-code {
