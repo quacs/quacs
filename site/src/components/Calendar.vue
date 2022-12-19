@@ -42,6 +42,11 @@
                 backgroundColor: colors(session.section.crn).bg,
                 borderColor: colors(session.section.crn).border,
                 color: colors(session.section.crn).text,
+                scrollbarColor:
+                  colors(session.section.crn).sbThumb +
+                  colors(session.section.crn).sbTrack,
+                '--sb-track-color': colors(session.section.crn).sbTrack,
+                '--sb-thumb-color': colors(session.section.crn).sbThumb,
               }"
             >
               <div class="event-text">
@@ -253,6 +258,8 @@ export default class Calendar extends Vue {
         bg: "var(--calendar-bg-color-" + colorIdx + ")",
         border: "var(--calendar-border-color-" + colorIdx + ")",
         text: "var(--calendar-text-color-" + colorIdx + ")",
+        sbTrack: "var(--calendar-sb-track-color-" + colorIdx + ")",
+        sbThumb: "var(--calendar-sb-thumb-color-" + colorIdx + ")",
       };
     };
   }
@@ -325,7 +332,7 @@ $dayFontSize: 0.8em;
 .calendar-event {
   display: block;
   box-sizing: border-box;
-  border-top: 1px solid #e7e7e7 !important; //temp fix for the borders not showing
+  // border-top: 1px solid #e7e7e7 !important; //temp fix for the borders not showing
   border-right: 1px solid #e7e7e7 !important;
   position: absolute;
   //height: 20%;
@@ -345,6 +352,16 @@ $dayFontSize: 0.8em;
     height: 100%;
     overflow-y: auto;
   }
+}
+
+div.calendar-event ::-webkit-scrollbar {
+  background: var(--sub-track-color);
+  width: 8px;
+}
+
+div.calendar-event ::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 10vw; /* just a high number to keep it round */
 }
 </style>
 
