@@ -44,6 +44,7 @@
                 color: colors(session.section.crn).text,
                 scrollbarColor:
                   colors(session.section.crn).sbThumb +
+                  ' ' +
                   colors(session.section.crn).sbTrack,
                 '--sb-track-color': colors(session.section.crn).sbTrack,
                 '--sb-thumb-color': colors(session.section.crn).sbThumb,
