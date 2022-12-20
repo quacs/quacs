@@ -57,8 +57,6 @@
   /* Calendar colors -- used to distinguish classes */
   --num-calendar-colors: 7;
 
-
-
   /* Calendar class color 0 */
   --calendar-bg-color-0: #ffe9cf;
   --calendar-border-color-0: #ff9332;
