@@ -355,7 +355,7 @@ $dayFontSize: 0.8em;
 }
 
 div.calendar-event ::-webkit-scrollbar {
-  background: var(--sub-track-color);
+  background: var(--sb-track-color);
   width: 8px;
 }
 
