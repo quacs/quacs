@@ -160,7 +160,7 @@ async def get_class_information(class_url):
                     days = []
                 location = meeting_data[3].strip()
                 date = meeting_data[4].split(" - ")
-                instructor = util.get_instructor_string(meeting_data[6])
+                instructor = util.get_instructor_string(meeting_data[-1])
 
                 timeslots.append(
                     {
