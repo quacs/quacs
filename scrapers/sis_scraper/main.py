@@ -39,8 +39,8 @@ async def get_section_information(section_url):
         credit_data = (
             re.search(r"<br/>\n(.*?) Credits\n<br/>", str(soup)).group(1).strip()
         )
-        
-        credit_data = list(map(float,re.split("TO|OR",credit_data)))
+
+        credit_data = list(map(float, re.split("TO|OR", credit_data)))
         credit_min = min(credit_data)
         credit_max = max(credit_data)
 
@@ -348,6 +348,9 @@ async def main():
             for term in os.listdir("data/"):
                 if term not in semesters:
                     semesters.append(term)
+        elif len(sys.argv[-1]) == 6:
+            print(f"Parsing {sys.argv[-1]} only")
+            semesters = [sys.argv[-1]]
         else:
             print("Parsing relevant terms only")
 
