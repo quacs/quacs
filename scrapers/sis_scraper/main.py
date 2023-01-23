@@ -39,10 +39,10 @@ async def get_section_information(section_url):
         credit_data = (
             re.search(r"<br/>\n(.*?) Credits\n<br/>", str(soup)).group(1).strip()
         )
-        if "TO" in credit_data:
-            credit_min, credit_max = (float(x.strip()) for x in credit_data.split("TO"))
-        else:
-            credit_min = credit_max = float(credit_data)
+
+        credit_data = list(map(float, re.split("TO|OR", credit_data)))
+        credit_min = min(credit_data)
+        credit_max = max(credit_data)
 
         section_dict["credMin"] = credit_min
         section_dict["credMax"] = credit_max
@@ -160,7 +160,7 @@ async def get_class_information(class_url):
                     days = []
                 location = meeting_data[3].strip()
                 date = meeting_data[4].split(" - ")
-                instructor = util.get_instructor_string(meeting_data[6])
+                instructor = util.get_instructor_string(meeting_data[-1])
 
                 timeslots.append(
                     {
@@ -348,6 +348,9 @@ async def main():
             for term in os.listdir("data/"):
                 if term not in semesters:
                     semesters.append(term)
+        elif len(sys.argv[-1]) == 6:
+            print(f"Parsing {sys.argv[-1]} only")
+            semesters = [sys.argv[-1]]
         else:
             print("Parsing relevant terms only")
 
