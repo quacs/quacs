@@ -346,7 +346,7 @@ async def scrape_terms_list():
                 map(lambda tag : tag["value"],raw_terms)
             ))
         with open(f"data/terms_in_course_search.json", "w+") as outfile:
-            outfile.write("[%s]" % terms.join(","));
+            outfile.write('["%s"]' % '","'.join(terms))
 
 async def main():
     if sys.argv[-1] == "help" or sys.argv[-1] == "--help":
