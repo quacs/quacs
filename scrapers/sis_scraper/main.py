@@ -359,7 +359,7 @@ async def main():
     ) as session:
         semesters = util.get_semesters_to_scrape()
         await scrape_terms_list()
-        """
+        
         if sys.argv[-1] == "ALL_YEARS":
             print("Parsing all years")
             for term in os.listdir("data/"):
@@ -373,7 +373,6 @@ async def main():
 
         for semester in semesters:
             await scrape_term(semester)
-        """
 
 if __name__ == "__main__":
     asyncio.run(main())
