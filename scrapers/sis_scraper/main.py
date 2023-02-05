@@ -331,6 +331,22 @@ async def scrape_term(term):
         json.dump(prerequisites, outfile, sort_keys=True, indent=2)
     print("Done")
 
+async def scrape_terms_list():
+    global session
+    async with session.get(
+        "https://sis.rpi.edu/rss/bwckschd.p_disp_dyn_sched",
+    ) as request:
+        soup = BeautifulSoup(await request.text())
+        raw_terms = soup.find(
+            "select",
+            {"id": "term_input_id"},
+        ).findAll("option")
+        terms = list(filter(
+                lambda val : val != '',
+                map(lambda tag : tag["value"],raw_terms)
+            ))
+        with open(f"data/terms_in_course_search.json", "w+") as outfile:
+            outfile.write("[%s]" % terms.join(","));
 
 async def main():
     if sys.argv[-1] == "help" or sys.argv[-1] == "--help":
@@ -342,7 +358,8 @@ async def main():
         connector=aiohttp.TCPConnector(limit=5)
     ) as session:
         semesters = util.get_semesters_to_scrape()
-
+        await scrape_terms_list()
+"""
         if sys.argv[-1] == "ALL_YEARS":
             print("Parsing all years")
             for term in os.listdir("data/"):
@@ -356,7 +373,7 @@ async def main():
 
         for semester in semesters:
             await scrape_term(semester)
-
+"""
 
 if __name__ == "__main__":
     asyncio.run(main())
