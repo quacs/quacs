@@ -51,7 +51,7 @@ export default class UnofficialScheduleModal extends Vue {
   }
 
   get semsInSearch(): string[] {
-    return process.env.VUE_APP_SEMS_IN_SEARCH.split(",");
+    return process.env.VUE_APP_SEMS_IN_SEARCH;
   }
 }
 </script>

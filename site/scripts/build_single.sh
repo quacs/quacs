@@ -53,6 +53,7 @@ rm .env
 echo "VUE_APP_CURR_SEM=$CURR_SEMESTER" >>.env
 printf "VUE_APP_SEMS_IN_SEARCH=" >>.env
 cat src/store/data/terms_in_course_search.json >>.env
+echo >>.env
 echo -n "VUE_APP_ALL_SEMS=[" >>.env
 ITER=0
 for directory in $(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0 | sed 's/ /\n/g' | sort -r); do
