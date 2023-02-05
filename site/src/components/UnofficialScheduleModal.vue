@@ -1,7 +1,7 @@
 <template>
   <b-modal
     title="Course offerings are not official!"
-    :visible="false"
+    :visible="!semsInSearch.includes(currentSem)"
     centered
     size="xl"
     :hide-footer="!acceptedThatScheduleIsUnofficial"
@@ -12,9 +12,9 @@
     hide-header-close
   >
     <span>
-      QuACS is currently based off of a pre-release schedule for the spring
-      semester. Course offerings and associated faculty are subject to change,
-      and prerequisite checking is not available.
+      QuACS is currently based off of a pre-release schedule for this semester.
+      Course offerings and associated faculty are heavily subject to change, and
+      prerequisite checking is not available.
     </span>
     <br />
     <br />
@@ -48,6 +48,10 @@ export default class UnofficialScheduleModal extends Vue {
 
   get currentSem(): string {
     return process.env.VUE_APP_CURR_SEM;
+  }
+
+  get semsInSearch(): string[] {
+    return process.env.VUE_APP_SEMS_IN_SEARCH.split(",");
   }
 }
 </script>
