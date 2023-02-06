@@ -81,7 +81,9 @@ def get_course_data(course_ids: List[str]) -> Dict:
         url = f"{BASE_URL}content{DEFAULT_QUERY_PARAMS}&method=getItems&options[full]=1&catalog={catalog_id}&type=courses{ids}"
 
         response = requests.get(url)
-        courses_xml = html.fromstring(response.content.decode(response.apparent_encoding))
+        courses_xml = html.fromstring(
+            response.content.decode(response.apparent_encoding)
+        )
         courses = courses_xml.xpath("//courses/course[not(@child-of)]")
         for course in courses:
             subj = course.xpath("./content/prefix/text()")[0].strip()
