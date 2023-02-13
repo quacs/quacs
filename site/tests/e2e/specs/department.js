@@ -25,7 +25,7 @@ describe("Test department page", () => {
             .first()
             .within(() => {
               cy.containsOne("01-15982");
-              cy.containsOne("Uzma Mushtaque, Shianne Hulbert");
+              cy.containsOne("Uzma Mushtaque, Shianne M. Hulbert");
               cy.containsOne("05/24 - 08/20");
               cy.containsOne("4/30 seats available");
               cy.getOne(".time-cell-M").containsOne("10:30a-12:10p");
