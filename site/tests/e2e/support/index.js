@@ -20,12 +20,11 @@ export const SEMESTER = "202105";
 
 export const SCHOOLS = {
   Architecture: 2,
-  "Information Technology and Web Science": 1,
-  Engineering: 10,
-  "Management and Technology": 1,
-  Science: 11,
+  Engineering: 9,
+  "Management and Technology": 2,
+  Science: 9,
   "Humanities, Arts, and Social Sciences": 13,
-  "Interdisciplinary and Other": 5,
+  "Interdisciplinary and Other": 1,
 };
 
 beforeEach(() => {
