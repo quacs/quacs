@@ -23,6 +23,8 @@ jobs:
 
       - name: Run tests
         working-directory: ./site
+        env:
+          TERM: dumb
         run: |
           yarn test:serve &
           until $(curl --silent --fail http://localhost:8080/summer2021 | grep QuACS --silent); do printf '.'; sleep 1; done

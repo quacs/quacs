@@ -51,7 +51,7 @@ def get_course_ids(catalog_id: str) -> List[str]:
 def get_catalog_description(fields, course_name):
     found_name = False
     # The description is always the next full field after the course name field
-    # Itearte through the fields until we find the course name field and then return the next filled field
+    # Iterate through the fields until we find the course name field and then return the next filled field
     for field in fields:
         if found_name == False:
             name = field.xpath(".//*/text()")
@@ -80,7 +80,10 @@ def get_course_data(course_ids: List[str]) -> Dict:
         ids = "".join([f"&ids[]={id}" for id in chunk])
         url = f"{BASE_URL}content{DEFAULT_QUERY_PARAMS}&method=getItems&options[full]=1&catalog={catalog_id}&type=courses{ids}"
 
-        courses_xml = html.fromstring(requests.get(url).text.encode("utf8"))
+        response = requests.get(url)
+        courses_xml = html.fromstring(
+            response.content.decode(response.apparent_encoding)
+        )
         courses = courses_xml.xpath("//courses/course[not(@child-of)]")
         for course in courses:
             subj = course.xpath("./content/prefix/text()")[0].strip()
