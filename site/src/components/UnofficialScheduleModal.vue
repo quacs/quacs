@@ -24,10 +24,10 @@
       schedule.</b-form-checkbox
     >
     <br />
-    <span
-      >(Please click the checkbox to accept the warning and continue to the
-      website)</span
-    >
+    <span>
+      (Please click the checkbox to accept the warning and continue to the
+      website)
+    </span>
   </b-modal>
 </template>
 
