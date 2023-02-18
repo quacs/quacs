@@ -76,7 +76,7 @@ async def get_section_information(section_url):
         for seat_type in seating[1:]:
             kind = seat_type.find("th").text
             capacity, actual, remaining = tuple(
-                int(x.text) for x in seat_type.findAll("td")
+                int(x.text.replace("\xa0", "0")) for x in seat_type.findAll("td")
             )
 
             if kind == "Seats":
@@ -348,6 +348,16 @@ async def main():
             for term in os.listdir("data/"):
                 if term not in semesters:
                     semesters.append(term)
+        elif sys.argv[-1] == "OLD_YEARS":
+            print("Parsing pre-2008 years only")
+            # weird special case:
+            # 199805 = first half summer, 199807 = second half
+            # all other summers just put both in XXXX05
+            # also, 199801 is not in SIS
+            semesters = ["199805", "199807", "199809"]
+            for year in range(1999, 2008):
+                for term in ["01", "05", "09"]:
+                    semesters.append(str(year) + str(term))
         elif len(sys.argv[-1]) == 6:
             print(f"Parsing {sys.argv[-1]} only")
             semesters = [sys.argv[-1]]
