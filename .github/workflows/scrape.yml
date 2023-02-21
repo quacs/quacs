@@ -16,7 +16,7 @@ on:
         type: choice
         default: 'CURRENT_YEAR'
         options:
-        - CURRENT_YEARS
+        - CURRENT_YEAR
         - ALL_YEARS
         - OLD_YEARS
 
