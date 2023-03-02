@@ -1,0 +1,128 @@
+[data-theme="true-dark"] {
+  --card-header-text: #000;
+  --raw-link: #000;
+  --background: #000;
+  --global-text: #000;
+  --global-text-hover: #000;
+  --card-body-background: #000;
+  --card-body-text: #000;
+  --card-header-background: #000;
+  --card-border-color: #000;
+  --footer-background: #000;
+  --navbar-background: #000;
+  --navbar-unselected-text: #000;
+  --navbar-unselected-text-hover: #000;
+  --navbar-text-focus: #000;
+  --navbar-text-disabled: #000;
+  --navbar-text-active: #000;
+  --navbar-text-show: #000;
+  --modal-header-background: #000;
+  --modal-header-text: #000;
+  --modal-body-background: #000;
+  --modal-body-text: #000;
+  --modal-footer-background: #000;
+  --modal-footer-text: #000;
+  --btn-primary-background: #000;
+  --btn-primary-text: #000;
+  --btn-secondary-background: #000;
+  --btn-secondary-text: #000;
+  --btn-box-shadow: #000;
+  --btn-transition: #000;
+  --btn-border-radius: #000;
+  --btn-border: #000;
+  --department-link-hover: #000;
+  --select-background: #000;
+  --select-text: #000;
+  --modal-close-x-hover: #000;
+  --card-header-hover: #000;
+  --table-text: #000;
+  --table-border: #000;
+  --course-row-hover: #000;
+  --conflict-row: #000;
+  --conflict-row-hover: #000;
+  --selected-row: #000;
+  --selected-row-hover: #000;
+  --list-group-item-background: #000;
+  --calendar-label: #000;
+  --toast-background: #000;
+  --toast-text: #000;
+  --trash-btn: #000;
+  --trash-btn-hover: #000;
+  --prerequisite-jumbotron: #000;
+  --prerequisite-warn-icon: #000;
+  --prerequisite-error-icon: #000;
+  --prerequisite-text: #000;
+  --taken-course: #000;
+  --not-taken-course: #000;
+  --overlay-background: #000;
+
+  /* Calendar colors -- used to distinguish classes */
+  --num-calendar-colors: #000;
+
+  /* Calendar class color 0 */
+  --calendar-bg-color-0: #000;
+  --calendar-border-color-0: #000;
+  --calendar-text-color-0: #000;
+  --calendar-sb-track-color-0: #000;
+  --calendar-sb-thumb-color-0: #000;
+
+  /* scroll bar colors will default to whatever the background and border colors are,
+  but are also available to be overridden by themes */
+
+  /* Calendar class color 1 */
+  --calendar-bg-color-1: #000;
+  --calendar-border-color-1: #000;
+  --calendar-text-color-1: #000;
+  --calendar-sb-track-color-1: #000;
+  --calendar-sb-thumb-color-1: #000;
+
+  /* Calendar class color 2 */
+  --calendar-bg-color-2: #000;
+  --calendar-border-color-2: #000;
+  --calendar-text-color-2: #000;
+  --calendar-sb-track-color-2: #000;
+  --calendar-sb-thumb-color-2: #000;
+
+  /* Calendar class color 3 */
+  --calendar-bg-color-3: #000;
+  --calendar-border-color-3: #000;
+  --calendar-text-color-3: #000;
+  --calendar-sb-track-color-3: #000;
+  --calendar-sb-thumb-color-3: #000;
+
+  /* Calendar class color 4 */
+  --calendar-bg-color-4: #000;
+  --calendar-border-color-4: #000;
+  --calendar-text-color-4: #000;
+  --calendar-sb-track-color-4: #000;
+  --calendar-sb-thumb-color-4: #000;
+
+  /* Calendar class color 5 */
+  --calendar-bg-color-5: #000;
+  --calendar-border-color-5: #000;
+  --calendar-text-color-5: #000;
+  --calendar-sb-track-color-5: #000;
+  --calendar-sb-thumb-color-5: #000;
+
+  /* Calendar class color 6 */
+  --calendar-bg-color-6: #000;
+  --calendar-border-color-6: #000;
+  --calendar-text-color-6: #000;
+  --calendar-sb-track-color-6: #000;
+  --calendar-sb-thumb-color-6: #000;
+}
+
+[data-theme="true-dark"] img,
+[data-theme="true-dark"] .sponsor {
+  visibility: hidden;
+}
+
+[data-theme="true-dark"] input,
+[data-theme="true-dark"] select {
+  border: none;
+  background-color: #000;
+}
+
+[data-theme="true-dark"] .custom-control-label {
+  color: #000;
+}

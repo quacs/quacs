@@ -24,8 +24,10 @@ export default class Settings extends VuexModule {
 
   @Mutation
   setColorTheme(newVal: string): void {
-    this.colorTheme = newVal;
-    setColorTheme(this.colorTheme);
+    if (newVal != "true-dark") {
+      this.colorTheme = newVal;
+    }
+    setColorTheme(newVal);
   }
 
   @Mutation
