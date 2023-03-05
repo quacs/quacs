@@ -49,6 +49,10 @@ jobs:
         working-directory: ./scrapers
         run: python3 sis_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
+      - name: Scrape csci topics courses
+        working-directory: ./scrapers
+        run: python3 csci_topics_scraper/main.py ${{ github.event.inputs.scrape_all }}
+
       - name: Upload semester-specific data
         uses: actions/upload-artifact@v2
         with:
