@@ -49,10 +49,6 @@ jobs:
         working-directory: ./scrapers
         run: python3 sis_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
-      - name: Scrape csci topics courses
-        working-directory: ./scrapers
-        run: python3 csci_topics_scraper/main.py ${{ github.event.inputs.scrape_all }}
-
       - name: Upload semester-specific data
         uses: actions/upload-artifact@v2
         with:
@@ -273,6 +269,33 @@ jobs:
         with:
           name: catalog
           path: scrapers/data
+  
+  scrape-csci-topics:
+    name: Scrape CSCI topics courses
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Intall pip requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scrapers/requirements.txt
+
+      - name: Scrape csci topics descriptions from Goldschmidt's website
+        working-directory: ./scrapers
+        run: python3 csci_topics_scraper/main.py ${{ github.event.inputs.scrape_all }}
+
+      - name: Upload data
+        uses: actions/upload-artifact@v2
+        with:
+          name: csci_topics
+          path: scrapers/data
 
   commit-data:
     name: Commit changes
@@ -283,6 +306,7 @@ jobs:
       # - scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
+      - scrape-csci-topics
     steps:
       - name: Checkout data repository
         uses: actions/checkout@v2
@@ -322,11 +346,11 @@ jobs:
 
           # Merge hard_coded + csci_topics data into the final values
           for directory in $(find semester_data/* -type d  | grep -v "hard_coded" | xargs -0); do
-            for type in {"hard_coded","csci_topics"}; do
-              if [ -d "$directory/$type" ]; then
-                if [ -f "$directory/$type/catalog.json" ]; then
+            for merge_data in {"hard_coded","csci_topics"}; do
+              if [ -d "$directory/$merge_data" ]; then
+                if [ -f "$directory/$merge_data/catalog.json" ]; then
                     echo "$directory/catalog.json"
-                    jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/$type/catalog.json" > "$directory/temp_catalog.json"
+                    jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/$merge_data/catalog.json" > "$directory/temp_catalog.json"
                     mv "$directory/temp_catalog.json" "$directory/catalog.json"
                     truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
                 fi
