@@ -39,8 +39,8 @@ def goldy_term_to_sis_term(term):
     elif term[0] == "f":
         postfix = "09"
     else:
-        # placeholder
-        postfix = "00"
+        # This shouldn't be possible
+        raise Exception(f"Invalid term code {term}")
     return "20" + term[1:] + postfix
 
 
@@ -50,17 +50,26 @@ async def scrape_txt(filename, list_of_terms):
     async with session.get(url) as request:
         data = re.split(r"\n======*", (await request.text()))
         for term_data in data:
+            # Goldschmidt uses Windows which is why we have to deal with \r,
+            # which I do by just removing all of them. Then we split on
+            # double-newlines, because each course "block" is split by these.
+            # Sometimes course "blocks" are split by more than 2 newlines
+            # so this results in empty or whitespace-only strings, which is
+            # why "if line.strip()" is there, to get rid of them.
             courses = [
                 line
                 for line in re.split("\n\n", term_data.replace("\r", ""))
                 if line.strip()
             ]
+            # Sometimes Goldy puts the heading of the file in brackets,
+            # and sometimes he does not, so we remove the left bracket
+            # and split on whitespace to find the term name.
             term = courses[0].replace("[", "").split(" ")[0]
-            list_of_terms[goldy_term_to_sis_term(term)] = scrape_term(courses[1:])
+            list_of_terms[goldy_term_to_sis_term(term)] = parse_term(courses[1:])
         return list_of_terms
 
 
-def scrape_term(courses):
+def parse_term(courses):
     catalog = {}
     for course in courses:
         lines = [line for line in course.split("\n") if line.strip()]
@@ -94,17 +103,17 @@ async def main():
     async with aiohttp.ClientSession(
         connector=aiohttp.TCPConnector(limit=5)
     ) as session:
-        links = await get_topics_txts()
+        filenames = await get_topics_txts()
 
         if sys.argv[-1] != "ALL_YEARS":
             print("Scraping most recent terms only")
-            links = links[:2]
+            filenames = filenames[:2]
         else:
             print("Scraping all years possible")
 
         terms = {}
-        for link in links:
-            await scrape_txt(link, terms)
+        for filename in filenames:
+            await scrape_txt(filename, terms)
 
         for term, data in terms.items():
             with open(f"data/{term}/csci_topics/catalog.json", "w") as outfile:
