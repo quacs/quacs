@@ -27,7 +27,7 @@ async def get_topics_txts():
             if "topics-courses" in link["href"]:
                 out.append(link["href"])
         # sorts reverse chronologically
-        return sorted(out,reverse=True,key=lambda x:(x[1:3]+str.lower(x[0])))
+        return sorted(out, reverse=True, key=lambda x: (x[1:3] + str.lower(x[0])))
 
 
 def goldy_term_to_sis_term(term):
@@ -104,7 +104,7 @@ async def main():
 
         terms = {}
         for link in links:
-            await scrape_txt(link,terms)
+            await scrape_txt(link, terms)
 
         for term, data in terms.items():
             with open(f"data/{term}/csci_topics/catalog.json", "w") as outfile:
