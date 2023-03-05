@@ -57,7 +57,7 @@ async def scrape_txt(filename, list_of_terms):
             # so this results in empty or whitespace-only strings, which is
             # why "if line.strip()" is there, to get rid of them.
             courses = [
-                line
+                line.strip()
                 for line in re.split("\n\n", term_data.replace("\r", ""))
                 if line.strip()
             ]
