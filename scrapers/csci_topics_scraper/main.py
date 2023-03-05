@@ -26,14 +26,8 @@ async def get_topics_txts():
         for link in links:
             if "topics-courses" in link["href"]:
                 out.append(link["href"])
-        return out
-
-
-async def scrape_all_txts(links):
-    list_of_terms = {}
-    for link in links:
-        await scrape_txt(link, list_of_terms)
-    return list_of_terms
+        # sorts reverse chronologically
+        return sorted(out,reverse=True,key=lambda x:(x[1:3]+str.lower(x[0])))
 
 
 def goldy_term_to_sis_term(term):
@@ -101,10 +95,18 @@ async def main():
         connector=aiohttp.TCPConnector(limit=5)
     ) as session:
         links = await get_topics_txts()
-        # had to do it like this because summer and fall are
-        # put together in the same file
-        all_terms = await scrape_all_txts(links)
-        for term, data in all_terms.items():
+
+        if sys.argv[-1] != "ALL_YEARS":
+            print("Scraping most recent terms only")
+            links = links[:2]
+        else:
+            print("Scraping all years possible")
+
+        terms = {}
+        for link in links:
+            await scrape_txt(link,terms)
+
+        for term, data in terms.items():
             with open(f"data/{term}/csci_topics/catalog.json", "w") as outfile:
                 json.dump(data, outfile, sort_keys=True, indent=2)
 
