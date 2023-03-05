@@ -30,7 +30,7 @@ async def get_topics_txts():
         return sorted(out, reverse=True, key=lambda x: (x[1:3] + str.lower(x[0])))
 
 
-def goldy_term_to_sis_term(term):
+def goldschmidt_term_to_sis_term(term):
     term = term.lower()
     if term[0] == "s":
         postfix = "01"
@@ -61,11 +61,11 @@ async def scrape_txt(filename, list_of_terms):
                 for line in re.split("\n\n", term_data.replace("\r", ""))
                 if line.strip()
             ]
-            # Sometimes Goldy puts the heading of the file in brackets,
+            # Sometimes Goldschmidt puts the heading of the file in brackets,
             # and sometimes he does not, so we remove the left bracket
             # and split on whitespace to find the term name.
             term = courses[0].replace("[", "").split(" ")[0]
-            list_of_terms[goldy_term_to_sis_term(term)] = parse_term(courses[1:])
+            list_of_terms[goldschmidt_term_to_sis_term(term)] = parse_term(courses[1:])
         return list_of_terms
 
 
@@ -82,7 +82,7 @@ def parse_term(courses):
         subj = course_title[0]
         entry["subj"] = subj
 
-        # This is because Goldy sometimes includes the section
+        # This is because Goldschmidt sometimes includes the section
         # number and sometimes does not
         if all(elmt.isdigit() for elmt in course_title[2].split("-")):
             # if it is a section number, do not put that in the course name
