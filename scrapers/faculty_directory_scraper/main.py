@@ -9,11 +9,12 @@ from bs4 import BeautifulSoup
 import json
 import re
 
+
 BASE_URL = "https://faculty.rpi.edu"
 
 
 def clean_string(string):
-    # Remove newlines and nbsp
+    # Remove newlines and nbsp, as well as repeated spaces.
     return re.sub("[\n\u00a0 ]+", " ", string).strip()
 
 
@@ -35,6 +36,9 @@ async def get_professor(session, url, data):
         else:
             entry["title"] = ""
 
+        # This makes it so that professors are listed as
+        # "Associate Professor, Computer Science"
+        # for example, if the data is available.
         department = soup.find("div", {"class": "field--name-field-primary-department"})
         if department:
             if title:
@@ -58,7 +62,8 @@ async def get_professor(session, url, data):
             )
 
         if education := soup.find("div", {"class": "field--name-field-education"}):
-            # The purpose of doing this is to prevent paragraphs in the education block from getting smushed together
+            # The purpose of doing this is to prevent paragraphs in the
+            # education block from getting smushed together.
             entry["education"] = clean_string(
                 " ".join(
                     [
@@ -83,7 +88,7 @@ async def get_professor(session, url, data):
         if office := soup.find("div", {"class": "field--name-field-location"}):
             entry["office"] = clean_string(office.text)
 
-        # Disabled to avoid spamming professors.
+        # Disabled to avoid making it easy to spam professors.
         # if phone := soup.find("div",{"class":"field--name-field-phone-number"}):
         #    entry["phone"] = clean_string(phone.text)
 
@@ -92,8 +97,8 @@ async def get_professor(session, url, data):
         ):
             entry["website"] = clean_string(website.text)
 
+        # Disabled to avoid making it easy to spam professors.
         # Scraping the email and ORCID (see Gittens) is a bit more complicated because neither is not wrapped in a classed tag
-        # Disabled to avoid spamming professors.
         # if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
         #    if email := envelope_icon.parent.find("a"):
         #        entry["email"] = clean_string(email.text)
