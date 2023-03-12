@@ -99,7 +99,8 @@ async def get_professor(session, url, data):
             entry["website"] = clean_string(website.text)
 
         # Disabled to avoid making it easy to spam professors.
-        # Scraping the email and ORCID (see Gittens) is a bit more complicated because neither is not wrapped in a classed tag
+        # Scraping the email and ORCID (see Gittens) is a bit more complicated
+        # because neither is wrapped in a classed tag
         # if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
         #    if email := envelope_icon.parent.find("a"):
         #        entry["email"] = clean_string(email.text)
