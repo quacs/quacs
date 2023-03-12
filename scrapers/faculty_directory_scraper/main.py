@@ -20,7 +20,7 @@ def clean_string(string):
 
 async def get_professor(session, url, data):
     async with session.get(f"{BASE_URL}/{url}") as response:
-        print(url)
+        print(f"Scraping {url}...")
         soup = BeautifulSoup(await response.text("utf8"), "lxml")
         entry = {}
         entry["name"] = soup.find("span", {"class": "field--name-title"}).text
@@ -62,23 +62,24 @@ async def get_professor(session, url, data):
             )
 
         if education := soup.find("div", {"class": "field--name-field-education"}):
-            # The purpose of doing this is to prevent paragraphs in the
-            # education block from getting smushed together.
             entry["education"] = clean_string(
-                " ".join(
-                    [
-                        x.text.strip()
-                        for x in education.find(
-                            "div", {"class", "field__item"}
-                        ).find_all(recursive=False)
-                    ]
-                )
+                education.find("div", {"class", "field__item"}).get_text(" ")
             )
 
         if teaching := soup.find(
             "div", {"class": "field--name-field-teaching-summary"}
         ):
-            entry["teaching"] = clean_string(teaching.text)
+            entry["teaching"] = clean_string(teaching.get_text(" "))
+
+        if office_hours := soup.find(
+            "div", {"class": "field--name-field-office-hours"}
+        ):
+            entry["office_hours"] = clean_string(office_hours.get_text(" "))
+
+        if current_teaching := soup.find(
+            "div", {"class": "field--name-field-current-courses"}
+        ):
+            entry["current-teaching"] = clean_string(current_teaching.get_text(" "))
 
         if research := soup.find(
             "div", {"class": "field--name-field-research-summary"}
