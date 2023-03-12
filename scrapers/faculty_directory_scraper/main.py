@@ -637,9 +637,11 @@ FACULTY_LIST = [
     "/ze-wille-kielwagen",
 ]
 
+
 def clean_string(string):
     # Remove newlines and nbsp
-    return re.sub("[\n\u00a0 ]+"," ",string).strip()
+    return re.sub("[\n\u00a0 ]+", " ", string).strip()
+
 
 async def get_professor(session, url, data):
     async with session.get(f"{BASE_URL}/{url}") as response:
@@ -647,63 +649,82 @@ async def get_professor(session, url, data):
         soup = BeautifulSoup(await response.text("utf8"), "lxml")
         entry = {}
         entry["name"] = soup.find("span", {"class": "field--name-title"}).text
-        entry["portrait"] = BASE_URL+soup.find("img",{"class":"img-fluid"})["src"]
+        entry["portrait"] = BASE_URL + soup.find("img", {"class": "img-fluid"})["src"]
 
         # Sometimes the title is in field--name-field-title, and sometimes
         # it is in field--name-field-alternate-title. No explanation for that.
-        if not (title := soup.find("div",{"class","field--name-field-title"})):
-            title = soup.find("div",{"class","field--name-field-alternate-title"})
+        if not (title := soup.find("div", {"class", "field--name-field-title"})):
+            title = soup.find("div", {"class", "field--name-field-alternate-title"})
         # There will also sometimes not be a title.
         if title:
             entry["title"] = title.text
         else:
             entry["title"] = ""
 
-        department = soup.find("div",{"class":"field--name-field-primary-department"})
+        department = soup.find("div", {"class": "field--name-field-primary-department"})
         if department:
             if title:
                 entry["title"] += ", "
             entry["title"] += department.text
 
         # Sometimes there is no bio, focus area, etc so we use this if statement patterm
-        if bio := soup.find("div",{"class":"field--name-field-bio"}):
+        if bio := soup.find("div", {"class": "field--name-field-bio"}):
             entry["biography"] = clean_string(bio.text)
 
-        if area := soup.find("div",{"class":"field--name-field-focus-area"}):
-            entry["area"] = clean_string(area.find("div",{"class","field__item"}).text)
+        if area := soup.find("div", {"class": "field--name-field-focus-area"}):
+            entry["area"] = clean_string(
+                area.find("div", {"class", "field__item"}).text
+            )
 
-        if primary_area := soup.find("div",{"class":"field--name-field-primary-research-focus"}):
-            entry["primary-area"] = clean_string(primary_area.find("div",{"class","field__item"}).text)
+        if primary_area := soup.find(
+            "div", {"class": "field--name-field-primary-research-focus"}
+        ):
+            entry["primary-area"] = clean_string(
+                primary_area.find("div", {"class", "field__item"}).text
+            )
 
-        if education := soup.find("div",{"class":"field--name-field-education"}):
+        if education := soup.find("div", {"class": "field--name-field-education"}):
             # The purpose of doing this is to prevent paragraphs in the education block from getting smushed together
-            entry["education"] = clean_string(" ".join([
-                x.text.strip() for x in education.find("div",{"class","field__item"}).find_all(recursive=False)
-            ]))
+            entry["education"] = clean_string(
+                " ".join(
+                    [
+                        x.text.strip()
+                        for x in education.find(
+                            "div", {"class", "field__item"}
+                        ).find_all(recursive=False)
+                    ]
+                )
+            )
 
-        if teaching := soup.find("div",{"class":"field--name-field-teaching-summary"}):
+        if teaching := soup.find(
+            "div", {"class": "field--name-field-teaching-summary"}
+        ):
             entry["teaching"] = clean_string(teaching.text)
 
-        if research := soup.find("div",{"class":"field--name-field-research-summary"}):
+        if research := soup.find(
+            "div", {"class": "field--name-field-research-summary"}
+        ):
             entry["research"] = clean_string(research.text)
 
-        if office := soup.find("div",{"class":"field--name-field-location"}):
+        if office := soup.find("div", {"class": "field--name-field-location"}):
             entry["office"] = clean_string(office.text)
 
         # Disabled to avoid spamming professors.
-        #if phone := soup.find("div",{"class":"field--name-field-phone-number"}):
+        # if phone := soup.find("div",{"class":"field--name-field-phone-number"}):
         #    entry["phone"] = clean_string(phone.text)
 
-        if website := soup.find("div",{"class":"field--name-field-website field--type-link"}):
+        if website := soup.find(
+            "div", {"class": "field--name-field-website field--type-link"}
+        ):
             entry["website"] = clean_string(website.text)
 
         # Scraping the email and ORCID (see Gittens) is a bit more complicated because neither is not wrapped in a classed tag
         # Disabled to avoid spamming professors.
-        #if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
+        # if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
         #    if email := envelope_icon.parent.find("a"):
         #        entry["email"] = clean_string(email.text)
-        
-        if orcid_icon := soup.find("i",{"class":"fa-orcid"}):
+
+        if orcid_icon := soup.find("i", {"class": "fa-orcid"}):
             entry["orcid"] = clean_string(orcid_icon.parent.text)
 
         data[url] = entry
