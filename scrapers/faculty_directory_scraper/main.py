@@ -41,7 +41,7 @@ async def get_professor(session, url, data):
                 entry["title"] += ", "
             entry["title"] += department.text
 
-        # Sometimes there is no bio, focus area, etc so we use this if statement patterm
+        # Sometimes there is no bio, focus area, etc so we use this if statement pattern.
         if bio := soup.find("div", {"class": "field--name-field-bio"}):
             entry["biography"] = clean_string(bio.text)
 
