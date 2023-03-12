@@ -690,16 +690,18 @@ async def get_professor(session, url, data):
         if office := soup.find("div",{"class":"field--name-field-location"}):
             entry["office"] = clean_string(office.text)
 
-        if phone := soup.find("div",{"class":"field--name-field-phone-number"}):
-            entry["phone"] = clean_string(phone.text)
+        # Disabled to avoid spamming professors.
+        #if phone := soup.find("div",{"class":"field--name-field-phone-number"}):
+        #    entry["phone"] = clean_string(phone.text)
 
         if website := soup.find("div",{"class":"field--name-field-website field--type-link"}):
             entry["website"] = clean_string(website.text)
 
         # Scraping the email and ORCID (see Gittens) is a bit more complicated because neither is not wrapped in a classed tag
-        if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
-            if email := envelope_icon.parent.find("a"):
-                entry["email"] = clean_string(email.text)
+        # Disabled to avoid spamming professors.
+        #if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
+        #    if email := envelope_icon.parent.find("a"):
+        #        entry["email"] = clean_string(email.text)
         
         if orcid_icon := soup.find("i",{"class":"fa-orcid"}):
             entry["orcid"] = clean_string(orcid_icon.parent.text)
