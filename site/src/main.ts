@@ -16,6 +16,7 @@ import "@/assets/styles/themes/black.css";
 import "@/assets/styles/themes/colorful.css";
 import "@/assets/styles/themes/yacs.css";
 import "@/assets/styles/themes/flowing.css";
+import "@/assets/styles/themes/true-dark.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {

@@ -10,11 +10,16 @@ body {
 .card-body {
   background: var(--card-body-background);
   color: var(--card-body-text);
+  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
 }
 
 .card-header {
   background: var(--card-header-background);
   color: var(--card-header-text);
+}
+
+.card {
+  border-color: var(--card-border-color);
 }
 
 .navbar.bg-light {
@@ -82,6 +87,12 @@ body {
   transition: var(--btn-transition);
 }
 
+.btn-secondary {
+  background: var(--btn-secondary-background);
+  border-color: var(--btn-secondary-background);
+  color: var(--btn-secondary-text);
+}
+
 .custom-select {
   background: var(--select-background);
   color: var(--select-text);
@@ -93,6 +104,18 @@ body {
 
 .table {
   color: var(--table-text);
+}
+
+.table-bordered td {
+  border-color: var(--table-border);
+}
+
+.table thead th {
+  border-color: var(--table-border);
+}
+
+.table-bordered {
+  border-color: var(--table-border);
 }
 
 .list-group-item {

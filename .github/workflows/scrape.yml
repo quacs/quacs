@@ -11,9 +11,14 @@ on:
   workflow_dispatch:
     inputs:
       scrape_all:
-        description: 'Scrape all semesters (ALL_YEARS|CURRENT_YEAR)'
+        description: 'Scrape all semesters (CURRENT_YEAR|ALL_YEARS|OLD_YEARS)'
         required: true
+        type: choice
         default: 'CURRENT_YEAR'
+        options:
+        - CURRENT_YEAR
+        - ALL_YEARS
+        - OLD_YEARS
 
 jobs:
   scrape-courses-and-prerequisites:

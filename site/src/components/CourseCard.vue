@@ -12,6 +12,7 @@
     <!-- header -->
     <div
       class="card-header course-card-header"
+      :class="{ header_expanded: expanded }"
       v-on:click="toggleExpanded()"
       v-on:keyup.enter="toggleExpanded()"
       tabindex="0"
@@ -196,12 +197,15 @@ export default class CourseCard extends Vue {
   expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin(): string {
-    return (
-      this.course.sections[0].credMin +
-      (this.course.sections[0].credMin !== this.course.sections[0].credMax
-        ? "-" + this.course.sections[0].credMax
-        : "")
+    const min = this.course.sections.reduce(
+      (prev, sec) => Math.min(prev, sec.credMin),
+      Infinity
     );
+    const max = this.course.sections.reduce(
+      (prev, sec) => Math.max(prev, sec.credMax),
+      -Infinity
+    );
+    return min + (min !== max ? "-" + max : "");
   }
 
   get attributes(): string {
@@ -302,10 +306,21 @@ export default class CourseCard extends Vue {
 
 .course-card-header {
   cursor: pointer;
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) calc(0.25rem - 1px)
+    calc(0.25rem - 1px);
+  transition: border-radius 0.5s;
 }
 
 .card-header:hover {
   background: var(--card-header-hover);
+}
+
+.header_expanded {
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+}
+
+.section-grow {
+  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
 }
 
 .course-code {
