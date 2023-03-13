@@ -87,6 +87,12 @@ body {
   transition: var(--btn-transition);
 }
 
+.btn-secondary {
+  background: var(--btn-secondary-background);
+  border-color: var(--btn-secondary-background);
+  color: var(--btn-secondary-text);
+}
+
 .custom-select {
   background: var(--select-background);
   color: var(--select-text);
