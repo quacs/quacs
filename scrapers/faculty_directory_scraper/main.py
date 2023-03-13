@@ -15,7 +15,12 @@ BASE_URL = "https://faculty.rpi.edu"
 
 def clean_string(string):
     # Remove newlines and nbsp, as well as repeated spaces.
-    return re.sub("[\n\u00a0 ]+", " ", string).strip()
+    string = re.sub("[\n\u00a0 ]+", " ", string)
+    # "founder of lightexture , where she designs"
+    # =>
+    # "founder of lightexture, where she designs"
+    # https://faculty.rpi.edu/yael-erel
+    return re.sub(" +([,.])",r"\1",string).strip()
 
 
 async def get_professor(session, url, data):
@@ -30,6 +35,7 @@ async def get_professor(session, url, data):
         # it is in field--name-field-alternate-title. No explanation for that.
         if not (title := soup.find("div", {"class", "field--name-field-title"})):
             title = soup.find("div", {"class", "field--name-field-alternate-title"})
+
         # There will also sometimes not be a title.
         if title:
             entry["title"] = title.text
@@ -38,73 +44,39 @@ async def get_professor(session, url, data):
 
         # This makes it so that professors are listed as
         # "Associate Professor, Computer Science"
-        # for example, if the data is available.
+        # for example, if the data is available. If there is no title but there
+        # is a department, then it just lists the department.
         department = soup.find("div", {"class": "field--name-field-primary-department"})
         if department:
             if title:
                 entry["title"] += ", "
             entry["title"] += department.text
 
-        # Sometimes there is no bio, focus area, etc so we use this if statement pattern.
-        if bio := soup.find("div", {"class": "field--name-field-bio"}):
-            entry["biography"] = clean_string(bio.text)
+        # Scrape a bunch of things
+        for key, cl in {
+            "area": "focus-area",
+            "primary-area": "primary-research-focus",
+            "education": "education",
+        }.items():
+            if tag := soup.find("div", {"class": f"field--name-field-{cl}"}):
+                entry[key] = clean_string(
+                    tag.find("div", {"class", "field__item"}).get_text(" ")
+                )
 
-        if area := soup.find("div", {"class": "field--name-field-focus-area"}):
-            entry["area"] = clean_string(
-                area.find("div", {"class", "field__item"}).text
-            )
+        for key, cl in {
+            "biography": "bio",
+            "teaching": "teaching-summary",
+            "office-hours": "office-hours",
+            "current-teaching": "current-teaching",
+            "research": "research-summary",
+            "office": "location",
+            "website": "website",
+        }.items():
+            if tag := soup.find("div", f"field--name-field-{cl}"):
+                entry[key] = clean_string(tag.get_text(" "))
 
-        if primary_area := soup.find(
-            "div", {"class": "field--name-field-primary-research-focus"}
-        ):
-            entry["primary-area"] = clean_string(
-                primary_area.find("div", {"class", "field__item"}).text
-            )
-
-        if education := soup.find("div", {"class": "field--name-field-education"}):
-            entry["education"] = clean_string(
-                education.find("div", {"class", "field__item"}).get_text(" ")
-            )
-
-        if teaching := soup.find(
-            "div", {"class": "field--name-field-teaching-summary"}
-        ):
-            entry["teaching"] = clean_string(teaching.get_text(" "))
-
-        if office_hours := soup.find(
-            "div", {"class": "field--name-field-office-hours"}
-        ):
-            entry["office_hours"] = clean_string(office_hours.get_text(" "))
-
-        if current_teaching := soup.find(
-            "div", {"class": "field--name-field-current-courses"}
-        ):
-            entry["current-teaching"] = clean_string(current_teaching.get_text(" "))
-
-        if research := soup.find(
-            "div", {"class": "field--name-field-research-summary"}
-        ):
-            entry["research"] = clean_string(research.text)
-
-        if office := soup.find("div", {"class": "field--name-field-location"}):
-            entry["office"] = clean_string(office.text)
-
-        # Disabled to avoid making it easy to spam professors.
-        # if phone := soup.find("div",{"class":"field--name-field-phone-number"}):
-        #    entry["phone"] = clean_string(phone.text)
-
-        if website := soup.find(
-            "div", {"class": "field--name-field-website field--type-link"}
-        ):
-            entry["website"] = clean_string(website.text)
-
-        # Disabled to avoid making it easy to spam professors.
-        # Scraping the email and ORCID (see Gittens) is a bit more complicated
-        # because neither is wrapped in a classed tag
-        # if envelope_icon := soup.find("i",{"class":"fa-envelope"}):
-        #    if email := envelope_icon.parent.find("a"):
-        #        entry["email"] = clean_string(email.text)
-
+        # Scraping the ORCID (see Gittens) is a bit more complicated
+        # because it isn't wrapped in a tag that is easily findable
         if orcid_icon := soup.find("i", {"class": "fa-orcid"}):
             entry["orcid"] = clean_string(orcid_icon.parent.text)
 
