@@ -33,7 +33,9 @@ async def get_professor(session, url, data):
 
         # Sometimes the title is in field--name-field-title, and sometimes
         # it is in field--name-field-alternate-title. No explanation for that.
-        title = soup.find("div", {"class", "field--name-field-title"}) or soup.find("div", {"class", "field--name-field-alternate-title"})
+        title = soup.find("div", {"class", "field--name-field-title"}) or soup.find(
+            "div", {"class", "field--name-field-alternate-title"}
+        )
 
         # There will also sometimes not be a title.
         if title:
