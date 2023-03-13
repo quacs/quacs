@@ -52,7 +52,6 @@ async def get_professor(session, url, data):
                 entry["title"] += ", "
             entry["title"] += department.text
 
-        # Scrape a bunch of things
         for key, cl in {
             "area": "focus-area",
             "primary-area": "primary-research-focus",
