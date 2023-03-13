@@ -116,7 +116,9 @@ async def main():
             await scrape_txt(filename, terms)
 
         for term, data in terms.items():
-            with open(f"data/{term}/csci_topics/catalog.json", "w") as outfile:
+            filename = f"data/{term}/csci_topics/catalog.json"
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, "w") as outfile:
                 json.dump(data, outfile, sort_keys=True, indent=2)
 
 
