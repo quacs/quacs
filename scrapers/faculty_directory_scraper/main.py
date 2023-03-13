@@ -20,7 +20,7 @@ def clean_string(string):
     # =>
     # "founder of lightexture, where she designs"
     # https://faculty.rpi.edu/yael-erel
-    return re.sub(" +([,.])",r"\1",string).strip()
+    return re.sub(" +([,.])", r"\1", string).strip()
 
 
 async def get_professor(session, url, data):
