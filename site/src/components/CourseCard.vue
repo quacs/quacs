@@ -197,12 +197,15 @@ export default class CourseCard extends Vue {
   expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin(): string {
-    return (
-      this.course.sections[0].credMin +
-      (this.course.sections[0].credMin !== this.course.sections[0].credMax
-        ? "-" + this.course.sections[0].credMax
-        : "")
+    const min = this.course.sections.reduce(
+      (prev, sec) => Math.min(prev, sec.credMin),
+      Infinity
     );
+    const max = this.course.sections.reduce(
+      (prev, sec) => Math.max(prev, sec.credMax),
+      -Infinity
+    );
+    return min + (min !== max ? "-" + max : "");
   }
 
   get attributes(): string {
