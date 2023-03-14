@@ -72,10 +72,12 @@ def scrape_professor(soup):
         if tag := soup.find("div", f"field--name-field-{cl}"):
             entry[key] = clean_string(tag.get_text(" "))
 
-    # Scraping the ORCID (see Gittens) is a bit more complicated
-    # because it isn't wrapped in a tag that is easily findable
+    # Scraping the ORCID and LinkedIn is a bit more complicated
+    # because they aren't wrapped in a tag that is easily findable
     if orcid_icon := soup.find("i", {"class": "fa-orcid"}):
         entry["orcid"] = clean_string(orcid_icon.parent.text)
+    if linkedin_icon := soup.find("i",{"class":"fa-linkedin"}):
+        entry["linkedin"] = clean_string(linkedin_icon.parent["href"])
 
     return entry
 
