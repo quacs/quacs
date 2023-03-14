@@ -7,6 +7,7 @@ import os
 import re
 import json
 import sys
+import copy
 
 # External dependnecies
 import aiohttp
@@ -94,7 +95,7 @@ def parse_term(courses):
         crses = course_title[1].split("/")
         for crse in crses:
             entry["crse"] = crse
-            catalog["-".join([subj, crse])] = entry
+            catalog["-".join([subj, crse])] = copy.deepcopy(entry)
     return catalog
 
 
