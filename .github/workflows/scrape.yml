@@ -340,17 +340,19 @@ jobs:
             rsync -avzh --ignore-missing-args catalog/$DIR_BASENAME/* "$directory" || true
           done
 
-          rsync -avz courses/ data/semester_data/
+          rsync -avzh courses/ data/semester_data/
 
-          cp prereq_graph/prereq_graph.json data/
+          rsync -avzh prereq_graph/prereq_graph.json data/
 
           rsync -avzh --ignore-missing-args faculty/faculty.json data || true
 
-          # rsync -avzh --ignore-missing-args hass_pathways/hass_pathways.json data || true
+          rsync -avzh --ignore-missing-args hass_pathways/hass_pathways.json data || true
 
           rsync -avzh --ignore-missing-args transfer/transfer.json data || true
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
+
+          rsync -avzh --ignore-missing-args csci_topics/ data/semester_data/ || true
 
           cd data
 
@@ -359,10 +361,10 @@ jobs:
             for merge_data in {"hard_coded","csci_topics"}; do
               if [ -d "$directory/$merge_data" ]; then
                 if [ -f "$directory/$merge_data/catalog.json" ]; then
-                    echo "$directory/catalog.json"
-                    jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/$merge_data/catalog.json" > "$directory/temp_catalog.json"
-                    mv "$directory/temp_catalog.json" "$directory/catalog.json"
-                    truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
+                  echo "$directory/catalog.json"
+                  jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/$merge_data/catalog.json" > "$directory/temp_catalog.json"
+                  mv "$directory/temp_catalog.json" "$directory/catalog.json"
+                  truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
                 fi
               fi
             done
