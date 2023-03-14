@@ -351,9 +351,9 @@ jobs:
           rsync -avzh --ignore-missing-args transfer/transfer.json data || true
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
-          
+
           rsync -avzh --ignore-missing-args csci_topics/ data/semester_data/ || true
-          
+
           cd data
 
           # Merge hard_coded + csci_topics data into the final values
