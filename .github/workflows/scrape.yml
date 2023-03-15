@@ -11,9 +11,14 @@ on:
   workflow_dispatch:
     inputs:
       scrape_all:
-        description: 'Scrape all semesters (ALL_YEARS|CURRENT_YEAR)'
+        description: 'Scrape all semesters (CURRENT_YEAR|ALL_YEARS|OLD_YEARS)'
         required: true
+        type: choice
         default: 'CURRENT_YEAR'
+        options:
+        - CURRENT_YEAR
+        - ALL_YEARS
+        - OLD_YEARS
 
 jobs:
   scrape-courses-and-prerequisites:
@@ -269,16 +274,49 @@ jobs:
         with:
           name: catalog
           path: scrapers/data
+  
+  scrape-csci-topics:
+    name: Scrape CSCI topics courses
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Intall pip requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scrapers/requirements.txt
+
+      - name: Scrape csci topics descriptions from Goldschmidt's website
+        working-directory: ./scrapers
+        run: python3 csci_topics_scraper/main.py ${{ github.event.inputs.scrape_all }}
+
+      - name: Upload data
+        uses: actions/upload-artifact@v2
+        with:
+          name: csci_topics
+          path: scrapers/data
 
   commit-data:
     name: Commit changes
     runs-on: ubuntu-latest
     needs:
       - scrape-courses-and-prerequisites
-      # - scrape-faculty
-      # - scrape-hass-pathways
+      - scrape-faculty
+      - scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
+      - scrape-csci-topics
+    if: |
+      always()
+      && contains(needs.scrape-courses-and-prerequisites.result,'success')
+      && contains(needs.scrape-prereq-graph.result,'success')
+      && contains(needs.scrape-catalog.result,'success')
     steps:
       - name: Checkout data repository
         uses: actions/checkout@v2
@@ -302,30 +340,34 @@ jobs:
             rsync -avzh --ignore-missing-args catalog/$DIR_BASENAME/* "$directory" || true
           done
 
-          rsync -avz courses/ data/semester_data/
+          rsync -avzh courses/ data/semester_data/
 
-          cp prereq_graph/prereq_graph.json data/
+          rsync -avzh prereq_graph/prereq_graph.json data/
 
           rsync -avzh --ignore-missing-args faculty/faculty.json data || true
 
-          # rsync -avzh --ignore-missing-args hass_pathways/hass_pathways.json data || true
+          rsync -avzh --ignore-missing-args hass_pathways/hass_pathways.json data || true
 
           rsync -avzh --ignore-missing-args transfer/transfer.json data || true
 
           rsync -avzh --ignore-missing-args transfer_guides/ data/transfer_guides/ || true
 
+          rsync -avzh --ignore-missing-args csci_topics/ data/semester_data/ || true
+
           cd data
 
-          # Merge any hard_coded data into the final values
+          # Merge hard_coded + csci_topics data into the final values
           for directory in $(find semester_data/* -type d  | grep -v "hard_coded" | xargs -0); do
-            if [ -d "$directory/hard_coded" ]; then
-              if [ -f "$directory/hard_coded/catalog.json" ]; then
+            for merge_data in {"hard_coded","csci_topics"}; do
+              if [ -d "$directory/$merge_data" ]; then
+                if [ -f "$directory/$merge_data/catalog.json" ]; then
                   echo "$directory/catalog.json"
-                  jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/hard_coded/catalog.json" > "$directory/temp_catalog.json"
+                  jq -a -s '.[0] * .[1]' "$directory/catalog.json" "$directory/$merge_data/catalog.json" > "$directory/temp_catalog.json"
                   mv "$directory/temp_catalog.json" "$directory/catalog.json"
                   truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
+                fi
               fi
-            fi
+            done
           done
 
           # Generate catalogs for any folders missing catalogs
