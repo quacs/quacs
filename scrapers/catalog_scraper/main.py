@@ -113,8 +113,7 @@ def save_catalog(data: Dict, year: str):
 
 if __name__ == "__main__":
     if sys.argv[-1] == "help" or sys.argv[-1] == "--help":
-        print(f"USAGE: python3 {sys.argv[0]} [ALL_YEARS]")
-        sys.exit(1)
+        raise SystemExit(f"USAGE: python3 {sys.argv[0]} [ALL_YEARS]")
 
     catalogs = get_catalogs()
 
@@ -127,6 +126,9 @@ if __name__ == "__main__":
     for index, (year, catalog_id) in enumerate(tqdm(catalogs)):
         course_ids = get_course_ids(catalog_id)
         data = get_course_data(course_ids)
+        if not data:
+            raise SystemExit("Catalog API returned blank, not saving")
+
         save_catalog(data, year)
 
         # Save the final catalog for the next year to account for delays in uploading the catalog
