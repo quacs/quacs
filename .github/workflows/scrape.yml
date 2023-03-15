@@ -316,7 +316,6 @@ jobs:
       always()
       && contains(needs.scrape-courses-and-prerequisites.result,'success')
       && contains(needs.scrape-prereq-graph.result,'success')
-      && contains(needs.scrape-catalog.result,'success')
     steps:
       - name: Checkout data repository
         uses: actions/checkout@v2
