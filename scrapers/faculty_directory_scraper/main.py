@@ -76,7 +76,7 @@ def scrape_professor(soup):
     # because they aren't wrapped in a tag that is easily findable
     if orcid_icon := soup.find("i", {"class": "fa-orcid"}):
         entry["orcid"] = clean_string(orcid_icon.parent.text)
-    if linkedin_icon := soup.find("i",{"class":"fa-linkedin"}):
+    if linkedin_icon := soup.find("i", {"class": "fa-linkedin"}):
         entry["linkedin"] = clean_string(linkedin_icon.parent["href"])
 
     return entry
