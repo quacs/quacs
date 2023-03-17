@@ -26,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -39,7 +39,7 @@ jobs:
           pip install -r scrapers/requirements.txt
 
       - name: Clone QuACS Data
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: quacs/quacs-data
           path: scrapers/quacs-data
@@ -55,7 +55,7 @@ jobs:
         run: python3 sis_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload semester-specific data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: courses
           path: scrapers/data/
@@ -66,10 +66,10 @@ jobs:
     needs: [scrape-courses-and-prerequisites]
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
@@ -85,7 +85,7 @@ jobs:
       # with the data already in the quacs-data repo.
 
       - name: Checkout data repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: "scrapers/data"
           repository: "quacs/quacs-data"
@@ -94,7 +94,7 @@ jobs:
           token: ${{ secrets.GITHUBTOKEN }}
 
       - name: Get scraped data
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: scrapers
 
@@ -107,7 +107,7 @@ jobs:
         run: python3 prerequisites_graph/main.py data/semester_data prereq_graph.json
 
       - name: Upload prerequisite graph data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: prereq_graph
           path: scrapers/prereq_graph.json
@@ -118,7 +118,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout degree planner
-  #       uses: actions/checkout@v2
+  #       uses: actions/checkout@v3
   #       with:
   #         path: 'degree-planner'
   #         repository: 'quacs/degree-planner'
@@ -131,7 +131,7 @@ jobs:
   #           chmod +x geckodriver
 
   #     - name: Set up Python
-  #       uses: actions/setup-python@v2
+  #       uses: actions/setup-python@v4
   #       with:
   #         python-version: '3.10'
 
@@ -154,7 +154,7 @@ jobs:
   #           python3 scraper.py refresh_data
 
   #     - name: Upload data
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: degree_requirements
   #         path: degree-planner/*.json
@@ -165,10 +165,10 @@ jobs:
     timeout-minutes: 1
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -182,7 +182,7 @@ jobs:
         run: python3 hass_pathways_scraper/main.py > hass_pathways.json
 
       - name: Upload data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: hass_pathways
           path: scrapers/hass_pathways.json
@@ -192,10 +192,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -209,7 +209,7 @@ jobs:
         run: python3 faculty_directory_scraper/main.py
 
       - name: Upload data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: faculty
           path: scrapers/faculty.json
@@ -219,10 +219,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -236,13 +236,13 @@ jobs:
         run: python3 transfer_scraper/main.py csv
 
       - name: Upload JSON data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: transfer
           path: scrapers/transfer.json
 
       - name: Upload CSV data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: transfer_guides
           path: scrapers/transfer_guides
@@ -253,10 +253,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -270,7 +270,7 @@ jobs:
         run: python3 catalog_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: catalog
           path: scrapers/data
@@ -280,10 +280,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -297,7 +297,7 @@ jobs:
         run: python3 csci_topics_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: csci_topics
           path: scrapers/data
@@ -318,7 +318,7 @@ jobs:
       && contains(needs.scrape-prereq-graph.result,'success')
     steps:
       - name: Checkout data repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: "scrapers/data"
           repository: "quacs/quacs-data"
@@ -327,7 +327,7 @@ jobs:
           token: ${{ secrets.GITHUBTOKEN }}
 
       - name: Get scraped data
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: scrapers
 
@@ -404,10 +404,10 @@ jobs:
   #         DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=${{ secrets.DATADOG_API_KEY }} DD_SITE="datadoghq.com" bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
 
   #     - name: Checkout branch
-  #       uses: actions/checkout@v2
+  #       uses: actions/checkout@v3
 
   #     - name: Set up python
-  #       uses: actions/setup-python@v2
+  #       uses: actions/setup-python@v4
   #       with:
   #         python-version: "3.10"
 
@@ -417,7 +417,7 @@ jobs:
   #         pip install -r scrapers/requirements.txt
 
   #     - name: Checkout data repository
-  #       uses: actions/checkout@v2
+  #       uses: actions/checkout@v3
   #       with:
   #         path: "scrapers/data"
   #         repository: "quacs/quacs-data"

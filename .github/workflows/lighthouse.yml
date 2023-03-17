@@ -6,12 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js for use with actions
-        uses: actions/setup-node@v1.4.4
+        uses: actions/setup-node@v3
         with:
-          version:  16.x
+          node-version:  16.x
 
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
