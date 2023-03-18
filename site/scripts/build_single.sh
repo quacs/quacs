@@ -3,6 +3,7 @@
 # This script builds a single semester (stored in $CURR_SEMESTER).  It relies on some setup
 # from build_entry.sh (namely setting up one-time dependencies like Umami and quacs-data)
 # so it should never be called on its own.
+export NODE_OPTIONS=--openssl-legacy-provider # needed because OpenSSL deprecated hash used in Webpack 4
 
 ROOT_DIRECTORY=$(pwd)
 

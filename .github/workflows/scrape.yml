@@ -31,7 +31,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install pip requirements
         run: |
@@ -71,7 +71,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
       - name: Install pip requirements
         run: |
@@ -133,7 +133,7 @@ jobs:
   #     - name: Set up Python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.10'
+  #         python-version: '3.11'
 
   #     - name: Set up Rust
   #       uses: actions-rs/toolchain@v1
@@ -159,33 +159,33 @@ jobs:
   #         name: degree_requirements
   #         path: degree-planner/*.json
 
-  scrape-hass-pathways:
-    name: Scrape HASS pathways
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
+  # scrape-hass-pathways:
+  #   name: Scrape HASS pathways
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 1
+  #   steps:
+  #     - name: Checkout branch
+  #       uses: actions/checkout@v3
 
-      - name: Set up python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+  #     - name: Set up python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.11'
 
-      - name: Install pip requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scrapers/requirements.txt
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r scrapers/requirements.txt
 
-      - name: Scrape HASS pathways
-        working-directory: ./scrapers
-        run: python3 hass_pathways_scraper/main.py > hass_pathways.json
+  #     - name: Scrape HASS pathways
+  #       working-directory: ./scrapers
+  #       run: python3 hass_pathways_scraper/main.py > hass_pathways.json
 
-      - name: Upload data
-        uses: actions/upload-artifact@v3
-        with:
-          name: hass_pathways
-          path: scrapers/hass_pathways.json
+  #     - name: Upload data
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: hass_pathways
+  #         path: scrapers/hass_pathways.json
 
   scrape-faculty:
     name: Scrape faculty
@@ -197,7 +197,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install pip requirements
         run: |
@@ -224,7 +224,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install pip requirements
         run: |
@@ -258,7 +258,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install pip requirements
         run: |
@@ -285,7 +285,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Intall pip requirements
         run: |
@@ -308,10 +308,11 @@ jobs:
     needs:
       - scrape-courses-and-prerequisites
       - scrape-faculty
-      - scrape-hass-pathways
+      #- scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
       - scrape-csci-topics
+      - scrape-transfer
     if: |
       always()
       && contains(needs.scrape-courses-and-prerequisites.result,'success')
@@ -409,7 +410,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: "3.10"
+  #         python-version: "3.11"
 
   #     - name: Install pip requirements
   #       run: |
