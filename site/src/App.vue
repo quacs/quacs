@@ -26,7 +26,11 @@
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <CourseSetEdit></CourseSetEdit>
-              <b-nav-item-dropdown left :title="shortSemToLongSem(currentSem)">
+              <b-nav-item-dropdown
+                left
+                :title="shortSemToLongSem(currentSem)"
+                class="semDropDown"
+              >
                 <template v-slot:button-content>
                   <em class="nav-text" style="font-style: normal">{{
                     shortSemToLongSem(currentSem)
@@ -443,5 +447,12 @@ body,
 .footer-logo-rotate {
   transform: rotate(360deg);
   transition-duration: 0.5s;
+}
+.semDropDown > ul {
+  overflow-y: scroll;
+  max-height: 25vh;
+  min-height: 5rem;
+  margin-right: 7rem;
+  max-width: 33vw;
 }
 </style>
