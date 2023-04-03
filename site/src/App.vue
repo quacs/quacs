@@ -449,8 +449,10 @@ body,
   transition-duration: 0.5s;
 }
 .semDropDown > ul {
-  overflow: scroll;
+  overflow-y: scroll;
   max-height: 25vh;
   min-height: 5rem;
+  margin-right: 7rem;
+  max-width: 33vw;
 }
 </style>
