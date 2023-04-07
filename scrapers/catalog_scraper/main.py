@@ -11,7 +11,7 @@ from lxml import etree
 BASE_URL = "http://rpi.apis.acalog.com/v1/"
 # It is ok to publish this key because I found it online already public
 DEFAULT_QUERY_PARAMS = "?key=3eef8a28f26fb2bcc514e6f1938929a1f9317628&format=xml"
-CHUNK_SIZE = 500
+CHUNK_SIZE = 100
 
 # returns the list of catalogs with the newest one being first
 # each catalog is a tuple (year, catalog_id) ex: ('2020-2021', 21)
@@ -81,6 +81,7 @@ def get_course_data(course_ids: List[str]) -> Dict:
         url = f"{BASE_URL}content{DEFAULT_QUERY_PARAMS}&method=getItems&options[full]=1&catalog={catalog_id}&type=courses{ids}"
 
         response = requests.get(url)
+        response.raise_for_status()
         courses_xml = html.fromstring(
             response.content.decode(response.apparent_encoding)
         )
