@@ -345,39 +345,35 @@ async def scrape_term_catalog(term):
             json.dump(catalog, outfile, sort_keys=False, indent=2)
 
 
-async def scrape_subject_catalog(term, subj):
+async def scrape_subject_catalog(term, search_subj):
     global session
-    url = f"https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in={term}&one_subj={subj}&sel_crse_strt=0&sel_crse_end=9999&sel_subj=&sel_levl=&sel_schd=&sel_coll=&sel_divs=&sel_dept=&sel_attr="
+    url = f"https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in={term}&one_subj={search_subj}&sel_crse_strt=0&sel_crse_end=9999&sel_subj=&sel_levl=&sel_schd=&sel_coll=&sel_divs=&sel_dept=&sel_attr="
     async with session.get(url) as request:
         soup = BeautifulSoup(await request.text())
         catalog = {}
-        for a in [
-            a
-            for a in soup.find(
-                "table",
-                {
-                    "summary": "This table lists all course detail for the selected term."
-                },
-            ).findAll("a")
-            if "p_disp_course_detail" in a["href"]
-        ]:
+        links = soup.find(
+            "table",
+            {"summary": "This table lists all course detail for the selected term."},
+        ).findAll("a")
+        links = filter(lambda a: "p_disp_course_detail" in a["href"], links)
+        for a in links:
             desc = (
                 a.findNext("td", {"class": "ntdefault"})
                 .contents[0]
                 .strip()
-                .split("\n")[0]
+                .splitlines()[0]
                 .strip()
             )
-            if desc != "":
-                link = a.contents[0].split(" ")
-                code = link[0] + "-" + link[1]
-                catalog[code] = {
-                    "subj": link[0],
-                    "crse": link[1],
-                    "name": util.normalize_class_name(" ".join(link[3:])),
-                    "description": desc,
-                    "source": "SIS",
-                }
+            if desc == "":
+                continue
+            [subj, crse] = a.contents[0].split()
+            catalog[f"{subj}-{crse}"] = {
+                "subj": subj,
+                "crse": crse,
+                "name": util.normalize_class_name(" ".join(link[3:]).strip()),
+                "description": desc,
+                "source": "SIS",
+            }
         return catalog
 
 
