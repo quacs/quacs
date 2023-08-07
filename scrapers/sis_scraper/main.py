@@ -340,26 +340,41 @@ async def scrape_term_catalog(term):
         soup = BeautifulSoup(await request.text())
         catalog = {}
         for subj in map(lambda x: x["value"], soup.find("select").findAll("option")):
-            catalog.update(await scrape_subject(term,subj))
+            catalog.update(await scrape_subject_catalog(term, subj))
         with open(f"data/{term}/catalog_sis.json", "w") as outfile:
             json.dump(catalog, outfile, sort_keys=False, indent=2)
 
 
-async def scrape_subject_catalog(term,subj):
+async def scrape_subject_catalog(term, subj):
     global session
     url = f"https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in={term}&one_subj={subj}&sel_crse_strt=0&sel_crse_end=9999&sel_subj=&sel_levl=&sel_schd=&sel_coll=&sel_divs=&sel_dept=&sel_attr="
     async with session.get(url) as request:
         soup = BeautifulSoup(await request.text())
         catalog = {}
-        for a in [a for a in soup.find("table",{"summary":"This table lists all course detail for the selected term."}).findAll("a") if "p_disp_course_detail" in a["href"]]:
-            desc = a.findNext('td',{"class":"ntdefault"}).contents[0].strip().split("\n")[0].strip()
+        for a in [
+            a
+            for a in soup.find(
+                "table",
+                {
+                    "summary": "This table lists all course detail for the selected term."
+                },
+            ).findAll("a")
+            if "p_disp_course_detail" in a["href"]
+        ]:
+            desc = (
+                a.findNext("td", {"class": "ntdefault"})
+                .contents[0]
+                .strip()
+                .split("\n")[0]
+                .strip()
+            )
             if desc != "":
                 link = a.contents[0].split(" ")
                 code = link[0] + "-" + link[1]
                 catalog[code] = {
                     "subj": link[0],
                     "crse": link[1],
-                    "name": " ".join(link[3:]),
+                    "name": util.normalize_class_name(" ".join(link[3:])),
                     "description": desc,
                     "source": "SIS",
                 }
@@ -400,6 +415,7 @@ async def main():
 
         for semester in semesters:
             await scrape_term(semester)
+            await scrape_term_catalog(semester)
 
 
 if __name__ == "__main__":
