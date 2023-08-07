@@ -97,6 +97,7 @@ def get_course_data(course_ids: List[str]) -> Dict:
                 "crse": crse,
                 "name": course.xpath("./content/name/text()")[0].strip(),
                 "description": get_catalog_description(fields, course_name),
+                "source": "Acalog",
             }
 
     return data
