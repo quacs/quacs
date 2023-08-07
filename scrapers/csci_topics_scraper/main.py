@@ -103,7 +103,7 @@ def parse_term(courses):
 async def main():
     global session
     async with aiohttp.ClientSession(
-        connector=aiohttp.TCPConnector(limit=5)
+        connector=aiohttp.TCPConnector(limit=5, ssl=False)
     ) as session:
         filenames = await get_topics_txts()
 
