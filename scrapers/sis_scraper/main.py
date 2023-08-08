@@ -333,7 +333,7 @@ async def scrape_term(term):
 
 
 async def scrape_term_catalog(term):
-    if not os.path.isdir("data/{term}"):
+    if not os.path.isdir(f"data/{term}"):
         print(f"Term does not exist in data yet, skipping {term} catalog scraping...")
         return
     print(f"Scraping {term} catalog...")
