@@ -361,12 +361,13 @@ async def scrape_subject_catalog(term, search_subj):
                 a.findNext("td", {"class": "ntdefault"})
                 .contents[0]
                 .strip()
-                .splitlines()[0]
+                .split("\n")[0]
                 .strip()
             )
             if desc == "":
                 continue
-            [subj, crse] = a.contents[0].split()
+            link = a.contents[0].split()
+            [subj, crse] = link[:2]
             catalog[f"{subj}-{crse}"] = {
                 "subj": subj,
                 "crse": crse,
