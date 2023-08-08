@@ -333,9 +333,7 @@ async def scrape_term(term):
 
 
 async def scrape_term_catalog(term):
-    if not os.path.isdir("data/{term}"):
-        print(f"Term does not exist in data yet, skipping {term} catalog scraping...")
-        return
+    os.makedirs(f"data/{term}", exist_ok=True)
     print(f"Scraping {term} catalog...")
     global session
     url = f"https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in={term}&sel_crse_strt=&sel_crse_end=&sel_subj=&sel_levl=&sel_schd=&sel_coll=&sel_divs=&sel_dept=&sel_attr="
