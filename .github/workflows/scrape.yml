@@ -358,10 +358,13 @@ jobs:
 
           # Merge SIS catalog + hard_coded + csci_topics data into the final values
           for directory in $(find semester_data/* -type d  | grep -v "hard_coded" | xargs -0); do
-            jq -a -s '.[0] * .[1]' "$directory/catalog_sis.json" "$directory/catalog.json" > "$directory/temp_catalog.json"
-            mv "$directory/temp_catalog.json" "$directory/catalog.json"
-            rm "$directory/catalog_sis.json"
-            truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
+            if [ -f "$directory/catalog_sis.json" ]; then
+              echo "$directory/catalog_sis.json"
+              jq -a -s '.[0] * .[1]' "$directory/catalog_sis.json" "$directory/catalog.json" > "$directory/temp_catalog.json"
+              mv "$directory/temp_catalog.json" "$directory/catalog.json"
+              rm "$directory/catalog_sis.json"
+              truncate -s -1 "$directory/catalog.json" #jq adds a newline at the end of the file that we dont want
+            fi
             for merge_data in {"hard_coded","csci_topics"}; do
               if [ -d "$directory/$merge_data" ]; then
                 if [ -f "$directory/$merge_data/catalog.json" ]; then
