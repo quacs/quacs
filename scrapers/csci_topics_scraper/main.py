@@ -91,6 +91,7 @@ def parse_term(courses):
         else:
             name = course_title[2:]
         entry["name"] = " ".join(name).title()
+        entry["source"] = "CSCI topics"
 
         crses = course_title[1].split("/")
         for crse in crses:
