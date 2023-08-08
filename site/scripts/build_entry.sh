@@ -24,7 +24,7 @@ done
 if test "$BUILD_ALL" != "true"; then
 	# We're only building one semester
 	if test "$BUILD_FOR_TESTS" != "true"; then
-		SEMESTER=$(basename "$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed 's/\/courses.json//g' | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
+		SEMESTER=$(basename "$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed 's,/courses.json,,g' | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)")
 	else
 		echo "Setting semester to testing semester so tests are consistent"
 		# Choose an arch semester for tests because arch semesters have more features to test
@@ -36,7 +36,7 @@ if test "$BUILD_ALL" != "true"; then
 	exit 0
 fi
 
-DIRECTORIES=$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed -e 's/\/courses.json/ /g' -e "s/[^0-9 ]//g" | tr ' ' '\n' | xargs -0)
+DIRECTORIES=$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed -e 's,/courses.json, ,g' -e "s/[^0-9 ]//g" | tr ' ' '\n' | xargs -0)
 if test "$DIFF_BUILD"; then
 	DIFF_DIRECTORIES=$(git -C src/store/data/ diff --name-only HEAD~1 HEAD | grep semester_data | tr "/" "\n" | grep "[0-9]" | sort -u)
 	DIRECTORIES=$(comm -12 <(echo "$DIRECTORIES") <(echo "$DIFF_DIRECTORIES"))
@@ -49,7 +49,7 @@ for directory in $DIRECTORIES; do
 	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
 done
 
-LATEST_SEMESTER=$(python scripts/short_sem_to_long_sem.py $(basename "$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed 's/\/courses.json//g' | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)"))
+LATEST_SEMESTER=$(python scripts/short_sem_to_long_sem.py $(basename "$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed 's,/courses.json,,g' | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)"))
 
 # Create html entry page
 cat <<EOF >"$OUTPUT_DIR/index.html"
