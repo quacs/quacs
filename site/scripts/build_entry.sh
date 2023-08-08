@@ -36,10 +36,10 @@ if test "$BUILD_ALL" != "true"; then
 	exit 0
 fi
 
-if test "$DIFF_BUILD" != "true"; then
-	DIRECTORIES=$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed 's/\/courses.json//g' | xargs -0)
-else
-	DIRECTORIES=$(git -C src/store/data/ diff --name-only HEAD~1 HEAD | grep semester_data | tr "/" "\n" | grep [0-9] | sort -u)
+DIRECTORIES=$(find src/store/data/semester_data/*/courses.json -print0 -maxdepth 0 | sed -e 's/\/courses.json/ /g' -e "s/[^0-9 ]//g" | tr ' ' '\n' | xargs -0)
+if test "$DIFF_BUILD"; then
+	DIFF_DIRECTORIES=$(git -C src/store/data/ diff --name-only HEAD~1 HEAD | grep semester_data | tr "/" "\n" | grep "[0-9]" | sort -u)
+	DIRECTORIES=$(comm -12 <(echo "$DIRECTORIES") <(echo "$DIFF_DIRECTORIES"))
 fi
 
 # We're trying to build all semesters, just do it back to back
