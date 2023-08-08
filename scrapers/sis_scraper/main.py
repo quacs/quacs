@@ -367,8 +367,6 @@ async def scrape_subject_catalog(term, search_subj):
                 .split("\n")[0]
                 .strip()
             )
-            if desc == "":
-                continue
             link = a.contents[0].split()
             [subj, crse] = link[:2]
             catalog[f"{subj}-{crse}"] = {
