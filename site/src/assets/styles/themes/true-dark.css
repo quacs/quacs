@@ -113,10 +113,6 @@
 }
 
 [data-theme="true-dark"] img,
-[data-theme="true-dark"] .sponsor {
-  visibility: hidden;
-}
-
 [data-theme="true-dark"] input,
 [data-theme="true-dark"] select {
   border: none;
