@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    <Advertisement />
-
     <b-card-group columns class="department-cards">
       <b-card
         v-for="school in schools"
@@ -25,11 +23,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { mapState } from "vuex";
 import { BCard, BCardGroup } from "bootstrap-vue";
-import Advertisement from "@/components/Advertisement.vue";
 
 @Component({
   components: {
-    Advertisement,
     "b-card": BCard,
     "b-card-group": BCardGroup,
   },

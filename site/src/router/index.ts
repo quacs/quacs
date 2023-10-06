@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "@/views/Home.vue";
 import Search from "@/views/Search.vue";
-import Sponsors from "@/views/Sponsors.vue";
 
 Vue.use(VueRouter);
 
@@ -23,10 +22,6 @@ const routes: Array<RouteConfig> = [
   {
     path: "/search",
     component: Search,
-  },
-  {
-    path: "/sponsors",
-    component: Sponsors,
   },
   {
     path: "/prerequisites",
