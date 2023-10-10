@@ -1,7 +1,7 @@
 <template>
   <b-modal
     title="Course offerings are not official!"
-    :visible="false"
+    :visible="currentSem === '202401'"
     centered
     size="xl"
     :hide-footer="!acceptedThatScheduleIsUnofficial"
@@ -12,9 +12,10 @@
     hide-header-close
   >
     <span>
-      QuACS is currently based off of a pre-release schedule for the spring
-      semester. Course offerings and associated faculty are subject to change,
-      and prerequisite checking is not available.
+      QuACS is currently based off of incomplete data for this
+      semester. It is still largely a copy/paste of last year's
+      schedule, and is heavily subject to change. Do not consider
+      it accurate in any way.
     </span>
     <br />
     <br />
