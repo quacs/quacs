@@ -7,6 +7,7 @@ import os
 import re
 import json
 import sys
+from datetime import datetime
 
 # External dependnecies
 import aiohttp
@@ -90,7 +91,7 @@ async def get_section_information(section_url):
     return section_dict
 
 
-async def get_class_information(class_url):
+async def get_class_information(class_url, registration_date):
     global session
 
     sections = []
@@ -101,6 +102,11 @@ async def get_class_information(class_url):
 
         # Iterate through each section in the course and retrieve appropriate data
         section_data = data.findAll("th", {"class": "ddtitle", "scope": "colgroup"})
+        registration_date[0] = (
+            re.search(r"Registration Dates: </span>(.*?)\n", str(data))
+            .group(1)
+            .split(" to ")[0]
+        )
         meeting_times = data.findAll(
             "table",
             {
@@ -211,14 +217,16 @@ async def get_classes_with_code(term, code):
         return await request.text()
 
 
-async def scrape_subject(term, name, code):
+async def scrape_subject(term, name, code, registration_date):
     courses_data = {"name": name, "code": code}
     courses_data["courses"] = list(
         filter(
             lambda x: x != None,
             await asyncio.gather(
                 *[
-                    get_class_information(f"https://sis.rpi.edu{clazz}")
+                    get_class_information(
+                        f"https://sis.rpi.edu{clazz}", registration_date
+                    )
                     for clazz in parse_semester_page(
                         await get_classes_with_code(term, code)
                     )
@@ -241,10 +249,20 @@ async def get_subjects_for_term(term):
 
 
 async def scrape_term(term):
+    # This is a list to simulate pass-by-reference, since adding
+    # another return value here would be a pain
+    registration_date = [None]
+
     print(f"Scraping {term}")
     courses = await asyncio.gather(
-        *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
+        *[
+            scrape_subject(term, *subj, registration_date)
+            for subj in await get_subjects_for_term(term)
+        ]
     )
+
+    registration_date = registration_date[0]
+    registration_date = datetime.strptime(registration_date, "%b %d, %Y").strftime("%m/%d/%Y")
 
     # Filter any defunct / empty departments from the list
     courses = list(filter(lambda dept: len(dept["courses"]) > 0, courses))
@@ -323,12 +341,15 @@ async def scrape_term(term):
                 for timeslot in section["timeslots"]:
                     timeslot["dateStart"] = date_to_quacs(timeslot["dateStart"])
                     timeslot["dateEnd"] = date_to_quacs(timeslot["dateEnd"])
+
     with open(f"data/{term}/schools.json", "w") as schools_f:
         json.dump(school_columns, schools_f, sort_keys=False, indent=2)
     with open(f"data/{term}/courses.json", "w") as outfile:
         json.dump(courses, outfile, sort_keys=True, indent=2)
     with open(f"data/{term}/prerequisites.json", "w") as outfile:
         json.dump(prerequisites, outfile, sort_keys=True, indent=2)
+    with open(f"data/{term}/registration_date.txt", "w") as outfile:
+        outfile.write(f"{registration_date}")
     print("Done")
 
 
