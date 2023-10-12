@@ -262,7 +262,9 @@ async def scrape_term(term):
     )
 
     registration_date = registration_date[0]
-    registration_date = datetime.strptime(registration_date, "%b %d, %Y").strftime("%m/%d/%Y")
+    registration_date = datetime.strptime(registration_date, "%b %d, %Y").strftime(
+        "%m/%d/%Y"
+    )
 
     # Filter any defunct / empty departments from the list
     courses = list(filter(lambda dept: len(dept["courses"]) > 0, courses))
