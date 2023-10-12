@@ -59,6 +59,10 @@ for directory in $(find src/store/data/semester_data/* -type d -print0 -maxdepth
 	if ! test -f "$CATALOG_FILE"; then
 		echo "{}" > "$CATALOG_FILE"
 	fi
+	REGISTRATION_DATES_FILE="$directory/registration_dates.json"
+	if ! test -f "$REGISTRATION_DATES_FILE"; then
+		printf '{\n  "registration_closes": "1970-01-01",\n  "registration_opens": "1970-01-01"\n}' > "$REGISTRATION_DATES_FILE"
+	fi
 	if test $ITER -ne 0; then
 		echo -n "," >>.env
 	fi
