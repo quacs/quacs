@@ -1,8 +1,6 @@
 <template>
   <div id="app">
     <div id="wrapper">
-      <UnofficialScheduleModal />
-
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img :src="getLogo" alt="QuACS Home" style="height: 27px"
@@ -74,6 +72,9 @@
         </b-collapse>
       </nav>
 
+      <div v-if="unofficialSchedule">
+        <UnofficialScheduleWarning />
+      </div>
       <div class="container-fluid" style="margin-top: 1rem">
         <div class="row">
           <div class="col-lg-1"></div>
@@ -173,14 +174,14 @@ import {
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
-import UnofficialScheduleModal from "@/components/UnofficialScheduleModal.vue";
+import UnofficialScheduleWarning from "@/components/UnofficialScheduleWarning.vue";
 import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 @Component({
   components: {
     Settings,
     CourseSetEdit,
-    UnofficialScheduleModal,
+    UnofficialScheduleWarning,
     "b-alert": BAlert,
     "b-button": BButton,
     "b-collapse": BCollapse,
@@ -226,6 +227,15 @@ export default class App extends Vue {
 
   get currentSem(): string {
     return process.env.VUE_APP_CURR_SEM;
+  }
+
+  get unofficialSchedule(): boolean {
+    let reg_opens = new Date(
+      this.$store.state.registrationDates.registration_opens
+    ).getTime();
+    let diff = (reg_opens - new Date().getTime()) / 1000;
+    // show the warning if there are at least 10 days until registration period opens
+    return diff / (60 * 60 * 24) >= 10;
   }
 
   get lastUpdated(): string {
