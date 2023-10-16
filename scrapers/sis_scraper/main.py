@@ -91,22 +91,32 @@ async def get_section_information(section_url):
     return section_dict
 
 
-async def get_class_information(class_url, registration_dates):
+async def get_class_information(class_url):
     global session
 
     sections = []
     course_data = {}
+    registration_dates = ()
 
     async with session.get(class_url) as data:
         data = BeautifulSoup(await data.text())
 
         # Iterate through each section in the course and retrieve appropriate data
         section_data = data.findAll("th", {"class": "ddtitle", "scope": "colgroup"})
-        registration_dates[0] = (
-            re.search(r"Registration Dates: </span>(.*?)\n", str(data))
-            .group(1)
-            .split(" to ")
-        )
+
+        # Get registration start and end dates, unless they don't exist/are hidden for
+        # some reason (this happened with arch planning course)
+        dates_rgx= re.search(r"Registration Dates: </span>(.*?)\n", str(data))
+        if(dates_rgx):
+            registration_dates = tuple(
+                datetime.strptime(d.strip(), "%b %d, %Y")
+                for d in (
+                    dates_rgx
+                    .group(1)
+                    .split(" to ")
+                )
+            )
+
         meeting_times = data.findAll(
             "table",
             {
@@ -189,7 +199,7 @@ async def get_class_information(class_url, registration_dates):
         course_data["crse"] = sections[0]["crse"]
         course_data["id"] = f"{course_data['subj']}-{str(course_data['crse']).zfill(4)}"
         course_data["sections"] = sections
-    return course_data
+    return course_data, registration_dates
 
 
 def parse_semester_page(text):
@@ -217,16 +227,14 @@ async def get_classes_with_code(term, code):
         return await request.text()
 
 
-async def scrape_subject(term, name, code, registration_dates):
+async def scrape_subject(term, name, code):
     courses_data = {"name": name, "code": code}
-    courses_data["courses"] = list(
+    subj_data = list(
         filter(
             lambda x: x != None,
             await asyncio.gather(
                 *[
-                    get_class_information(
-                        f"https://sis.rpi.edu{clazz}", registration_dates
-                    )
+                    get_class_information(f"https://sis.rpi.edu{clazz}")
                     for clazz in parse_semester_page(
                         await get_classes_with_code(term, code)
                     )
@@ -234,7 +242,12 @@ async def scrape_subject(term, name, code, registration_dates):
             ),
         )
     )
-    return courses_data
+    if not subj_data:
+        courses_data["courses"], registration_dates = subj_data, ()
+    else:
+        courses_data["courses"], registration_dates = zip(*subj_data)
+        registration_dates = tuple(filter(bool, registration_dates))
+    return courses_data, registration_dates
 
 
 async def get_subjects_for_term(term):
@@ -249,25 +262,20 @@ async def get_subjects_for_term(term):
 
 
 async def scrape_term(term):
-    # This is a list to simulate pass-by-reference, since adding
-    # another return value here would be a pain
-    registration_dates_list = [None]
-
     print(f"Scraping {term}")
-    courses = await asyncio.gather(
-        *[
-            scrape_subject(term, *subj, registration_dates_list)
-            for subj in await get_subjects_for_term(term)
-        ]
-    )
 
-    registration_dates = [
-        datetime.strptime(d.strip(), "%b %d, %Y").strftime("%Y-%m-%d")
-        for d in registration_dates_list[0]
-    ]
+    courses, registration_dates = zip(
+        *await asyncio.gather(
+            *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
+        )
+    )
+    # Remove empty entries (these happen when a subject has no courses in a semester,
+    # e.g. ITWS over arch summer) and just get the first pair of registration dates (begin/end)
+    registration_dates = list(filter(bool, registration_dates))[0][0]
+
     registration_dates_json = {
-        "registration_opens": registration_dates[0],
-        "registration_closes": registration_dates[1],
+        "registration_opens": registration_dates[0].strftime("%Y-%m-%d"),
+        "registration_closes": registration_dates[1].strftime("%Y-%m-%d"),
     }
 
     # Filter any defunct / empty departments from the list
