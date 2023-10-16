@@ -106,15 +106,11 @@ async def get_class_information(class_url):
 
         # Get registration start and end dates, unless they don't exist/are hidden for
         # some reason (this happened with arch planning course)
-        dates_rgx= re.search(r"Registration Dates: </span>(.*?)\n", str(data))
-        if(dates_rgx):
+        dates_rgx = re.search(r"Registration Dates: </span>(.*?)\n", str(data))
+        if dates_rgx:
             registration_dates = tuple(
                 datetime.strptime(d.strip(), "%b %d, %Y")
-                for d in (
-                    dates_rgx
-                    .group(1)
-                    .split(" to ")
-                )
+                for d in (dates_rgx.group(1).split(" to "))
             )
 
         meeting_times = data.findAll(
