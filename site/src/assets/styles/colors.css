@@ -54,6 +54,12 @@
   --not-taken-course: #dc3545;
   --overlay-background: #f8f9fa;
 
+  /* Used for unofficial schedule warning */
+  --warning-font-size: 1.7rem;
+  --warning-border-style: solid;
+  --warning-border-width: 1px;
+  --warning-color: #f11;
+
   /* Calendar colors -- used to distinguish classes */
   --num-calendar-colors: 7;
 
