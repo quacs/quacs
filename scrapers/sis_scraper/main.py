@@ -265,9 +265,9 @@ async def scrape_term(term):
             *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
         )
     )
-    
+
     # Remove empty entries (these happen when a subject has no courses in a semester,
-    # e.g. ITWS over arch summer) 
+    # e.g. ITWS over arch summer)
     registration_dates = list(filter(bool, registration_dates))
 
     if not registration_dates:
