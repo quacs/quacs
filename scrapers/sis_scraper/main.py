@@ -265,9 +265,19 @@ async def scrape_term(term):
             *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
         )
     )
+
     # Remove empty entries (these happen when a subject has no courses in a semester,
-    # e.g. ITWS over arch summer) and just get the first pair of registration dates (begin/end)
-    registration_dates = list(filter(bool, registration_dates))[0][0]
+    # e.g. ITWS over arch summer)
+    registration_dates = list(filter(bool, registration_dates))
+
+    if not registration_dates:
+        # If the semester is empty then there are no registration dates, so use
+        # unix timestamp 0 as a placeholder
+        beginning_of_time = datetime.fromtimestamp(0)
+        registration_dates = (beginning_of_time, beginning_of_time)
+    else:
+        # Just get the first pair of registration dates (begin/end)
+        registration_dates = registration_dates[0][0]
 
     registration_dates_json = {
         "registration_opens": registration_dates[0].strftime("%Y-%m-%d"),
