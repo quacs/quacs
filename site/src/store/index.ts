@@ -14,6 +14,8 @@ import Vuex from "vuex";
 
 // eslint-disable-next-line
 const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
+// eslint-disable-next-line
+const REGISTRATION_DATES_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/registration_dates.json`);
 
 import DATA_STATS_JSON from "./data/meta.json";
 import PREREQ_GRAPH_JSON from "./data/prereq_graph.json";
@@ -31,6 +33,10 @@ export default new Vuex.Store({
       name: string;
       depts: { code: string; name: string }[];
     }[],
+    registrationDates: REGISTRATION_DATES_JSON as {
+      registration_opens: string;
+      registration_closes: string;
+    },
     dataStats: DATA_STATS_JSON as { last_updated: string },
     departments: [] as Department[], // asynchronously loaded
     catalog: {} as { [id: string]: CatalogCourse }, // asynchronously loaded

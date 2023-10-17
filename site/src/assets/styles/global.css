@@ -121,3 +121,15 @@ body {
 .list-group-item {
   background: var(--list-group-item-background);
 }
+
+.unofficial-schedule-warning {
+  text-align: center;
+  padding-top: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding-bottom: 1rem;
+  font-size: var(--warning-font-size);
+  border-style: var(--warning-border-style);
+  border-width: var(--warning-border-width);
+  color: var(--warning-color);
+}

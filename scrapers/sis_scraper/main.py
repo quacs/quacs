@@ -7,6 +7,7 @@ import os
 import re
 import json
 import sys
+from datetime import datetime
 
 # External dependnecies
 import aiohttp
@@ -95,12 +96,23 @@ async def get_class_information(class_url):
 
     sections = []
     course_data = {}
+    registration_dates = ()
 
     async with session.get(class_url) as data:
         data = BeautifulSoup(await data.text())
 
         # Iterate through each section in the course and retrieve appropriate data
         section_data = data.findAll("th", {"class": "ddtitle", "scope": "colgroup"})
+
+        # Get registration start and end dates, unless they don't exist/are hidden for
+        # some reason (this happened with arch planning course)
+        dates_rgx = re.search(r"Registration Dates: </span>(.*?)\n", str(data))
+        if dates_rgx:
+            registration_dates = tuple(
+                datetime.strptime(d.strip(), "%b %d, %Y")
+                for d in (dates_rgx.group(1).split(" to "))
+            )
+
         meeting_times = data.findAll(
             "table",
             {
@@ -183,7 +195,7 @@ async def get_class_information(class_url):
         course_data["crse"] = sections[0]["crse"]
         course_data["id"] = f"{course_data['subj']}-{str(course_data['crse']).zfill(4)}"
         course_data["sections"] = sections
-    return course_data
+    return course_data, registration_dates
 
 
 def parse_semester_page(text):
@@ -213,7 +225,7 @@ async def get_classes_with_code(term, code):
 
 async def scrape_subject(term, name, code):
     courses_data = {"name": name, "code": code}
-    courses_data["courses"] = list(
+    subj_data = list(
         filter(
             lambda x: x != None,
             await asyncio.gather(
@@ -226,7 +238,12 @@ async def scrape_subject(term, name, code):
             ),
         )
     )
-    return courses_data
+    if not subj_data:
+        courses_data["courses"], registration_dates = subj_data, ()
+    else:
+        courses_data["courses"], registration_dates = zip(*subj_data)
+        registration_dates = tuple(filter(bool, registration_dates))
+    return courses_data, registration_dates
 
 
 async def get_subjects_for_term(term):
@@ -242,9 +259,20 @@ async def get_subjects_for_term(term):
 
 async def scrape_term(term):
     print(f"Scraping {term}")
-    courses = await asyncio.gather(
-        *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
+
+    courses, registration_dates = zip(
+        *await asyncio.gather(
+            *[scrape_subject(term, *subj) for subj in await get_subjects_for_term(term)]
+        )
     )
+    # Remove empty entries (these happen when a subject has no courses in a semester,
+    # e.g. ITWS over arch summer) and just get the first pair of registration dates (begin/end)
+    registration_dates = list(filter(bool, registration_dates))[0][0]
+
+    registration_dates_json = {
+        "registration_opens": registration_dates[0].strftime("%Y-%m-%d"),
+        "registration_closes": registration_dates[1].strftime("%Y-%m-%d"),
+    }
 
     # Filter any defunct / empty departments from the list
     courses = list(filter(lambda dept: len(dept["courses"]) > 0, courses))
@@ -323,12 +351,15 @@ async def scrape_term(term):
                 for timeslot in section["timeslots"]:
                     timeslot["dateStart"] = date_to_quacs(timeslot["dateStart"])
                     timeslot["dateEnd"] = date_to_quacs(timeslot["dateEnd"])
+
     with open(f"data/{term}/schools.json", "w") as schools_f:
         json.dump(school_columns, schools_f, sort_keys=False, indent=2)
     with open(f"data/{term}/courses.json", "w") as outfile:
         json.dump(courses, outfile, sort_keys=True, indent=2)
     with open(f"data/{term}/prerequisites.json", "w") as outfile:
         json.dump(prerequisites, outfile, sort_keys=True, indent=2)
+    with open(f"data/{term}/registration_dates.json", "w") as outfile:
+        json.dump(registration_dates_json, outfile, sort_keys=True, indent=2)
     print("Done")
 
 
