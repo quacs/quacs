@@ -49,7 +49,7 @@ async def scrape_txt(filename, list_of_terms):
     global session
     url = f"https://www.cs.rpi.edu/~goldsd/docs/{filename}"
     async with session.get(url) as request:
-        data = re.split(r"\n======*", (await request.text()))
+        data = re.split(r"\n======*", await request.text("Windows-1252"))
         for term_data in data:
             # Goldschmidt uses Windows which is why we have to deal with \r,
             # which I do by just removing all of them. Then we split on
