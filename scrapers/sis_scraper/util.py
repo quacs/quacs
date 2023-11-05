@@ -4,6 +4,7 @@ from copy import deepcopy
 import datetime
 import time
 
+
 # "11:00 AM - 1:00 PM" -> 1100,1300
 def time_to_military(time):
     def __time_offset(time):

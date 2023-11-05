@@ -14,6 +14,7 @@ import os
 # Example: { "NY": "New York" }
 global_id_to_name_map = {}
 
+
 # Takes the homepage soup and the type of id to get, and returns a list of the ids
 def get_ids(homepage_soup, type: str) -> List[str]:
     global global_id_to_name_map
