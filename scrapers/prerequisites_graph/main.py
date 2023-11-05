@@ -36,7 +36,6 @@ def sem_add_courses(sem_dir: str, adj_list: Dict[str, CoursePrereqs]):
     # Populate `courses`
     for dept in sem_courses:
         for course in dept["courses"]:
-
             course_id = course["id"].replace("-", " ")
             prereqs = get_prereq_course_ids(
                 sem_prereqs[str(course["sections"][0]["crn"])]

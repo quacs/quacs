@@ -14,6 +14,7 @@ Range = namedtuple("Range", ["start", "end"])
 # As of right now by importing this file it also runs the code
 # import main
 
+
 # Uses regex to extract out the crns and bitpacks from the rust mod.rs file
 def get_bitpacks(path):
     bitpacks = {}

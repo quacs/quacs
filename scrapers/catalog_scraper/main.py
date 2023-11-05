@@ -13,6 +13,7 @@ BASE_URL = "http://rpi.apis.acalog.com/v1/"
 DEFAULT_QUERY_PARAMS = "?key=3eef8a28f26fb2bcc514e6f1938929a1f9317628&format=xml"
 CHUNK_SIZE = 100
 
+
 # returns the list of catalogs with the newest one being first
 # each catalog is a tuple (year, catalog_id) ex: ('2020-2021', 21)
 def get_catalogs() -> List[Tuple[str, int]]:
@@ -103,10 +104,15 @@ def get_course_data(course_ids: List[str]) -> Dict:
     return data
 
 
-# Saves the catalog to the 3 semesters for that year
+# Saves the catalog to the 4 possible semesters for that year
 def save_catalog(data: Dict, year: str):
     years = year.split("-")
-    for directory in (f"{years[0]}09", f"{years[1]}01", f"{years[1]}05"):
+    for directory in (
+        f"{years[0]}09",
+        f"{years[0]}12",
+        f"{years[1]}01",
+        f"{years[1]}05",
+    ):
         directory = "data/" + directory
         os.makedirs(directory, exist_ok=True)
         with open(f"{directory}/catalog.json", "w") as outfile:
