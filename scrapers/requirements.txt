@@ -1,5 +1,5 @@
 aiohttp==3.9.1
-beautifulsoup4==4.11.1
+beautifulsoup4==4.12.2
 lxml==4.9.2
 requests==2.31.0
 tqdm==4.64.1
