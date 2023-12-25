@@ -4,4 +4,4 @@ lxml==4.9.2
 requests==2.31.0
 tqdm==4.64.1
 datadog==0.44.0
-black==23.11.0
+black==23.12.1
