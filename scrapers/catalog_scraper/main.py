@@ -28,9 +28,9 @@ def get_catalogs() -> List[Tuple[str, int]]:
     # For each catalog get its year and id and add that as as tuples to ret
     for catalog in catalogs:
         catalog_id: int = catalog.xpath("@id")[0].split("acalog-catalog-")[1]
-        catalog_year: str = catalog.xpath(".//title/text()")[0].split(
-            "Rensselaer Catalog "
-        )[1]
+        catalog_year: str = [
+            text for text in catalog.xpath("//text()") if "Rensselaer Catalog " in text
+        ][0].split("Rensselaer Catalog ")[1]
         ret.append((catalog_year, catalog_id))
 
     # sort so that the newest catalog is always first
@@ -88,15 +88,15 @@ def get_course_data(course_ids: List[str]) -> Dict:
         )
         courses = courses_xml.xpath("//courses/course[not(@child-of)]")
         for course in courses:
-            subj = course.xpath("./content/prefix/text()")[0].strip()
-            crse = course.xpath("./content/code/text()")[0].strip()
-            course_name = course.xpath("./content/name/text()")[0].strip()
-            fields = course.xpath("./content/field")
+            subj = course.xpath("//prefix/text()")[0].strip()
+            crse = course.xpath("//code/text()")[0].strip()
+            course_name = course.xpath("//name/text()")[0].strip()
+            fields = course.xpath("//field")
 
             data[f"{subj}-{crse}"] = {
                 "subj": subj,
                 "crse": crse,
-                "name": course.xpath("./content/name/text()")[0].strip(),
+                "name": course.xpath("//name/text()")[0].strip(),
                 "description": get_catalog_description(fields, course_name),
                 "source": "Acalog",
             }
@@ -135,7 +135,9 @@ if __name__ == "__main__":
         course_ids = get_course_ids(catalog_id)
         data = get_course_data(course_ids)
         if not data:
-            raise SystemExit("Catalog API returned blank, not saving")
+            raise SystemExit(
+                f"Catalog API returned blank for year={year} catalog_id={catalog_id}, not saving"
+            )
 
         save_catalog(data, year)
 
