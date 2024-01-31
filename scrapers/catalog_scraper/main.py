@@ -135,9 +135,10 @@ if __name__ == "__main__":
         course_ids = get_course_ids(catalog_id)
         data = get_course_data(course_ids)
         if not data:
-            raise SystemExit(
+            print(
                 f"Catalog API returned blank for year={year} catalog_id={catalog_id}, not saving"
             )
+            continue
 
         save_catalog(data, year)
 
