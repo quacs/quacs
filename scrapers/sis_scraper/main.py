@@ -218,8 +218,8 @@ async def get_classes_with_code(term, code):
     # Post request data was observed from: https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in=202205&sel_crse_strt=0&sel_crse_end=9999&sel_subj=&sel_levl=&sel_schd=&sel_coll=&sel_divs=&sel_dept=&sel_attr=
     async with session.post(
         "https://sis.rpi.edu/rss/bwckctlg.p_display_courses",
-        data = f"term_in={term}&call_proc_in=&sel_subj=dummy&sel_levl=dummy&sel_schd=dummy&sel_coll=dummy&sel_divs=dummy&sel_dept=dummy&sel_attr=dummy&sel_subj={code}&sel_crse_strt=&sel_crse_end=&sel_title=&sel_levl=%25&sel_schd=%25&sel_coll=%25&sel_divs=%25&sel_dept=%25&sel_from_cred=&sel_to_cred=&sel_attr=%25",
-        headers = {
+        data=f"term_in={term}&call_proc_in=&sel_subj=dummy&sel_levl=dummy&sel_schd=dummy&sel_coll=dummy&sel_divs=dummy&sel_dept=dummy&sel_attr=dummy&sel_subj={code}&sel_crse_strt=&sel_crse_end=&sel_title=&sel_levl=%25&sel_schd=%25&sel_coll=%25&sel_divs=%25&sel_dept=%25&sel_from_cred=&sel_to_cred=&sel_attr=%25",
+        headers={
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
@@ -231,8 +231,8 @@ async def get_classes_with_code(term, code):
             "Sec-Fetch-User": "?1",
             "Sec-GPC": "1",
             "Pragma": "no-cache",
-            "Cache-Control": "no-cache"
-        }
+            "Cache-Control": "no-cache",
+        },
     ) as request:
         return await request.text()
 
