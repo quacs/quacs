@@ -10,6 +10,22 @@ from tqdm import tqdm
 import csv
 import os
 
+# Used to spoof user agent for POST requests, SIS shows an error otherwise
+post_headers = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-User": "?1",
+    "Sec-GPC": "1",
+    "Pragma": "no-cache",
+    "Cache-Control": "no-cache",
+}
+
 # Stores the full name of a school, nation, or state mapped from their sis id
 # Example: { "NY": "New York" }
 global_id_to_name_map = {}
@@ -41,6 +57,7 @@ async def get_specific_school_ids(
     async with s.post(
         url="https://sis.rpi.edu/rss/yhwwkwags.P_Select_Inst",
         data=f"stat_code={state_id}&natn_code={nation_id}&sbgi_code=",
+        headers=post_headers,
     ) as results:
         homepage = BeautifulSoup(await results.text(), "html.parser")
 
@@ -106,6 +123,7 @@ async def get_school_data(s, id) -> None:
     async with s.post(
         url="https://sis.rpi.edu/rss/yhwwkwags.P_Select_Inst",
         data=f"stat_code=&natn_code=&sbgi_code={id}",
+        headers=post_headers,
     ) as results:
         soup = BeautifulSoup(await results.text(), "html.parser")
 
