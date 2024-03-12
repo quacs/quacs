@@ -88,7 +88,7 @@ export default class Settings extends Vue {
     { value: "dark black", text: "Black" },
     { value: "light colorful", text: "Splash of Color" },
     { value: "yacs", text: "YACS" },
-    { value: "flowing", text: "Flowing" },
+    { value: "flowing", text: "Arhum" },
     { value: "true-dark", text: "True Dark" },
   ];
 }
