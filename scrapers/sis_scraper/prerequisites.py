@@ -25,6 +25,7 @@ def tokenize(prerequisites: str) -> Tokens:
         ("OR", r"or"),
         ("AND", r"and"),
         ("COURSE", r"[a-zA-Z]{4}(?:-| )\d{4}"),
+        ("MIN_GRADE", r"(?<=Minimum Grade of )[A-Z]*[+-]?"),
     ]
 
     # Get regex that matches a token
@@ -55,10 +56,14 @@ def parse_atom(tokens: Tokens, cur_tok: int):
         result, cur_tok = parse_tokens(tokens, cur_tok + 1)
         assert tokens[cur_tok][0] == "CLOSE_PAREN"
     else:
+        min_grade_exists = tokens[cur_tok + 1][0] == "MIN_GRADE"
         result = {
             "type": "course",
             "course": tokens[cur_tok][1],
+            "min_grade": tokens[cur_tok + 1][1] if min_grade_exists else None,
         }
+        if min_grade_exists:
+            cur_tok += 1
     return (result, cur_tok + 1)
 
 
