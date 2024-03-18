@@ -25,7 +25,7 @@ def tokenize(prerequisites: str) -> Tokens:
         ("OR", r"or"),
         ("AND", r"and"),
         ("COURSE", r"[a-zA-Z]{4}(?:-| )\d{4}"),
-        ("MIN_GRADE", r"(?<=Minimum Grade of )[A-Z]*[+-]?"),
+        ("MIN_GRADE", r"(?<=Minimum Grade of )[A-Z]+[+-]?"),
     ]
 
     # Get regex that matches a token
