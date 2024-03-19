@@ -67,18 +67,18 @@ def parse_atom(tokens: Tokens, cur_tok: int):
     return (result, cur_tok + 1)
 
 
-def parse_or(tokens: Tokens, cur_tok: int):
-    """Parse a prereq expression with only OR"""
+def parse_and(tokens: Tokens, cur_tok: int):
+    """Parse a prereq expression with only AND"""
     (left, cur_tok) = parse_atom(tokens, cur_tok)
     left_list = [left]
-    while tokens[cur_tok][0] == "OR":
+    while tokens[cur_tok][0] == "AND":
         (right, cur_tok) = parse_atom(tokens, cur_tok + 1)
         left_list.append(right)
     if len(left_list) == 1:
         result = left
     else:
         result = {
-            "type": "or",
+            "type": "and",
             "nested": left_list,
         }
     return (result, cur_tok)
@@ -86,16 +86,16 @@ def parse_or(tokens: Tokens, cur_tok: int):
 
 def parse_tokens(tokens: Tokens, cur_tok: int = 0):
     """Parse a tokenized prereq expression"""
-    (left, cur_tok) = parse_or(tokens, cur_tok)
+    (left, cur_tok) = parse_and(tokens, cur_tok)
     left_list = [left]
-    while tokens[cur_tok][0] == "AND":
-        (right, cur_tok) = parse_or(tokens, cur_tok + 1)
+    while tokens[cur_tok][0] == "OR":
+        (right, cur_tok) = parse_and(tokens, cur_tok + 1)
         left_list.append(right)
     if len(left_list) == 1:
         result = left
     else:
         result = {
-            "type": "and",
+            "type": "or",
             "nested": left_list,
         }
     return (result, cur_tok)
