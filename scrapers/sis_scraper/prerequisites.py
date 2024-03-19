@@ -24,7 +24,7 @@ def tokenize(prerequisites: str) -> Tokens:
         ("CLOSE_PAREN", r"\)"),
         ("OR", r"or"),
         ("AND", r"and"),
-        ("COURSE", r"[a-zA-Z]{4}(?:-| )\d{4}"),
+        ("COURSE", r"[a-zA-Z]{4}(?:-| )\d+@?"),
         ("MIN_GRADE", r"(?<=Minimum Grade of )[A-Z]+[+-]?"),
     ]
 
