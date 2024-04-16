@@ -90,6 +90,7 @@ export default class Settings extends Vue {
     { value: "yacs", text: "YACS" },
     { value: "flowing", text: "Flowing" },
     { value: "true-dark", text: "True Dark" },
+    { value: "pinkout", text: "Pinkout" },
   ];
 }
 </script>
