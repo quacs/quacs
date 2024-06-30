@@ -1,5 +1,5 @@
 # QuACS - The Questionably Accurate Course Scheduler
-
+Test
 View the live website here: [https://quacs.org](https://quacs.org)
 
 Want to ask a question, help with development, or just hang out? [Join our discord!](https://discord.gg/nZKAzzE5bX)
