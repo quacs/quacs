@@ -214,38 +214,39 @@ jobs:
           name: faculty
           path: scrapers/faculty.json
 
-  scrape-transfer:
-    name: Scrape transfer
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
+# This is broken, commenting out so the job does not continue to fail
+  # scrape-transfer:
+  #   name: Scrape transfer
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout branch
+  #       uses: actions/checkout@v3
 
-      - name: Set up python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+  #     - name: Set up python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.11'
 
-      - name: Install pip requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scrapers/requirements.txt
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r scrapers/requirements.txt
 
-      - name: Scrape transfer
-        working-directory: ./scrapers
-        run: python3 transfer_scraper/main.py csv
+  #     - name: Scrape transfer
+  #       working-directory: ./scrapers
+  #       run: python3 transfer_scraper/main.py csv
 
-      - name: Upload JSON data
-        uses: actions/upload-artifact@v3
-        with:
-          name: transfer
-          path: scrapers/transfer.json
+  #     - name: Upload JSON data
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: transfer
+  #         path: scrapers/transfer.json
 
-      - name: Upload CSV data
-        uses: actions/upload-artifact@v3
-        with:
-          name: transfer_guides
-          path: scrapers/transfer_guides
+  #     - name: Upload CSV data
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: transfer_guides
+  #         path: scrapers/transfer_guides
 
   # This may need to be updated now that the scrapers have been moved into the same repo as the site
   scrape-catalog:
@@ -312,7 +313,7 @@ jobs:
       - scrape-prereq-graph
       - scrape-catalog
       - scrape-csci-topics
-      - scrape-transfer
+      # - scrape-transfer
     if: |
       always()
       && contains(needs.scrape-courses-and-prerequisites.result,'success')
