@@ -219,7 +219,7 @@ impl<'a, const N: usize> Context<'a, N> {
 
         let course_name = self.data.crn_courses.get(&crn).unwrap();
 
-        if self.selected_courses.get(course_name).is_some() {
+        if self.selected_courses.contains_key(course_name) {
             console_log!("Checking if crn {} conflicts with global schedule", crn);
 
             // Assuming we didn't have other sections from this course selected, do we conflict?
