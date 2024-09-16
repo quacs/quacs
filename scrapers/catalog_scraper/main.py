@@ -88,15 +88,15 @@ def get_course_data(course_ids: List[str]) -> Dict:
         )
         courses = courses_xml.xpath("//courses/course[not(@child-of)]")
         for course in courses:
-            subj = course.xpath("//prefix/text()")[0].strip()
-            crse = course.xpath("//code/text()")[0].strip()
-            course_name = course.xpath("//name/text()")[0].strip()
-            fields = course.xpath("//field")
+            subj = course.xpath(".//prefix/text()")[0].strip()
+            crse = course.xpath(".//code/text()")[0].strip()
+            course_name = course.xpath(".//name/text()")[0].strip()
+            fields = course.xpath(".//field")
 
             data[f"{subj}-{crse}"] = {
                 "subj": subj,
                 "crse": crse,
-                "name": course.xpath("//name/text()")[0].strip(),
+                "name": course.xpath(".//name/text()")[0].strip(),
                 "description": get_catalog_description(fields, course_name),
                 "source": "Acalog",
             }

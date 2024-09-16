@@ -17,7 +17,11 @@ class CoursePrereqs(TypedDict):
     prereqs: List[str]
 
 
-def sem_add_courses(sem_dir: str, adj_list: Dict[str, CoursePrereqs]):
+def sem_add_courses(
+    sem_dir: str,
+    adj_list: Dict[str, CoursePrereqs],
+    most_recent_catalog: Dict[str, Dict],
+):
     """
     Using the semester in the `sem_dir` directory,
     update the graph in `adj_list`.
@@ -25,6 +29,8 @@ def sem_add_courses(sem_dir: str, adj_list: Dict[str, CoursePrereqs]):
 
     # Load the JSONs
     try:
+        with open(f"{sem_dir}/catalog.json", "r") as f:
+            sem_catalog = json.load(f)
         with open(f"{sem_dir}/courses.json", "r") as f:
             sem_courses = json.load(f)
         with open(f"{sem_dir}/prerequisites.json", "r") as f:
@@ -42,7 +48,10 @@ def sem_add_courses(sem_dir: str, adj_list: Dict[str, CoursePrereqs]):
             )
 
             adj_list[course_id] = {
-                "title": course["title"],
+                "title": most_recent_catalog.get(
+                    course["id"],
+                    sem_catalog.get(course["id"], {"name": course["title"]}),
+                )["name"],
                 "prereqs": prereqs,
             }
 
@@ -91,8 +100,17 @@ def generate(semester_data_path: str):
         )
     )
 
+    most_recent_catalog = {}
+    for sem_dir in reversed(sem_dirs):
+        try:
+            with open(f"{sem_dir}/catalog.json", "r") as f:
+                print(f"Trying to load catalog for {sem_dir}...")
+                most_recent_catalog = json.load(f)
+                break
+        except FileNotFoundError:
+            continue
     for sem_dir in sem_dirs:
-        sem_add_courses(sem_dir, adj_list)
+        sem_add_courses(sem_dir, adj_list, most_recent_catalog)
 
     return adj_list
 
