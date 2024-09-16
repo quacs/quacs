@@ -100,8 +100,15 @@ def generate(semester_data_path: str):
         )
     )
 
-    with open(f"{sem_dirs[-1]}/catalog.json", "r") as f:
-        most_recent_catalog = json.load(f)
+    most_recent_catalog = {}
+    for sem_dir in reversed(sem_dirs):
+        try:
+            with open(f"{sem_dir}/catalog.json", "r") as f:
+                print(f"Trying to load catalog for {sem_dir}...")
+                most_recent_catalog = json.load(f)
+                break
+        except FileNotFoundError:
+            continue
     for sem_dir in sem_dirs:
         sem_add_courses(sem_dir, adj_list, most_recent_catalog)
 
