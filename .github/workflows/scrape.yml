@@ -312,7 +312,7 @@ jobs:
       #- scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
-      - scrape-csci-topics
+      # - scrape-csci-topics
       # - scrape-transfer
     if: |
       always()
