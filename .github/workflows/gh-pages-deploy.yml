@@ -50,3 +50,25 @@ jobs:
           git -C gh-pages-site config user.name "QuACS" && git -C gh-pages-site config user.email "github@quacs.org"
           yarn gh-pages-deploy
 
+  update-meta:
+    name: Update meta
+    runs-on: ubuntu-latest
+    needs: [gh-pages-deploy]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout meta branch
+        uses: actions/checkout@v4
+        with:
+          ref: meta
+
+      - name: Update meta.json
+        run: |
+          echo -n \{\"last_deployed\":\"$(date --iso-8601=seconds -u)\"\} > meta.json
+
+      - name: Push meta.json
+        run: |
+          git config user.name "QuACS" && git config user.email "github@quacs.org"
+          git add meta.json
+          git commit -m "$(date)" || exit 0
+          git push
