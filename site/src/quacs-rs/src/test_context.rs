@@ -15,7 +15,7 @@ fn get_sorted_schedules<'a, const N: usize>(ctx: &mut Context<'a, N>) -> Vec<Vec
     (0..num_schedules)
         .map(|i| {
             ctx.get_schedule(i)
-                .into_iter()
+                .iter()
                 .copied()
                 .collect::<BTreeSet<u32>>()
                 .into_iter()
