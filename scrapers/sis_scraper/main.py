@@ -359,10 +359,8 @@ async def scrape_term(term):
     # Replace all the dateStart/dateEnd with the MM/DD format used by the quacs frontend
     # Additionally, split out the prereq field into a separate json
     prerequisites = {}
-    date_to_quacs = (
-        lambda date: f"{str(date.month).zfill(2)}/{str(date.day).zfill(2)}"
-        if date != None
-        else ""
+    date_to_quacs = lambda date: (
+        f"{str(date.month).zfill(2)}/{str(date.day).zfill(2)}" if date != None else ""
     )
     for dept in courses:
         for course in dept["courses"]:

@@ -1,7 +1,7 @@
-aiohttp==3.9.1
-beautifulsoup4==4.11.1
-lxml==4.9.2
-requests==2.31.0
-tqdm==4.64.1
-datadog==0.44.0
-black==23.11.0
+aiohttp==3.12.12
+beautifulsoup4==4.13.4
+lxml==5.4.0
+requests==2.32.4
+tqdm==4.67.1
+datadog==0.51.0
+black==25.1.0
