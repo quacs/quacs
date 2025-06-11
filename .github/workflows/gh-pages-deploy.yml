@@ -14,20 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js for use with actions
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '22.16.0'
+          node-version:  18.x
 
       - name: Checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.13.4'
 
       - name: Checkout site repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           repository: "quacs/site"
           ref: "master"
