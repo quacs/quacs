@@ -55,7 +55,7 @@ jobs:
         run: python3 sis_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload semester-specific data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: courses
           path: scrapers/data/
@@ -94,7 +94,7 @@ jobs:
           token: ${{ secrets.GITHUBTOKEN }}
 
       - name: Get scraped data
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: scrapers
 
@@ -107,7 +107,7 @@ jobs:
         run: python3 prerequisites_graph/main.py data/semester_data prereq_graph.json
 
       - name: Upload prerequisite graph data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: prereq_graph
           path: scrapers/prereq_graph.json
@@ -154,7 +154,7 @@ jobs:
   #           python3 scraper.py refresh_data
 
   #     - name: Upload data
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         name: degree_requirements
   #         path: degree-planner/*.json
@@ -182,7 +182,7 @@ jobs:
   #       run: python3 hass_pathways_scraper/main.py > hass_pathways.json
 
   #     - name: Upload data
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         name: hass_pathways
   #         path: scrapers/hass_pathways.json
@@ -209,43 +209,44 @@ jobs:
         run: python3 faculty_directory_scraper/main.py
 
       - name: Upload data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: faculty
           path: scrapers/faculty.json
 
-  scrape-transfer:
-    name: Scrape transfer
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
+# This is broken, commenting out so the job does not continue to fail
+  # scrape-transfer:
+  #   name: Scrape transfer
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout branch
+  #       uses: actions/checkout@v3
 
-      - name: Set up python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+  #     - name: Set up python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.11'
 
-      - name: Install pip requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scrapers/requirements.txt
+  #     - name: Install pip requirements
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r scrapers/requirements.txt
 
-      - name: Scrape transfer
-        working-directory: ./scrapers
-        run: python3 transfer_scraper/main.py csv
+  #     - name: Scrape transfer
+  #       working-directory: ./scrapers
+  #       run: python3 transfer_scraper/main.py csv
 
-      - name: Upload JSON data
-        uses: actions/upload-artifact@v3
-        with:
-          name: transfer
-          path: scrapers/transfer.json
+  #     - name: Upload JSON data
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: transfer
+  #         path: scrapers/transfer.json
 
-      - name: Upload CSV data
-        uses: actions/upload-artifact@v3
-        with:
-          name: transfer_guides
-          path: scrapers/transfer_guides
+  #     - name: Upload CSV data
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: transfer_guides
+  #         path: scrapers/transfer_guides
 
   # This may need to be updated now that the scrapers have been moved into the same repo as the site
   scrape-catalog:
@@ -270,11 +271,11 @@ jobs:
         run: python3 catalog_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: catalog
           path: scrapers/data
-  
+
   scrape-csci-topics:
     name: Scrape CSCI topics courses
     runs-on: ubuntu-latest
@@ -297,7 +298,7 @@ jobs:
         run: python3 csci_topics_scraper/main.py ${{ github.event.inputs.scrape_all }}
 
       - name: Upload data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: csci_topics
           path: scrapers/data
@@ -311,8 +312,8 @@ jobs:
       #- scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
-      - scrape-csci-topics
-      - scrape-transfer
+      # - scrape-csci-topics
+      # - scrape-transfer
     if: |
       always()
       && contains(needs.scrape-courses-and-prerequisites.result,'success')
@@ -328,7 +329,7 @@ jobs:
           token: ${{ secrets.GITHUBTOKEN }}
 
       - name: Get scraped data
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: scrapers
 
@@ -356,6 +357,15 @@ jobs:
 
           cd data
 
+          # Generate catalogs for any folders missing catalogs
+          # This is to minimize build failures when a semester transition occurs.
+          for directory in $(find semester_data/* -type d | xargs -0); do
+            if [ ! -f "$directory/catalog.json" ]; then
+              echo "Generating $directory/catalog.json"
+              echo "{}" > $directory/catalog.json
+            fi
+          done
+
           # Merge SIS catalog + hard_coded + csci_topics data into the final values
           for directory in $(find semester_data/* -type d  | grep -v "hard_coded" | xargs -0); do
             if [ -f "$directory/catalog_sis.json" ]; then
@@ -375,15 +385,6 @@ jobs:
                 fi
               fi
             done
-          done
-
-          # Generate catalogs for any folders missing catalogs
-          # This is to minimize build failures when a semester transition occurs.
-          for directory in $(find semester_data/* -type d | xargs -0); do
-            if [ ! -f "$directory/catalog.json" ]; then
-              echo "Generating $directory/catalog.json"
-              echo "{}" > $directory/catalog.json
-            fi
           done
 
           git config user.name "QuACS" && git config user.email "github@quacs.org"
