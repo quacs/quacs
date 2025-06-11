@@ -26,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
 
@@ -39,7 +39,7 @@ jobs:
           pip install -r scrapers/requirements.txt
 
       - name: Clone QuACS Data
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: quacs/quacs-data
           path: scrapers/quacs-data
@@ -66,10 +66,10 @@ jobs:
     needs: [scrape-courses-and-prerequisites]
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
 
@@ -85,7 +85,7 @@ jobs:
       # with the data already in the quacs-data repo.
 
       - name: Checkout data repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: "scrapers/data"
           repository: "quacs/quacs-data"
@@ -118,7 +118,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout degree planner
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
   #       with:
   #         path: 'degree-planner'
   #         repository: 'quacs/degree-planner'
@@ -131,7 +131,7 @@ jobs:
   #           chmod +x geckodriver
 
   #     - name: Set up Python
-  #       uses: actions/setup-python@v4
+  #       uses: actions/setup-python@v5
   #       with:
   #         python-version: '3.13.3'
 
@@ -165,10 +165,10 @@ jobs:
   #   timeout-minutes: 1
   #   steps:
   #     - name: Checkout branch
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
 
   #     - name: Set up python
-  #       uses: actions/setup-python@v4
+  #       uses: actions/setup-python@v5
   #       with:
   #         python-version: '3.13.3'
 
@@ -192,10 +192,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
 
@@ -220,10 +220,10 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout branch
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
 
   #     - name: Set up python
-  #       uses: actions/setup-python@v4
+  #       uses: actions/setup-python@v5
   #       with:
   #         python-version: '3.13.3'
 
@@ -254,10 +254,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
 
@@ -281,10 +281,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
 
@@ -320,7 +320,7 @@ jobs:
       && contains(needs.scrape-prereq-graph.result,'success')
     steps:
       - name: Checkout data repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: "scrapers/data"
           repository: "quacs/quacs-data"
@@ -413,10 +413,10 @@ jobs:
   #         DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=${{ secrets.DATADOG_API_KEY }} DD_SITE="datadoghq.com" bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
 
   #     - name: Checkout branch
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
 
   #     - name: Set up python
-  #       uses: actions/setup-python@v4
+  #       uses: actions/setup-python@v5
   #       with:
   #         python-version: '3.13.3'
 
@@ -426,7 +426,7 @@ jobs:
   #         pip install -r scrapers/requirements.txt
 
   #     - name: Checkout data repository
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
   #       with:
   #         path: "scrapers/data"
   #         repository: "quacs/quacs-data"
