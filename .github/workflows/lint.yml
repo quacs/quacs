@@ -20,7 +20,10 @@ jobs:
 
       - name: Clean install JS dependencies
         working-directory: ./site
-        run: yarn install --frozen-lockfile
+        run: |
+          yarn --version
+          node --version
+          yarn install --frozen-lockfile
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
