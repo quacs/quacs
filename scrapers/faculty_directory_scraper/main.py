@@ -103,7 +103,7 @@ async def get_professor(session, url, data):
         # Getting each entry in the search results
         for canonical_path in map(
             lambda x: x.find("a")["href"],
-            soup.findAll("div", {"class": "views-field-title"}),
+            soup.find_all("div", {"class": "views-field-title"}),
         ):
             print(f"Scraping {canonical_path}...")
             async with session.get(f"{BASE_URL}{canonical_path}") as response:
