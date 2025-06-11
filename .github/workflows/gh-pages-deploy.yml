@@ -44,8 +44,9 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Install wasm-pack
-        working-directory: ./site
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        env:
+          VERSION: 'v0.13.1'
+        run: curl https://raw.githubusercontent.com/rustwasm/wasm-pack/refs/heads/master/docs/_installer/init.sh -sSf | sh
 
       - name: Run deploy script
         working-directory: ./site
