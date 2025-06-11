@@ -21,11 +21,12 @@
     "@trevoreyre/autocomplete-vue": "^2.2.0",
     "@types/file-saver": "^2.0.3",
     "axios": "^0.24.0",
-    "bootstrap": "^4.6.0",
-    "bootstrap-vue": "^2.21.2",
+    "bootstrap": "5.3.6",
+    "bootstrap-vue": "2.22.0",
     "file-saver": "^2.0.5",
     "fuse.js": "^6.4.6",
     "ics": "^2.31.0",
+    "package.json": "^2.0.1",
     "register-service-worker": "^1.7.2",
     "simple-web-worker": "^1.2.0",
     "stylelint": "^14.0.1",
@@ -40,7 +41,8 @@
     "vue-visjs": "^0.6.0",
     "vuex": "^3.6.2",
     "vuex-persistedstate": "^4.1.0",
-    "xss": "^1.0.10"
+    "xss": "^1.0.10",
+    "yarn.lock": "^0.0.1-security"
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^5.10.0",
