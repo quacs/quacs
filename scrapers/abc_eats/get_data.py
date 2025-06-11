@@ -38,7 +38,6 @@ async def main():
     """Handle the execution of borough and restaurant detail fetching asynchronously."""
     global combined_data
     async with aiohttp.ClientSession() as session:
-
         # Fetch borough-level data first
         borough_tasks = [fetch_borough_data(session, borough) for borough in boroughs]
         borough_results = await asyncio.gather(*borough_tasks)
