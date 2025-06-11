@@ -10,11 +10,18 @@ jobs:
         with:
           node-version:  18.x
 
+      - name: Set up rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: '1.86.0'
+
       - name: Checkout branch
         uses: actions/checkout@v3
 
       - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        env:
+          VERSION: 'v0.13.1'
+        run: curl https://raw.githubusercontent.com/rustwasm/wasm-pack/refs/heads/master/docs/_installer/init.sh -sSf | sh
 
       - name: Yarn install
         working-directory: ./site
