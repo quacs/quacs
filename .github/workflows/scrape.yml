@@ -133,7 +133,7 @@ jobs:
   #     - name: Set up Python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.11'
+  #         python-version: '3.13.4'
 
   #     - name: Set up Rust
   #       uses: actions-rs/toolchain@v1
@@ -170,7 +170,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.11'
+  #         python-version: '3.13.4'
 
   #     - name: Install pip requirements
   #       run: |
@@ -225,7 +225,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.11'
+  #         python-version: '3.13.4'
 
   #     - name: Install pip requirements
   #       run: |
@@ -259,7 +259,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.13.4'
 
       - name: Install pip requirements
         run: |
@@ -286,7 +286,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.13.4'
 
       - name: Intall pip requirements
         run: |
@@ -418,7 +418,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: "3.11"
+  #         python-version: '3.13.4'
 
   #     - name: Install pip requirements
   #       run: |
