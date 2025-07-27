@@ -5,11 +5,9 @@ import {
   PrerequisiteJSON,
 } from "@/typings";
 
-import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
 
 import Vue from "vue";
-import VueAxios from "vue-axios";
 import Vuex from "vuex";
 
 // eslint-disable-next-line
@@ -25,7 +23,6 @@ import prerequisites from "./modules/prerequisites";
 import schedule from "./modules/schedule";
 
 Vue.use(Vuex);
-Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
