@@ -91,12 +91,12 @@ export default class Schedule extends VuexModule {
     if (Object.keys(this.courseSets[this.currentTerm]).length <= 1) {
       return false;
     }
-    this.context.commit("deleteCourseSet", p);
     if (this.currentCourseSet === p.name) {
       this.context.dispatch("switchCurrentCourseSet", {
         name: Object.keys(this.courseSets[this.currentTerm])[0],
       });
     }
+    this.context.commit("deleteCourseSet", p);
     return true;
   }
 
