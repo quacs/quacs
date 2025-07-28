@@ -40,7 +40,11 @@ QuACS is not affiliated with YACS. The work they have done has been invaluable t
 yarn install
 ```
 
-You'll also need to install Rust and `wasm-pack` to build the WebAssembly components of the website.  Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).
+You'll also need to install `Rust` and `wasm-pack` to build the WebAssembly components of the website.  
+Instructions for `Rust` can be found [here](https://www.rust-lang.org/tools/install)  
+Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).
+
+**NOTE:** If you are using a Mac, you may need to edit `quacs-rs/Cargo.toml` to set `wasm-opt = false`.
 
 ### Compiles and hot-reloads for development
 ```
