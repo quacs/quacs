@@ -29,20 +29,23 @@
           <Calendar :sections="currentSchedule" />
 
           <div class="d-flex justify-content-between">
-            <div class="crn-list">
-              CRNs:
-              <template v-for="(section, idx) in currentSchedule">
-                <template v-if="idx !== 0">, </template>
-                <span
-                  class="crn"
-                  v-b-tooltip.hover.top
-                  :title="'Click to copy the CRN for ' + section.title"
-                  :key="section.crn"
-                  v-on:click="copyToClipboard(section.crn)"
-                  >{{ section.crn }}</span
-                ></template
-              >
-              <div id="crn-copy-indicator">Copied!</div>
+            <div class="info-container d-flex flex-column">
+              <div class="crn-list">
+                CRNs:
+                <template v-for="(section, idx) in currentSchedule">
+                  <template v-if="idx !== 0">, </template>
+                  <span
+                    class="crn"
+                    v-b-tooltip.hover.top
+                    :title="'Click to copy the CRN for ' + section.title"
+                    :key="section.crn"
+                    v-on:click="copyToClipboard(section.crn)"
+                    >{{ section.crn }}</span
+                  ></template
+                >
+                <div id="crn-copy-indicator">Copied!</div>
+              </div>
+              <div class="credits">{{ creditRange }} Credits</div>
             </div>
             <b-button @click="exportIcs()">
               <font-awesome-icon
@@ -238,6 +241,25 @@ export default class Schedule extends Vue {
     newSchedule.push(...this.sectionsWithoutTimes);
 
     this.currentSchedule = newSchedule;
+  }
+
+  get creditRange(): string {
+    if (this.currentSchedule.length === 0) {
+      return "0";
+    }
+    const minCredits = this.currentSchedule.reduce(
+      (partialSum, currSection) => partialSum + currSection.credMin,
+      0
+    );
+    const maxCredits = this.currentSchedule.reduce(
+      (partialSum, currSection) => partialSum + currSection.credMax,
+      0
+    );
+
+    if (minCredits === maxCredits) {
+      return `${minCredits}`;
+    }
+    return `${minCredits}-${maxCredits}`;
   }
 
   /////////////////////
