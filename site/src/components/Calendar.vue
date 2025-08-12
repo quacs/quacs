@@ -64,6 +64,8 @@
                 {{ session.timeslot.instructor }}
                 <br />
                 {{ session.timeslot.location }}
+                <br />
+                {{ typeFullName(session.timeslot.type) }}
               </div>
             </div>
 
@@ -140,6 +142,18 @@ export default class Calendar extends Vue {
         this.selectedDate = Math.min(this.selectedDate, timeslotStartDate);
       }
     }
+  }
+
+  typeFullName(type: string): string {
+    const typeNames: { [key: string]: string } = {
+      LEC: "Lecture",
+      TES: "Exam",
+      REC: "Recitation",
+      LAB: "Lab",
+      STU: "Studio",
+    };
+
+    return typeNames[type] || "Unknown";
   }
 
   getDays(): Day[] {
