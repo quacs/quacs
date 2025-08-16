@@ -1,6 +1,6 @@
 aiohttp==3.12.12
 beautifulsoup4==4.13.4
-lxml==5.4.0
+lxml==6.0.0
 requests==2.32.4
 tqdm==4.67.1
 datadog==0.51.0
