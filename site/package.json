@@ -23,6 +23,7 @@
     "axios": "^0.24.0",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
+    "caniuse-lite": "1.0.30001722",
     "file-saver": "^2.0.5",
     "fuse.js": "^6.4.6",
     "ics": "^2.31.0",
