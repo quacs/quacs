@@ -22,7 +22,7 @@ async def get_topics_txts():
     url = "https://www.cs.rpi.edu/~goldsd/docs/"
     async with session.get(url) as request:
         soup = BeautifulSoup(await request.text())
-        links = soup.find("table").findAll("a")
+        links = soup.find("table").find_all("a")
         out = []
         for link in links:
             if "topics-courses" in link["href"]:
