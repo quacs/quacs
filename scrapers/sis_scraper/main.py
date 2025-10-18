@@ -260,15 +260,26 @@ async def scrape_subject(term, name, code):
     return courses_data, registration_dates
 
 
+# Returns list of subjects in format
+# [ ('Administrative Courses', 'ADMN'), ('Aerospace Studies', 'USAF'), ... ]
 async def get_subjects_for_term(term):
+    # New SIS makes this easy by just returning the prefixes in the following JSON format
+    # [
+    #   {
+    #     "code": "ADMN",
+    #     "description": "Administrative Courses"
+    #   },
+    #   {
+    #     "code": "USAF",
+    #     "description": "Aerospace Studies"
+    #   },
+    #   ....
+    # ]
     global session
-    url = f"https://sis.rpi.edu/rss/bwckctlg.p_display_courses?term_in={term}&sel_crse_strt=&sel_crse_end=&sel_subj=&sel_levl=&sel_schd=&sel_coll=&sel_divs=&sel_dept=&sel_attr="
+    url = f"https://sis9.rpi.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?searchTerm=&term={term}&offset=1&max=100"
     async with session.get(url) as request:
-        soup = BeautifulSoup(await request.text())
-        return [
-            (entry.text, entry["value"])
-            for entry in soup.find("select", {"id": "subj_id"}).findAll("option")
-        ]
+        subjects_json = json.loads(await request.text())
+        return [(entry["code"], entry["description"]) for entry in subjects_json]
 
 
 async def scrape_term(term):
