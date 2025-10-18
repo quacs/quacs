@@ -17,7 +17,6 @@ import bs4
 # Project
 import util
 import conflict_logic
-import prerequisites
 
 # ClientSession for aiohttp
 session = None
@@ -130,10 +129,10 @@ def parse_meeting_times(meetings_faculty):
 
 
 async def get_section_prerequisites(term, crn):
-    """Fetch prerequisites from the old SIS endpoint"""
+    """Fetch prerequisites from the new SIS9 endpoint"""
     global session
 
-    url = f"https://sis.rpi.edu/rss/bwckschd.p_disp_detail_sched?term_in={term}&crn_in={crn}"
+    url = f"https://sis9.rpi.edu/StudentRegistrationSsb/ssb/searchResults/getSectionPrerequisites?term={term}&courseReferenceNumber={crn}"
 
     try:
         async with session.get(url) as response:
@@ -143,11 +142,162 @@ async def get_section_prerequisites(term, crn):
             text = await response.text()
             soup = bs4.BeautifulSoup(text, features="lxml")
 
-            # Use the existing prerequisites parser
-            return prerequisites.get_prereq_string(soup)
+            # Parse the new prerequisites table format
+            return parse_new_prerequisites_html(soup)
     except Exception:
         # If we fail to get prereqs for any reason, return empty dict
         return {}
+
+
+def parse_new_prerequisites_html(soup):
+    """Parse prerequisites from new SIS9 HTML table format"""
+    prereq_data = {}
+
+    # Find the prerequisites table
+    table = soup.find('table', {'class': 'basePreqTable'})
+    if not table:
+        return {}
+
+    tbody = table.find('tbody')
+    if not tbody:
+        return {}
+
+    rows = tbody.find_all('tr')
+    if not rows:
+        return {}
+
+    # Parse the prerequisite rows into a structured format
+    # The table has columns: And/Or, Open Paren, Test, Score, Subject, Course Number, Level, Grade, Close Paren
+    prereq_items = []
+
+    for row in rows:
+        cols = row.find_all('td')
+        if len(cols) < 8:
+            continue
+
+        and_or = cols[0].text.strip().lower()  # '', 'and', 'or'
+        open_paren = cols[1].text.strip()       # '(' or ''
+        # cols[2] = test (not used for course prereqs)
+        # cols[3] = score (not used for course prereqs)
+        subject = cols[4].text.strip()
+        course_num = cols[5].text.strip()
+        # cols[6] = level (not used)
+        grade = cols[7].text.strip()
+        close_paren = cols[8].text.strip() if len(cols) > 8 else ''  # ')' or ''
+
+        if subject and course_num:
+            # Map subject name to code (e.g., "Computer Science" -> "CSCI")
+            subject_code = map_subject_name_to_code(subject)
+
+            prereq_items.append({
+                'connector': and_or,  # '', 'and', 'or'
+                'open_paren': open_paren,
+                'subject': subject_code,
+                'course': course_num,
+                'grade': grade if grade else None,
+                'close_paren': close_paren
+            })
+
+    if not prereq_items:
+        return {}
+
+    # Convert the flat list into nested structure
+    prereq_structure = build_prereq_structure(prereq_items)
+
+    if prereq_structure:
+        prereq_data['prerequisites'] = prereq_structure
+
+    return prereq_data
+
+
+def map_subject_name_to_code(subject_name):
+    """Map subject full name to department code"""
+    # Common mappings based on RPI departments
+    mapping = {
+        'Computer Science': 'CSCI',
+        'Mathematics': 'MATH',
+        'Management': 'MGMT',
+        'Physics': 'PHYS',
+        'Chemistry': 'CHEM',
+        'Biology': 'BIOL',
+        'Biomedical Engineering': 'BMED',
+        'Chemical Engineering': 'CHME',
+        'Civil Engineering': 'CIVL',
+        'Electrical Engineering': 'ECSE',
+        'Mechanical Engineering': 'MECH',
+        'Materials Science & Engineering': 'MTLE',
+        'Cognitive Science': 'COGS',
+        'Communication': 'COMM',
+        'Economics': 'ECON',
+        'Engineering': 'ENGR',
+        'Science': 'NSCI',
+        'Information Technology & Web Science': 'ITWS',
+    }
+
+    return mapping.get(subject_name, subject_name)
+
+
+def build_prereq_structure(items):
+    """Build nested prerequisite structure from flat list"""
+    if not items:
+        return None
+
+    # Handle single course
+    if len(items) == 1:
+        item = items[0]
+        return {
+            'type': 'course',
+            'course': f"{item['subject']} {item['course']}",
+            'min_grade': item['grade']
+        }
+
+    # Build structure based on connectors and parentheses
+    # The key insight: parentheses group OR clauses, and everything at top level is AND
+    result = []
+    i = 0
+
+    while i < len(items):
+        item = items[i]
+
+        course_obj = {
+            'type': 'course',
+            'course': f"{item['subject']} {item['course']}",
+            'min_grade': item['grade']
+        }
+
+        # Check if this starts a parenthesized OR group
+        if item['open_paren'] == '(':
+            # Collect all courses until we find the closing paren
+            or_group = [course_obj]
+            i += 1
+
+            while i < len(items) and not items[i-1].get('close_paren'):
+                next_item = items[i]
+                next_course = {
+                    'type': 'course',
+                    'course': f"{next_item['subject']} {next_item['course']}",
+                    'min_grade': next_item['grade']
+                }
+                or_group.append(next_course)
+                i += 1
+
+            # Create OR node
+            if len(or_group) > 1:
+                result.append({'type': 'or', 'nested': or_group})
+            else:
+                result.append(or_group[0])
+        else:
+            # Standalone course (not in parens)
+            result.append(course_obj)
+            i += 1
+
+    # Wrap in AND if multiple items
+    if len(result) > 1:
+        return {'type': 'and', 'nested': result}
+    elif len(result) == 1:
+        return result[0]
+    else:
+        return None
 
 
 async def get_section_information(section_data, main_faculty, term):
@@ -333,7 +483,7 @@ async def scrape_term(term):
 
         if course_key not in courses_by_subject[subject_code]:
             courses_by_subject[subject_code][course_key] = {
-                'title': html.unescape(section['courseTitle']),
+                'title': util.normalize_class_name(html.unescape(section['courseTitle'])),
                 'subj': subject_code,
                 'crse': int(course_number),
                 'id': course_key,
@@ -357,13 +507,21 @@ async def scrape_term(term):
         credit_hour_high = section.get('creditHourHigh')
         credit_hour_low = section.get('creditHourLow')
 
+        # Handle different credit hour formats from API
         if credit_hour_high is not None:
+            # Variable credit course (e.g., 1-4 credits)
             section_dict['credMin'] = float(credit_hour_low or 0)
             section_dict['credMax'] = float(credit_hour_high)
+        elif credit_hour_low is not None:
+            # Fixed credit course with only creditHourLow set
+            section_dict['credMin'] = float(credit_hour_low)
+            section_dict['credMax'] = float(credit_hour_low)
         elif credit_hours is not None:
+            # Credit hours in the creditHours field
             section_dict['credMin'] = float(credit_hours)
             section_dict['credMax'] = float(credit_hours)
         else:
+            # No credit information (e.g., 0 credit courses)
             section_dict['credMin'] = 0.0
             section_dict['credMax'] = 0.0
 
