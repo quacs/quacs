@@ -1,0 +1,6 @@
+[toolchain]
+# Pinned to the last Rust release before bulk-memory was enabled by default
+# for wasm32-unknown-unknown (1.87.0). Newer toolchains emit a Wasm DataCount
+# section that this project's webpack 4 / vue-cli 4 parser cannot handle.
+channel = "1.86.0"
+targets = ["wasm32-unknown-unknown"]
