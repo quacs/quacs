@@ -41,8 +41,13 @@
             <font-awesome-icon
               v-if="Object.keys(getCourseSets).length > 1"
               :icon="['fas', 'trash']"
-              class="open_close_icon, trash-btn"
+              class="open_close_icon trash-btn mr-2"
               @click="removeCourseSet(courseSet)"
+            ></font-awesome-icon>
+            <font-awesome-icon
+              :icon="['fas', 'clone']"
+              class="open_close_icon duplicate-btn"
+              @click="duplicateCourseSet(courseSet)"
             ></font-awesome-icon>
             {{ courseSet }}
           </div>
@@ -156,6 +161,22 @@ export default class CourseSetEdit extends Vue {
   removeCourseSet(name: string): void {
     this.$store.dispatch("schedule/removeCourseSet", {
       name: name,
+    });
+  }
+
+  duplicateCourseSet(name: string): void {
+    let newName: string;
+    const regexResult = name.match(/^(.+) (\d+)$/);
+    const baseName = regexResult?.[1] ?? name;
+    const indexNum = regexResult?.[2] ?? "";
+    const parsedNum = parseInt(indexNum);
+    if (isNaN(parsedNum)) {
+      newName = name + " 1";
+    } else {
+      newName = baseName + " " + (parsedNum + 1);
+    }
+    this.$store.dispatch("schedule/copyCourseSet", {
+      name: newName,
     });
   }
 
