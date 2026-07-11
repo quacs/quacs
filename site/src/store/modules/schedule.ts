@@ -82,6 +82,29 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
+  copyCurrentToCourseSet(p: { name: string }): void {
+    Vue.set(
+      this.courseSets[this.currentTerm],
+      p.name,
+      JSON.parse(
+        JSON.stringify(this.courseSets[this.currentTerm][this.currentCourseSet])
+      )
+    );
+  }
+
+  @Action
+  copyCourseSet(p: { name: string }): boolean {
+    //Cannot add a courseSet with a name of one that exists
+    if (this.courseSets[this.currentTerm][p.name]) {
+      return false;
+    }
+
+    this.context.commit("copyCurrentToCourseSet", p);
+    this.context.dispatch("switchCurrentCourseSet", p);
+    return true;
+  }
+
+  @Mutation
   deleteCourseSet(p: { name: string }): void {
     Vue.delete(this.courseSets[this.currentTerm], p.name);
   }
