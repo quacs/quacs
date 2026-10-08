@@ -42,8 +42,7 @@ yarn install
 
 You'll also need to install `Rust` and `wasm-pack` to build the WebAssembly components of the website.  
 Instructions for `Rust` can be found [here](https://www.rust-lang.org/tools/install)  
-Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).  
-The Rust version is pinned in `src/quacs-rs/rust-toolchain.toml` (newer versions produce WebAssembly that our webpack version can't read), so `rustup` will install it automatically.
+Instructions for installing `wasm-pack` can be found [here](https://rustwasm.github.io/wasm-pack/installer/).
 
 **NOTE:** If you are using a Mac, you may need to edit `quacs-rs/Cargo.toml` to set `wasm-opt = false`.
 
@@ -70,13 +69,6 @@ Or run it headlessly with:
 ```
 yarn test:e2e:headless
 ```
-
-## AI agent tools (WebMCP)
-QuACS exposes its course data to in-browser AI agents through [WebMCP](https://webmachinelearning.github.io/webmcp/), which lets a page register tools with the browser instead of running an MCP server. The tools live in `src/webmcp.ts` and let an agent search courses, read sections and prerequisites, filter sections by time/days/attributes, and build schedules in the user's (local only) course sets, plus a `get_help_and_feedback` tool that points people to our Discord. Browsers without WebMCP ignore them.
-
-The **AI Agents** item in the navbar (`src/components/AgentSetup.vue`) explains setup to users, including a prompt they can copy into their agent.
-
-To try them, enable `chrome://flags/#enable-webmcp-testing` in Chrome and use a WebMCP-aware agent on the site. Enabling `chrome://flags/#devtools-webmcp-support` as well lets you inspect and run the tools from DevTools.
 
 ## Contributing a theme
 Please replace `dark` with your theme name
