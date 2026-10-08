@@ -79,7 +79,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { BButton, BModal } from "bootstrap-vue";
 
 const MCP_COMMAND =
-  "npx -y chrome-devtools-mcp@latest --isolated --categoryExperimentalWebmcp --chromeArg=--enable-features=WebMCP";
+  "npx -y chrome-devtools-mcp@latest --headless --isolated --categoryExperimentalWebmcp --chromeArg=--enable-features=WebMCP";
 
 @Component({
   components: {
@@ -134,6 +134,7 @@ export default class AgentSetup extends Vue {
       "   For other clients, add the same command and args to your MCP config.",
       "2. If the new server's tools aren't available in this session yet, ask me to reload your MCP servers (in Claude Code: run /reload-plugins, or restart with claude --continue if that doesn't work), then carry on from step 3.",
       `3. Use that server's navigate_page tool to open ${this.siteUrl}, call list_webmcp_tools to see the QuACS tools, and call them with execute_webmcp_tool, passing the tool input as a JSON string.`,
+      "   That browser is headless and temporary, so anything you select there disappears when it closes. Give me the CRNs of the schedule you build.",
       "",
       "To confirm it works, call get_term_info and tell me which semester QuACS is showing. Then help me plan my schedule.",
     ].join("\n");
