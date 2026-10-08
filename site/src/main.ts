@@ -68,6 +68,7 @@ import "./registerServiceWorker";
 import router from "@/router";
 import store from "@/store";
 import { setColorTheme } from "@/utilities";
+import { registerWebMcpTools } from "@/webmcp";
 
 Vue.config.productionTip = false;
 
@@ -84,3 +85,5 @@ new Vue({
     setColorTheme(this.$store.state.settings.colorTheme);
   },
 }).$mount("#app");
+
+registerWebMcpTools(store);
