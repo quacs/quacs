@@ -2,103 +2,65 @@
   <div>
     <b-modal
       id="agent-setup-modal"
-      title="Use QuACS with your AI agent"
-      size="lg"
+      title="Use QuACS with AI"
       @show="refreshNativeSupport"
     >
       <p>
-        QuACS shares its course data with AI agents as
-        <a
-          href="https://webmachinelearning.github.io/webmcp/"
-          target="_blank"
-          rel="noopener"
-          >WebMCP</a
-        >
-        tools. Your agent can search courses, check prerequisites, find sections
-        that fit your week and build schedules for you. The tools run in the
-        browser tab, so nothing is sent to a QuACS server.
+        Let an AI agent search courses, check prerequisites and build your
+        schedule. Copy this prompt into Claude Code, Cursor or any agent that
+        supports MCP:
       </p>
 
-      <b-alert :variant="nativeSupport ? 'success' : 'secondary'" show>
-        <span v-if="nativeSupport">
-          This browser supports WebMCP, so QuACS tools are available to agents
-          built into it right now.
-        </span>
-        <span v-else>
-          This browser doesn't support WebMCP yet. Use the setup below to
-          connect a coding agent.
-        </span>
-      </b-alert>
-
-      <h5>Let your agent set it up</h5>
-      <p>
-        Paste this prompt into Claude Code, Cursor, Codex or any agent that can
-        add MCP servers:
-      </p>
+      <div class="prompt-preview" data-cy="agent-prompt">{{ prompt }}</div>
       <b-button
         variant="primary"
-        class="mb-2"
+        block
         data-cy="copy-agent-prompt"
         @click="copy(prompt, 'prompt')"
       >
-        {{ copied === "prompt" ? "Copied!" : "Copy prompt" }}
+        {{ copied === "prompt" ? "Copied!" : "Copy setup prompt" }}
       </b-button>
-      <pre class="agent-setup-code" data-cy="agent-prompt">{{ prompt }}</pre>
 
-      <hr />
-
-      <h5>Set it up yourself</h5>
-      <p>
-        Agents outside the browser reach the tools through
-        <a
-          href="https://github.com/ChromeDevTools/chrome-devtools-mcp"
-          target="_blank"
-          rel="noopener"
-          >Chrome DevTools MCP</a
-        >, which opens a Chrome window with WebMCP turned on. For Claude Code,
-        run:
-      </p>
-      <pre class="agent-setup-code">{{ claudeCommand }}</pre>
-      <b-button
-        variant="outline-primary"
-        size="sm"
-        @click="copy(claudeCommand, 'command')"
-      >
-        {{ copied === "command" ? "Copied!" : "Copy command" }}
-      </b-button>
-      <p class="mt-3">For other MCP clients, add this to the MCP config:</p>
-      <pre class="agent-setup-code">{{ mcpConfig }}</pre>
-      <b-button
-        variant="outline-primary"
-        size="sm"
-        @click="copy(mcpConfig, 'config')"
-      >
-        {{ copied === "config" ? "Copied!" : "Copy config" }}
-      </b-button>
-      <p class="mt-3">
-        Then ask your agent to open <code>{{ siteUrl }}</code> and use
-        <code>list_webmcp_tools</code> and <code>execute_webmcp_tool</code>. The
-        agent works in its own browser window, so schedules it builds there
-        won't appear here; ask it for the CRNs.
+      <p class="browser-status" data-cy="browser-status">
+        <template v-if="nativeSupport">
+          <font-awesome-icon :icon="['fas', 'check']"></font-awesome-icon>
+          WebMCP is on in this browser, so agents built into it can use QuACS
+          directly.
+        </template>
+        <template v-else-if="isChrome">
+          To let agents built into Chrome use QuACS directly, open
+          <code>{{ chromeFlag }}</code
+          >&nbsp;<a href="#" @click.prevent="copy(chromeFlag, 'flag')">{{
+            copied === "flag" ? "(copied)" : "(copy)"
+          }}</a
+          >, set it to Enabled and relaunch Chrome.
+        </template>
+        <template v-else>
+          Agents built into the browser need Chrome with
+          <code>{{ chromeFlag }}</code> enabled.
+        </template>
       </p>
 
-      <h5>Agents built into Chrome</h5>
-      <p>
-        Enable <code>chrome://flags/#enable-webmcp-testing</code>, restart
-        Chrome and reload QuACS. Agents in the browser can then use the tools on
-        this page directly, and anything they add to your schedule shows up
-        here.
-      </p>
-
-      <p class="mt-3 mb-0">
-        Problems or feedback? Come talk to us on
-        <a href="https://discord.gg/yXaHkwU" target="_blank" rel="noopener"
-          >Discord</a
-        >.
-      </p>
+      <details>
+        <summary>Manual setup</summary>
+        <p>
+          Run this in a terminal (Claude Code shown), then ask your agent to
+          open <code>{{ siteUrl }}</code> and use its WebMCP tools:
+        </p>
+        <pre class="setup-command">{{ claudeCommand }}</pre>
+        <a href="#" @click.prevent="copy(claudeCommand, 'command')">{{
+          copied === "command" ? "Copied!" : "Copy command"
+        }}</a>
+      </details>
 
       <template v-slot:modal-footer="{ ok }">
-        <b-button variant="primary" @click="ok()"> Close </b-button>
+        <small class="mr-auto">
+          Problems or feedback?
+          <a href="https://discord.gg/yXaHkwU" target="_blank" rel="noopener"
+            >Join our Discord</a
+          >
+        </small>
+        <b-button variant="secondary" @click="ok()"> Close </b-button>
       </template>
     </b-modal>
   </div>
@@ -106,19 +68,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { BAlert, BButton, BModal } from "bootstrap-vue";
+import { BButton, BModal } from "bootstrap-vue";
 
-const MCP_ARGS = [
-  "-y",
-  "chrome-devtools-mcp@latest",
-  "--isolated",
-  "--categoryExperimentalWebmcp",
-  "--chromeArg=--enable-features=WebMCP",
-];
+const MCP_COMMAND =
+  "npx -y chrome-devtools-mcp@latest --isolated --categoryExperimentalWebmcp --chromeArg=--enable-features=WebMCP";
 
 @Component({
   components: {
-    "b-alert": BAlert,
     "b-button": BButton,
     "b-modal": BModal,
   },
@@ -126,21 +82,18 @@ const MCP_ARGS = [
 export default class AgentSetup extends Vue {
   copied: string | null = null;
   nativeSupport = false;
+  chromeFlag = "chrome://flags/#enable-webmcp-testing";
+
+  get isChrome(): boolean {
+    return /Chrome\//.test(navigator.userAgent);
+  }
 
   get siteUrl(): string {
     return window.location.origin + process.env.BASE_URL;
   }
 
   get claudeCommand(): string {
-    return `claude mcp add quacs -- npx ${MCP_ARGS.join(" ")}`;
-  }
-
-  get mcpConfig(): string {
-    return JSON.stringify(
-      { mcpServers: { quacs: { command: "npx", args: MCP_ARGS } } },
-      null,
-      2
-    );
+    return `claude mcp add quacs -- ${MCP_COMMAND}`;
   }
 
   get prompt(): string {
@@ -148,7 +101,7 @@ export default class AgentSetup extends Vue {
       `Set yourself up to use QuACS, the RPI course scheduler at ${this.siteUrl}, through its WebMCP tools.`,
       "",
       "QuACS registers its tools in the browser with WebMCP (document.modelContext), so you need a browser bridge:",
-      `1. Add an MCP server named "quacs" that runs: npx ${MCP_ARGS.join(" ")}`,
+      `1. Add an MCP server named "quacs" that runs: ${MCP_COMMAND}`,
       `   In Claude Code that is: ${this.claudeCommand}`,
       "   For other clients, add the same command and args to your MCP config, then reload MCP servers (restart if needed).",
       `2. Use that server's navigate_page tool to open ${this.siteUrl}`,
@@ -189,17 +142,37 @@ export default class AgentSetup extends Vue {
 </script>
 
 <style scoped>
-.agent-setup-code {
+.prompt-preview {
   white-space: pre-wrap;
-  word-break: break-word;
+  font-family: monospace;
+  font-size: 0.8rem;
+  max-height: 4.5em;
+  overflow: hidden;
+  padding: 0.5rem 0.75rem 0;
+  border-radius: 6px 6px 0 0;
   background: rgba(127, 127, 127, 0.12);
   color: var(--global-text);
-  border-radius: 6px;
-  padding: 0.75rem;
-  font-size: 0.85rem;
+  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent);
+  mask-image: linear-gradient(to bottom, black 30%, transparent);
 }
 
-h5 {
-  margin-top: 1rem;
+.browser-status {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.setup-command {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(127, 127, 127, 0.12);
+  color: var(--global-text);
+}
+
+summary {
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 </style>

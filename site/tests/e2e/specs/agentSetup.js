@@ -6,8 +6,11 @@ describe("Test AI agent setup modal", () => {
 
     cy.getNav().containsOne("AI Agents").click();
     cy.getOne("#agent-setup-modal").within(() => {
-      cy.containsOne("Use QuACS with your AI agent");
-      cy.containsOne("doesn't support WebMCP yet");
+      cy.containsOne("Use QuACS with AI");
+      cy.getOne("[data-cy=browser-status]").should(
+        "contain",
+        "chrome://flags/#enable-webmcp-testing"
+      );
       cy.getOne("[data-cy=agent-prompt]").should(
         "contain",
         "claude mcp add quacs -- npx -y chrome-devtools-mcp@latest"
