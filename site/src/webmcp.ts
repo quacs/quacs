@@ -47,6 +47,11 @@ declare global {
       list(): Pick<ModelContextTool, "name" | "description" | "inputSchema">[];
       call(name: string, input?: Record<string, unknown>): Promise<unknown>;
     };
+    // Datadog RUM, loaded asynchronously by the snippet in index.html
+    DD_RUM?: {
+      onReady(callback: () => void): void;
+      addAction(name: string, context?: Record<string, unknown>): void;
+    };
   }
 }
 
@@ -1011,31 +1016,73 @@ function buildTools(store: QuacsStore): ModelContextTool[] {
   ];
 }
 
+// Reports agent usage to Datadog RUM. A no-op if the RUM snippet was blocked.
+export function trackAgentAction(
+  name: string,
+  context: Record<string, unknown> = {}
+): void {
+  const rum = window.DD_RUM;
+  rum?.onReady(() => rum.addAction(name, context));
+}
+
 export function registerWebMcpTools(store: QuacsStore): void {
   const tools = buildTools(store);
+  const runners = new Map<
+    string,
+    (input: Record<string, unknown>, via: string) => Promise<unknown>
+  >();
   for (const tool of tools) {
     const execute = tool.execute;
-    // Browsers turn a thrown error into a generic failure, so hand the message
-    // back as a result instead to let the agent correct itself.
-    tool.execute = (input) =>
-      execute(input).catch((error) => ({
-        error: error instanceof Error ? error.message : String(error),
-        help: "If this looks like a QuACS bug, call get_help_and_feedback.",
-      }));
+    const run = async (input: Record<string, unknown>, via: string) => {
+      const start = performance.now();
+      let result: unknown;
+      let ok = true;
+      try {
+        result = await execute(input);
+      } catch (error) {
+        // Browsers turn a thrown error into a generic failure, so hand the
+        // message back as a result instead to let the agent correct itself.
+        ok = false;
+        result = {
+          error: error instanceof Error ? error.message : String(error),
+          help: "If this looks like a QuACS bug, call get_help_and_feedback.",
+        };
+      }
+      trackAgentAction("webmcp_tool_call", {
+        tool: tool.name,
+        via,
+        ok,
+        input,
+        error: ok ? undefined : (result as { error: string }).error,
+        duration_ms: Math.round(performance.now() - start),
+      });
+      return result;
+    };
+    runners.set(tool.name, run);
+    tool.execute = (input) => run(input, "webmcp");
   }
 
   window.quacsTools = {
-    list: () =>
-      tools.map(({ name, description, inputSchema }) => ({
+    list: () => {
+      trackAgentAction("webmcp_list_tools", { via: "quacsTools" });
+      return tools.map(({ name, description, inputSchema }) => ({
         name,
         description,
         inputSchema,
-      })),
+      }));
+    },
     call: (name, input = {}) => {
-      const tool = tools.find((t) => t.name === name);
-      return tool
-        ? tool.execute(input)
-        : Promise.resolve({ error: `No QuACS tool named "${name}".` });
+      const run = runners.get(name);
+      if (run === undefined) {
+        trackAgentAction("webmcp_tool_call", {
+          tool: name,
+          via: "quacsTools",
+          ok: false,
+          error: "unknown tool",
+        });
+        return Promise.resolve({ error: `No QuACS tool named "${name}".` });
+      }
+      return run(input, "quacsTools");
     },
   };
 

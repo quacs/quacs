@@ -23,7 +23,6 @@ Want to ask a question, help with development, or just hang out? [Join our disco
 - Mobile phones should not be second class citizens. Do not hide important data from people on mobile devices.
 - Open Source. Everything in QuACS is open source under the MIT License.
 - Competition drives innovation. We love competition because we feel that everyone is better off because of it. Our data is not only publicly stored in this repo, but it also is easy to acquire yourself using our scrapers. We would love to see what people can do with the data!
-- Your privacy is extremely important. We do not collect any identifying data and, because everything is client side, you can rest assured that nothing you upload or do on QuACS is viewable by anyone else.
 
 # Other Notes
 

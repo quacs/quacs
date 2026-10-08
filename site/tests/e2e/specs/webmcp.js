@@ -35,6 +35,32 @@ describe("Test window.quacsTools without WebMCP", () => {
       .its("semester")
       .should("equal", "Summer 2021");
   });
+
+  it("Reports tool calls to Datadog RUM", () => {
+    // Stand in for the RUM agent, ignoring the real one when it loads
+    cy.visit("/", {
+      onBeforeLoad(win) {
+        const rum = {
+          onReady: (callback) => callback(),
+          init: cy.stub(),
+          startSessionReplayRecording: cy.stub(),
+          addAction: cy.stub().as("addAction"),
+        };
+        Object.defineProperty(win, "DD_RUM", {
+          get: () => rum,
+          set: cy.stub(),
+        });
+      },
+    });
+    cy.window()
+      .its("quacsTools")
+      .then((quacsTools) => quacsTools.call("get_term_info"));
+    cy.get("@addAction").should(
+      "have.been.calledWithMatch",
+      "webmcp_tool_call",
+      { tool: "get_term_info", via: "quacsTools", ok: true }
+    );
+  });
 });
 
 describe("Test WebMCP tools", () => {
