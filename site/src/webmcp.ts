@@ -15,7 +15,7 @@ import {
   Timeslot,
 } from "@/typings";
 import { instantFuseSearch } from "@/searchUtilities";
-import { DAYS, shortSemToLongSem } from "@/utilities";
+import { DAYS, shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 interface ModelContextTool {
   name: string;
@@ -310,6 +310,22 @@ function meetsPrerequisite(
   return prereq.nested.some((child) => meetsPrerequisite(taken, child));
 }
 
+function allSemesters(): string[] {
+  return JSON.parse(process.env.VUE_APP_ALL_SEMS || "[]");
+}
+
+// Accepts "Fall 2026", "fall2026", "fall-2026" or "202609"
+function findSemester(raw: string): string | undefined {
+  const normalize = (text: string) => text.toLowerCase().replace(/[\s_-]/g, "");
+  const wanted = normalize(String(raw));
+  return allSemesters().find(
+    (sem) =>
+      sem === wanted ||
+      normalize(shortSemToLongSem()(sem)) === wanted ||
+      normalize(shortSemToURL()(sem)) === `/${wanted}`
+  );
+}
+
 function clampLimit(raw: unknown): number {
   const limit = Number(raw ?? DEFAULT_LIMIT);
   return Math.max(1, Math.min(MAX_LIMIT, isNaN(limit) ? DEFAULT_LIMIT : limit));
@@ -378,13 +394,10 @@ function buildTools(store: QuacsStore): ModelContextTool[] {
       name: "get_term_info",
       title: "Get term info",
       description:
-        "Get the semester this QuACS page covers (QuACS is the RPI course scheduler), its registration dates, when the course data was last updated, and the other semesters available.",
+        "Get the semester this QuACS page covers (QuACS is the RPI course scheduler), its registration dates, when the course data was last updated, and the other semesters available. Every other tool only sees this semester; use switch_semester to work with another one.",
       inputSchema: { type: "object", properties: {} },
       annotations: readOnly,
       execute: async () => {
-        const allSems: string[] = JSON.parse(
-          process.env.VUE_APP_ALL_SEMS || "[]"
-        );
         return {
           semester: shortSemToLongSem()(term),
           semester_code: term,
@@ -392,13 +405,48 @@ function buildTools(store: QuacsStore): ModelContextTool[] {
           registration_closes:
             store.state.registrationDates.registration_closes,
           data_last_updated: store.state.dataStats.last_updated,
-          // QuACS hosts each semester at its own URL; tools only cover this one
-          other_recent_semesters: allSems
+          // QuACS builds each semester as its own page, so tools only cover this one
+          other_semesters: allSemesters()
             .filter((sem) => sem !== term)
-            .slice(0, 6)
             .map((sem) => shortSemToLongSem()(sem)),
           time_format:
             "Times are 24 hour HH:MM. Days use full names (Monday-Sunday).",
+        };
+      },
+    },
+    {
+      name: "switch_semester",
+      title: "Switch semester",
+      description:
+        "Move this tab to another semester's QuACS page. Each semester is a separate page with its own course data, saved schedules and tools, so the page reloads: wait a moment, then list the tools again before calling them.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          semester: {
+            type: "string",
+            description: 'Semester such as "Fall 2026" (see get_term_info)',
+          },
+        },
+        required: ["semester"],
+      },
+      execute: async ({ semester }) => {
+        const target = findSemester(String(semester || ""));
+        if (target === undefined) {
+          throw new Error(
+            `QuACS has no "${semester}" semester. See other_semesters from get_term_info.`
+          );
+        }
+        if (target === term) {
+          return { semester: shortSemToLongSem()(term), already_here: true };
+        }
+        const url = `${window.location.origin}${shortSemToURL()(target)}/`;
+        // Give the result time to reach the agent before the page unloads
+        setTimeout(() => window.location.assign(url), 250);
+        return {
+          switching_to: shortSemToLongSem()(target),
+          url,
+          next_step:
+            "The page is reloading. List the tools again, then call get_term_info to confirm the semester.",
         };
       },
     },

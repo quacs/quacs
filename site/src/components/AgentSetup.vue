@@ -24,8 +24,7 @@
       <p class="browser-status" data-cy="browser-status">
         <template v-if="nativeSupport">
           <font-awesome-icon :icon="['fas', 'check']"></font-awesome-icon>
-          WebMCP is on in this browser, so agents built into it can use QuACS
-          directly.
+          WebMCP is on in this browser.
         </template>
         <template v-else-if="browser.chromiumVersion >= MIN_CHROMIUM">
           To let agents built into {{ browser.name }} use QuACS directly, open

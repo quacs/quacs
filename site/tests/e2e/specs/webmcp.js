@@ -45,6 +45,7 @@ describe("Test WebMCP tools", () => {
           "switch_course_set",
           "set_prior_courses",
           "get_help_and_feedback",
+          "switch_semester",
         ]);
         expect(tools.get_course.annotations.readOnlyHint).to.equal(true);
         expect(tools.select_sections.annotations).to.equal(undefined);
@@ -161,6 +162,18 @@ describe("Test WebMCP tools", () => {
     })
       .its("num_possible_schedules")
       .should("equal", 2);
+  });
+
+  it("Handles semester switching", () => {
+    callTool("get_term_info")
+      .its("other_semesters")
+      .should("include", "Spring 2021");
+    callTool("switch_semester", { semester: "summer-2021" })
+      .its("already_here")
+      .should("equal", true);
+    callTool("switch_semester", { semester: "Fall 1999" })
+      .its("error")
+      .should("contain", 'no "Fall 1999" semester');
   });
 
   it("Points people to the Discord", () => {
