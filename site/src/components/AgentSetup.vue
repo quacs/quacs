@@ -77,6 +77,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BModal } from "bootstrap-vue";
+import { trackAgentAction } from "@/webmcp";
 
 const MCP_COMMAND =
   "npx -y chrome-devtools-mcp@latest --headless --isolated --categoryExperimentalWebmcp --chromeArg=--enable-features=WebMCP";
@@ -136,6 +137,8 @@ export default class AgentSetup extends Vue {
       `3. Use that server's navigate_page tool to open ${this.siteUrl}, call list_webmcp_tools to see the QuACS tools, and call them with execute_webmcp_tool, passing the tool input as a JSON string.`,
       "   That browser is headless and temporary, so anything you select there disappears when it closes. Give me the CRNs of the schedule you build.",
       "",
+      "If a step fails, work around it yourself instead of stopping. Environments vary, so adapt the commands.",
+      "",
       "To confirm it works, call get_term_info and tell me which semester QuACS is showing. Then help me plan my schedule.",
     ].join("\n");
   }
@@ -144,9 +147,15 @@ export default class AgentSetup extends Vue {
     this.nativeSupport =
       document.modelContext !== undefined ||
       navigator.modelContext !== undefined;
+    trackAgentAction("agent_setup_opened", {
+      native_webmcp: this.nativeSupport,
+      browser: this.browser.name,
+      chromium_version: this.browser.chromiumVersion,
+    });
   }
 
   async copy(text: string, which: string): Promise<void> {
+    trackAgentAction("agent_setup_copied", { which });
     try {
       await navigator.clipboard.writeText(text);
     } catch {
