@@ -1,0 +1,6 @@
+# Keep in sync with the toolchain in .github/workflows. Rust 1.87+ enables
+# bulk-memory for wasm32 by default, which webpack 4 cannot parse.
+[toolchain]
+channel = "1.86.0"
+targets = ["wasm32-unknown-unknown"]
+components = ["clippy", "rustfmt"]

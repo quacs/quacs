@@ -12,7 +12,7 @@ echo "Retrieving latest quacs-data for quacs-rs"
 git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=1 src/store/data || exit 1
 
 semesters=(src/store/data/semester_data/*)
-curr_semester="$(basename ${semesters[-1]})"
+curr_semester="$(basename "${semesters[${#semesters[@]}-1]}")"
 echo "Setting quacs-rs to build for $curr_semester"
 mkdir src/quacs-rs/src/data || rm -rf src/quacs-rs/src/data/*
 cp src/store/data/semester_data/$curr_semester/*.rs src/quacs-rs/src/data

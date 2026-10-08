@@ -56,6 +56,14 @@
                 >Schedule</b-nav-item
               >
               <b-nav-item
+                class="nav-text text-nowrap"
+                data-cy="agent-setup-link"
+                v-b-modal.agent-setup-modal
+              >
+                <font-awesome-icon :icon="['fas', 'robot']"></font-awesome-icon>
+                AI Agents
+              </b-nav-item>
+              <b-nav-item
                 v-if="installable"
                 class="nav-text mobile-only"
                 @click="installPrompt()"
@@ -108,6 +116,7 @@
       </div>
     </div>
     <Settings></Settings>
+    <AgentSetup></AgentSetup>
     <footer class="footer">
       <div class="footer-links">
         <a
@@ -173,6 +182,7 @@ import {
   VBTooltip,
 } from "bootstrap-vue";
 import Settings from "@/components/Settings.vue";
+import AgentSetup from "@/components/AgentSetup.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
 import UnofficialScheduleWarning from "@/components/UnofficialScheduleWarning.vue";
 import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
@@ -180,6 +190,7 @@ import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
 @Component({
   components: {
     Settings,
+    AgentSetup,
     CourseSetEdit,
     UnofficialScheduleWarning,
     "b-alert": BAlert,
