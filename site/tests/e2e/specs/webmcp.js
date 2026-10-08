@@ -150,9 +150,9 @@ describe("Test WebMCP tools", () => {
     callTool("set_prior_courses", { add: ["CSCI-2200"] })
       .its("prior_courses")
       .should("deep.equal", ["CSCI-1200", "CSCI-2200", "MATH-1020"]);
-    callTool("get_my_schedule")
-      .its("courses_missing_prerequisites")
-      .should("equal", undefined);
+    callTool("get_my_schedule").then((schedule) =>
+      expect(schedule.courses_missing_prerequisites).to.equal(undefined)
+    );
 
     callTool("select_sections", {
       course_ids: ["CSCI-2600"],
