@@ -27,17 +27,26 @@
           WebMCP is on in this browser, so agents built into it can use QuACS
           directly.
         </template>
-        <template v-else-if="isChrome">
-          To let agents built into Chrome use QuACS directly, open
-          <code>{{ chromeFlag }}</code
-          >&nbsp;<a href="#" @click.prevent="copy(chromeFlag, 'flag')">{{
+        <template v-else-if="browser.chromiumVersion >= MIN_CHROMIUM">
+          To let agents built into {{ browser.name }} use QuACS directly, open
+          <code>{{ flagUrl }}</code
+          >&nbsp;<a href="#" @click.prevent="copy(flagUrl, 'flag')">{{
             copied === "flag" ? "(copied)" : "(copy)"
           }}</a
-          >, set it to Enabled and relaunch Chrome.
+          >, set it to Enabled and relaunch {{ browser.name }}.
+          <template v-if="browser.name !== 'Chrome'">
+            If you can't find it, use Chrome.
+          </template>
+        </template>
+        <template v-else-if="browser.chromiumVersion > 0">
+          Update {{ browser.name }} to let agents built into it use QuACS
+          directly, then enable <code>{{ flagUrl }}</code
+          >.
         </template>
         <template v-else>
-          Agents built into the browser need Chrome with
-          <code>{{ chromeFlag }}</code> enabled.
+          This browser doesn't support WebMCP yet. To let agents built into the
+          browser use QuACS directly, use Chrome with
+          <code>chrome://flags/#enable-webmcp-testing</code> enabled.
         </template>
       </p>
 
@@ -82,10 +91,28 @@ const MCP_COMMAND =
 export default class AgentSetup extends Vue {
   copied: string | null = null;
   nativeSupport = false;
-  chromeFlag = "chrome://flags/#enable-webmcp-testing";
+  // First Chromium release with the WebMCP flag
+  MIN_CHROMIUM = 146;
 
-  get isChrome(): boolean {
-    return /Chrome\//.test(navigator.userAgent);
+  // Every Chromium browser has the flag, under its own flags page
+  get browser(): { name: string; scheme: string; chromiumVersion: number } {
+    const ua = navigator.userAgent;
+    const chromium = ua.match(/Chrome\/(\d+)/);
+    const chromiumVersion = chromium ? parseInt(chromium[1]) : 0;
+    if (/Edg\//.test(ua)) {
+      return { name: "Edge", scheme: "edge", chromiumVersion };
+    } else if (/OPR\//.test(ua)) {
+      return { name: "Opera", scheme: "opera", chromiumVersion };
+    } else if (/Vivaldi\//.test(ua)) {
+      return { name: "Vivaldi", scheme: "vivaldi", chromiumVersion };
+    } else if ("brave" in navigator) {
+      return { name: "Brave", scheme: "brave", chromiumVersion };
+    }
+    return { name: "Chrome", scheme: "chrome", chromiumVersion };
+  }
+
+  get flagUrl(): string {
+    return `${this.browser.scheme}://flags/#enable-webmcp-testing`;
   }
 
   get siteUrl(): string {
