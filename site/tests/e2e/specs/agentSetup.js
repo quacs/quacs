@@ -13,7 +13,7 @@ describe("Test AI agent setup modal", () => {
       );
       cy.getOne("[data-cy=agent-prompt]").should(
         "contain",
-        "claude mcp add quacs -- npx -y chrome-devtools-mcp@latest"
+        "claude mcp add --scope user quacs -- npx -y chrome-devtools-mcp@latest"
       );
 
       cy.getOne("[data-cy=copy-agent-prompt]").click();
