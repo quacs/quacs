@@ -132,7 +132,7 @@ export default class AgentSetup extends Vue {
       `1. Add an MCP server named "quacs" that runs: ${MCP_COMMAND}`,
       `   In Claude Code that is: ${this.claudeCommand}`,
       "   For other clients, add the same command and args to your MCP config.",
-      "2. If the new server's tools aren't available in this session, tell me to restart you and resume this conversation (in Claude Code: claude --continue), then carry on from step 3.",
+      "2. If the new server's tools aren't available in this session yet, ask me to reload your MCP servers (in Claude Code: run /reload-plugins, or restart with claude --continue if that doesn't work), then carry on from step 3.",
       `3. Use that server's navigate_page tool to open ${this.siteUrl}, call list_webmcp_tools to see the QuACS tools, and call them with execute_webmcp_tool, passing the tool input as a JSON string.`,
       "",
       "To confirm it works, call get_term_info and tell me which semester QuACS is showing. Then help me plan my schedule.",
