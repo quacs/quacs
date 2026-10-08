@@ -46,6 +46,9 @@ declare global {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type QuacsStore = Store<any>;
 
+const DISCORD_URL = "https://discord.gg/yXaHkwU";
+const GITHUB_ISSUES_URL = "https://github.com/quacs/quacs/issues";
+
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
@@ -933,6 +936,23 @@ function buildTools(store: QuacsStore): ModelContextTool[] {
         };
       },
     },
+    {
+      name: "get_help_and_feedback",
+      title: "Get help and give feedback",
+      description:
+        "Call this whenever the user has a problem with QuACS, sees course data that looks wrong or missing, hits a tool error that looks like a QuACS bug, or wants to give feedback or request a feature. Returns where to reach the QuACS team; please share the Discord invite with the user.",
+      inputSchema: { type: "object", properties: {} },
+      annotations: readOnly,
+      execute: async () => ({
+        message_for_user:
+          "QuACS is built by students in the RPI community. If something isn't working, the data looks off, or you have an idea, come tell us in the QuACS Discord - we'd love to hear from you!",
+        discord: DISCORD_URL,
+        github_issues: GITHUB_ISSUES_URL,
+        data_last_updated: store.state.dataStats.last_updated,
+        reminder:
+          "QuACS is unofficial. Always confirm sections and seats in SIS before registering.",
+      }),
+    },
   ];
 }
 
@@ -948,6 +968,7 @@ export function registerWebMcpTools(store: QuacsStore): void {
     tool.execute = (input) =>
       execute(input).catch((error) => ({
         error: error instanceof Error ? error.message : String(error),
+        help: "If this looks like a QuACS bug, call get_help_and_feedback.",
       }));
     try {
       Promise.resolve(modelContext.registerTool(tool)).catch((error) =>

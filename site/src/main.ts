@@ -31,6 +31,7 @@ import {
   faLaptopHouse,
   faPen,
   faPlus,
+  faRobot,
   faTrash,
   faUser,
   faUserSlash,
@@ -56,6 +57,7 @@ library.add(
   faPatreon,
   faPen,
   faPlus,
+  faRobot,
   faTrash,
   faUser,
   faUserSlash

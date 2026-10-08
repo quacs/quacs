@@ -1,0 +1,25 @@
+describe("Test AI agent setup modal", () => {
+  it("Opens from the navbar and copies the setup prompt", () => {
+    cy.window().then((win) =>
+      cy.stub(win.navigator.clipboard, "writeText").resolves().as("copy")
+    );
+
+    cy.getNav().containsOne("AI Agents").click();
+    cy.getOne("#agent-setup-modal").within(() => {
+      cy.containsOne("Use QuACS with your AI agent");
+      cy.containsOne("doesn't support WebMCP yet");
+      cy.getOne("[data-cy=agent-prompt]").should(
+        "contain",
+        "claude mcp add quacs -- npx -y chrome-devtools-mcp@latest"
+      );
+
+      cy.getOne("[data-cy=copy-agent-prompt]").click();
+      cy.get("@copy")
+        .should("have.been.calledOnce")
+        .its("firstCall.args.0")
+        .should("contain", "list_webmcp_tools")
+        .and("contain", "/summer2021/");
+      cy.getOne("[data-cy=copy-agent-prompt]").should("contain", "Copied!");
+    });
+  });
+});

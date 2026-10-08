@@ -44,6 +44,7 @@ describe("Test WebMCP tools", () => {
           "select_sections",
           "switch_course_set",
           "set_prior_courses",
+          "get_help_and_feedback",
         ]);
         expect(tools.get_course.annotations.readOnlyHint).to.equal(true);
         expect(tools.select_sections.annotations).to.equal(undefined);
@@ -160,6 +161,12 @@ describe("Test WebMCP tools", () => {
     })
       .its("num_possible_schedules")
       .should("equal", 2);
+  });
+
+  it("Points people to the Discord", () => {
+    callTool("get_help_and_feedback")
+      .its("discord")
+      .should("equal", "https://discord.gg/yXaHkwU");
   });
 
   it("Returns errors as results", () => {
