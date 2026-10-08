@@ -1,7 +1,8 @@
 // Exposes QuACS data to in-browser AI agents through WebMCP
 // (https://webmachinelearning.github.io/webmcp/). Everything runs client side:
 // the page registers tools with the browser and agents call them directly, so
-// no MCP server is needed. Browsers without WebMCP support simply skip this.
+// no MCP server is needed. The same tools are also on window.quacsTools for
+// agents that can run JavaScript in the page but whose browser lacks WebMCP.
 import { Store } from "vuex";
 import {
   CatalogCourse,
@@ -40,6 +41,12 @@ declare global {
   interface Navigator {
     // Deprecated location of the API, still used by older Chromium builds
     modelContext?: ModelContext;
+  }
+  interface Window {
+    quacsTools?: {
+      list(): Pick<ModelContextTool, "name" | "description" | "inputSchema">[];
+      call(name: string, input?: Record<string, unknown>): Promise<unknown>;
+    };
   }
 }
 
@@ -1005,11 +1012,8 @@ function buildTools(store: QuacsStore): ModelContextTool[] {
 }
 
 export function registerWebMcpTools(store: QuacsStore): void {
-  const modelContext = document.modelContext || navigator.modelContext;
-  if (modelContext === undefined) {
-    return;
-  }
-  for (const tool of buildTools(store)) {
+  const tools = buildTools(store);
+  for (const tool of tools) {
     const execute = tool.execute;
     // Browsers turn a thrown error into a generic failure, so hand the message
     // back as a result instead to let the agent correct itself.
@@ -1018,6 +1022,28 @@ export function registerWebMcpTools(store: QuacsStore): void {
         error: error instanceof Error ? error.message : String(error),
         help: "If this looks like a QuACS bug, call get_help_and_feedback.",
       }));
+  }
+
+  window.quacsTools = {
+    list: () =>
+      tools.map(({ name, description, inputSchema }) => ({
+        name,
+        description,
+        inputSchema,
+      })),
+    call: (name, input = {}) => {
+      const tool = tools.find((t) => t.name === name);
+      return tool
+        ? tool.execute(input)
+        : Promise.resolve({ error: `No QuACS tool named "${name}".` });
+    },
+  };
+
+  const modelContext = document.modelContext || navigator.modelContext;
+  if (modelContext === undefined) {
+    return;
+  }
+  for (const tool of tools) {
     try {
       Promise.resolve(modelContext.registerTool(tool)).catch((error) =>
         // eslint-disable-next-line no-console

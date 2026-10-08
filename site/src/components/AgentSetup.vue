@@ -119,19 +119,21 @@ export default class AgentSetup extends Vue {
   }
 
   get claudeCommand(): string {
-    return `claude mcp add quacs -- ${MCP_COMMAND}`;
+    return `claude mcp add --scope user quacs -- ${MCP_COMMAND}`;
   }
 
   get prompt(): string {
     return [
-      `Set yourself up to use QuACS, the RPI course scheduler at ${this.siteUrl}, through its WebMCP tools.`,
+      `Set yourself up to use QuACS, the RPI course scheduler at ${this.siteUrl}, through the tools it exposes in the page.`,
       "",
-      "QuACS registers its tools in the browser with WebMCP (document.modelContext), so you need a browser bridge:",
+      'Fastest: if you already have a browser tool that can run JavaScript in a page (for example Chrome DevTools MCP\'s evaluate_script), open the URL and run `await window.quacsTools.list()` to see the tools and `await window.quacsTools.call("get_term_info", {})` to call one. No other setup is needed.',
+      "",
+      "Otherwise, add a browser bridge that supports WebMCP:",
       `1. Add an MCP server named "quacs" that runs: ${MCP_COMMAND}`,
       `   In Claude Code that is: ${this.claudeCommand}`,
-      "   For other clients, add the same command and args to your MCP config, then reload MCP servers (restart if needed).",
-      `2. Use that server's navigate_page tool to open ${this.siteUrl}`,
-      "3. Call list_webmcp_tools to see the QuACS tools, and call them with execute_webmcp_tool, passing the tool input as a JSON string.",
+      "   For other clients, add the same command and args to your MCP config.",
+      "2. If the new server's tools aren't available in this session, tell me to restart you and resume this conversation (in Claude Code: claude --continue), then carry on from step 3.",
+      `3. Use that server's navigate_page tool to open ${this.siteUrl}, call list_webmcp_tools to see the QuACS tools, and call them with execute_webmcp_tool, passing the tool input as a JSON string.`,
       "",
       "To confirm it works, call get_term_info and tell me which semester QuACS is showing. Then help me plan my schedule.",
     ].join("\n");

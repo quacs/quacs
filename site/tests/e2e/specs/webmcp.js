@@ -24,6 +24,19 @@ function callTool(name, input = {}) {
     .then({ timeout: 30000 }, (tool) => tool.execute(input));
 }
 
+describe("Test window.quacsTools without WebMCP", () => {
+  it("Lists and calls tools", () => {
+    cy.window()
+      .its("quacsTools")
+      .then((quacsTools) => {
+        expect(quacsTools.list()).to.have.length(14);
+        return quacsTools.call("get_term_info");
+      })
+      .its("semester")
+      .should("equal", "Summer 2021");
+  });
+});
+
 describe("Test WebMCP tools", () => {
   beforeEach(visitWithModelContext);
 
@@ -171,9 +184,9 @@ describe("Test WebMCP tools", () => {
     callTool("switch_semester", { semester: "summer-2021" })
       .its("already_here")
       .should("equal", true);
-    callTool("switch_semester", { semester: "Fall 1999" })
+    callTool("switch_semester", { semester: "Fall 1899" })
       .its("error")
-      .should("contain", 'no "Fall 1999" semester');
+      .should("contain", 'no "Fall 1899" semester');
   });
 
   it("Points people to the Discord", () => {
