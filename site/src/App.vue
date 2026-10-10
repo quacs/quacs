@@ -134,9 +134,11 @@
           aria-label="See QuACS usage stats"
           target="_blank"
           ><img
+            id="footer-logo"
             src="@/assets/images/quacs_white.svg"
             alt="QuACS stats"
             style="height: 1em; vertical-align: -0.125em"
+            @mouseenter="rotateLogo()"
         /></a>
         <a
           href="https://github.com/quacs/quacs"
