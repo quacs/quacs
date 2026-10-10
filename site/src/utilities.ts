@@ -354,7 +354,7 @@ export function shuffleArray<T>(a: T[]): T[] {
 
 export function getLogo(): string {
   const baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/img/logos/`;
-  const defaultLogo = ["quacs_logo.svg", "quacs_logo_white_duck.svg"];
+  const defaultLogo = ["quacs_logo_white_duck.svg"];
 
   // Returns a date in the current year with the specified month and day
   // Note: Uses 1-indexing for months (e.g. 1=January, 12=December).

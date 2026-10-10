@@ -17,28 +17,31 @@
         <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <script>
-        (function(h,o,u,n,d) {
-            h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
-            d=o.createElement(u);d.async=1;d.src=n
-            n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
-        })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
-        DD_RUM.onReady(function() {
-            DD_RUM.init({
-            clientToken: 'pub91f8066271bd1dd18eb67001df37c8af',
-            applicationId: '94a8e320-14ac-4e17-8679-8196c4f5fdfd',
-            site: 'datadoghq.com',
-            service: 'quacs',
-            env: 'prod',
-            // Specify a version number to identify the deployed version of your application in Datadog
-            // version: '1.0.0',
-            sessionSampleRate: 100,
-            sessionReplaySampleRate: 100,
-            trackUserInteractions: true,
-            trackResources: true,
-            trackLongTasks: true,
-            defaultPrivacyLevel: 'allow',
-            });
-        })
+        // Skip RUM in Cypress so e2e runs do not show up in usage stats
+        if (!window.Cypress) {
+            (function(h,o,u,n,d) {
+                h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
+                d=o.createElement(u);d.async=1;d.src=n
+                n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
+            })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
+            DD_RUM.onReady(function() {
+                DD_RUM.init({
+                clientToken: 'pub91f8066271bd1dd18eb67001df37c8af',
+                applicationId: '94a8e320-14ac-4e17-8679-8196c4f5fdfd',
+                site: 'datadoghq.com',
+                service: 'quacs',
+                env: 'prod',
+                // Specify a version number to identify the deployed version of your application in Datadog
+                // version: '1.0.0',
+                sessionSampleRate: 100,
+                sessionReplaySampleRate: 100,
+                trackUserInteractions: true,
+                trackResources: true,
+                trackLongTasks: true,
+                defaultPrivacyLevel: 'allow',
+                });
+            })
+        }
     </script>
     <div id="app"></div>
     <script>

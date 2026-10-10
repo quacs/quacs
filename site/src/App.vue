@@ -128,6 +128,17 @@
           ><font-awesome-icon :icon="['fab', 'discord']"></font-awesome-icon>
         </a>
         <a
+          href="https://stats.quacs.org"
+          rel="noopener"
+          title="See QuACS usage stats"
+          aria-label="See QuACS usage stats"
+          target="_blank"
+          ><img
+            src="@/assets/images/quacs_white.svg"
+            alt="QuACS stats"
+            style="height: 1em; vertical-align: -0.125em"
+        /></a>
+        <a
           href="https://github.com/quacs/quacs"
           rel="noopener"
           title="Visit our GitHub"
@@ -135,13 +146,6 @@
           target="_blank"
           ><font-awesome-icon :icon="['fab', 'github']"></font-awesome-icon>
         </a>
-        <!--img
-          id="footer-logo"
-          src="@/assets/images/quacs_white.svg"
-          alt="QuACS"
-          style="height: 40px"
-          @click="rotateLogo()"
-        /-->
       </div>
       <div class="footer-updated">
         Last updated {{ lastUpdated }} (<a
