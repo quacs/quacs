@@ -8,7 +8,7 @@ describe("Test navbar", () => {
     );
     cy.get("nav").containsOne("Prerequisites").click();
     cy.getBody().containsOne("Prerequisites");
-    cy.get("nav").getOne("img").click();
+    cy.getOne("nav img").click();
 
     cy.getBody().get(".card-header").containsOne(Object.keys(SCHOOLS)[0]);
   });
