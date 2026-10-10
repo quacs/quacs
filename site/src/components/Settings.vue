@@ -30,6 +30,12 @@
         >Hide courses/sections you are missing the prerequisites
         for?</b-form-checkbox
       >
+      <b-form-checkbox
+        switch
+        v-model="hideAgentButton"
+        data-cy="hide-agent-button-toggle"
+        >Hide the AI Agents button in the navbar?</b-form-checkbox
+      >
       <template v-slot:modal-footer="{ ok }">
         <b-button variant="primary" @click="ok()"> Close </b-button>
       </template>
@@ -40,6 +46,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
+import { trackAgentAction } from "@/webmcp";
 
 @Component({
   components: {
@@ -68,6 +75,15 @@ import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
           "settings/toggleHiddenPrerequisites",
           !this.$store.state.settings.hidePrerequisites
         );
+      },
+    },
+    hideAgentButton: {
+      get() {
+        return this.$store.state.settings.hideAgentButton;
+      },
+      set(hidden: boolean) {
+        this.$store.commit("settings/setHideAgentButton", hidden);
+        trackAgentAction("agent_button_toggled", { hidden });
       },
     },
   },

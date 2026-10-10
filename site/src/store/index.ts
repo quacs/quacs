@@ -132,6 +132,7 @@ export default new Vuex.Store({
         "settings.timePreference",
         "settings.colorTheme",
         "settings.hidePrerequisites",
+        "settings.hideAgentButton",
         "settings.enableTracking",
         "prerequisites.priorCourses",
         "prerequisites.enableChecking",

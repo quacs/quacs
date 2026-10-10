@@ -7,6 +7,7 @@ export default class Settings extends VuexModule {
   timePreference: TimePreference = TimePreference.Standard; // If a value is in localstorage, this will be set to that on load
   colorTheme = "system";
   hidePrerequisites = false;
+  hideAgentButton = false;
   enableTracking = true;
 
   get isMilitaryTime(): () => boolean {
@@ -37,6 +38,11 @@ export default class Settings extends VuexModule {
 
   get hidePrerequisitesState(): boolean {
     return this.hidePrerequisites;
+  }
+
+  @Mutation
+  setHideAgentButton(state: boolean): void {
+    this.hideAgentButton = state;
   }
 
   @Mutation

@@ -56,6 +56,7 @@
                 >Schedule</b-nav-item
               >
               <b-nav-item
+                v-if="!$store.state.settings.hideAgentButton"
                 class="nav-text text-nowrap"
                 data-cy="agent-setup-link"
                 v-b-modal.agent-setup-modal
