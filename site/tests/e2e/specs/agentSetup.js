@@ -30,14 +30,14 @@ describe("Test AI agent setup modal", () => {
 describe("Test hiding the AI Agents button", () => {
   it("Hides the navbar button from settings and remembers it", () => {
     cy.getNav().find("svg[data-icon=cog]").click();
-    cy.getOne("[data-cy=hide-agent-button-toggle]").check({ force: true });
+    cy.get("[data-cy=hide-agent-button-toggle]").check({ force: true });
     cy.get("[data-cy=agent-setup-link]").should("not.exist");
 
     cy.reload();
     cy.get("[data-cy=agent-setup-link]").should("not.exist");
 
     cy.getNav().find("svg[data-icon=cog]").click();
-    cy.getOne("[data-cy=hide-agent-button-toggle]").uncheck({ force: true });
+    cy.get("[data-cy=hide-agent-button-toggle]").uncheck({ force: true });
     cy.getOne("[data-cy=agent-setup-link]");
   });
 });
