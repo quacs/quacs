@@ -173,3 +173,35 @@ describe("Test color themes", () => {
     );
   });
 });
+
+describe("MTA route badges", () => {
+  it("uses real routes with their matching official colors", () => {
+    cy.getNav().find("svg[data-icon=cog]").click();
+    cy.get("#colorTheme").select("MTA");
+    cy.get(".modal-footer").contains("Close").click();
+    const routes = [
+      ["1", "rgb(216, 34, 51)"],
+      ["2", "rgb(216, 34, 51)"],
+      ["4", "rgb(0, 153, 82)"],
+      ["7", "rgb(154, 56, 161)"],
+      ["B", "rgb(235, 104, 0)"],
+      ["A", "rgb(0, 98, 207)"],
+      ["Q", "rgb(246, 188, 38)"],
+      ["G", "rgb(121, 149, 52)"],
+    ];
+    cy.get(".department-cards .card-header").each(($header, index) => {
+      const badge = $header[0].ownerDocument.defaultView.getComputedStyle(
+        $header[0],
+        "::before"
+      );
+      const [route, color] = routes[index % routes.length];
+      expect(badge.content).to.equal(`"${route}"`);
+      expect(badge.backgroundColor).to.equal(color);
+    });
+    cy.get(".transit-schedule-link .transit-bullet").should(
+      "have.css",
+      "background-color",
+      "rgb(124, 133, 140)"
+    );
+  });
+});

@@ -15,8 +15,8 @@
       <path d="M29 0V900M53 0V900M1387 0V900M1411 0V900"/>
     </g>
     <g fill="none" stroke-width="4" opacity=".17">
-      <path d="M82 0V225L164 307V515L82 597V900" stroke="#0039a6"/>
-      <path d="M1358 0V470L1280 548V720L1358 798V900" stroke="#ee352e"/>
+      <path d="M82 0V225L164 307V515L82 597V900" stroke="#0062cf"/>
+      <path d="M1358 0V470L1280 548V720L1358 798V900" stroke="#d82233"/>
     </g>
     <g fill="#f5f2e9" stroke="#181818" stroke-width="2" opacity=".3">
       <circle cx="82" cy="130" r="6"/>
