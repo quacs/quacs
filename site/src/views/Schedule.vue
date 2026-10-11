@@ -94,6 +94,7 @@
           v-for="course in selectedCourses"
           v-bind:key="course.subj + course.crse + course.title"
           v-bind:course="course"
+          v-bind:current-schedule-crns="currentScheduleCrns"
         />
       </div>
     </div>
@@ -241,6 +242,10 @@ export default class Schedule extends Vue {
     newSchedule.push(...this.sectionsWithoutTimes);
 
     this.currentSchedule = newSchedule;
+  }
+
+  get currentScheduleCrns(): number[] {
+    return this.currentSchedule.map((section) => section.crn);
   }
 
   get creditRange(): string {
