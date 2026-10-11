@@ -110,6 +110,7 @@ describe("Test color themes", () => {
           init: cy.stub(),
           startSessionReplayRecording: cy.stub(),
           addAction: cy.stub().as("addAction"),
+          setGlobalContextProperty: cy.stub().as("setGlobal"),
         };
         Object.defineProperty(win, "DD_RUM", {
           get: () => rum,
@@ -122,5 +123,15 @@ describe("Test color themes", () => {
     cy.get("@addAction").should("have.been.calledWithMatch", "theme_selected", {
       theme: "retro",
     });
+    cy.get("@setGlobal").should(
+      "have.been.calledWith",
+      "selected_theme",
+      "retro"
+    );
+    cy.get("@setGlobal").should(
+      "have.been.calledWith",
+      "applied_theme",
+      "retro"
+    );
   });
 });

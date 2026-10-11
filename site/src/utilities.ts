@@ -251,6 +251,13 @@ export function setColorTheme(colorTheme: string): void {
     "data-theme-accent",
     newColorTheme.split(" ")[1]
   );
+  const rum = window.DD_RUM;
+  rum?.onReady(() => {
+    if (typeof rum.setGlobalContextProperty === "function") {
+      rum.setGlobalContextProperty("selected_theme", colorTheme);
+      rum.setGlobalContextProperty("applied_theme", newColorTheme);
+    }
+  });
 }
 
 function meetsPrerequisite(

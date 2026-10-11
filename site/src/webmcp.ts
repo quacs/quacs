@@ -51,6 +51,7 @@ declare global {
     DD_RUM?: {
       onReady(callback: () => void): void;
       addAction(name: string, context?: Record<string, unknown>): void;
+      setGlobalContextProperty?(key: string, value: unknown): void;
     };
   }
 }
