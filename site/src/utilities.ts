@@ -215,6 +215,7 @@ export const THEME_OPTIONS: { value: string; text: string; saved: boolean }[] =
     { value: "nyan", text: "Nyan Cat", saved: true },
     { value: ARTISANAL_THEME, text: "Artisanal", saved: true },
     { value: "luma", text: "Luma (Calico)", saved: true },
+    { value: "trains", text: "MTA", saved: true },
     { value: "wingdings", text: "Wingdings", saved: false },
   ];
 

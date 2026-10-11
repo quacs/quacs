@@ -2,6 +2,7 @@ const NEW_THEMES = {
   "Illuminated Manuscript": "manuscript",
   "Retro Arcade": "retro",
   "Classic Web": "web1",
+  MTA: "trains",
 };
 
 describe("Test color themes", () => {
@@ -15,7 +16,41 @@ describe("Test color themes", () => {
     }
 
     cy.reload();
-    cy.get("html").should("have.attr", "data-theme", "web1");
+    cy.get("html").should("have.attr", "data-theme", "trains");
+  });
+
+  it("Keeps the transit layout scoped to MTA on desktop and mobile", () => {
+    cy.getNav().find("svg[data-icon=cog]").click();
+    cy.getOne("#colorTheme").select("MTA");
+    cy.getOne(".modal-footer").containsOne("Close").click();
+    cy.get(".transit-masthead").should("be.visible");
+    cy.get(".department-cards .card")
+      .first()
+      .should("have.css", "border-radius", "0px");
+
+    cy.viewport(390, 844);
+    cy.get(".transit-masthead").should("be.visible");
+    cy.document().then((doc) => {
+      expect(doc.documentElement.scrollWidth).to.be.at.most(390);
+    });
+    cy.get(".department-link").first().click();
+    cy.get(".course-card").should("exist");
+    cy.get(".navbar-brand").click();
+    cy.get(".transit-masthead").should("be.visible");
+
+    cy.viewport(1280, 800);
+    cy.getNav().contains("Schedule").click();
+    cy.get(".day-label")
+      .first()
+      .should("have.css", "color", "rgb(255, 255, 255)");
+    cy.get(".navbar > .navbar-brand").click();
+    cy.getNav().find("svg[data-icon=cog]").click();
+    cy.getOne("#colorTheme").select("Light");
+    cy.getOne(".modal-footer").containsOne("Close").click();
+    cy.get(".transit-masthead").should("not.be.visible");
+    cy.get(".department-cards .card")
+      .first()
+      .should("have.css", "border-radius", "4px");
   });
 
   it("Keeps the look of the existing light theme", () => {
