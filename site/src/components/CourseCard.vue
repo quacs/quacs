@@ -128,7 +128,10 @@
           :class="{ expanded: expanded }"
           :key="course.id + lastNewSchedule"
         >
-          <Sections v-bind:course="course" />
+          <Sections
+            v-bind:course="course"
+            v-bind:current-schedule-crns="currentScheduleCrns"
+          />
         </div>
       </div>
     </div>
@@ -207,6 +210,7 @@ export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
   @Prop() readonly startExpanded!: boolean;
   @Prop({ type: Boolean, default: false }) readonly removable!: boolean;
+  @Prop() readonly currentScheduleCrns?: number[];
   expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin(): string {

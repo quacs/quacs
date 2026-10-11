@@ -108,6 +108,7 @@
           v-bind:course="course"
           removable
           @remove="removeCourse"
+          v-bind:current-schedule-crns="currentScheduleCrns"
         />
       </div>
     </div>
@@ -266,6 +267,10 @@ export default class Schedule extends Vue {
     newSchedule.push(...this.sectionsWithoutTimes);
 
     this.currentSchedule = newSchedule;
+  }
+
+  get currentScheduleCrns(): number[] {
+    return this.currentSchedule.map((section) => section.crn);
   }
 
   get creditRange(): string {
