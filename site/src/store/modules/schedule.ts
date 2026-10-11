@@ -17,9 +17,11 @@ export default class Schedule extends VuexModule {
   needToGenerateSchedules = false;
   currentTerm = 202009; // TODO: remove this after the current semester
   currentCourseSet = "Course Set 1";
+  // Left empty so vuex-persistedstate's merge with saved state can't bring
+  // back a deleted "Course Set 1"; ensureDefaultCourseSet fills it in instead
   courseSets: {
     [term: number]: CourseSets;
-  } = { 202009: { "Course Set 1": {} } };
+  } = { 202009: {} };
 
   wasmLoaded = false;
   lastNewSchedule = 0;
@@ -31,6 +33,20 @@ export default class Schedule extends VuexModule {
       console.log("Out of date or uninitialized sections, clearing");
 
       this.storedVersion = this.CURRENT_STORAGE_VERSION;
+    }
+  }
+
+  @Mutation
+  ensureDefaultCourseSet(): void {
+    if (!this.courseSets[this.currentTerm]) {
+      Vue.set(this.courseSets, this.currentTerm, {});
+    }
+    const sets = this.courseSets[this.currentTerm];
+    if (Object.keys(sets).length === 0) {
+      Vue.set(sets, "Course Set 1", {});
+    }
+    if (!sets[this.currentCourseSet]) {
+      this.currentCourseSet = Object.keys(sets)[0];
     }
   }
 
