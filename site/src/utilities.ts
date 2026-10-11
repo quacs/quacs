@@ -1,5 +1,6 @@
 import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
+import { applyTicker } from "@/themeTicker";
 
 export const DAYS: Day[] = [
   {
@@ -171,21 +172,92 @@ export function timeslotStartEndUnix(
 //The theme accent is usually used for slight modifications of a different theme
 //EX: Black mode is only slightly different from dark mode
 //Also the hard coded word "system" will swap between light/dark based on device reference
+// Web fonts for the themes that need them. Each loads the first time its theme is picked
+const THEME_FONT_QUERIES: { [theme: string]: string } = {
+  manuscript: "family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia",
+  retro: "family=Press+Start+2P&family=VT323",
+  artisanal: "family=Comic+Neue:wght@400;700",
+};
+
+function loadThemeFont(theme: string): void {
+  const query = THEME_FONT_QUERIES[theme];
+  const id = `theme-font-${theme}`;
+  if (query === undefined || document.getElementById(id) !== null) {
+    return;
+  }
+  const link = document.createElement("link");
+  link.id = id;
+  link.rel = "stylesheet";
+  link.href = `https://fonts.googleapis.com/css2?${query}&display=swap`;
+  document.head.appendChild(link);
+}
+
+export const SYSTEM_THEME = "system";
+export const RANDOM_THEME = "random";
+export const ARTISANAL_THEME = "artisanal";
+// The theme used when nothing valid is saved
+export const DEFAULT_THEME = SYSTEM_THEME;
+
+//Add color theme option here, in the order the settings dropdown shows them
+// saved: false means the theme is applied but never saved, so a reload restores the previously saved theme
+export const THEME_OPTIONS: { value: string; text: string; saved: boolean }[] =
+  [
+    { value: SYSTEM_THEME, text: "Follow Device Theme", saved: true },
+    { value: "light", text: "Light", saved: true },
+    { value: "dark", text: "Dark", saved: true },
+    { value: "dark black", text: "Black", saved: true },
+    { value: RANDOM_THEME, text: "Random", saved: true },
+    { value: "yacs", text: "YACS", saved: true },
+    { value: "true-dark", text: "True Dark", saved: false },
+    { value: "manuscript", text: "Illuminated Manuscript", saved: true },
+    { value: "retro", text: "Retro Arcade", saved: true },
+    { value: "web1", text: "Classic Web", saved: true },
+    { value: "nyan", text: "Nyan Cat", saved: true },
+    { value: ARTISANAL_THEME, text: "Artisanal", saved: true },
+    { value: "luma", text: "Luma (Calico)", saved: true },
+    { value: "wingdings", text: "Wingdings", saved: false },
+  ];
+
+// Themes that are applied but never saved, so a reload restores the previously saved theme
+export const UNSAVED_THEMES = THEME_OPTIONS.filter(
+  (option) => !option.saved
+).map((option) => option.value);
+
+// Themes "random" may pick from. Unsaved themes are left out so random never lands on one
+const RANDOM_THEMES = THEME_OPTIONS.filter(
+  (option) =>
+    option.saved &&
+    option.value !== RANDOM_THEME &&
+    option.value !== SYSTEM_THEME
+).map((option) => option.value);
+
 export function setColorTheme(colorTheme: string): void {
   let newColorTheme = colorTheme;
-  if (colorTheme === "system") {
+  if (colorTheme === SYSTEM_THEME) {
     newColorTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
+  } else if (colorTheme === RANDOM_THEME) {
+    newColorTheme =
+      RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
   }
-  document.documentElement.setAttribute(
-    "data-theme",
-    newColorTheme.split(" ")[0]
-  );
+  const theme = newColorTheme.split(" ")[0];
+  document.documentElement.setAttribute("data-theme", theme);
+  if (theme === ARTISANAL_THEME) {
+    applyTicker();
+  }
+  loadThemeFont(theme);
   document.documentElement.setAttribute(
     "data-theme-accent",
     newColorTheme.split(" ")[1]
   );
+  const rum = window.DD_RUM;
+  rum?.onReady(() => {
+    if (typeof rum.setGlobalContextProperty === "function") {
+      rum.setGlobalContextProperty("selected_theme", colorTheme);
+      rum.setGlobalContextProperty("applied_theme", newColorTheme);
+    }
+  });
 }
 
 function meetsPrerequisite(

@@ -114,4 +114,36 @@
   --calendar-text-color-6: #000;
   --calendar-sb-track-color-6: var(--calendar-bg-color-6);
   --calendar-sb-thumb-color-6: var(--calendar-border-color-6);
+
+  /* Shape, type and effects. The defaults keep the classic look; themes override these
+  to change the feel without touching component styles */
+  --card-border-radius: 0.25rem;
+  --card-border-width: 1px;
+  --card-inner-radius: calc(var(--card-border-radius) - var(--card-border-width));
+  --card-shadow: none;
+  --card-background: #fff;
+  --card-backdrop-filter: none;
+  --navbar-backdrop-filter: none;
+  --font-body:
+    -apple-system,
+    "BlinkMacSystemFont",
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    "Arial",
+    "Noto Sans",
+    "Liberation Sans",
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --font-heading: var(--font-body);
+  --background-image: none;
+  --background-attachment: scroll;
+
+  /* Lines and fills that used to be hardcoded in components */
+  --calendar-grid-color: #e7e7e7;
+  --search-bar-background: #eee;
+  --search-bar-border: #eee;
 }

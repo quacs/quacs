@@ -1,0 +1,82 @@
+/* Classic Web: Times text, blue links, grey beveled buttons and navy title bars, like an old homepage */
+[data-theme="web1"] {
+  --card-header-text: #000080;
+  --raw-link: #00e;
+  --background: #fff;
+  --global-text: #000;
+  --global-text-hover: #000080;
+  --card-body-background: #fff;
+  --card-body-text: #000;
+  --card-header-background: #d4d0c8;
+  --card-border-color: #808080;
+  --card-border-width: 2px;
+  --card-border-radius: 0;
+  --card-shadow: none;
+  --footer-background: #c0c0c0;
+  --navbar-background: #c0c0c0;
+  --navbar-unselected-text: #000080;
+  --navbar-unselected-text-hover: #f00;
+  --navbar-text-focus: #f00;
+  --navbar-text-disabled: #808080;
+  --navbar-text-active: #000;
+  --navbar-text-show: #000;
+  --modal-header-background: #000080;
+  --modal-header-text: #fff;
+  --modal-body-background: #fff;
+  --modal-body-text: #000;
+  --modal-footer-background: #c0c0c0;
+  --modal-footer-text: #000;
+  --btn-primary-background: #c0c0c0;
+  --btn-primary-text: #000;
+  --btn-border-radius: 0;
+  --btn-border: 2px outset #dfdfdf;
+  --btn-box-shadow: none;
+  --department-link-hover: #ff0;
+  --select-background: #fff;
+  --select-text: #000;
+  --modal-close-x-hover: #f00;
+  --table-text: #000;
+  --table-border: #808080;
+  --course-row-hover: #ffc;
+  --conflict-row: #ff8080;
+  --conflict-row-hover: #ff4040;
+  --selected-row: #ff0;
+  --selected-row-hover: #ff6;
+  --list-group-item-background: #fff;
+  --calendar-grid-color: #808080;
+  --search-bar-background: #fff;
+  --search-bar-border: #808080;
+  --overlay-background: #c0c0c0;
+  --trash-btn: #000080;
+  --trash-btn-hover: #f00;
+  --prerequisite-jumbotron: #ffc;
+  --prerequisite-text: #000;
+  --taken-course: #008000;
+  --not-taken-course: #f00;
+  --font-body: "Times New Roman", "Times", serif;
+  --font-heading: "Verdana", "Geneva", sans-serif;
+}
+
+[data-theme="web1"] a:visited {
+  color: #551a8b;
+}
+
+[data-theme="web1"] .card {
+  border-style: outset;
+  margin-bottom: 0.5rem;
+}
+
+[data-theme="web1"] .card-header {
+  font-family: verdana, geneva, sans-serif;
+  font-weight: bold;
+  border-bottom: 2px groove #808080;
+}
+
+[data-theme="web1"] .navbar.bg-light {
+  border-bottom: 3px ridge #808080;
+}
+
+/* Layout: tight rows and grooved title bars, like the tables on old sites */
+[data-theme="web1"] .card-body {
+  padding: 0.5rem 0.75rem;
+}

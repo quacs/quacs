@@ -142,6 +142,8 @@ scrapers/*/*/*/*.rs
 # Python
 *.pyc
 site/tests/e2e/videos/*.js.mp4
+site/tests/e2e/screenshots/
+site/cypress/
 
 # Macs
 .DS_Store

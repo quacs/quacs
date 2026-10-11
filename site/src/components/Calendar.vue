@@ -322,8 +322,8 @@ $dayFontSize: 0.8em;
 .grid-hour {
   display: block;
   box-sizing: border-box;
-  border-top: 1px solid #e7e7e7;
-  border-right: 1px solid #e7e7e7;
+  border-top: 1px solid var(--calendar-grid-color);
+  border-right: 1px solid var(--calendar-grid-color);
 }
 
 .grid-day:last-of-type .grid-hour {
@@ -333,7 +333,7 @@ $dayFontSize: 0.8em;
 .calendar-event {
   display: block;
   box-sizing: border-box;
-  border-right: 1px solid #e7e7e7 !important;
+  border-right: 1px solid var(--calendar-grid-color) !important;
   position: absolute;
   //height: 20%;
   //   width: 20%;

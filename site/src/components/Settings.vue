@@ -47,6 +47,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
 import { trackAgentAction } from "@/webmcp";
+import { ARTISANAL_THEME, THEME_OPTIONS } from "@/utilities";
 
 @Component({
   components: {
@@ -63,6 +64,7 @@ import { trackAgentAction } from "@/webmcp";
     },
     colorTheme: function (val) {
       this.$store.commit("settings/setColorTheme", val);
+      trackAgentAction("theme_selected", { theme: val });
     },
   },
   computed: {
@@ -83,6 +85,10 @@ import { trackAgentAction } from "@/webmcp";
       },
       set(hidden: boolean) {
         this.$store.commit("settings/setHideAgentButton", hidden);
+        if (hidden) {
+          this.$store.commit("settings/setColorTheme", ARTISANAL_THEME);
+          (this as Settings).colorTheme = ARTISANAL_THEME;
+        }
         trackAgentAction("agent_button_toggled", { hidden });
       },
     },
@@ -96,16 +102,8 @@ export default class Settings extends Vue {
   ];
 
   colorTheme = this.$store.state.settings.colorTheme;
-  //Add color theme option here
-  themeOptions: { value: string; text: string }[] = [
-    { value: "system", text: "Follow Device Theme" },
-    { value: "light", text: "Light" },
-    { value: "dark", text: "Dark" },
-    { value: "dark black", text: "Black" },
-    { value: "light colorful", text: "Splash of Color" },
-    { value: "yacs", text: "YACS" },
-    { value: "flowing", text: "Flowing" },
-    { value: "true-dark", text: "True Dark" },
-  ];
+  themeOptions: { value: string; text: string }[] = THEME_OPTIONS.map(
+    ({ value, text }) => ({ value, text })
+  );
 }
 </script>

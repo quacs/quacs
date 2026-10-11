@@ -4,13 +4,25 @@ a color in colors.css */
 
 body {
   background: var(--background);
+  background-image: var(--background-image);
+  background-attachment: var(--background-attachment);
   color: var(--global-text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
 }
 
 .card-body {
   background: var(--card-body-background);
   color: var(--card-body-text);
-  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+  border-radius: 0 0 var(--card-inner-radius) var(--card-inner-radius);
 }
 
 .card-header {
@@ -19,11 +31,21 @@ body {
 }
 
 .card {
+  background-color: var(--card-background);
   border-color: var(--card-border-color);
+  border-width: var(--card-border-width);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: var(--card-backdrop-filter);
+}
+
+.card-header:first-child {
+  border-radius: var(--card-inner-radius) var(--card-inner-radius) 0 0;
 }
 
 .navbar.bg-light {
   background: var(--navbar-background) !important;
+  backdrop-filter: var(--navbar-backdrop-filter);
 }
 
 .b-overlay > .bg-light {

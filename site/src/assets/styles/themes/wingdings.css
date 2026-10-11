@@ -1,0 +1,30 @@
+/* Wingdings: the light theme (colors from colors.css) with every piece of text in Wingdings.
+Wingdings is a Microsoft symbol font, so it only shows where it is installed (Windows, or Office on macOS).
+Everywhere else the stack falls back to the default system font, so the page stays readable. */
+:root {
+  --wingdings-font:
+    "Wingdings",
+    -apple-system,
+    "BlinkMacSystemFont",
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    "Arial",
+    sans-serif;
+}
+
+[data-theme="wingdings"] {
+  --font-body: var(--wingdings-font);
+  --font-heading: var(--font-body);
+}
+
+/* Bootstrap tooltips and code, and some components, set their own font stacks instead of
+inheriting. !important makes sure they follow the theme font as well, whatever the load order. */
+[data-theme="wingdings"] * {
+  font-family: var(--font-body) !important;
+}
+
+/* The theme name in the Settings dropdown shows in Wingdings whichever theme is active */
+option[value="wingdings"] {
+  font-family: var(--wingdings-font);
+}

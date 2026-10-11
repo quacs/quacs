@@ -1,0 +1,407 @@
+/* Artisanal (Human Made): photocopied paper, hazard tape, a ransom-note title and rubber stamps.
+Deliberately loud. Body text stays black on paper and cream cards. Motion only runs when the
+OS asks for it (prefers-reduced-motion: no-preference). */
+[data-theme="artisanal"] {
+  --card-header-text: #000;
+  --raw-link: #000;
+  --background: #f4efe6;
+  --background-image:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%3E%3Cfilter%20id%3D%22n%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.85%22%20numOctaves%3D%223%22%20stitchTiles%3D%22stitch%22%20seed%3D%227%22%2F%3E%3CfeColorMatrix%20type%3D%22matrix%22%20values%3D%220%200%200%200%200%200%200%200%200%200%200%200%200%200%200%20-2.2%200%200%200%201.17%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22240%22%20height%3D%22240%22%20filter%3D%22url(%23n)%22%2F%3E%3C%2Fsvg%3E"),
+    radial-gradient(rgb(0 0 0 / 13%) 1.5px, transparent 2px) 0 0 / 10px 10px;
+  --background-attachment: scroll;
+  --global-text: #000;
+  --global-text-hover: #b8005c;
+  --card-body-background: #fffdf7;
+  --card-body-text: #000;
+  --card-header-background: #ffd400;
+  --card-header-hover: #ffe566;
+  --card-border-color: #000;
+  --card-border-width: 3px;
+  --card-border-radius: 2px;
+  --card-inner-radius: 0;
+  --card-background: #fffdf7;
+  --card-backdrop-filter: none;
+  --card-shadow: 6px 6px 0 #000;
+  --footer-background: #ffd400;
+  --navbar-background: #000;
+  --navbar-backdrop-filter: none;
+  --navbar-unselected-text: rgb(255 255 255 / 85%);
+  --navbar-unselected-text-hover: #ffd400;
+  --navbar-text-focus: #ffd400;
+  --navbar-text-disabled: rgb(255 255 255 / 50%);
+  --navbar-text-active: #ff2e88;
+  --navbar-text-show: #ff2e88;
+  --modal-header-background: #ffd400;
+  --modal-header-text: #000;
+  --modal-body-background: #fffdf7;
+  --modal-body-text: #000;
+  --modal-footer-background: #fffdf7;
+  --modal-footer-text: #000;
+  --modal-close-x-hover: #ff2e88;
+  --btn-primary-background: #ffd400;
+  --btn-primary-text: #000;
+  --btn-secondary-background: #39ff14;
+  --btn-secondary-text: #000;
+  --btn-border: 3px solid #000;
+  --btn-border-radius: 14px 4px 16px 3px / 4px 16px 3px 14px;
+  --btn-box-shadow: 4px 4px 0 #000;
+  --btn-transition: all 0s ease 0s;
+  --department-link-hover: #fff27a;
+  --select-background: #fffdf7;
+  --select-text: #000;
+  --table-text: #000;
+  --table-border: #000;
+  --course-row-hover: #fff3b0;
+  --conflict-row: #ff9ec4;
+  --conflict-row-hover: #ff74ad;
+  --selected-row: #9dff7a;
+  --selected-row-hover: #6bff3d;
+  --list-group-item-background: #fffdf7;
+  --calendar-label: #000;
+  --calendar-grid-color: rgb(0 0 0 / 18%);
+  --search-bar-background: #fffdf7;
+  --search-bar-border: #000;
+  --overlay-background: #f4efe6;
+  --toast-background: #000;
+  --toast-text: #ffd400;
+  --trash-btn: #b8005c;
+  --trash-btn-hover: #000;
+  --prerequisite-jumbotron: #fff3b0;
+  --prerequisite-warn-icon: #b35c00;
+  --prerequisite-error-icon: #b8005c;
+  --prerequisite-text: #000;
+  --taken-course: #0b6e2e;
+  --not-taken-course: #b8005c;
+  --font-body: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive;
+  --font-heading: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive;
+  --warning-font-size: 1.5rem;
+  --warning-border-style: dashed;
+  --warning-border-width: 4px;
+  --warning-color: #d6002f;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #ffd400;
+  --calendar-border-color-0: #000;
+  --calendar-text-color-0: #000;
+  --calendar-bg-color-1: #ff9ec4;
+  --calendar-border-color-1: #000;
+  --calendar-text-color-1: #000;
+  --calendar-bg-color-2: #7ef0ff;
+  --calendar-border-color-2: #000;
+  --calendar-text-color-2: #000;
+  --calendar-bg-color-3: #d9c2ff;
+  --calendar-border-color-3: #000;
+  --calendar-text-color-3: #000;
+  --calendar-bg-color-4: #9dff7a;
+  --calendar-border-color-4: #000;
+  --calendar-text-color-4: #000;
+  --calendar-bg-color-5: #ffb35c;
+  --calendar-border-color-5: #000;
+  --calendar-text-color-5: #000;
+  --calendar-bg-color-6: #fff;
+  --calendar-border-color-6: #000;
+  --calendar-text-color-6: #000;
+}
+
+/* Type: heading hierarchy with misregistered magenta and green ink, slightly tilted */
+[data-theme="artisanal"] h1,
+[data-theme="artisanal"] h2,
+[data-theme="artisanal"] h3 {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow:
+    2px 2px 0 #ff2e88,
+    -1px -1px 0 #39ff14;
+  transform-origin: left center;
+}
+
+[data-theme="artisanal"] h1 {
+  transform: rotate(-1.5deg);
+}
+
+[data-theme="artisanal"] h2 {
+  transform: rotate(0.8deg);
+}
+
+[data-theme="artisanal"] h3 {
+  transform: rotate(-0.6deg);
+}
+
+/* Ransom-note title: the first letter of the page title is cut out of a black block. CSS cannot
+   style each word separately without changing the markup, so the first letter carries the effect */
+[data-theme="artisanal"] h1::first-letter {
+  background: #000;
+  color: #ffd400;
+  padding: 0 0.12em;
+  margin-right: 0.08em;
+  font-size: 1.3em;
+  line-height: 1;
+  box-shadow: 4px 4px 0 #ff2e88;
+}
+
+/* Navbar: black bar with a hazard and magenta stripe underneath, hand-lettered brand */
+[data-theme="artisanal"] .navbar.bg-light::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 10px;
+  background: repeating-linear-gradient(-45deg, #ffd400 0 12px, #ff2e88 12px 24px);
+  pointer-events: none;
+}
+
+[data-theme="artisanal"] .navbar .navbar-brand {
+  transform: rotate(-3deg);
+}
+
+[data-theme="artisanal"] .navbar-nav .nav-link {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="artisanal"] .navbar-nav .nav-link:hover,
+[data-theme="artisanal"] .navbar-nav .nav-link:focus {
+  text-decoration: underline wavy #ff2e88;
+}
+
+[data-theme="artisanal"] #search-bar {
+  border: 3px solid #000;
+  border-radius: 0;
+  color: #000;
+}
+
+[data-theme="artisanal"] #search-bar::placeholder {
+  color: #4d4d4d;
+}
+
+/* Cards: torn-paper panels, each one a few degrees off square, with hazard or magenta tape
+   on a corner. The tape is decorative (pointer-events: none) and sits above the card's top edge */
+[data-theme="artisanal"] .card {
+  --tilt: 0deg;
+  --tilt-hover: 0deg;
+
+  position: relative;
+  margin-bottom: 1.25rem;
+  transform: rotate(var(--tilt));
+}
+
+[data-theme="artisanal"] .card:nth-child(4n + 1) {
+  --tilt: -0.6deg;
+  --tilt-hover: 1.2deg;
+}
+
+[data-theme="artisanal"] .card:nth-child(4n + 2) {
+  --tilt: 0.4deg;
+  --tilt-hover: -0.8deg;
+}
+
+[data-theme="artisanal"] .card:nth-child(4n + 3) {
+  --tilt: -0.25deg;
+  --tilt-hover: 0.5deg;
+}
+
+[data-theme="artisanal"] .card:nth-child(4n) {
+  --tilt: 0.6deg;
+  --tilt-hover: -1.1deg;
+}
+
+/* A card that is hovered or has focus inside it has to paint above its neighbours, or an open
+   dropdown from one card would sit underneath the next card */
+[data-theme="artisanal"] .card:hover {
+  z-index: 1;
+}
+
+[data-theme="artisanal"] .card:focus-within {
+  z-index: 2;
+}
+
+[data-theme="artisanal"] .card::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  left: -0.5rem;
+  width: 5.5rem;
+  height: 1.1rem;
+  background: rgb(255 212 0 / 75%);
+  clip-path: polygon(0% 12%, 6% 0%, 12% 14%, 22% 0%, 100% 6%, 96% 50%, 100% 94%, 14% 100%, 8% 84%, 0% 100%, 4% 50%);
+  transform: rotate(-6deg);
+  pointer-events: none;
+  z-index: 3;
+}
+
+[data-theme="artisanal"] .card:nth-child(even)::before {
+  left: auto;
+  right: -0.5rem;
+  background: rgb(255 46 136 / 60%);
+  transform: rotate(7deg);
+}
+
+[data-theme="artisanal"] .card-header {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-bottom: 3px solid #000;
+}
+
+[data-theme="artisanal"] .card:nth-child(3n + 2) > .card-header {
+  background: #ff2e88;
+}
+
+[data-theme="artisanal"] .card:nth-child(3n) > .card-header {
+  background: #39ff14;
+}
+
+[data-theme="artisanal"] a {
+  color: #000;
+}
+
+[data-theme="artisanal"] .footer-links > a:hover {
+  color: #b8005c;
+}
+
+/* Links: black text for contrast (magenta on paper would only reach about 3:1), a magenta
+   underline everywhere, and a yellow marker highlight in body copy. Nav links, buttons and dropdown
+   items keep their own colors */
+[data-theme="artisanal"] .card-body a:not(.btn),
+[data-theme="artisanal"] .jumbotron a:not(.btn) {
+  background-image: linear-gradient(transparent 62%, #ffd400 62%);
+}
+
+[data-theme="artisanal"] a:not(.nav-link):not(.btn):not(.dropdown-item) {
+  text-decoration-line: underline;
+  text-decoration-color: #ff2e88;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+
+[data-theme="artisanal"] .btn-primary:disabled {
+  background-color: #ffd400;
+  border-color: #000;
+  color: #000;
+}
+
+/* Buttons, dialogs and menus are cut from the same card stock, with hard black shadows */
+[data-theme="artisanal"] .btn {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="artisanal"] .modal-content,
+[data-theme="artisanal"] .dropdown-menu {
+  border: 3px solid #000;
+  border-radius: 2px;
+  box-shadow: 6px 6px 0 #000;
+}
+
+[data-theme="artisanal"] .modal-header,
+[data-theme="artisanal"] .modal-footer {
+  border-color: #000;
+}
+
+[data-theme="artisanal"] .jumbotron {
+  border: 3px dashed #000;
+  border-radius: 2px;
+}
+
+/* Footer: hazard yellow. The marquee is pinned to the bottom of the viewport and ignores the pointer.
+   Body and footer padding keep the footer and the last cards clear of it when the page is scrolled to the end */
+[data-theme="artisanal"] body {
+  padding-bottom: 34px;
+}
+
+[data-theme="artisanal"] .footer {
+  padding-bottom: calc(34px + 1rem);
+  border-top: 3px solid #000;
+}
+
+[data-theme="artisanal"] body::after {
+  content: "";
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  background: var(--artisanal-ticker) repeat-x 0 0 / var(--ticker-width) 34px;
+  pointer-events: none;
+}
+
+/* Rubber stamp in the empty left gutter of the desktop layout. It is fixed and sits behind the
+   content (z-index: -1), so it cannot cover a control or card text, and it is hidden below 992px */
+@media (min-width: 992px) {
+  [data-theme="artisanal"] body::before {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    top: 26vh;
+    left: 0.4rem;
+    width: 7.5rem;
+    height: 7.5rem;
+    background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cfilter%20id%3D%22r%22%20x%3D%22-5%25%22%20y%3D%22-5%25%22%20width%3D%22110%25%22%20height%3D%22110%25%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.75%22%20numOctaves%3D%222%22%20seed%3D%224%22%20result%3D%22t%22%2F%3E%3CfeDisplacementMap%20in%3D%22SourceGraphic%22%20in2%3D%22t%22%20scale%3D%227%22%2F%3E%3C%2Ffilter%3E%3Cg%20filter%3D%22url(%23r)%22%20fill%3D%22none%22%20stroke%3D%22%23ff2e88%22%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%22110%22%20r%3D%22100%22%20stroke-width%3D%2210%22%2F%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%22110%22%20r%3D%2284%22%20stroke-width%3D%223%22%2F%3E%3C%2Fg%3E%3Cg%20filter%3D%22url(%23r)%22%20fill%3D%22%23ff2e88%22%20font-family%3D%22'Comic%20Sans%20MS'%2C'Comic%20Sans'%2C'Comic%20Neue'%2Ccursive%22%20font-weight%3D%22700%22%20text-anchor%3D%22middle%22%3E%3Ctext%20x%3D%22110%22%20y%3D%22114%22%20font-size%3D%2240%22%3EHUMAN%3C%2Ftext%3E%3Ctext%20x%3D%22110%22%20y%3D%22156%22%20font-size%3D%2234%22%3EMADE%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / contain no-repeat;
+    transform: rotate(-16deg);
+    opacity: 85%;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+}
+
+/* Motion: the marquee scrolls, cards jitter when hovered or focused and tilt to a new angle.
+   Everything here is skipped for reduced motion, which leaves the static chaos in place */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes artisanal-marquee {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: calc(var(--ticker-width) * -1) 0;
+    }
+  }
+
+  @keyframes artisanal-shake {
+    0% {
+      transform: rotate(var(--tilt)) translate(0, 0);
+    }
+
+    20% {
+      transform: rotate(calc(var(--tilt) + 0.7deg)) translate(-2px, 1px);
+    }
+
+    40% {
+      transform: rotate(calc(var(--tilt) - 0.8deg)) translate(2px, -1px);
+    }
+
+    60% {
+      transform: rotate(calc(var(--tilt) + 0.4deg)) translate(-1px, 2px);
+    }
+
+    80% {
+      transform: rotate(calc(var(--tilt) - 0.3deg)) translate(1px, 0);
+    }
+
+    100% {
+      transform: rotate(var(--tilt-hover)) translate(0, 0);
+    }
+  }
+
+  [data-theme="artisanal"] body::after {
+    animation: artisanal-marquee var(--ticker-duration) linear infinite;
+  }
+
+  [data-theme="artisanal"] .card {
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  [data-theme="artisanal"] .card:hover,
+  [data-theme="artisanal"] .card:focus-within {
+    transform: rotate(var(--tilt-hover));
+    box-shadow: 9px 9px 0 #000;
+    animation: artisanal-shake 0.45s linear 1;
+  }
+
+  [data-theme="artisanal"] .btn-primary:hover {
+    transform: rotate(-1.5deg);
+  }
+}

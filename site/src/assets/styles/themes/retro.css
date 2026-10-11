@@ -1,0 +1,133 @@
+/* Retro Arcade: pixel fonts, neon on night blue, scanlines and hard drop shadows */
+[data-theme="retro"] {
+  --card-header-text: #ffd166;
+  --raw-link: #5ce1e6;
+  --background: #0b0b1e;
+  --background-image:
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 3px),
+    linear-gradient(rgb(11 11 30 / 50%), rgb(11 11 30 / 50%)),
+    url("../../images/retro-arcade-bg.svg");
+  --global-text: #e8e8ff;
+  --global-text-hover: #ffd166;
+  --card-body-background: #14142e;
+  --card-body-text: #e8e8ff;
+  --card-header-background: #22224a;
+  --card-border-color: #ffd166;
+  --card-border-width: 3px;
+  --card-border-radius: 0;
+  --card-shadow: 6px 6px 0 #000;
+  --footer-background: #1a1a38;
+  --navbar-background: #14142e;
+  --navbar-unselected-text: rgb(232 232 255 / 60%);
+  --navbar-unselected-text-hover: #ffd166;
+  --navbar-text-focus: #ffd166;
+  --navbar-text-disabled: rgb(232 232 255 / 25%);
+  --navbar-text-active: #5ce1e6;
+  --navbar-text-show: #5ce1e6;
+  --modal-header-background: #22224a;
+  --modal-header-text: #ffd166;
+  --modal-body-background: #14142e;
+  --modal-body-text: #e8e8ff;
+  --modal-footer-background: #14142e;
+  --modal-footer-text: #e8e8ff;
+  --btn-primary-background: #ff4d6d;
+  --btn-primary-text: #fff;
+  --btn-border-radius: 0;
+  --btn-border: 3px solid #000;
+  --btn-box-shadow: 4px 4px 0 #000;
+  --department-link-hover: #22224a;
+  --select-background: #14142e;
+  --select-text: #e8e8ff;
+  --modal-close-x-hover: #ffd166;
+  --table-text: #e8e8ff;
+  --table-border: #3a3a6a;
+  --course-row-hover: #22224a;
+  --conflict-row: #7a1f3d;
+  --conflict-row-hover: #9a2a4f;
+  --selected-row: #3b2a6b;
+  --selected-row-hover: #4d3a8a;
+  --list-group-item-background: #14142e;
+  --calendar-grid-color: #3a3a6a;
+  --search-bar-background: #14142e;
+  --search-bar-border: #ffd166;
+  --overlay-background: #14142e;
+  --trash-btn: #ff4d6d;
+  --trash-btn-hover: #ffd166;
+  --prerequisite-jumbotron: #22224a;
+  --prerequisite-text: #e8e8ff;
+  --taken-course: #5cff8a;
+  --not-taken-course: #ff4d6d;
+  --font-body: "VT323", monospace;
+  --font-heading: "Press Start 2P", monospace;
+}
+
+[data-theme="retro"] body {
+  font-size: 1.4rem;
+  line-height: 1.2;
+
+  /* Scanlines and the dimming overlay keep the auto size; the 384px pixel-art tile is drawn at 4px per art pixel */
+  background-size: auto, auto, 384px 384px;
+  image-rendering: pixelated;
+}
+
+[data-theme="retro"] h1,
+[data-theme="retro"] h2,
+[data-theme="retro"] h3,
+[data-theme="retro"] h4,
+[data-theme="retro"] h5,
+[data-theme="retro"] h6 {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #ffd166;
+}
+
+[data-theme="retro"] .btn {
+  text-transform: uppercase;
+}
+
+[data-theme="retro"] .btn-primary:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Layout: chunky colored title bars, a blinking cursor after the site name and roomier rows */
+[data-theme="retro"] .card {
+  margin-bottom: 1.25rem;
+}
+
+[data-theme="retro"] .card-header {
+  padding-left: 0.75rem;
+  border-left: 10px solid #ff4d6d;
+}
+
+/* Solid panels behind the red warning and the calendar so no star sits under their text */
+[data-theme="retro"] .unofficial-schedule-warning,
+[data-theme="retro"] .calendar {
+  background: var(--background);
+}
+
+[data-theme="retro"] .navbar-brand::after {
+  content: "_";
+  margin-left: 0.15rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes retro-blink {
+    0% {
+      opacity: 100%;
+    }
+
+    50% {
+      opacity: 0%;
+    }
+  }
+
+  [data-theme="retro"] .navbar-brand::after {
+    animation: retro-blink 1s steps(1) infinite;
+  }
+
+  /* Button press transition only when motion is allowed; otherwise the :root default (0s) applies */
+  [data-theme="retro"] {
+    --btn-transition: transform 0.05s;
+  }
+}

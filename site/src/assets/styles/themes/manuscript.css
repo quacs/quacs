@@ -1,0 +1,97 @@
+/* Illuminated Manuscript: parchment, blackletter headings, rubricated red and framed panels */
+[data-theme="manuscript"] {
+  --card-header-text: #3b2415;
+  --raw-link: #8b1a1a;
+  --background: #efe2bd;
+  --background-image:
+    radial-gradient(circle at 20% 10%, rgb(255 248 220 / 60%), transparent 45%),
+    linear-gradient(180deg, #f4e8c8 0%, #e6d3a0 100%);
+  --background-attachment: fixed;
+  --global-text: #3b2415;
+  --global-text-hover: #6b4423;
+  --card-body-background: #fbf4df;
+  --card-body-text: #3b2415;
+  --card-header-background: #e7d29c;
+  --card-border-color: #7a4e22;
+  --card-border-width: 3px;
+  --card-border-radius: 0;
+  --card-shadow: 0 2px 0 rgb(59 36 21 / 18%);
+  --footer-background: #d9bf80;
+  --navbar-background: #e7d29c;
+  --navbar-unselected-text: rgb(59 36 21 / 60%);
+  --navbar-unselected-text-hover: #8b1a1a;
+  --navbar-text-focus: #8b1a1a;
+  --navbar-text-disabled: rgb(59 36 21 / 30%);
+  --navbar-text-active: #8b1a1a;
+  --navbar-text-show: #8b1a1a;
+  --modal-header-background: #e7d29c;
+  --modal-header-text: #3b2415;
+  --modal-body-background: #fbf4df;
+  --modal-body-text: #3b2415;
+  --modal-footer-background: #fbf4df;
+  --modal-footer-text: #3b2415;
+  --btn-primary-background: #8b1a1a;
+  --btn-primary-text: #f8efd6;
+  --btn-border-radius: 0;
+  --btn-border: 2px solid #5c1010;
+  --btn-box-shadow: inset 0 0 0 1px #d9a441;
+  --department-link-hover: #e7d29c;
+  --select-background: #fbf4df;
+  --select-text: #3b2415;
+  --table-text: #3b2415;
+  --table-border: #c9a96a;
+  --course-row-hover: #efe0b8;
+  --conflict-row: #e8a0a0;
+  --conflict-row-hover: #d98585;
+  --selected-row: #d7b56d;
+  --selected-row-hover: #c9a25a;
+  --list-group-item-background: #fbf4df;
+  --calendar-grid-color: #c9a96a;
+  --search-bar-background: #fbf4df;
+  --search-bar-border: #7a4e22;
+  --overlay-background: #f4e8c8;
+  --trash-btn: #7a4e22;
+  --trash-btn-hover: #8b1a1a;
+  --prerequisite-jumbotron: #e7d29c;
+  --prerequisite-text: #3b2415;
+  --taken-course: #3d6b2a;
+  --not-taken-course: #8b1a1a;
+  --font-body: "IM Fell English", georgia, serif;
+  --font-heading: "UnifrakturMaguntia", "IM Fell English", serif;
+}
+
+[data-theme="manuscript"] body {
+  font-size: 1.15rem;
+}
+
+[data-theme="manuscript"] h1,
+[data-theme="manuscript"] h2,
+[data-theme="manuscript"] h3 {
+  color: #8b1a1a;
+  font-weight: 400;
+}
+
+[data-theme="manuscript"] .card {
+  outline: 1px solid #b08a4a;
+  outline-offset: 4px;
+}
+
+/* Layout: a drop cap opens the page text, framed panels and small-cap title bars */
+[data-theme="manuscript"] .card-header {
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+[data-theme="manuscript"] .jumbotron {
+  border: 3px double #7a4e22;
+  border-radius: 0;
+}
+
+[data-theme="manuscript"] .jumbotron > p:first-of-type::first-letter {
+  float: left;
+  margin: 0.1em 0.12em 0 0;
+  font-family: UnifrakturMaguntia, serif;
+  font-size: 3.4em;
+  line-height: 0.8;
+  color: #8b1a1a;
+}
