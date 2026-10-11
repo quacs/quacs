@@ -102,6 +102,35 @@ export default class Schedule extends VuexModule {
     return true;
   }
 
+  @Mutation
+  renameCourseSetEntry(p: { oldName: string; newName: string }): void {
+    // Rebuild the term's map so the renamed set keeps its position
+    const renamed: CourseSets = {};
+    for (const name of Object.keys(this.courseSets[this.currentTerm])) {
+      renamed[name === p.oldName ? p.newName : name] =
+        this.courseSets[this.currentTerm][name];
+    }
+    Vue.set(this.courseSets, this.currentTerm, renamed);
+    if (this.currentCourseSet === p.oldName) {
+      this.currentCourseSet = p.newName;
+    }
+  }
+
+  @Action
+  renameCourseSet(p: { oldName: string; newName: string }): boolean {
+    const newName = p.newName.trim();
+    const sets = this.courseSets[this.currentTerm];
+    //Cannot rename to an empty name or a name that already exists
+    if (newName.length === 0 || !(p.oldName in sets) || newName in sets) {
+      return false;
+    }
+    this.context.commit("renameCourseSetEntry", {
+      oldName: p.oldName,
+      newName,
+    });
+    return true;
+  }
+
   @Action
   async setSelected(p: { crn: string; selected: boolean }): Promise<void> {
     Vue.set(
