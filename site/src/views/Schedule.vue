@@ -14,12 +14,10 @@
               class="schedule-select-button"
               v-on:click="decrementSchedule()"
             ></b-icon-chevron-left>
-            <span class="schedule-num">
-              Viewing schedule {{ visibleCurrentScheduleNumber }} out of
-              {{ numSchedules }} generated schedule{{
-                numSchedules > 1 ? "s" : ""
-              }}
-            </span>
+            <!-- v-text replaces the span's whole content on every update, so
+            stray text nodes (e.g. left by browser translation or extensions)
+            can't pile up next to the live text -->
+            <span class="schedule-num" v-text="scheduleNumText"></span>
             <b-icon-chevron-right
               class="schedule-select-button"
               v-on:click="incrementSchedule()"
@@ -219,6 +217,14 @@ export default class Schedule extends Vue {
       return 0;
     }
     return this.currentScheduleNumber + 1;
+  }
+
+  get scheduleNumText(): string {
+    // @ts-expect-error: This is mapped in the @Component decorator
+    const numSchedules: number = this.numSchedules;
+    return `Viewing schedule ${
+      this.visibleCurrentScheduleNumber
+    } out of ${numSchedules} generated schedule${numSchedules > 1 ? "s" : ""}`;
   }
 
   get sectionsWithoutTimes(): CourseSection[] {
