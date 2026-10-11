@@ -3,7 +3,10 @@
   --card-header-text: #ffd166;
   --raw-link: #5ce1e6;
   --background: #0b0b1e;
-  --background-image: repeating-linear-gradient(0deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 3px);
+  --background-image:
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 3px),
+    linear-gradient(rgb(11 11 30 / 50%), rgb(11 11 30 / 50%)),
+    url("../../images/retro-arcade-bg.svg");
   --global-text: #e8e8ff;
   --global-text-hover: #ffd166;
   --card-body-background: #14142e;
@@ -32,7 +35,6 @@
   --btn-border-radius: 0;
   --btn-border: 3px solid #000;
   --btn-box-shadow: 4px 4px 0 #000;
-  --btn-transition: transform 0.05s;
   --department-link-hover: #22224a;
   --select-background: #14142e;
   --select-text: #e8e8ff;
@@ -62,6 +64,10 @@
 [data-theme="retro"] body {
   font-size: 1.4rem;
   line-height: 1.2;
+
+  /* Scanlines and the dimming overlay keep the auto size; the 384px pixel-art tile is drawn at 4px per art pixel */
+  background-size: auto, auto, 384px 384px;
+  image-rendering: pixelated;
 }
 
 [data-theme="retro"] h1,
@@ -94,6 +100,12 @@
   border-left: 10px solid #ff4d6d;
 }
 
+/* Solid panels behind the red warning and the calendar so no star sits under their text */
+[data-theme="retro"] .unofficial-schedule-warning,
+[data-theme="retro"] .calendar {
+  background: var(--background);
+}
+
 [data-theme="retro"] .navbar-brand::after {
   content: "_";
   margin-left: 0.15rem;
@@ -112,5 +124,10 @@
 
   [data-theme="retro"] .navbar-brand::after {
     animation: retro-blink 1s steps(1) infinite;
+  }
+
+  /* Button press transition only when motion is allowed; otherwise the :root default (0s) applies */
+  [data-theme="retro"] {
+    --btn-transition: transform 0.05s;
   }
 }
