@@ -36,6 +36,9 @@ describe("Test color themes", () => {
     cy.get("html").should("have.attr", "data-theme", "light");
     cy.getOne("#colorTheme").select("Wingdings");
     cy.get("html").should("have.attr", "data-theme", "wingdings");
+    cy.get("body")
+      .should("have.css", "font-family")
+      .and("contain", "Wingdings Lookalike");
     cy.getOne(".modal-footer").containsOne("Close").click();
     cy.get(".modal-footer").should("not.exist");
 
