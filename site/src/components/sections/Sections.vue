@@ -26,6 +26,7 @@
         v-bind:class="{
           selected: isSelected(section.crn),
           conflict: conflicts[section.crn],
+          'current-schedule': isInCurrentSchedule(section.crn),
           hidden:
             !hasMetAllPrerequisites(section.crn) &&
             hidePrerequisitesState &&
@@ -54,6 +55,15 @@
           >-<span title="CRN: the unique id given to each section in sis">{{
             section.crn
           }}</span>
+          <span
+            v-if="isInCurrentSchedule(section.crn)"
+            class="current-schedule-badge"
+            data-cy="current-schedule-section"
+            title="This section is in the schedule shown above"
+          >
+            <font-awesome-icon :icon="['fas', 'calendar']"></font-awesome-icon>
+            In current schedule</span
+          >
           <span
             v-if="prerequisiteCheckingState"
             class="padding-left prerequisiteError"
@@ -213,6 +223,8 @@ import { VBTooltip } from "bootstrap-vue";
 })
 export default class Section extends Vue {
   @Prop() readonly course!: Course;
+  // CRNs of the schedule currently shown on the Schedule page (unset elsewhere)
+  @Prop() readonly currentScheduleCrns?: number[];
   days = [] as string[];
   conflicts: { [crn: number]: boolean } = {};
 
@@ -224,6 +236,13 @@ export default class Section extends Vue {
           Vue.set(this.conflicts, section.crn, isInConflict);
         });
     }
+  }
+
+  isInCurrentSchedule(crn: number): boolean {
+    return (
+      this.currentScheduleCrns !== undefined &&
+      this.currentScheduleCrns.includes(crn)
+    );
   }
 
   getDays(): string[] {
@@ -443,6 +462,19 @@ export default class Section extends Vue {
 
 .invisible {
   visibility: hidden;
+}
+
+.current-schedule > .info-cell {
+  box-shadow: inset 0.3rem 0 0 currentColor;
+}
+
+.current-schedule-badge {
+  margin: 0px 0.3rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  white-space: nowrap;
 }
 
 .prerequisiteError {

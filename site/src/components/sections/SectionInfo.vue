@@ -57,13 +57,15 @@
       </template>
       <template v-if="section.rem <= 0 || section.xl_rem <= 0">
         <b>This section is currently full.</b>
-        In order to register, you must submit a signed
+        To register, ask the primary instructor (marked "P" in SIS) for an
+        override, or join the
         <a
-          href="https://www.rpi.edu/dept/srfs/AuthorizationFrm.pdf"
+          href="https://registrar.rpi.edu/services/course-registration/course-waiting-list"
           target="_blank"
-          >override form</a
+          rel="noopener"
+          >waitlist</a
         >
-        to the registrar.
+        in SIS.
       </template>
     </b-modal>
   </div>

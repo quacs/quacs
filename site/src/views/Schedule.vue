@@ -14,12 +14,10 @@
               class="schedule-select-button"
               v-on:click="decrementSchedule()"
             ></b-icon-chevron-left>
-            <span class="schedule-num">
-              Viewing schedule {{ visibleCurrentScheduleNumber }} out of
-              {{ numSchedules }} generated schedule{{
-                numSchedules > 1 ? "s" : ""
-              }}
-            </span>
+            <!-- v-text replaces the span's whole content on every update, so
+            stray text nodes (e.g. left by browser translation or extensions)
+            can't pile up next to the live text -->
+            <span class="schedule-num" v-text="scheduleNumText"></span>
             <b-icon-chevron-right
               class="schedule-select-button"
               v-on:click="incrementSchedule()"
@@ -89,11 +87,28 @@
         </template>
       </b-overlay>
 
+      <div
+        v-if="selectedCourses.length > 0"
+        class="d-flex justify-content-end mb-2"
+      >
+        <b-button
+          variant="outline-danger"
+          data-cy="clear-schedule"
+          @click="clearSchedule()"
+        >
+          <font-awesome-icon :icon="['fas', 'trash']"></font-awesome-icon>
+          Clear all
+        </b-button>
+      </div>
+
       <div class="card-columns">
         <CourseCard
           v-for="course in selectedCourses"
           v-bind:key="course.subj + course.crse + course.title"
           v-bind:course="course"
+          removable
+          @remove="removeCourse"
+          v-bind:current-schedule-crns="currentScheduleCrns"
         />
       </div>
     </div>
@@ -110,6 +125,7 @@ import {
   BIconChevronLeft,
   BIconChevronRight,
   BOverlay,
+  ModalPlugin,
   BSpinner,
   VBTooltip,
 } from "bootstrap-vue";
@@ -120,8 +136,10 @@ import { EventAttributes, createEvents, DateArray } from "ics";
 import { saveAs } from "file-saver";
 import { shortSemToLongSem } from "@/utilities";
 import { Timeslot } from "@/typings";
+import { trackAgentAction } from "@/webmcp";
 
 Vue.directive("b-tooltip", VBTooltip);
+Vue.use(ModalPlugin);
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -202,6 +220,14 @@ export default class Schedule extends Vue {
     return this.currentScheduleNumber + 1;
   }
 
+  get scheduleNumText(): string {
+    // @ts-expect-error: This is mapped in the @Component decorator
+    const numSchedules: number = this.numSchedules;
+    return `Viewing schedule ${
+      this.visibleCurrentScheduleNumber
+    } out of ${numSchedules} generated schedule${numSchedules > 1 ? "s" : ""}`;
+  }
+
   get sectionsWithoutTimes(): CourseSection[] {
     const sections = [];
 
@@ -241,6 +267,10 @@ export default class Schedule extends Vue {
     newSchedule.push(...this.sectionsWithoutTimes);
 
     this.currentSchedule = newSchedule;
+  }
+
+  get currentScheduleCrns(): number[] {
+    return this.currentSchedule.map((section) => section.crn);
   }
 
   get creditRange(): string {
@@ -288,6 +318,54 @@ export default class Schedule extends Vue {
       this.numSchedules
     );
     this.getSchedule(this.currentScheduleNumber);
+  }
+
+  /////////////////////
+  // REMOVE COURSES  //
+  /////////////////////
+
+  async deselectSections(crns: string[]): Promise<void> {
+    for (const crn of crns) {
+      await this.$store.dispatch("schedule/setSelected", {
+        crn,
+        selected: false,
+      });
+    }
+    this.$store.dispatch("schedule/generateSchedulesAndConflicts");
+  }
+
+  async removeCourse(course: Course): Promise<void> {
+    const crns = course.sections
+      .map((section) => String(section.crn))
+      .filter((crn) => this.$store.getters["schedule/isSelected"](crn));
+    // Deselect first so the course isn't picked up again if the list empties
+    await this.deselectSections(crns);
+    this.keepSelected = this.keepSelected.filter((c) => c !== course);
+    trackAgentAction("schedule_course_removed", {
+      course: `${course.subj}-${course.crse}`,
+    });
+  }
+
+  async clearSchedule(): Promise<void> {
+    const confirmed = await this.$bvModal.msgBoxConfirm(
+      `Remove all courses from ${this.currentCourseSet}?`,
+      {
+        title: "Clear schedule",
+        okTitle: "Clear all",
+        okVariant: "danger",
+        centered: true,
+      }
+    );
+    if (!confirmed) {
+      return;
+    }
+    const term = this.$store.state.schedule.currentTerm;
+    const courseSet =
+      this.$store.state.schedule.courseSets[term][this.currentCourseSet];
+    const crns = Object.keys(courseSet).filter((crn) => courseSet[crn]);
+    await this.deselectSections(crns);
+    this.keepSelected = [];
+    trackAgentAction("schedule_cleared", { sections: crns.length });
   }
 
   ////////////////////

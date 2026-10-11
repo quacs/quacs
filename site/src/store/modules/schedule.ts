@@ -1,7 +1,8 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import Vue from "vue";
-import { CourseSection, CourseSets } from "@/typings";
+import { CourseSection, CourseSets, Department } from "@/typings";
+import { ExportedCourseSet, uniqueCourseSetName } from "@/courseSetTransfer";
 
 import * as quacsWorker from "@/workers/schedule.worker";
 const worker = (
@@ -17,9 +18,11 @@ export default class Schedule extends VuexModule {
   needToGenerateSchedules = false;
   currentTerm = 202009; // TODO: remove this after the current semester
   currentCourseSet = "Course Set 1";
+  // Left empty so vuex-persistedstate's merge with saved state can't bring
+  // back a deleted "Course Set 1"; ensureDefaultCourseSet fills it in instead
   courseSets: {
     [term: number]: CourseSets;
-  } = { 202009: { "Course Set 1": {} } };
+  } = { 202009: {} };
 
   wasmLoaded = false;
   lastNewSchedule = 0;
@@ -31,6 +34,20 @@ export default class Schedule extends VuexModule {
       console.log("Out of date or uninitialized sections, clearing");
 
       this.storedVersion = this.CURRENT_STORAGE_VERSION;
+    }
+  }
+
+  @Mutation
+  ensureDefaultCourseSet(): void {
+    if (!this.courseSets[this.currentTerm]) {
+      Vue.set(this.courseSets, this.currentTerm, {});
+    }
+    const sets = this.courseSets[this.currentTerm];
+    if (Object.keys(sets).length === 0) {
+      Vue.set(sets, "Course Set 1", {});
+    }
+    if (!sets[this.currentCourseSet]) {
+      this.currentCourseSet = Object.keys(sets)[0];
     }
   }
 
@@ -82,6 +99,55 @@ export default class Schedule extends VuexModule {
   }
 
   @Mutation
+  createCourseSetWithSections(p: { name: string; crns: number[] }): void {
+    const sections: { [crn: string]: boolean } = {};
+    for (const crn of p.crns) {
+      sections[String(crn)] = true;
+    }
+    Vue.set(this.courseSets[this.currentTerm], p.name, sections);
+  }
+
+  // Adds each course set as a new one (never overwriting an existing set) and
+  // switches to the first. CRNs not offered this semester are skipped.
+  @Action
+  async importCourseSets(p: {
+    courseSets: ExportedCourseSet[];
+  }): Promise<{ names: string[]; skippedCrns: number }> {
+    const validCrns = new Set<number>();
+    for (const dept of this.context.rootState.departments as Department[]) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          validCrns.add(section.crn);
+        }
+      }
+    }
+
+    const names: string[] = [];
+    let skippedCrns = 0;
+    for (const set of p.courseSets) {
+      const crns = Array.from(new Set(set.crns));
+      const keptCrns = crns.filter((crn) => validCrns.has(crn));
+      skippedCrns += crns.length - keptCrns.length;
+      const name = uniqueCourseSetName(
+        set.name,
+        Object.keys(this.courseSets[this.currentTerm])
+      );
+      this.context.commit("createCourseSetWithSections", {
+        name,
+        crns: keptCrns,
+      });
+      names.push(name);
+    }
+
+    if (names.length > 0) {
+      await this.context.dispatch("switchCurrentCourseSet", {
+        name: names[0],
+      });
+    }
+    return { names, skippedCrns };
+  }
+
+  @Mutation
   deleteCourseSet(p: { name: string }): void {
     Vue.delete(this.courseSets[this.currentTerm], p.name);
   }
@@ -102,13 +168,49 @@ export default class Schedule extends VuexModule {
     return true;
   }
 
+  @Mutation
+  renameCourseSetEntry(p: { oldName: string; newName: string }): void {
+    // Rebuild the term's map so the renamed set keeps its position
+    const renamed: CourseSets = {};
+    for (const name of Object.keys(this.courseSets[this.currentTerm])) {
+      renamed[name === p.oldName ? p.newName : name] =
+        this.courseSets[this.currentTerm][name];
+    }
+    Vue.set(this.courseSets, this.currentTerm, renamed);
+    if (this.currentCourseSet === p.oldName) {
+      this.currentCourseSet = p.newName;
+    }
+  }
+
   @Action
-  async setSelected(p: { crn: string; selected: boolean }): Promise<void> {
+  renameCourseSet(p: { oldName: string; newName: string }): boolean {
+    const newName = p.newName.trim();
+    const sets = this.courseSets[this.currentTerm];
+    //Cannot rename to an empty name or a name that already exists
+    if (newName.length === 0 || !(p.oldName in sets) || newName in sets) {
+      return false;
+    }
+    this.context.commit("renameCourseSetEntry", {
+      oldName: p.oldName,
+      newName,
+    });
+    return true;
+  }
+
+  // A mutation (not a direct write in the action) so the change is saved to
+  // localStorage right away, before another tab can sync over it
+  @Mutation
+  _setSelected(p: { crn: string; selected: boolean }): void {
     Vue.set(
       this.courseSets[this.currentTerm][this.currentCourseSet],
       p.crn,
       p.selected
     );
+  }
+
+  @Action
+  async setSelected(p: { crn: string; selected: boolean }): Promise<void> {
+    this.context.commit("_setSelected", p);
     worker.setSelected(p.crn, p.selected);
   }
 
@@ -172,6 +274,23 @@ export default class Schedule extends VuexModule {
         this.courseSets[this.currentTerm][this.currentCourseSet][section]
       );
     }
+  }
+
+  // Called after another tab updated localStorage and the state was replaced
+  @Action
+  async resyncSelectedSections(previous: {
+    [crn: string]: boolean;
+  }): Promise<void> {
+    for (const sec in previous) {
+      worker.setSelected(sec, false);
+    }
+    const current = this.courseSets[this.currentTerm]?.[this.currentCourseSet];
+    for (const sec in current) {
+      if (current[sec]) {
+        worker.setSelected(sec, true);
+      }
+    }
+    this.context.dispatch("generateSchedulesAndConflicts");
   }
 
   @Action
