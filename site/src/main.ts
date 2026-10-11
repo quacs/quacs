@@ -24,6 +24,7 @@ import "@/assets/styles/themes/web1.css";
 import "@/assets/styles/themes/aero.css";
 import "@/assets/styles/themes/liquid.css";
 import "@/assets/styles/themes/nyan.css";
+import "@/assets/styles/themes/artisanal.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {

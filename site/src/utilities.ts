@@ -177,6 +177,7 @@ const THEME_FONT_QUERIES: { [theme: string]: string } = {
   manuscript: "family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia",
   retro: "family=Press+Start+2P&family=VT323",
   aero: "family=Open+Sans:wght@400;600;700",
+  artisanal: "family=Comic+Neue:wght@400;700",
 };
 
 function loadThemeFont(theme: string): void {
