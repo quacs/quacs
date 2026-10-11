@@ -1,7 +1,8 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import Vue from "vue";
-import { CourseSection, CourseSets } from "@/typings";
+import { CourseSection, CourseSets, Department } from "@/typings";
+import { ExportedCourseSet, uniqueCourseSetName } from "@/courseSetTransfer";
 
 import * as quacsWorker from "@/workers/schedule.worker";
 const worker = (
@@ -79,6 +80,55 @@ export default class Schedule extends VuexModule {
     this.context.commit("createNewCourseSet", p);
     this.context.dispatch("switchCurrentCourseSet", p);
     return true;
+  }
+
+  @Mutation
+  createCourseSetWithSections(p: { name: string; crns: number[] }): void {
+    const sections: { [crn: string]: boolean } = {};
+    for (const crn of p.crns) {
+      sections[String(crn)] = true;
+    }
+    Vue.set(this.courseSets[this.currentTerm], p.name, sections);
+  }
+
+  // Adds each course set as a new one (never overwriting an existing set) and
+  // switches to the first. CRNs not offered this semester are skipped.
+  @Action
+  async importCourseSets(p: {
+    courseSets: ExportedCourseSet[];
+  }): Promise<{ names: string[]; skippedCrns: number }> {
+    const validCrns = new Set<number>();
+    for (const dept of this.context.rootState.departments as Department[]) {
+      for (const course of dept.courses) {
+        for (const section of course.sections) {
+          validCrns.add(section.crn);
+        }
+      }
+    }
+
+    const names: string[] = [];
+    let skippedCrns = 0;
+    for (const set of p.courseSets) {
+      const crns = Array.from(new Set(set.crns));
+      const keptCrns = crns.filter((crn) => validCrns.has(crn));
+      skippedCrns += crns.length - keptCrns.length;
+      const name = uniqueCourseSetName(
+        set.name,
+        Object.keys(this.courseSets[this.currentTerm])
+      );
+      this.context.commit("createCourseSetWithSections", {
+        name,
+        crns: keptCrns,
+      });
+      names.push(name);
+    }
+
+    if (names.length > 0) {
+      await this.context.dispatch("switchCurrentCourseSet", {
+        name: names[0],
+      });
+    }
+    return { names, skippedCrns };
   }
 
   @Mutation
