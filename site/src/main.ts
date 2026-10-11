@@ -36,11 +36,7 @@ import {
   faUser,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faDiscord,
-  faGithub,
-  faPatreon,
-} from "@fortawesome/free-brands-svg-icons";
+import { faDiscord, faGithub } from "@fortawesome/free-brands-svg-icons";
 
 library.add(
   faCalendar,
@@ -54,7 +50,6 @@ library.add(
   faHeart,
   faInfoCircle,
   faLaptopHouse,
-  faPatreon,
   faPen,
   faPlus,
   faRobot,
