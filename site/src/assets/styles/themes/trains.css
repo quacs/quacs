@@ -1,0 +1,669 @@
+/* MTA: an original NYC subway homage. All rules are gated by data-theme;
+   the existing theme tokens, markup, and scheduling behavior stay intact. */
+[data-theme="trains"] {
+  --background: #f5f2e9;
+  --background-image: url("../../images/mta-tracks.svg");
+  --background-attachment: fixed;
+  --global-text: #181818;
+  --global-text-hover: #0039a6;
+  --text-default: #181818;
+  --raw-link: #0039a6;
+  --font-body: "Helvetica Neue", helvetica, arial, sans-serif;
+  --font-heading: var(--font-body);
+  --card-background: #fff;
+  --card-body-background: #fff;
+  --card-body-text: #181818;
+  --card-header-background: #181818;
+  --card-header-text: #fff;
+  --card-header-hover: #303030;
+  --card-border-color: #181818;
+  --card-border-width: 1px;
+  --card-border-radius: 0;
+  --card-inner-radius: 0;
+  --card-shadow: 0 3px 0 rgb(24 24 24 / 10%);
+  --navbar-background: #181818;
+  --navbar-unselected-text: #e5e5e5;
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: #999;
+  --navbar-text-active: #fff;
+  --navbar-text-show: #fff;
+  --footer-background: #e8e5dc;
+  --modal-header-background: #181818;
+  --modal-header-text: #fff;
+  --modal-body-background: #fff;
+  --modal-body-text: #181818;
+  --modal-footer-background: #f5f2e9;
+  --modal-footer-text: #181818;
+  --modal-close-x-hover: #fccc0a;
+  --btn-primary-background: #0039a6;
+  --btn-primary-text: #fff;
+  --btn-secondary-background: #181818;
+  --btn-secondary-text: #fff;
+  --btn-border: 2px solid #0039a6;
+  --btn-border-radius: 0;
+  --btn-box-shadow: 0 3px 0 rgb(0 57 166 / 20%);
+  --btn-transition: background-color 0.15s ease;
+  --department-link-hover: #f0f4fa;
+  --select-background: #fff;
+  --select-text: #181818;
+  --table-text: #181818;
+  --table-border: #c8c8c8;
+  --course-row-hover: #eef2f8;
+  --selected-row: #dbe9fd;
+  --selected-row-hover: #c4dbfc;
+  --conflict-row: #ffdad8;
+  --conflict-row-hover: #ffc5c1;
+  --list-group-item-background: #fff;
+  --search-bar-background: #fff;
+  --search-bar-border: #fff;
+  --calendar-label: #333;
+  --calendar-grid-color: #d0cec7;
+  --overlay-background: #f5f2e9;
+  --trash-btn: #666;
+  --trash-btn-hover: #b9221c;
+  --toast-background: #181818;
+  --toast-text: #fff;
+  --warning-color: #b9221c;
+  --prerequisite-jumbotron: #fff4ce;
+  --prerequisite-text: #181818;
+  --prerequisite-warn-icon: #806000;
+  --prerequisite-error-icon: #b9221c;
+  --taken-course: #00672a;
+  --not-taken-course: #b9221c;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #dce7fa;
+  --calendar-border-color-0: #0039a6;
+  --calendar-text-color-0: #181818;
+  --calendar-bg-color-1: #ffe0de;
+  --calendar-border-color-1: #ee352e;
+  --calendar-text-color-1: #181818;
+  --calendar-bg-color-2: #d8efdf;
+  --calendar-border-color-2: #00933c;
+  --calendar-text-color-2: #181818;
+  --calendar-bg-color-3: #fff1bc;
+  --calendar-border-color-3: #fccc0a;
+  --calendar-text-color-3: #181818;
+  --calendar-bg-color-4: #ffe3d1;
+  --calendar-border-color-4: #ff6319;
+  --calendar-text-color-4: #181818;
+  --calendar-bg-color-5: #f3dcf0;
+  --calendar-border-color-5: #b933ad;
+  --calendar-text-color-5: #181818;
+  --calendar-bg-color-6: #e7e7e7;
+  --calendar-border-color-6: #808183;
+  --calendar-text-color-6: #181818;
+}
+
+[data-theme="trains"] :focus-visible {
+  outline: 3px solid #0039a6;
+  outline-offset: 3px;
+}
+
+/* Tracks stay in the page layer; opaque cards and calendar keep data readable. */
+[data-theme="trains"] body {
+  background-size: 100% 900px;
+  background-position: center top;
+}
+
+/* Rail centers match x=41 and x=1399 in the 1440px wallpaper.
+   Fixed, non-interactive trains stay behind the content as the page scrolls. */
+[data-theme="trains"] body::before,
+[data-theme="trains"] body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: calc(100% * 41 / 1440);
+  z-index: -1;
+  width: clamp(9px, 2.1vw, 30px);
+  height: clamp(27px, 6.3vw, 90px);
+  background: url("../../images/mta-train.svg") center / contain no-repeat;
+  pointer-events: none;
+  animation: mta-uptown 24s linear infinite;
+  will-change: transform;
+}
+
+[data-theme="trains"] body::after {
+  left: calc(100% * 1399 / 1440);
+  animation: mta-downtown 29s linear infinite;
+  animation-delay: -12s;
+}
+
+@keyframes mta-uptown {
+  0% {
+    transform: translate(-50%, calc(100vh + 100px));
+  }
+
+  42%,
+  49% {
+    transform: translate(-50%, 48vh);
+  }
+
+  100% {
+    transform: translate(-50%, -100px);
+  }
+}
+
+@keyframes mta-downtown {
+  0% {
+    transform: translate(-50%, -100px) rotate(180deg);
+  }
+
+  35%,
+  42% {
+    transform: translate(-50%, 33vh) rotate(180deg);
+  }
+
+  100% {
+    transform: translate(-50%, calc(100vh + 100px)) rotate(180deg);
+  }
+}
+
+[data-theme="trains"] .calendar {
+  background: #f5f2e9;
+}
+
+/* The white rule above the lettering is the station-sign signature. */
+[data-theme="trains"] .navbar.bg-light {
+  border-top: 5px solid #fff;
+  border-bottom: 5px solid #fccc0a;
+  padding: 0.8rem 1.5rem;
+}
+
+[data-theme="trains"] .navbar .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+[data-theme="trains"] .navbar .navbar-brand img {
+  display: none;
+}
+
+[data-theme="trains"] .navbar > .navbar-brand::before {
+  content: "";
+  width: 41px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: url("../../images/mta-duck.svg") center / contain no-repeat;
+  color: #181818;
+  border-radius: 50%;
+  font-size: 24px;
+  letter-spacing: 0;
+}
+
+[data-theme="trains"] .navbar > .navbar-brand::after {
+  content: "QuACS";
+  font-size: 25px;
+  margin-right: 0.7rem;
+}
+
+[data-theme="trains"] .navbar .nav-text {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+[data-theme="trains"] .navbar-nav .nav-link.active {
+  box-shadow: inset 0 -3px #fccc0a;
+}
+
+[data-theme="trains"] .navbar-light .navbar-toggler {
+  border: 1px solid #aaa;
+  border-radius: 0;
+}
+
+[data-theme="trains"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+[data-theme="trains"] #search-bar {
+  border-radius: 0;
+}
+
+[data-theme="trains"] #search-bar:focus {
+  outline: 3px solid #fccc0a;
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+[data-theme="trains"] .home .transit-masthead {
+  display: block;
+  background: rgb(245 242 233 / 94%);
+  margin: 0.5rem 0 1rem;
+}
+
+[data-theme="trains"] .transit-sign {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0.75rem;
+  line-height: 1.2;
+  background: #181818;
+  color: #fff;
+  border-top: 3px solid #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+[data-theme="trains"] .transit-sign > :first-child {
+  letter-spacing: 0.1em;
+}
+
+[data-theme="trains"] .transit-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid #181818;
+}
+
+[data-theme="trains"] .transit-copy {
+  padding: 1rem 1rem 1rem 0;
+}
+
+[data-theme="trains"] .transit-kicker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  margin-bottom: 0.5rem;
+}
+
+[data-theme="trains"] #transit-title {
+  font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  margin-bottom: 0.65rem;
+}
+
+[data-theme="trains"] .transit-copy p {
+  max-width: 30rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #484848;
+}
+
+[data-theme="trains"] .transit-schedule-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-weight: 700;
+  color: #181818;
+  margin-top: 0.4rem;
+}
+
+[data-theme="trains"] .transit-bullet {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  color: #fff;
+  background: #0039a6;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+[data-theme="trains"] .transit-map {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+[data-theme="trains"] .transit-itinerary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  margin: 0;
+  list-style: none;
+  border-bottom: 4px solid #181818;
+}
+
+[data-theme="trains"] .transit-itinerary li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+[data-theme="trains"] .transit-itinerary .transit-bullet {
+  background: #ee352e;
+}
+
+[data-theme="trains"] .transit-directory {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-top: 0.75rem;
+}
+
+[data-theme="trains"] .transit-directory h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+[data-theme="trains"] .transit-directory > span {
+  font-size: 0.8rem;
+}
+
+/* Each school is a line; departments are stops. The original names and links
+   remain intact, and the colors are decorative rather than the sole identifier. */
+[data-theme="trains"] .department-cards {
+  counter-reset: transit-line;
+  column-gap: 1.5rem;
+}
+
+[data-theme="trains"] .department-cards > .card {
+  --transit-line: #0039a6;
+
+  counter-increment: transit-line;
+  margin-bottom: 1.5rem;
+  break-inside: avoid;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(5n + 2) {
+  --transit-line: #ee352e;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(5n + 3) {
+  --transit-line: #00933c;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(5n + 4) {
+  --transit-line: #b933ad;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(5n) {
+  --transit-line: #c74b0a;
+}
+
+[data-theme="trains"] .department-cards .card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem;
+  border-top: 3px solid #fff;
+  border-bottom: 5px solid var(--transit-line);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  min-height: 5rem;
+}
+
+[data-theme="trains"] .department-cards .card-header::before {
+  content: counter(transit-line);
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  background: var(--transit-line);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 1.35rem;
+}
+
+[data-theme="trains"] .department-cards .card-body {
+  padding: 1rem 0.5rem;
+}
+
+[data-theme="trains"] .department-cards .department-link {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-left: 0.9rem;
+  padding: 0.65rem 0.5rem 0.65rem 1.25rem;
+  border-left: 5px solid var(--transit-line);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+[data-theme="trains"] .department-cards .department-link::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 1rem;
+  width: 11px;
+  height: 11px;
+  background: #fff;
+  border: 2px solid #181818;
+  border-radius: 50%;
+}
+
+[data-theme="trains"] .department-cards .department-link:hover::before {
+  background: #181818;
+}
+
+[data-theme="trains"] .department-cards .department-code {
+  min-width: 3rem;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+[data-theme="trains"] .course-card-header {
+  border-top: 3px solid #fff;
+  border-left: 6px solid #0039a6;
+}
+
+[data-theme="trains"] .course-card .course-code {
+  color: #fccc0a;
+  font-family: var(--font-body);
+}
+
+[data-theme="trains"] .unofficial-schedule-warning {
+  background: #fff1bc;
+  border: 1px solid #181818;
+  border-left: 6px solid #fccc0a;
+  color: #181818;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+/* The advisory's Bootstrap row sits outside a container. Cancel its negative
+   gutters here so it cannot widen the mobile viewport. */
+[data-theme="trains"] #wrapper > div:not(.container-fluid) > .row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+[data-theme="trains"] .unofficial-schedule-warning::before {
+  content: "SERVICE ADVISORY";
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+[data-theme="trains"] .schedule-select {
+  padding: 0.8rem;
+  background: #181818;
+  color: #fff;
+  border-top: 3px solid #fff;
+}
+
+[data-theme="trains"] .calendar .day-label {
+  background: #181818;
+  color: #fff;
+  padding: 0.35rem 0;
+  font-weight: 700;
+}
+
+[data-theme="trains"] .calendar .calendar-event {
+  border-left-width: 6px;
+}
+
+[data-theme="trains"] .btn {
+  border-radius: 0;
+  font-weight: 600;
+}
+
+[data-theme="trains"] .btn-primary:hover,
+[data-theme="trains"] .btn-primary:not(:disabled):not(.disabled):active {
+  background: #002c80;
+  border-color: #002c80;
+}
+
+[data-theme="trains"] .modal-content,
+[data-theme="trains"] .dropdown-menu {
+  border: 1px solid #181818;
+  border-radius: 0;
+}
+
+[data-theme="trains"] .modal-header {
+  border-top: 4px solid #fff;
+  border-bottom: 5px solid #fccc0a;
+}
+
+[data-theme="trains"] .custom-select {
+  border: 1px solid #777;
+  border-radius: 0;
+
+  /* global.css replaces Bootstrap's background shorthand, including its arrow. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='m2 4 4 4 4-4' fill='none' stroke='%23181818' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+
+[data-theme="trains"] .navbar :focus-visible,
+[data-theme="trains"] .course-card-header:focus-visible {
+  outline-color: #fccc0a;
+}
+
+[data-theme="trains"] .footer {
+  border-top: 6px solid #181818;
+
+  /* prettier-ignore */
+  background-image:
+    linear-gradient(
+      90deg,
+      #0039a6 0% 20%,
+      #ee352e 20% 40%,
+      #00933c 40% 60%,
+      #ff6319 60% 80%,
+      #b933ad 80%
+    );
+  background-size: 100% 5px;
+  background-repeat: no-repeat;
+}
+
+[data-theme="trains"] .footer::before {
+  content: "End of the line. See you next semester. ↗";
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 1rem 1.25rem;
+  text-align: center;
+}
+
+@media (max-width: 991px) {
+  [data-theme="trains"] #wrapper > .container-fluid {
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  [data-theme="trains"] .transit-intro {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  [data-theme="trains"] .transit-itinerary,
+  [data-theme="trains"] .transit-directory {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  [data-theme="trains"] .navbar.bg-light {
+    padding: 0.6rem 1rem;
+  }
+
+  [data-theme="trains"] #nav-collapse {
+    padding-top: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  [data-theme="trains"] .transit-sign {
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.65rem;
+  }
+
+  [data-theme="trains"] .transit-intro {
+    grid-template-columns: minmax(0, 1fr) minmax(80px, 30%);
+    gap: 0.5rem;
+  }
+
+  [data-theme="trains"] .transit-copy {
+    padding: 0.85rem 0;
+  }
+
+  [data-theme="trains"] #transit-title {
+    font-size: 1.9rem;
+  }
+
+  [data-theme="trains"] .transit-map {
+    max-height: 110px;
+    margin-bottom: 0;
+  }
+
+  [data-theme="trains"] .transit-itinerary,
+  [data-theme="trains"] .transit-copy p,
+  [data-theme="trains"] .transit-kicker {
+    display: none;
+  }
+
+  [data-theme="trains"] .transit-itinerary li {
+    position: relative;
+    padding: 0.4rem 0;
+  }
+
+  [data-theme="trains"] .transit-itinerary li + li::before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: -10px;
+    height: 17px;
+    width: 4px;
+    background: #ee352e;
+  }
+
+  [data-theme="trains"] .transit-directory {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="trains"] {
+    --btn-transition: none;
+  }
+
+  [data-theme="trains"] body::before,
+  [data-theme="trains"] body::after {
+    animation: none;
+    will-change: auto;
+  }
+
+  [data-theme="trains"] body::before {
+    transform: translate(-50%, 140px);
+  }
+
+  [data-theme="trains"] body::after {
+    transform: translate(-50%, 360px) rotate(180deg);
+  }
+}

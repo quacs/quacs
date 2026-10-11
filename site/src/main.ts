@@ -22,6 +22,7 @@ import "@/assets/styles/themes/nyan.css";
 import "@/assets/styles/themes/artisanal.css";
 import "@/assets/styles/themes/luma.css";
 import "@/assets/styles/themes/wingdings.css";
+import "@/assets/styles/themes/trains.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
