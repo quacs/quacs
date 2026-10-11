@@ -1,5 +1,6 @@
 import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
+import { applyTicker } from "@/themeTicker";
 
 export const DAYS: Day[] = [
   {
@@ -225,6 +226,9 @@ export function setColorTheme(colorTheme: string): void {
   }
   const theme = newColorTheme.split(" ")[0];
   document.documentElement.setAttribute("data-theme", theme);
+  if (theme === "artisanal") {
+    applyTicker();
+  }
   loadThemeFont(theme);
   document.documentElement.setAttribute(
     "data-theme-accent",
