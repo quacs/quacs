@@ -32,6 +32,18 @@
           • {{ credMin }} credit<template v-if="credMin !== '1'">s</template>
           {{ attributes }}
         </span>
+        <font-awesome-icon
+          v-if="removable"
+          :icon="['fas', 'trash']"
+          class="trash-btn remove-course-btn"
+          data-cy="remove-course"
+          :title="
+            'Remove ' + course.subj + '-' + course.crse + ' from schedule'
+          "
+          tabindex="0"
+          v-on:click.stop="$emit('remove', course)"
+          v-on:keyup.enter.stop="$emit('remove', course)"
+        ></font-awesome-icon>
         <!--
         This code should be left here in case we ever need to add a more info button to a course
         <font-awesome-icon
@@ -194,6 +206,7 @@ Vue.use(ModalPlugin);
 export default class CourseCard extends Vue {
   @Prop() readonly course!: Course;
   @Prop() readonly startExpanded!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly removable!: boolean;
   expanded = this.startExpanded ? this.startExpanded : false;
 
   get credMin(): string {
@@ -360,5 +373,10 @@ export default class CourseCard extends Vue {
 }
 .hidden {
   display: none;
+}
+
+.remove-course-btn {
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
 }
 </style>
