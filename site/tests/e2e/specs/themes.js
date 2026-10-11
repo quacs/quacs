@@ -1,10 +1,7 @@
 const NEW_THEMES = {
-  "Soft Modern": "soft",
   "Illuminated Manuscript": "manuscript",
   "Retro Arcade": "retro",
   "Classic Web": "web1",
-  "Frutiger Aero": "aero",
-  "Liquid Glass": "liquid",
 };
 
 describe("Test color themes", () => {
@@ -18,7 +15,7 @@ describe("Test color themes", () => {
     }
 
     cy.reload();
-    cy.get("html").should("have.attr", "data-theme", "liquid");
+    cy.get("html").should("have.attr", "data-theme", "web1");
   });
 
   it("Keeps the look of the existing light theme", () => {
@@ -31,5 +28,92 @@ describe("Test color themes", () => {
     cy.get(".modal-footer").should("not.exist");
 
     cy.get(".card").first().should("have.css", "border-radius", "4px");
+  });
+
+  it("Applies Wingdings without saving it, so a reload restores the saved theme", () => {
+    cy.getNav().find("svg[data-icon=cog]").click();
+    cy.getOne("#colorTheme").select("Light");
+    cy.get("html").should("have.attr", "data-theme", "light");
+    cy.getOne("#colorTheme").select("Wingdings");
+    cy.get("html").should("have.attr", "data-theme", "wingdings");
+    cy.getOne(".modal-footer").containsOne("Close").click();
+    cy.get(".modal-footer").should("not.exist");
+
+    cy.reload();
+    cy.get("html").should("have.attr", "data-theme", "light");
+  });
+
+  it("Picks a usable theme on every load when Random is saved", () => {
+    const excluded = ["random", "system", "true-dark", "wingdings"];
+    cy.getNav().find("svg[data-icon=cog]").click();
+    cy.get("#colorTheme option").then((options) => {
+      // data-theme is the first word of the option value, e.g. "dark black" -> "dark"
+      const usable = [...options]
+        .map((option) => option.value)
+        .filter((value) => !excluded.includes(value))
+        .map((value) => value.split(" ")[0]);
+      cy.getOne("#colorTheme").select("Random");
+      cy.getOne(".modal-footer").containsOne("Close").click();
+      cy.get(".modal-footer").should("not.exist");
+
+      for (let i = 0; i < 5; i++) {
+        cy.reload();
+        cy.get("html").invoke("attr", "data-theme").should("be.oneOf", usable);
+        cy.getNav().find("svg[data-icon=cog]").click();
+        cy.getOne("#colorTheme").should("have.value", "random");
+        cy.getOne(".modal-footer").containsOne("Close").click();
+        cy.get(".modal-footer").should("not.exist");
+      }
+    });
+  });
+
+  it("Falls back to Light when a removed theme is saved", () => {
+    for (const removed of [
+      "soft",
+      "aero",
+      "liquid",
+      "light colorful",
+      "flowing",
+    ]) {
+      // Seed storage before the app boots, so the running app cannot overwrite it first
+      cy.visit("/", {
+        onBeforeLoad(win) {
+          win.localStorage.setItem(
+            "inter-semester-storage",
+            JSON.stringify({ settings: { colorTheme: removed } })
+          );
+        },
+      });
+      cy.get("html").should("have.attr", "data-theme", "light");
+      cy.window()
+        .its("localStorage")
+        .invoke("getItem", "inter-semester-storage")
+        .then((raw) =>
+          expect(JSON.parse(raw).settings.colorTheme).to.equal("light")
+        );
+    }
+  });
+
+  it("Records the picked theme in RUM", () => {
+    cy.visit("/", {
+      onBeforeLoad(win) {
+        // Stand in for the RUM agent, ignoring the real one when it loads
+        const rum = {
+          onReady: (callback) => callback(),
+          init: cy.stub(),
+          startSessionReplayRecording: cy.stub(),
+          addAction: cy.stub().as("addAction"),
+        };
+        Object.defineProperty(win, "DD_RUM", {
+          get: () => rum,
+          set: cy.stub(),
+        });
+      },
+    });
+    cy.getNav().find("svg[data-icon=cog]").click();
+    cy.getOne("#colorTheme").select("Retro Arcade");
+    cy.get("@addAction").should("have.been.calledWithMatch", "theme_selected", {
+      theme: "retro",
+    });
   });
 });

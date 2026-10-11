@@ -13,18 +13,15 @@ import "@/assets/styles/global.css";
 import "@/assets/styles/colors.css";
 import "@/assets/styles/themes/dark.css";
 import "@/assets/styles/themes/black.css";
-import "@/assets/styles/themes/colorful.css";
 import "@/assets/styles/themes/yacs.css";
-import "@/assets/styles/themes/flowing.css";
 import "@/assets/styles/themes/true-dark.css";
-import "@/assets/styles/themes/soft.css";
 import "@/assets/styles/themes/manuscript.css";
 import "@/assets/styles/themes/retro.css";
 import "@/assets/styles/themes/web1.css";
-import "@/assets/styles/themes/aero.css";
-import "@/assets/styles/themes/liquid.css";
 import "@/assets/styles/themes/nyan.css";
 import "@/assets/styles/themes/artisanal.css";
+import "@/assets/styles/themes/luma.css";
+import "@/assets/styles/themes/wingdings.css";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {

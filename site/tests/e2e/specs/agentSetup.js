@@ -32,6 +32,8 @@ describe("Test hiding the AI Agents button", () => {
     cy.getNav().find("svg[data-icon=cog]").click();
     cy.get("[data-cy=hide-agent-button-toggle]").check({ force: true });
     cy.get("[data-cy=agent-setup-link]").should("not.exist");
+    cy.get("html").should("have.attr", "data-theme", "artisanal");
+    cy.getOne("#colorTheme").should("have.value", "artisanal");
 
     cy.reload();
     cy.get("[data-cy=agent-setup-link]").should("not.exist");

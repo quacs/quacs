@@ -173,10 +173,8 @@ export function timeslotStartEndUnix(
 //Also the hard coded word "system" will swap between light/dark based on device reference
 // Web fonts for the themes that need them. Each loads the first time its theme is picked
 const THEME_FONT_QUERIES: { [theme: string]: string } = {
-  soft: "family=Inter:wght@400;600;700",
   manuscript: "family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia",
   retro: "family=Press+Start+2P&family=VT323",
-  aero: "family=Open+Sans:wght@400;600;700",
   artisanal: "family=Comic+Neue:wght@400;700",
 };
 
@@ -193,12 +191,37 @@ function loadThemeFont(theme: string): void {
   document.head.appendChild(link);
 }
 
+// Themes that are applied but never saved, so a reload restores the previously saved theme
+export const UNSAVED_THEMES = ["true-dark", "wingdings"];
+
+// Themes "random" may pick from. Keep in sync with themeOptions in Settings.vue.
+// Unsaved themes are filtered out so random never lands on one, even if added here later
+const RANDOM_THEMES = [
+  "light",
+  "dark",
+  "dark black",
+  "yacs",
+  "true-dark",
+  "manuscript",
+  "retro",
+  "web1",
+  "nyan",
+  "artisanal",
+  "luma",
+].filter(
+  (theme) =>
+    !UNSAVED_THEMES.includes(theme) && theme !== "random" && theme !== "system"
+);
+
 export function setColorTheme(colorTheme: string): void {
   let newColorTheme = colorTheme;
   if (colorTheme === "system") {
     newColorTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
+  } else if (colorTheme === "random") {
+    newColorTheme =
+      RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
   }
   const theme = newColorTheme.split(" ")[0];
   document.documentElement.setAttribute("data-theme", theme);

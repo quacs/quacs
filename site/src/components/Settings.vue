@@ -63,6 +63,7 @@ import { trackAgentAction } from "@/webmcp";
     },
     colorTheme: function (val) {
       this.$store.commit("settings/setColorTheme", val);
+      trackAgentAction("theme_selected", { theme: val });
     },
   },
   computed: {
@@ -83,6 +84,10 @@ import { trackAgentAction } from "@/webmcp";
       },
       set(hidden: boolean) {
         this.$store.commit("settings/setHideAgentButton", hidden);
+        if (hidden) {
+          this.$store.commit("settings/setColorTheme", "artisanal");
+          (this as Settings).colorTheme = "artisanal";
+        }
         trackAgentAction("agent_button_toggled", { hidden });
       },
     },
@@ -102,18 +107,16 @@ export default class Settings extends Vue {
     { value: "light", text: "Light" },
     { value: "dark", text: "Dark" },
     { value: "dark black", text: "Black" },
-    { value: "light colorful", text: "Splash of Color" },
+    { value: "random", text: "Random" },
     { value: "yacs", text: "YACS" },
-    { value: "flowing", text: "Flowing" },
     { value: "true-dark", text: "True Dark" },
-    { value: "soft", text: "Soft Modern" },
     { value: "manuscript", text: "Illuminated Manuscript" },
     { value: "retro", text: "Retro Arcade" },
     { value: "web1", text: "Classic Web" },
-    { value: "aero", text: "Frutiger Aero" },
-    { value: "liquid", text: "Liquid Glass" },
     { value: "nyan", text: "Nyan Cat" },
     { value: "artisanal", text: "Artisanal" },
+    { value: "luma", text: "Luma (Calico)" },
+    { value: "wingdings", text: "Wingdings" },
   ];
 }
 </script>

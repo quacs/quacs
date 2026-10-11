@@ -1,6 +1,6 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { TimePreference } from "@/typings";
-import { setColorTheme } from "@/utilities";
+import { setColorTheme, UNSAVED_THEMES } from "@/utilities";
 
 @Module({ namespaced: true, name: "settings" })
 export default class Settings extends VuexModule {
@@ -25,7 +25,7 @@ export default class Settings extends VuexModule {
 
   @Mutation
   setColorTheme(newVal: string): void {
-    if (newVal != "true-dark") {
+    if (!UNSAVED_THEMES.includes(newVal)) {
       this.colorTheme = newVal;
     }
     setColorTheme(newVal);

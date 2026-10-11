@@ -1,0 +1,309 @@
+/* Luma (Calico): a tortoiseshell cat on a cream base. Charcoal is the text, navbar and primary button
+color. Tortoiseshell brown carries links and accents. Apricot fills card and modal headers, with charcoal
+text only. Kraft tan draws borders and the calendar grid. Scratcher blue marks the active nav underline
+and the focus ring. Cards are solid white chest, so text never sits on the page pattern. The page carries
+a faint blue quatrefoil tile at about 7% opacity, fixed behind everything. Under the tile sits a 5%
+watermark photo of Luma, so the tile stays on top of it. */
+[data-theme="luma"] {
+  /* Page and text */
+  --background: #fbf5ea;
+  --background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='%233F7FA6' opacity='0.07'%3E%3Ccircle cx='48' cy='31' r='14'/%3E%3Ccircle cx='65' cy='48' r='14'/%3E%3Ccircle cx='48' cy='65' r='14'/%3E%3Ccircle cx='31' cy='48' r='14'/%3E%3Ccircle cx='0' cy='0' r='3'/%3E%3Ccircle cx='96' cy='0' r='3'/%3E%3Ccircle cx='0' cy='96' r='3'/%3E%3Ccircle cx='96' cy='96' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  --background-attachment: fixed;
+  --global-text: #2a2322;
+  --global-text-hover: #8a4b22;
+  --raw-link: #8a4b22;
+  --text-default: #2a2322;
+  --footer-background: #efe3d1;
+  --font-body:
+    system-ui,
+    -apple-system,
+    blinkmacsystemfont,
+    "Segoe UI",
+    roboto,
+    "Helvetica Neue",
+    arial,
+    sans-serif;
+  --font-heading: var(--font-body);
+  --warning-color: #9b2a1d;
+
+  /* Cards: solid white chest body under an apricot header, kraft tan border */
+  --card-background: #fffdf9;
+  --card-body-background: #fffdf9;
+  --card-body-text: #2a2322;
+  --card-header-background: #f2b48c;
+  --card-header-text: #2a2322;
+  --card-header-hover: #f6c3a0;
+  --card-border-color: #c9a878;
+  --card-border-width: 1px;
+  --card-border-radius: 16px;
+  --card-inner-radius: calc(var(--card-border-radius) - var(--card-border-width));
+  --card-shadow: 0 1px 2px rgb(42 35 34 / 8%), 0 6px 16px rgb(42 35 34 / 8%);
+  --card-backdrop-filter: none;
+  --navbar-backdrop-filter: none;
+
+  /* Navbar: charcoal bar with cream text */
+  --navbar-background: #2a2322;
+  --navbar-unselected-text: #d9cdc0;
+  --navbar-unselected-text-hover: #fbf5ea;
+  --navbar-text-focus: #fbf5ea;
+  --navbar-text-disabled: rgb(217 205 192 / 35%);
+  --navbar-text-active: #fffdf9;
+  --navbar-text-show: #fffdf9;
+
+  /* Modals */
+  --modal-header-background: #f2b48c;
+  --modal-header-text: #2a2322;
+  --modal-body-background: #fffdf9;
+  --modal-body-text: #2a2322;
+  --modal-footer-background: #fffdf9;
+  --modal-footer-text: #2a2322;
+  --modal-close-x-hover: #8a4b22;
+
+  /* Buttons: charcoal fill with cream text. Hover shifts to tortoiseshell brown. */
+  --btn-primary-background: #2a2322;
+  --btn-primary-text: #fbf5ea;
+  --btn-border: 1px solid #2a2322;
+  --btn-border-radius: 10px;
+  --btn-box-shadow: 0 2px 6px rgb(42 35 34 / 20%);
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: #efe3d1;
+  --btn-secondary-text: #2a2322;
+
+  /* Lists, tables and course rows. Pink is the hover and conflict accent. Blue wash marks selections. */
+  --department-link-hover: #f9dbe3;
+  --course-row-hover: #f6eee2;
+  --conflict-row: #f8d3dc;
+  --conflict-row-hover: #e88ca0;
+  --selected-row: #e7f1f7;
+  --selected-row-hover: #d3e6f2;
+  --list-group-item-background: #fffdf9;
+  --select-background: #fffdf9;
+  --select-text: #2a2322;
+  --table-text: #2a2322;
+  --table-border: #c9a878;
+  --search-bar-background: #fffdf9;
+  --search-bar-border: #c9a878;
+  --overlay-background: #fbf5ea;
+  --trash-btn: #6e5e56;
+  --trash-btn-hover: #9b2a1d;
+  --prerequisite-jumbotron: #f3e8d8;
+  --prerequisite-text: #2a2322;
+  --prerequisite-warn-icon: #9a8a2a;
+  --prerequisite-error-icon: #b3261e;
+
+  /* Status text. Taken and not-taken are text, so both are dark enough to pass 4.5:1 on white. */
+  --taken-course: #2e6b34;
+  --not-taken-course: #b3261e;
+  --toast-background: #2a2322;
+  --toast-text: #fbf5ea;
+
+  /* Calendar: pastel event blocks with charcoal text. Kraft tan draws the grid. Labels sit on the page. */
+  --calendar-grid-color: #c9a878;
+  --calendar-label: #4a3d37;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #f2b48c;
+  --calendar-border-color-0: #8a4b22;
+  --calendar-text-color-0: #2a2322;
+  --calendar-sb-track-color-0: var(--calendar-bg-color-0);
+  --calendar-sb-thumb-color-0: var(--calendar-border-color-0);
+  --calendar-bg-color-1: #cfe3ef;
+  --calendar-border-color-1: #3f7fa6;
+  --calendar-text-color-1: #2a2322;
+  --calendar-sb-track-color-1: var(--calendar-bg-color-1);
+  --calendar-sb-thumb-color-1: var(--calendar-border-color-1);
+  --calendar-bg-color-2: #f8d3dc;
+  --calendar-border-color-2: #e88ca0;
+  --calendar-text-color-2: #2a2322;
+  --calendar-sb-track-color-2: var(--calendar-bg-color-2);
+  --calendar-sb-thumb-color-2: var(--calendar-border-color-2);
+  --calendar-bg-color-3: #e9e6b8;
+  --calendar-border-color-3: #9a8a2a;
+  --calendar-text-color-3: #2a2322;
+  --calendar-sb-track-color-3: var(--calendar-bg-color-3);
+  --calendar-sb-thumb-color-3: var(--calendar-border-color-3);
+  --calendar-bg-color-4: #efe3d1;
+  --calendar-border-color-4: #c9a878;
+  --calendar-text-color-4: #2a2322;
+  --calendar-sb-track-color-4: var(--calendar-bg-color-4);
+  --calendar-sb-thumb-color-4: var(--calendar-border-color-4);
+  --calendar-bg-color-5: #efd6c8;
+  --calendar-border-color-5: #a0623a;
+  --calendar-text-color-5: #2a2322;
+  --calendar-sb-track-color-5: var(--calendar-bg-color-5);
+  --calendar-sb-thumb-color-5: var(--calendar-border-color-5);
+  --calendar-bg-color-6: #d9e7dc;
+  --calendar-border-color-6: #5f7f56;
+  --calendar-text-color-6: #2a2322;
+  --calendar-sb-track-color-6: var(--calendar-bg-color-6);
+  --calendar-sb-thumb-color-6: var(--calendar-border-color-6);
+}
+
+/* Page layers, all fixed and behind the content. The body stops drawing the tile itself. The tile
+is drawn on ::after instead, so the watermark on ::before (z-index -2, 5% opacity) sits under it.
+Cards and the footer have solid backgrounds, so the watermark only shows on the cream page. */
+[data-theme="luma"] body {
+  background-image: none;
+}
+
+[data-theme="luma"] body::before,
+[data-theme="luma"] body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+
+[data-theme="luma"] body::before {
+  background: url("../../images/luma-watermark.jpg") center 35% / cover no-repeat;
+  opacity: 5%;
+}
+
+[data-theme="luma"] body::after {
+  z-index: -1;
+  background-image: var(--background-image);
+}
+
+/* Headings and card headers */
+[data-theme="luma"] h1,
+[data-theme="luma"] h2,
+[data-theme="luma"] h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="luma"] .card-header {
+  border-bottom: 1px solid #c9a878;
+  font-weight: 600;
+}
+
+/* Links: tortoiseshell brown. The :where() wrapper keeps this at element specificity, so component
+colors such as nav links and buttons still win. */
+:where([data-theme="luma"]) a {
+  color: var(--raw-link);
+}
+
+[data-theme="luma"] a:hover {
+  color: #5e3115;
+}
+
+/* Navbar: the bar is charcoal, so the brand and toggler need light strokes. The active link gets a
+scratcher blue underline. */
+[data-theme="luma"] .navbar-light .navbar-brand,
+[data-theme="luma"] .navbar-light .navbar-brand:hover {
+  color: #fbf5ea;
+}
+
+/* Luma's avatar, a decorative 32px circle after the logo. It takes no pointer events, so the brand link
+behaves as before. */
+[data-theme="luma"] .navbar-brand::after {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  border: 2px solid #f2b48c;
+  border-radius: 50%;
+  background: url("../../images/luma.jpg") center / cover no-repeat;
+  pointer-events: none;
+}
+
+[data-theme="luma"] .navbar-light .navbar-toggler {
+  border-color: rgb(251 245 234 / 45%);
+}
+
+[data-theme="luma"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='%23FBF5EA' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+[data-theme="luma"] .navbar-nav .nav-link {
+  position: relative;
+}
+
+[data-theme="luma"] .navbar-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.2rem;
+  height: 3px;
+  border-radius: 2px;
+  background: #3f7fa6;
+}
+
+/* Primary buttons: Bootstrap's own hover rule sets a blue background at higher specificity, so the
+luma hover has to win explicitly. */
+[data-theme="luma"] .btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgb(63 127 166 / 55%);
+}
+
+[data-theme="luma"] .btn-primary:hover,
+[data-theme="luma"] .btn-primary:not(:disabled):not(.disabled):active {
+  background-color: #8a4b22;
+  border-color: #8a4b22;
+  color: #fbf5ea;
+}
+
+/* Focus ring: scratcher blue, offset so it reads on both cream and charcoal */
+[data-theme="luma"] :focus-visible {
+  outline: 2px solid #3f7fa6;
+  outline-offset: 2px;
+}
+
+/* Footer: Luma's round photo, with a caption under it. Both pseudo-elements sit ahead of the footer
+links and take no pointer events. Footer text keeps the charcoal text color on the kraft footer. */
+[data-theme="luma"] .footer::before {
+  content: "";
+  order: -2;
+  box-sizing: border-box;
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 0.5rem;
+  border: 3px solid #8a4b22;
+  border-radius: 50%;
+  background: url("../../images/luma-footer.jpg") center / cover no-repeat;
+  pointer-events: none;
+}
+
+[data-theme="luma"] .footer::after {
+  content: "Luma approved this theme";
+  order: -1;
+  display: block;
+  margin-bottom: 1.25rem;
+  color: var(--global-text);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Prerequisites: the jumbotron gets the card radius. On 600px and up, a thin scratcher strip runs
+across its top. The strip bleeds into the jumbotron's top padding, and it hides below 600px. */
+[data-theme="luma"] .jumbotron {
+  border-radius: var(--card-border-radius);
+}
+
+@media (min-width: 600px) {
+  [data-theme="luma"] .jumbotron::before {
+    content: "";
+    display: block;
+    height: 80px;
+    margin: -4rem -2rem 2rem;
+    border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+    background: url("../../images/luma-scratcher.jpg") center 12% / cover no-repeat;
+    pointer-events: none;
+  }
+}
+
+/* Motion: a gentle color and shadow fade on buttons, only when the OS allows motion */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="luma"] {
+    --btn-transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+}
