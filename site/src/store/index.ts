@@ -10,7 +10,7 @@ import createPersistedState from "vuex-persistedstate";
 
 import Vue from "vue";
 import VueAxios from "vue-axios";
-import Vuex from "vuex";
+import Vuex, { Store } from "vuex";
 
 // eslint-disable-next-line
 const SCHOOLS_JSON = require(`./data/semester_data/${process.env.VUE_APP_CURR_SEM}/schools.json`);
@@ -25,6 +25,43 @@ import prerequisites from "./modules/prerequisites";
 import schedule from "./modules/schedule";
 
 Vue.use(Vuex);
+
+const SEMESTER_STORAGE_KEY =
+  process.env.VUE_APP_CURR_SEM === "202101"
+    ? "vuex"
+    : (process.env.VUE_APP_CURR_SEM as string);
+const INTER_SEMESTER_STORAGE_KEY = "inter-semester-storage";
+
+// Each tab only reads localStorage on load, so without this a second tab
+// overwrites whatever the first tab saved. The storage event fires in every
+// other tab when one tab writes, so pull the new value into this tab's state.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function syncAcrossTabs(store: Store<any>): void {
+  window.addEventListener("storage", (event) => {
+    if (
+      event.newValue === null ||
+      (event.key !== SEMESTER_STORAGE_KEY &&
+        event.key !== INTER_SEMESTER_STORAGE_KEY)
+    ) {
+      return;
+    }
+    const saved = JSON.parse(event.newValue);
+    const schedule = store.state.schedule;
+    const previous = {
+      ...schedule.courseSets[schedule.currentTerm]?.[schedule.currentCourseSet],
+    };
+
+    const next = { ...store.state };
+    for (const module in saved) {
+      next[module] = { ...store.state[module], ...saved[module] };
+    }
+    store.replaceState(next);
+
+    if (event.key === SEMESTER_STORAGE_KEY) {
+      store.dispatch("schedule/resyncSelectedSections", previous);
+    }
+  });
+}
 Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
@@ -110,10 +147,7 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
-      key:
-        process.env.VUE_APP_CURR_SEM === "202101"
-          ? "vuex"
-          : process.env.VUE_APP_CURR_SEM,
+      key: SEMESTER_STORAGE_KEY,
       paths: [
         "schedule.storedVersion",
         "schedule.currentTerm",
@@ -127,7 +161,7 @@ export default new Vuex.Store({
       },
     }),
     createPersistedState({
-      key: "inter-semester-storage",
+      key: INTER_SEMESTER_STORAGE_KEY,
       paths: [
         "settings.timePreference",
         "settings.colorTheme",
@@ -138,5 +172,6 @@ export default new Vuex.Store({
         "prerequisites.enableChecking",
       ],
     }),
+    syncAcrossTabs,
   ],
 });

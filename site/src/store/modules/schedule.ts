@@ -102,13 +102,20 @@ export default class Schedule extends VuexModule {
     return true;
   }
 
-  @Action
-  async setSelected(p: { crn: string; selected: boolean }): Promise<void> {
+  // A mutation (not a direct write in the action) so the change is saved to
+  // localStorage right away, before another tab can sync over it
+  @Mutation
+  _setSelected(p: { crn: string; selected: boolean }): void {
     Vue.set(
       this.courseSets[this.currentTerm][this.currentCourseSet],
       p.crn,
       p.selected
     );
+  }
+
+  @Action
+  async setSelected(p: { crn: string; selected: boolean }): Promise<void> {
+    this.context.commit("_setSelected", p);
     worker.setSelected(p.crn, p.selected);
   }
 
@@ -172,6 +179,23 @@ export default class Schedule extends VuexModule {
         this.courseSets[this.currentTerm][this.currentCourseSet][section]
       );
     }
+  }
+
+  // Called after another tab updated localStorage and the state was replaced
+  @Action
+  async resyncSelectedSections(previous: {
+    [crn: string]: boolean;
+  }): Promise<void> {
+    for (const sec in previous) {
+      worker.setSelected(sec, false);
+    }
+    const current = this.courseSets[this.currentTerm]?.[this.currentCourseSet];
+    for (const sec in current) {
+      if (current[sec]) {
+        worker.setSelected(sec, true);
+      }
+    }
+    this.context.dispatch("generateSchedulesAndConflicts");
   }
 
   @Action
