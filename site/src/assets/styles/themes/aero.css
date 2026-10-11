@@ -1,0 +1,81 @@
+/* Frutiger Aero: glossy sky-to-grass backdrop, frosted glass panels and bubbly glossy buttons */
+[data-theme="aero"] {
+  --card-header-text: #003a6b;
+  --raw-link: #0067b8;
+  --background: #5fb4ec;
+  --background-image: linear-gradient(180deg, #2f8fd9 0%, #7cc6f2 40%, #d5f0ff 62%, #8fd45a 62.5%, #5cae2e 100%);
+  --background-attachment: fixed;
+  --global-text: #082a4a;
+  --global-text-hover: #0067b8;
+  --card-body-background: rgb(255 255 255 / 78%);
+  --card-body-text: #082a4a;
+  --card-header-background: linear-gradient(180deg, #fff 0%, #eaf6ff 100%);
+  --card-border-color: rgb(255 255 255 / 85%);
+  --card-border-width: 1px;
+  --card-border-radius: 14px;
+  --card-shadow: 0 8px 22px rgb(0 60 120 / 25%);
+  --card-backdrop-filter: blur(6px);
+  --footer-background: linear-gradient(180deg, #6fc1f0 0%, #2e7fc7 100%);
+  --navbar-background: linear-gradient(180deg, #5bb7f2 0%, #2f86d6 50%, #1c6fc0 51%, #3c97e0 100%);
+  --navbar-backdrop-filter: blur(6px);
+  --navbar-unselected-text: rgb(255 255 255 / 80%);
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: rgb(255 255 255 / 40%);
+  --navbar-text-active: #fff;
+  --navbar-text-show: #fff;
+  --modal-header-background: linear-gradient(180deg, #fff 0%, #e4f4ff 48%, #bfe3fb 52%, #e9f7ff 100%);
+  --modal-header-text: #003a6b;
+  --modal-body-background: rgb(255 255 255 / 92%);
+  --modal-body-text: #082a4a;
+  --modal-footer-background: rgb(255 255 255 / 92%);
+  --modal-footer-text: #082a4a;
+  --btn-primary-background: linear-gradient(180deg, #a6f08c 0%, #4cb62e 50%, #3a9d1f 51%, #7ad65a 100%);
+  --btn-primary-text: #fff;
+  --btn-border-radius: 999px;
+  --btn-border: 1px solid #2e7d1a;
+  --btn-box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%), 0 2px 4px rgb(0 60 0 / 30%);
+  --department-link-hover: #d5f0ff;
+  --select-background: #fff;
+  --select-text: #082a4a;
+  --modal-close-x-hover: #003a6b;
+  --table-text: #082a4a;
+  --table-border: #b5d9f2;
+  --course-row-hover: rgb(213 240 255 / 70%);
+  --conflict-row: #ffb4b4;
+  --conflict-row-hover: #ff9a9a;
+  --selected-row: #bfe6ff;
+  --selected-row-hover: #9fd7fb;
+  --list-group-item-background: rgb(255 255 255 / 80%);
+  --calendar-grid-color: #bcd9ee;
+  --search-bar-background: rgb(255 255 255 / 85%);
+  --search-bar-border: #9cc9ea;
+  --overlay-background: rgb(255 255 255 / 85%);
+  --trash-btn: #2f6fa8;
+  --trash-btn-hover: #d62d2d;
+  --prerequisite-jumbotron: rgb(255 255 255 / 70%);
+  --prerequisite-text: #082a4a;
+  --taken-course: #2e8b1f;
+  --not-taken-course: #d62d2d;
+  --font-body: "Open Sans", "Segoe UI", sans-serif;
+}
+
+[data-theme="aero"] .navbar-brand,
+[data-theme="aero"] .navbar-nav .nav-link {
+  text-shadow: 0 1px 2px rgb(0 40 80 / 45%);
+}
+
+[data-theme="aero"] .btn-primary {
+  text-shadow: 0 1px 1px rgb(0 60 0 / 40%);
+}
+
+/* Layout: the navbar becomes a rounded floating capsule and cards get soft spacing */
+[data-theme="aero"] .navbar.bg-light {
+  margin: 0.5rem 0.75rem 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgb(0 60 120 / 30%);
+}
+
+[data-theme="aero"] .card {
+  margin-bottom: 0.9rem;
+}

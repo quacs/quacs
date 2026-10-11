@@ -106,6 +106,12 @@ export default class Settings extends Vue {
     { value: "yacs", text: "YACS" },
     { value: "flowing", text: "Flowing" },
     { value: "true-dark", text: "True Dark" },
+    { value: "soft", text: "Soft Modern" },
+    { value: "manuscript", text: "Illuminated Manuscript" },
+    { value: "retro", text: "Retro Arcade" },
+    { value: "web1", text: "Classic Web" },
+    { value: "aero", text: "Frutiger Aero" },
+    { value: "liquid", text: "Liquid Glass" },
   ];
 }
 </script>

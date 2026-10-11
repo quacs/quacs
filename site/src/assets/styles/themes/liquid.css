@@ -1,0 +1,200 @@
+/* Liquid Glass: frosted panels floating over drifting color blobs, with shimmering headings,
+shimmering buttons and cards that lift on hover. All motion is skipped for people who ask
+for reduced motion in their OS settings. */
+[data-theme="liquid"] {
+  --card-header-text: #fff;
+  --raw-link: #7dd3fc;
+  --background: #0a0717;
+  --background-image: linear-gradient(135deg, #1a0b3d 0%, #0b1d3a 50%, #07262e 100%);
+  --background-attachment: fixed;
+  --global-text: #f5f3ff;
+  --global-text-hover: #c4b5fd;
+  --card-body-background: rgb(255 255 255 / 7%);
+  --card-body-text: #f5f3ff;
+  --card-header-background: rgb(255 255 255 / 12%);
+  --card-border-color: rgb(255 255 255 / 28%);
+  --card-border-width: 1px;
+  --card-border-radius: 22px;
+  --card-background: transparent;
+  --card-shadow: 0 8px 32px rgb(0 0 0 / 35%), inset 0 1px 0 rgb(255 255 255 / 25%);
+  --card-backdrop-filter: blur(18px) saturate(180%);
+  --footer-background: rgb(255 255 255 / 6%);
+  --navbar-background: rgb(255 255 255 / 10%);
+  --navbar-backdrop-filter: blur(20px) saturate(180%);
+  --navbar-unselected-text: rgb(245 243 255 / 65%);
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: rgb(245 243 255 / 30%);
+  --navbar-text-active: #fff;
+  --navbar-text-show: #fff;
+  --modal-header-background: rgb(20 14 40 / 70%);
+  --modal-header-text: #f5f3ff;
+  --modal-body-background: rgb(20 14 40 / 80%);
+  --modal-body-text: #f5f3ff;
+  --modal-footer-background: rgb(20 14 40 / 80%);
+  --modal-footer-text: #f5f3ff;
+  --modal-close-x-hover: #fff;
+  --btn-primary-background: linear-gradient(135deg, rgb(236 72 153 / 85%), rgb(99 102 241 / 85%));
+  --btn-primary-text: #fff;
+  --btn-border-radius: 999px;
+  --btn-border: 1px solid rgb(255 255 255 / 35%);
+  --btn-box-shadow: 0 6px 20px rgb(236 72 153 / 35%);
+  --btn-transition: transform 0.2s ease, box-shadow 0.2s ease;
+  --department-link-hover: rgb(255 255 255 / 12%);
+  --select-background: rgb(255 255 255 / 10%);
+  --select-text: #f5f3ff;
+  --table-text: #f5f3ff;
+  --table-border: rgb(255 255 255 / 15%);
+  --course-row-hover: rgb(255 255 255 / 10%);
+  --conflict-row: rgb(244 63 94 / 50%);
+  --conflict-row-hover: rgb(244 63 94 / 65%);
+  --selected-row: rgb(129 140 248 / 45%);
+  --selected-row-hover: rgb(129 140 248 / 60%);
+  --list-group-item-background: rgb(255 255 255 / 5%);
+  --calendar-grid-color: rgb(255 255 255 / 12%);
+  --search-bar-background: rgb(255 255 255 / 10%);
+  --search-bar-border: rgb(255 255 255 / 25%);
+  --overlay-background: rgb(10 7 23 / 70%);
+  --trash-btn: #f9a8d4;
+  --trash-btn-hover: #fff;
+  --prerequisite-jumbotron: rgb(255 255 255 / 8%);
+  --prerequisite-text: #f5f3ff;
+  --taken-course: #6ee7b7;
+  --not-taken-course: #fda4af;
+}
+
+/* Colored light drifting behind the glass. Fixed so it stays put while the page scrolls */
+[data-theme="liquid"] body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 30%, #ec4899 0, transparent 30%),
+    radial-gradient(circle at 80% 20%, #22d3ee 0, transparent 30%),
+    radial-gradient(circle at 60% 85%, #a78bfa 0, transparent 35%),
+    radial-gradient(circle at 10% 90%, #fde047 0, transparent 22%);
+  filter: blur(70px) saturate(140%);
+  opacity: 50%;
+}
+
+[data-theme="liquid"] h1,
+[data-theme="liquid"] h2,
+[data-theme="liquid"] h3 {
+  background: linear-gradient(90deg, #f0abfc, #7dd3fc, #fde68a, #f0abfc);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+[data-theme="liquid"] .navbar-nav .nav-link {
+  position: relative;
+}
+
+[data-theme="liquid"] .navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.2rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #f0abfc, #7dd3fc);
+  transform: scaleX(0);
+}
+
+[data-theme="liquid"] .navbar-nav .nav-link.active::after,
+[data-theme="liquid"] .navbar-nav .nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+[data-theme="liquid"] .btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="liquid"] .btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 45%) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liquid-drift {
+    0% {
+      transform: translate3d(-2%, -1%, 0) rotate(0deg) scale(1);
+    }
+
+    50% {
+      transform: translate3d(3%, 2%, 0) rotate(8deg) scale(1.08);
+    }
+
+    100% {
+      transform: translate3d(-1%, 3%, 0) rotate(-6deg) scale(0.96);
+    }
+  }
+
+  @keyframes liquid-shine {
+    from {
+      background-position: 0 center;
+    }
+
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  [data-theme="liquid"] body::before {
+    animation: liquid-drift 18s ease-in-out infinite alternate;
+  }
+
+  [data-theme="liquid"] h1,
+  [data-theme="liquid"] h2,
+  [data-theme="liquid"] h3 {
+    animation: liquid-shine 6s linear infinite;
+  }
+
+  [data-theme="liquid"] .card {
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+  }
+
+  [data-theme="liquid"] .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 45%), inset 0 1px 0 rgb(255 255 255 / 35%);
+  }
+
+  [data-theme="liquid"] .navbar-nav .nav-link::after {
+    transition: transform 0.3s ease;
+  }
+
+  [data-theme="liquid"] .btn-primary::after {
+    transition: transform 0.7s ease;
+  }
+
+  [data-theme="liquid"] .btn-primary:hover::after {
+    transform: translateX(120%);
+  }
+}
+
+/* Layout: the navbar floats as a glass pill, with more room between cards */
+[data-theme="liquid"] .navbar.bg-light {
+  margin: 0.75rem 0.75rem 0;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 999px;
+}
+
+[data-theme="liquid"] .card {
+  margin-bottom: 1.1rem;
+}
+
+[data-theme="liquid"] #search-bar {
+  color: #f5f3ff;
+}
+
+[data-theme="liquid"] #search-bar::placeholder {
+  color: rgb(245 243 255 / 60%);
+}

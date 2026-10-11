@@ -171,6 +171,27 @@ export function timeslotStartEndUnix(
 //The theme accent is usually used for slight modifications of a different theme
 //EX: Black mode is only slightly different from dark mode
 //Also the hard coded word "system" will swap between light/dark based on device reference
+// Web fonts for the themes that need them. Each loads the first time its theme is picked
+const THEME_FONT_QUERIES: { [theme: string]: string } = {
+  soft: "family=Inter:wght@400;600;700",
+  manuscript: "family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia",
+  retro: "family=Press+Start+2P&family=VT323",
+  aero: "family=Open+Sans:wght@400;600;700",
+};
+
+function loadThemeFont(theme: string): void {
+  const query = THEME_FONT_QUERIES[theme];
+  const id = `theme-font-${theme}`;
+  if (query === undefined || document.getElementById(id) !== null) {
+    return;
+  }
+  const link = document.createElement("link");
+  link.id = id;
+  link.rel = "stylesheet";
+  link.href = `https://fonts.googleapis.com/css2?${query}&display=swap`;
+  document.head.appendChild(link);
+}
+
 export function setColorTheme(colorTheme: string): void {
   let newColorTheme = colorTheme;
   if (colorTheme === "system") {
@@ -178,10 +199,9 @@ export function setColorTheme(colorTheme: string): void {
       ? "dark"
       : "light";
   }
-  document.documentElement.setAttribute(
-    "data-theme",
-    newColorTheme.split(" ")[0]
-  );
+  const theme = newColorTheme.split(" ")[0];
+  document.documentElement.setAttribute("data-theme", theme);
+  loadThemeFont(theme);
   document.documentElement.setAttribute(
     "data-theme-accent",
     newColorTheme.split(" ")[1]

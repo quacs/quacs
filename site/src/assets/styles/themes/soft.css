@@ -1,0 +1,93 @@
+/* Soft Modern: rounded white cards, gentle shadows, indigo accents and pill buttons */
+[data-theme="soft"] {
+  --card-header-text: #1f2937;
+  --raw-link: #4f46e5;
+  --background: #f3f5fb;
+  --global-text: #1f2937;
+  --global-text-hover: #4b5563;
+  --card-body-background: #fff;
+  --card-body-text: #1f2937;
+  --card-header-background: #fff;
+  --card-border-color: transparent;
+  --card-border-width: 0;
+  --card-border-radius: 0.875rem;
+  --card-shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 6px 16px rgb(16 24 40 / 6%);
+  --footer-background: #e8ebf5;
+  --navbar-background: #fff;
+  --navbar-unselected-text: rgb(31 41 55 / 55%);
+  --navbar-unselected-text-hover: rgb(31 41 55 / 80%);
+  --navbar-text-focus: rgb(31 41 55 / 80%);
+  --navbar-text-disabled: rgb(31 41 55 / 30%);
+  --navbar-text-active: #4f46e5;
+  --navbar-text-show: #4f46e5;
+  --modal-header-background: #fff;
+  --modal-header-text: #1f2937;
+  --modal-body-background: #fff;
+  --modal-body-text: #1f2937;
+  --modal-footer-background: #fff;
+  --modal-footer-text: #1f2937;
+  --btn-primary-background: #4f46e5;
+  --btn-primary-text: #fff;
+  --btn-border-radius: 999px;
+  --btn-box-shadow: 0 2px 6px rgb(79 70 229 / 30%);
+  --btn-transition: all 0.2s ease;
+  --department-link-hover: #eef0fb;
+  --select-background: #fff;
+  --select-text: #1f2937;
+  --modal-close-x-hover: #1f2937;
+  --card-header-hover: #f5f6fb;
+  --table-text: #1f2937;
+  --table-border: #e5e7eb;
+  --course-row-hover: #f1f3fb;
+  --conflict-row: #fee2e2;
+  --conflict-row-hover: #fecaca;
+  --selected-row: #e0e7ff;
+  --selected-row-hover: #c7d2fe;
+  --list-group-item-background: #fff;
+  --calendar-grid-color: #eceef5;
+  --search-bar-background: #fff;
+  --search-bar-border: #e5e7eb;
+  --overlay-background: #f8f9fc;
+  --trash-btn: #6b7280;
+  --trash-btn-hover: #dc2626;
+  --prerequisite-jumbotron: #eef0fb;
+  --prerequisite-text: #1f2937;
+  --taken-course: #15803d;
+  --not-taken-course: #dc2626;
+  --font-body: "Inter", -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", sans-serif;
+}
+
+[data-theme="soft"] h1,
+[data-theme="soft"] h2,
+[data-theme="soft"] h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="soft"] .card-header {
+  border-bottom-color: #eef0f6;
+  padding: 0.9rem 1.25rem;
+  font-weight: 600;
+}
+
+[data-theme="soft"] .navbar.bg-light {
+  box-shadow: 0 1px 3px rgb(16 24 40 / 8%);
+}
+
+/* Layout: more air between cards, roomier header rows, pill-shaped nav highlights */
+[data-theme="soft"] .card {
+  margin-bottom: 1rem;
+}
+
+[data-theme="soft"] .navbar-nav .nav-link {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+}
+
+[data-theme="soft"] .navbar-nav .nav-link.active {
+  background: #eef0fb;
+}
+
+[data-theme="soft"] .btn {
+  border-radius: 999px;
+}
