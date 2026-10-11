@@ -1,60 +1,79 @@
-/* Liquid Glass: frosted panels floating over drifting color blobs, with shimmering headings,
-shimmering buttons and cards that lift on hover. All motion is skipped for people who ask
-for reduced motion in their OS settings. */
+/* Liquid Glass: smoky translucent panels that float over drifting color, with bright rim
+highlights, concentric pill and capsule shapes and spring motion. Glass is used for the
+navigation layer and for course cards, modals and popovers. Calendars, tables and body text
+sit on fills that keep contrast above WCAG AA. Motion is limited to
+prefers-reduced-motion: no-preference, and translucency is raised for
+prefers-reduced-transparency: reduce. */
 [data-theme="liquid"] {
+  color-scheme: dark;
+
+  /* Glass material. Fills are dark and tinted so light text passes AA over the blobs */
+  --glass-fill: rgb(18 14 40 / 44%);
+  --glass-fill-strong: rgb(18 14 40 / 62%);
+  --glass-edge: rgb(255 255 255 / 28%);
+  --glass-blur-strong: blur(22px) saturate(180%);
+  --glass-shadow: 0 10px 30px rgb(0 0 0 / 30%);
+  --glass-rim:
+    inset 0 1.5px 0 rgb(255 255 255 / 70%),
+    inset 0 -1px 0 rgb(255 255 255 / 14%);
   --card-header-text: #fff;
   --raw-link: #7dd3fc;
   --background: #0a0717;
   --background-image: linear-gradient(135deg, #1a0b3d 0%, #0b1d3a 50%, #07262e 100%);
   --background-attachment: fixed;
   --global-text: #f5f3ff;
-  --global-text-hover: #c4b5fd;
-  --card-body-background: rgb(255 255 255 / 7%);
+  --global-text-hover: #ddd6fe;
+  --card-body-background: transparent;
   --card-body-text: #f5f3ff;
-  --card-header-background: rgb(255 255 255 / 12%);
-  --card-border-color: rgb(255 255 255 / 28%);
+  --card-header-background: rgb(255 255 255 / 4%);
+  --card-border-color: var(--glass-edge);
   --card-border-width: 1px;
   --card-border-radius: 22px;
-  --card-background: transparent;
-  --card-shadow: 0 8px 32px rgb(0 0 0 / 35%), inset 0 1px 0 rgb(255 255 255 / 25%);
-  --card-backdrop-filter: blur(18px) saturate(180%);
-  --footer-background: rgb(255 255 255 / 6%);
-  --navbar-background: rgb(255 255 255 / 10%);
-  --navbar-backdrop-filter: blur(20px) saturate(180%);
-  --navbar-unselected-text: rgb(245 243 255 / 65%);
+  --card-background: var(--glass-fill);
+  --card-shadow: var(--glass-shadow), var(--glass-rim);
+
+  /* Cards are not blurred: there are dozens per page, and each would blur the animated
+  blobs. The translucent fill and rim highlight carry the glass look. The navbar and modals
+  keep the real blur. */
+  --card-backdrop-filter: none;
+  --footer-background: rgb(255 255 255 / 5%);
+  --navbar-background: var(--glass-fill-strong);
+  --navbar-backdrop-filter: var(--glass-blur-strong);
+  --navbar-unselected-text: rgb(245 243 255 / 82%);
   --navbar-unselected-text-hover: #fff;
   --navbar-text-focus: #fff;
-  --navbar-text-disabled: rgb(245 243 255 / 30%);
+  --navbar-text-disabled: rgb(245 243 255 / 40%);
   --navbar-text-active: #fff;
   --navbar-text-show: #fff;
-  --modal-header-background: rgb(20 14 40 / 70%);
+  --modal-header-background: transparent;
   --modal-header-text: #f5f3ff;
-  --modal-body-background: rgb(20 14 40 / 80%);
+  --modal-body-background: transparent;
   --modal-body-text: #f5f3ff;
-  --modal-footer-background: rgb(20 14 40 / 80%);
+  --modal-footer-background: transparent;
   --modal-footer-text: #f5f3ff;
   --modal-close-x-hover: #fff;
-  --btn-primary-background: linear-gradient(135deg, rgb(236 72 153 / 85%), rgb(99 102 241 / 85%));
+  --btn-primary-background: linear-gradient(135deg, rgb(190 24 93 / 90%), rgb(67 56 202 / 90%));
   --btn-primary-text: #fff;
   --btn-border-radius: 999px;
   --btn-border: 1px solid rgb(255 255 255 / 35%);
-  --btn-box-shadow: 0 6px 20px rgb(236 72 153 / 35%);
-  --btn-transition: transform 0.2s ease, box-shadow 0.2s ease;
+  --btn-box-shadow: 0 6px 18px rgb(190 24 93 / 30%), inset 0 1px 0 rgb(255 255 255 / 45%);
   --department-link-hover: rgb(255 255 255 / 12%);
   --select-background: rgb(255 255 255 / 10%);
   --select-text: #f5f3ff;
   --table-text: #f5f3ff;
-  --table-border: rgb(255 255 255 / 15%);
+  --table-border: rgb(255 255 255 / 14%);
   --course-row-hover: rgb(255 255 255 / 10%);
   --conflict-row: rgb(244 63 94 / 50%);
   --conflict-row-hover: rgb(244 63 94 / 65%);
   --selected-row: rgb(129 140 248 / 45%);
   --selected-row-hover: rgb(129 140 248 / 60%);
   --list-group-item-background: rgb(255 255 255 / 5%);
-  --calendar-grid-color: rgb(255 255 255 / 12%);
+  --calendar-label: #cbd5e1;
+  --calendar-grid-color: rgb(255 255 255 / 14%);
   --search-bar-background: rgb(255 255 255 / 10%);
-  --search-bar-border: rgb(255 255 255 / 25%);
+  --search-bar-border: rgb(255 255 255 / 24%);
   --overlay-background: rgb(10 7 23 / 70%);
+  --warning-color: #fda4af;
   --trash-btn: #f9a8d4;
   --trash-btn-hover: #fff;
   --prerequisite-jumbotron: rgb(255 255 255 / 8%);
@@ -63,7 +82,17 @@ for reduced motion in their OS settings. */
   --not-taken-course: #fda4af;
 }
 
-/* Colored light drifting behind the glass. Fixed so it stays put while the page scrolls */
+/* Reduced transparency: the glass fills become nearly opaque */
+@media (prefers-reduced-transparency: reduce) {
+  [data-theme="liquid"] {
+    --glass-fill: rgb(18 14 40 / 90%);
+    --glass-fill-strong: rgb(18 14 40 / 92%);
+    --glass-edge: rgb(255 255 255 / 36%);
+  }
+}
+
+/* Colored light drifting behind the glass. Fixed so it stays put while the page scrolls.
+Kept dim so the glass and text stay high contrast. */
 [data-theme="liquid"] body::before {
   content: "";
   position: fixed;
@@ -75,8 +104,12 @@ for reduced motion in their OS settings. */
     radial-gradient(circle at 80% 20%, #22d3ee 0, transparent 30%),
     radial-gradient(circle at 60% 85%, #a78bfa 0, transparent 35%),
     radial-gradient(circle at 10% 90%, #fde047 0, transparent 22%);
-  filter: blur(70px) saturate(140%);
-  opacity: 50%;
+  filter: blur(80px) saturate(120%);
+  opacity: 35%;
+}
+
+[data-theme="liquid"] body {
+  -webkit-font-smoothing: antialiased;
 }
 
 [data-theme="liquid"] h1,
@@ -87,13 +120,55 @@ for reduced motion in their OS settings. */
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+/* Glass surfaces get a diagonal sheen from a ::before overlay, not a second blur */
+[data-theme="liquid"] .card::before,
+[data-theme="liquid"] .navbar.bg-light::before,
+[data-theme="liquid"] .modal-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      115deg,
+      rgb(255 255 255 / 16%) 0%,
+      rgb(255 255 255 / 2%) 40%,
+      rgb(255 255 255 / 0%) 65%,
+      rgb(255 255 255 / 6%) 100%
+    );
+}
+
+/* Navigation: floating glass pill with underline indicators */
+[data-theme="liquid"] .navbar.bg-light {
+  margin: 0.75rem 15px 0;
+  border: 1px solid rgb(255 255 255 / 26%);
+  border-radius: 999px;
+  box-shadow: var(--glass-shadow), var(--glass-rim);
+}
+
+/* When the mobile menu is expanded, the tall bar becomes a rounded rectangle so the
+content does not sit outside a fully round end cap */
+[data-theme="liquid"] .navbar.bg-light:has(.collapse.show) {
+  border-radius: 28px;
 }
 
 [data-theme="liquid"] .navbar-nav .nav-link {
   position: relative;
+  border-radius: 999px;
 }
 
-[data-theme="liquid"] .navbar-nav .nav-link::after {
+[data-theme="liquid"] .navbar-nav .nav-link:hover {
+  background-color: rgb(255 255 255 / 10%);
+}
+
+/* Underline indicators. Dropdown toggles are excluded so Bootstrap's caret ::after survives */
+[data-theme="liquid"] .navbar-nav .nav-link:not(.dropdown-toggle)::after {
   content: "";
   position: absolute;
   left: 0.6rem;
@@ -105,14 +180,222 @@ for reduced motion in their OS settings. */
   transform: scaleX(0);
 }
 
-[data-theme="liquid"] .navbar-nav .nav-link.active::after,
-[data-theme="liquid"] .navbar-nav .nav-link:hover::after {
+[data-theme="liquid"] .navbar-nav .nav-link:not(.dropdown-toggle).active::after,
+[data-theme="liquid"] .navbar-nav .nav-link:not(.dropdown-toggle):hover::after {
   transform: scaleX(1);
+}
+
+[data-theme="liquid"] .navbar-toggler {
+  border-color: rgb(255 255 255 / 30%);
+  border-radius: 999px;
+}
+
+[data-theme="liquid"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='%23f5f3ff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Search field: capsule with a light icon, so it stays visible on dark glass */
+[data-theme="liquid"] #search-bar {
+  color: #f5f3ff;
+  border-radius: 999px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23d4d4e8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4-4'/%3E%3C/svg%3E");
+}
+
+[data-theme="liquid"] #search-bar::placeholder {
+  color: rgb(245 243 255 / 72%);
+}
+
+/* App.vue sets a white background on focus, so override it with dark glass and light text */
+[data-theme="liquid"] #search-bar:focus {
+  color: #f5f3ff;
+  background-color: rgb(20 14 40 / 85%);
+  border-color: rgb(125 211 252 / 75%);
+  box-shadow: 0 0 0 3px rgb(125 211 252 / 28%);
+}
+
+/* Cards: glass panels. The header and body are flat tints inside the glass.
+isolation keeps the sheen (::before, z-index -1) above the card background */
+[data-theme="liquid"] .card {
+  margin-bottom: 1.1rem;
+  isolation: isolate;
+}
+
+[data-theme="liquid"] .card-header:not(:last-child) {
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+}
+
+[data-theme="liquid"] .card-header:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: -2px;
+}
+
+/* Warnings and prerequisite notes */
+[data-theme="liquid"] .unofficial-schedule-warning {
+  background-color: rgb(244 63 94 / 12%);
+  border-color: rgb(253 164 175 / 45%);
+  border-radius: 22px;
+}
+
+[data-theme="liquid"] .jumbotron {
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 22px;
+}
+
+/* Modals: glass sheets. The header, body and footer are transparent so there is one blur */
+[data-theme="liquid"] .modal-content {
+  background-color: var(--glass-fill-strong);
+  backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-edge);
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%), var(--glass-rim);
+}
+
+[data-theme="liquid"] .modal-header {
+  border-bottom-color: rgb(255 255 255 / 12%);
+}
+
+[data-theme="liquid"] .modal-footer {
+  border-top-color: rgb(255 255 255 / 12%);
+}
+
+[data-theme="liquid"] .modal-backdrop.show {
+  opacity: 40%;
+}
+
+[data-theme="liquid"] .close {
+  opacity: 85%;
+  text-shadow: none;
+}
+
+/* Popovers that sit inside the navbar stay flat so glass is never nested in glass */
+[data-theme="liquid"] .dropdown-menu {
+  background-color: rgb(24 18 50 / 94%);
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 18px;
+  padding: 0.5rem;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 45%), inset 0 1px 0 rgb(255 255 255 / 40%);
+}
+
+[data-theme="liquid"] .dropdown-item {
+  color: var(--global-text);
+  border-radius: 10px;
+}
+
+[data-theme="liquid"] .dropdown-item:hover,
+[data-theme="liquid"] .dropdown-item:focus {
+  background-color: rgb(255 255 255 / 12%);
+  color: #fff;
+}
+
+[data-theme="liquid"] .dropdown-item.active,
+[data-theme="liquid"] .dropdown-item:active {
+  background-color: rgb(129 140 248 / 45%);
+  color: #fff;
+}
+
+[data-theme="liquid"] .dropdown-divider {
+  border-top-color: rgb(255 255 255 / 14%);
+}
+
+[data-theme="liquid"] .tooltip-inner {
+  background-color: rgb(24 18 50 / 94%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 12px;
+  color: #f5f3ff;
+}
+
+[data-theme="liquid"] .bs-tooltip-bottom .arrow::before {
+  border-bottom-color: rgb(24 18 50 / 94%);
+}
+
+[data-theme="liquid"] .bs-tooltip-top .arrow::before {
+  border-top-color: rgb(24 18 50 / 94%);
+}
+
+[data-theme="liquid"] .alert {
+  background-color: var(--glass-fill-strong);
+  backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-edge);
+  border-radius: 22px;
+  color: #f5f3ff;
+}
+
+/* Form controls: translucent capsules, not white boxes */
+[data-theme="liquid"] .form-control {
+  background-color: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 26%);
+  border-radius: 999px;
+  color: #f5f3ff;
+}
+
+[data-theme="liquid"] .form-control::placeholder {
+  color: rgb(245 243 255 / 70%);
+}
+
+[data-theme="liquid"] .form-control:focus {
+  background-color: rgb(255 255 255 / 16%);
+  border-color: rgb(125 211 252 / 75%);
+  box-shadow: 0 0 0 3px rgb(125 211 252 / 28%);
+  color: #fff;
+}
+
+[data-theme="liquid"] .form-control.is-invalid,
+[data-theme="liquid"] .form-control.is-invalid:focus {
+  border-color: #fda4af;
+}
+
+[data-theme="liquid"] .form-control.is-valid,
+[data-theme="liquid"] .form-control.is-valid:focus {
+  border-color: #86efac;
+}
+
+[data-theme="liquid"] .form-control:disabled {
+  background-color: rgb(255 255 255 / 5%);
+  color: rgb(245 243 255 / 45%);
+}
+
+[data-theme="liquid"] .custom-select {
+  background-color: var(--select-background);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23f5f3ff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 8px;
+  border-color: rgb(255 255 255 / 26%);
+  border-radius: 999px;
+}
+
+[data-theme="liquid"] .custom-switch .custom-control-label::before {
+  border-color: rgb(255 255 255 / 55%);
+  background-color: rgb(255 255 255 / 14%);
+}
+
+[data-theme="liquid"] .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #818cf8;
+  border-color: #818cf8;
+}
+
+[data-theme="liquid"] .list-group-item {
+  border-color: rgb(255 255 255 / 14%);
+  color: #f5f3ff;
+}
+
+/* Buttons: pill capsules with a tinted glass primary action */
+[data-theme="liquid"] .btn {
+  border-radius: 999px;
 }
 
 [data-theme="liquid"] .btn-primary {
   position: relative;
   overflow: hidden;
+}
+
+[data-theme="liquid"] .btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgb(255 255 255 / 22%), rgb(255 255 255 / 0%) 55%);
 }
 
 [data-theme="liquid"] .btn-primary::after {
@@ -121,6 +404,48 @@ for reduced motion in their OS settings. */
   inset: 0;
   background: linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 45%) 50%, transparent 70%);
   transform: translateX(-120%);
+}
+
+[data-theme="liquid"] .btn-outline-danger {
+  background-color: rgb(255 255 255 / 4%);
+  border-color: rgb(253 164 175 / 55%);
+  color: #fda4af;
+}
+
+[data-theme="liquid"] .btn-outline-danger:hover,
+[data-theme="liquid"] .btn-outline-danger:focus {
+  background-color: rgb(244 63 94 / 30%);
+  border-color: rgb(253 164 175 / 80%);
+  color: #fff;
+}
+
+[data-theme="liquid"] .btn:focus-visible,
+[data-theme="liquid"] .navbar-nav .nav-link:focus-visible,
+[data-theme="liquid"] .custom-select:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+/* Calendar: a near-solid panel so the hour labels, grid lines and event blocks stay legible */
+[data-theme="liquid"] .calendar {
+  background-color: rgb(14 10 30 / 90%);
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 22px;
+}
+
+[data-theme="liquid"] .calendar-event {
+  border-radius: 10px;
+}
+
+/* Footer: links keep contrast on hover instead of dropping to DimGrey */
+[data-theme="liquid"] .footer-links > a:hover {
+  color: #c4b5fd;
+}
+
+/* Reduced motion: switch off Bootstrap's 0.3s modal slide. All timed motion lives in the
+no-preference block below */
+[data-theme="liquid"] .modal.fade .modal-dialog {
+  transition: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -148,6 +473,10 @@ for reduced motion in their OS settings. */
     }
   }
 
+  [data-theme="liquid"] {
+    --btn-transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.35s ease;
+  }
+
   [data-theme="liquid"] body::before {
     animation: liquid-drift 18s ease-in-out infinite alternate;
   }
@@ -159,16 +488,42 @@ for reduced motion in their OS settings. */
   }
 
   [data-theme="liquid"] .card {
-    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.35s ease;
   }
 
   [data-theme="liquid"] .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 16px 40px rgb(0 0 0 / 45%), inset 0 1px 0 rgb(255 255 255 / 35%);
+    box-shadow:
+      0 16px 40px rgb(0 0 0 / 40%),
+      inset 0 1.5px 0 rgb(255 255 255 / 80%),
+      inset 0 -1px 0 rgb(255 255 255 / 14%);
   }
 
-  [data-theme="liquid"] .navbar-nav .nav-link::after {
-    transition: transform 0.3s ease;
+  /* Press highlight: a soft light glow spreads across the header while it is pressed */
+  [data-theme="liquid"] .card-header {
+    transition: background-color 0.3s ease;
+  }
+
+  [data-theme="liquid"] .card-header:active {
+    background-color: rgb(255 255 255 / 12%);
+    box-shadow: inset 0 0 28px rgb(255 255 255 / 12%);
+  }
+
+  [data-theme="liquid"] .btn {
+    transition:
+      transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1),
+      box-shadow 0.35s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  [data-theme="liquid"] .btn:active {
+    transform: scale(0.95);
+  }
+
+  [data-theme="liquid"] .btn-primary:active {
+    box-shadow: inset 0 0 22px rgb(255 255 255 / 45%), inset 0 1px 0 rgb(255 255 255 / 45%);
   }
 
   [data-theme="liquid"] .btn-primary::after {
@@ -178,23 +533,12 @@ for reduced motion in their OS settings. */
   [data-theme="liquid"] .btn-primary:hover::after {
     transform: translateX(120%);
   }
-}
 
-/* Layout: the navbar floats as a glass pill, with more room between cards */
-[data-theme="liquid"] .navbar.bg-light {
-  margin: 0.75rem 0.75rem 0;
-  border: 1px solid rgb(255 255 255 / 20%);
-  border-radius: 999px;
-}
+  [data-theme="liquid"] .navbar-nav .nav-link:not(.dropdown-toggle)::after {
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
 
-[data-theme="liquid"] .card {
-  margin-bottom: 1.1rem;
-}
-
-[data-theme="liquid"] #search-bar {
-  color: #f5f3ff;
-}
-
-[data-theme="liquid"] #search-bar::placeholder {
-  color: rgb(245 243 255 / 60%);
+  [data-theme="liquid"] .modal.fade .modal-dialog {
+    transition: transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
 }
