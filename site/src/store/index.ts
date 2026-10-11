@@ -126,6 +126,7 @@ export default new Vuex.Store({
           .then(() => store.dispatch("schedule/initSelectedSetions"));
       },
     }),
+    (store) => store.commit("schedule/ensureDefaultCourseSet"),
     createPersistedState({
       key: "inter-semester-storage",
       paths: [
