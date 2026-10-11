@@ -1,11 +1,11 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { TimePreference } from "@/typings";
-import { setColorTheme, UNSAVED_THEMES } from "@/utilities";
+import { DEFAULT_THEME, setColorTheme, UNSAVED_THEMES } from "@/utilities";
 
 @Module({ namespaced: true, name: "settings" })
 export default class Settings extends VuexModule {
   timePreference: TimePreference = TimePreference.Standard; // If a value is in localstorage, this will be set to that on load
-  colorTheme = "system";
+  colorTheme = DEFAULT_THEME;
   hidePrerequisites = false;
   hideAgentButton = false;
   enableTracking = true;

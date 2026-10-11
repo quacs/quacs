@@ -47,6 +47,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { BButton, BFormCheckbox, BFormSelect, VBTooltip } from "bootstrap-vue";
 import { trackAgentAction } from "@/webmcp";
+import { ARTISANAL_THEME, THEME_OPTIONS } from "@/utilities";
 
 @Component({
   components: {
@@ -85,8 +86,8 @@ import { trackAgentAction } from "@/webmcp";
       set(hidden: boolean) {
         this.$store.commit("settings/setHideAgentButton", hidden);
         if (hidden) {
-          this.$store.commit("settings/setColorTheme", "artisanal");
-          (this as Settings).colorTheme = "artisanal";
+          this.$store.commit("settings/setColorTheme", ARTISANAL_THEME);
+          (this as Settings).colorTheme = ARTISANAL_THEME;
         }
         trackAgentAction("agent_button_toggled", { hidden });
       },
@@ -101,22 +102,8 @@ export default class Settings extends Vue {
   ];
 
   colorTheme = this.$store.state.settings.colorTheme;
-  //Add color theme option here
-  themeOptions: { value: string; text: string }[] = [
-    { value: "system", text: "Follow Device Theme" },
-    { value: "light", text: "Light" },
-    { value: "dark", text: "Dark" },
-    { value: "dark black", text: "Black" },
-    { value: "random", text: "Random" },
-    { value: "yacs", text: "YACS" },
-    { value: "true-dark", text: "True Dark" },
-    { value: "manuscript", text: "Illuminated Manuscript" },
-    { value: "retro", text: "Retro Arcade" },
-    { value: "web1", text: "Classic Web" },
-    { value: "nyan", text: "Nyan Cat" },
-    { value: "artisanal", text: "Artisanal" },
-    { value: "luma", text: "Luma (Calico)" },
-    { value: "wingdings", text: "Wingdings" },
-  ];
+  themeOptions: { value: string; text: string }[] = THEME_OPTIONS.map(
+    ({ value, text }) => ({ value, text })
+  );
 }
 </script>

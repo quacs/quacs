@@ -67,13 +67,14 @@ describe("Test color themes", () => {
     });
   });
 
-  it("Falls back to Light when a removed theme is saved", () => {
+  it("Falls back to the default theme when a saved theme is not an option", () => {
     for (const removed of [
       "soft",
       "aero",
       "liquid",
       "light colorful",
       "flowing",
+      "not-a-theme",
     ]) {
       // Seed storage before the app boots, so the running app cannot overwrite it first
       cy.visit("/", {
@@ -84,12 +85,18 @@ describe("Test color themes", () => {
           );
         },
       });
-      cy.get("html").should("have.attr", "data-theme", "light");
+      // The default is "Follow Device Theme", which resolves to light or dark
+      cy.window().then((win) => {
+        const expected = win.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        cy.get("html").should("have.attr", "data-theme", expected);
+      });
       cy.window()
         .its("localStorage")
         .invoke("getItem", "inter-semester-storage")
         .then((raw) =>
-          expect(JSON.parse(raw).settings.colorTheme).to.equal("light")
+          expect(JSON.parse(raw).settings.colorTheme).to.equal("system")
         );
     }
   });

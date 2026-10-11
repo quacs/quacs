@@ -192,41 +192,58 @@ function loadThemeFont(theme: string): void {
   document.head.appendChild(link);
 }
 
-// Themes that are applied but never saved, so a reload restores the previously saved theme
-export const UNSAVED_THEMES = ["true-dark", "wingdings"];
+export const SYSTEM_THEME = "system";
+export const RANDOM_THEME = "random";
+export const ARTISANAL_THEME = "artisanal";
+// The theme used when nothing valid is saved
+export const DEFAULT_THEME = SYSTEM_THEME;
 
-// Themes "random" may pick from. Keep in sync with themeOptions in Settings.vue.
-// Unsaved themes are filtered out so random never lands on one, even if added here later
-const RANDOM_THEMES = [
-  "light",
-  "dark",
-  "dark black",
-  "yacs",
-  "true-dark",
-  "manuscript",
-  "retro",
-  "web1",
-  "nyan",
-  "artisanal",
-  "luma",
-].filter(
-  (theme) =>
-    !UNSAVED_THEMES.includes(theme) && theme !== "random" && theme !== "system"
-);
+//Add color theme option here, in the order the settings dropdown shows them
+// saved: false means the theme is applied but never saved, so a reload restores the previously saved theme
+export const THEME_OPTIONS: { value: string; text: string; saved: boolean }[] =
+  [
+    { value: SYSTEM_THEME, text: "Follow Device Theme", saved: true },
+    { value: "light", text: "Light", saved: true },
+    { value: "dark", text: "Dark", saved: true },
+    { value: "dark black", text: "Black", saved: true },
+    { value: RANDOM_THEME, text: "Random", saved: true },
+    { value: "yacs", text: "YACS", saved: true },
+    { value: "true-dark", text: "True Dark", saved: false },
+    { value: "manuscript", text: "Illuminated Manuscript", saved: true },
+    { value: "retro", text: "Retro Arcade", saved: true },
+    { value: "web1", text: "Classic Web", saved: true },
+    { value: "nyan", text: "Nyan Cat", saved: true },
+    { value: ARTISANAL_THEME, text: "Artisanal", saved: true },
+    { value: "luma", text: "Luma (Calico)", saved: true },
+    { value: "wingdings", text: "Wingdings", saved: false },
+  ];
+
+// Themes that are applied but never saved, so a reload restores the previously saved theme
+export const UNSAVED_THEMES = THEME_OPTIONS.filter(
+  (option) => !option.saved
+).map((option) => option.value);
+
+// Themes "random" may pick from. Unsaved themes are left out so random never lands on one
+const RANDOM_THEMES = THEME_OPTIONS.filter(
+  (option) =>
+    option.saved &&
+    option.value !== RANDOM_THEME &&
+    option.value !== SYSTEM_THEME
+).map((option) => option.value);
 
 export function setColorTheme(colorTheme: string): void {
   let newColorTheme = colorTheme;
-  if (colorTheme === "system") {
+  if (colorTheme === SYSTEM_THEME) {
     newColorTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
-  } else if (colorTheme === "random") {
+  } else if (colorTheme === RANDOM_THEME) {
     newColorTheme =
       RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
   }
   const theme = newColorTheme.split(" ")[0];
   document.documentElement.setAttribute("data-theme", theme);
-  if (theme === "artisanal") {
+  if (theme === ARTISANAL_THEME) {
     applyTicker();
   }
   loadThemeFont(theme);

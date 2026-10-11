@@ -23,6 +23,7 @@ import PREREQ_GRAPH_JSON from "./data/prereq_graph.json";
 import settings from "./modules/settings";
 import prerequisites from "./modules/prerequisites";
 import schedule from "./modules/schedule";
+import { DEFAULT_THEME, THEME_OPTIONS } from "@/utilities";
 
 Vue.use(Vuex);
 
@@ -173,15 +174,15 @@ export default new Vuex.Store({
         "prerequisites.enableChecking",
       ],
     }),
-    // Removed themes (soft, aero, liquid, light colorful, flowing) fall back to light, and the commit persists that
+    // A saved theme that is no longer an option (e.g. a removed theme) falls back to the default, and the commit persists that
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (store: Store<any>) => {
       if (
-        ["soft", "aero", "liquid", "light colorful", "flowing"].includes(
-          store.state.settings.colorTheme
+        !THEME_OPTIONS.some(
+          (option) => option.value === store.state.settings.colorTheme
         )
       ) {
-        store.commit("settings/setColorTheme", "light");
+        store.commit("settings/setColorTheme", DEFAULT_THEME);
       }
     },
     syncAcrossTabs,
