@@ -112,6 +112,7 @@ export default class Settings extends Vue {
     { value: "web1", text: "Classic Web" },
     { value: "aero", text: "Frutiger Aero" },
     { value: "liquid", text: "Liquid Glass" },
+    { value: "nyan", text: "Nyan Cat" },
   ];
 }
 </script>

@@ -1,0 +1,282 @@
+/* Nyan Cat: a night sky with a starfield, pastel pop-tart cards with cream bodies, and rainbow
+accents on links, the active nav item, selected rows, buttons and borders. Text never sits on the
+rainbow. A rainbow trail runs along the bottom edge and a pixel cat bobs in the bottom-left corner.
+Every decorative layer has pointer-events: none. Motion only runs when the OS does not ask for
+reduced motion. */
+[data-theme="nyan"] {
+  /* Page and text */
+  --background: #0d0f2b;
+  --background-image: linear-gradient(180deg, #1b1f4b 0%, #0d0f2b 100%);
+  --background-attachment: fixed;
+  --global-text: #f4efff;
+  --global-text-hover: #ffe14d;
+  --raw-link: #9fd3ff;
+  --footer-background: #241d55;
+  --font-body:
+    -apple-system,
+    blinkmacsystemfont,
+    "Segoe UI",
+    roboto,
+    "Helvetica Neue",
+    arial,
+    sans-serif;
+  --font-heading: ui-monospace, "SFMono-Regular", menlo, consolas, "Liberation Mono", monospace;
+  --warning-color: #ffa0c8;
+
+  /* Cards: pastel pop-tart header over a cream body */
+  --card-header-background: #ffb8dc;
+  --card-header-text: #3b1f4a;
+  --card-header-hover: #ffa2cf;
+  --card-body-background: #fff6e5;
+  --card-body-text: #2e1a2e;
+  --card-background: #fff6e5;
+  --card-border-color: #3b1f4a;
+  --card-border-width: 2px;
+  --card-border-radius: 8px;
+  --card-shadow: 4px 4px 0 #07081a;
+  --card-backdrop-filter: none;
+  --navbar-backdrop-filter: none;
+
+  /* Navbar */
+  --navbar-background: #1d1a4a;
+  --navbar-unselected-text: #cdc4f2;
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: rgb(205 196 242 / 35%);
+  --navbar-text-active: #ffe14d;
+  --navbar-text-show: #ffe14d;
+
+  /* Modals */
+  --modal-header-background: #ffb8dc;
+  --modal-header-text: #3b1f4a;
+  --modal-body-background: #fff6e5;
+  --modal-body-text: #2e1a2e;
+  --modal-footer-background: #fff6e5;
+  --modal-footer-text: #2e1a2e;
+  --modal-close-x-hover: #2e1a2e;
+
+  /* Buttons: pink fill with plum text, a rainbow ring on hover */
+  --btn-primary-background: #ff7eb9;
+  --btn-primary-text: #2a0f2b;
+  --btn-border: 2px solid #3b1f4a;
+  --btn-border-radius: 4px;
+  --btn-box-shadow: 0 0 0 3px #ffe14d, 0 0 0 5px #6bd96b, 0 0 0 7px #b36bff;
+  --btn-transition: box-shadow 0.15s ease;
+  --btn-secondary-background: #efe3ff;
+  --btn-secondary-text: #2e1a2e;
+
+  /* Lists, tables and course rows */
+  --department-link-hover: #ffd6ea;
+  --text-default: #2e1a2e;
+  --select-background: #fff6e5;
+  --select-text: #2e1a2e;
+  --table-text: #2e1a2e;
+  --table-border: #d7b9cf;
+  --course-row-hover: #fff0c4;
+  --conflict-row: #ffb3b3;
+  --conflict-row-hover: #ff9494;
+  --selected-row: #d9c8ff;
+  --selected-row-hover: #c4aeff;
+  --list-group-item-background: #fff6e5;
+  --search-bar-background: #fffaf0;
+  --search-bar-border: #c79ab8;
+  --overlay-background: rgb(27 31 75 / 70%);
+  --trash-btn: #6b2d6b;
+  --trash-btn-hover: #d6336c;
+  --prerequisite-jumbotron: #efe3ff;
+  --prerequisite-text: #2e1a2e;
+  --prerequisite-warn-icon: #ffa500;
+  --prerequisite-error-icon: #ff4d4d;
+  --taken-course: #17703c;
+  --not-taken-course: #c81e5a;
+  --toast-background: #2b1640;
+  --toast-text: #fff6e5;
+
+  /* Calendar: pastel blocks with plum text and rainbow borders. The calendar grid sits on the
+  night sky, so its labels and lines are light. */
+  --calendar-grid-color: rgb(230 212 255 / 22%);
+  --calendar-label: #d4c9f5;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #ffd6ea;
+  --calendar-border-color-0: #ff4d9e;
+  --calendar-text-color-0: #2e1a2e;
+  --calendar-bg-color-1: #fff3b0;
+  --calendar-border-color-1: #d9a300;
+  --calendar-text-color-1: #2e1a2e;
+  --calendar-bg-color-2: #c9f7d3;
+  --calendar-border-color-2: #2fb35a;
+  --calendar-text-color-2: #2e1a2e;
+  --calendar-bg-color-3: #cde6ff;
+  --calendar-border-color-3: #3d8fe6;
+  --calendar-text-color-3: #2e1a2e;
+  --calendar-bg-color-4: #e3d0ff;
+  --calendar-border-color-4: #9a5cf0;
+  --calendar-text-color-4: #2e1a2e;
+  --calendar-bg-color-5: #ffd9c2;
+  --calendar-border-color-5: #ff7a4d;
+  --calendar-text-color-5: #2e1a2e;
+  --calendar-bg-color-6: #ffc9c9;
+  --calendar-border-color-6: #ff4d4d;
+  --calendar-text-color-6: #2e1a2e;
+}
+
+/* Starfield: fixed, behind everything, three layers of stars at different densities */
+[data-theme="nyan"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12px 34px, #fff, transparent),
+    radial-gradient(1px 1px at 88px 120px, #fff, transparent),
+    radial-gradient(1px 1px at 157px 46px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 201px 178px, #ffe14d, transparent),
+    radial-gradient(1px 1px at 240px 92px, #fff, transparent),
+    radial-gradient(1px 1px at 300px 20px, #cdc4f2, transparent),
+    radial-gradient(1px 1px at 35px 300px, #fff, transparent),
+    radial-gradient(2px 2px at 320px 60px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 410px 200px, #ff7eb9, transparent),
+    radial-gradient(1px 1px at 255px 330px, #fff, transparent),
+    radial-gradient(1px 1px at 600px 80px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 120px 470px, #c9b8ff, transparent),
+    radial-gradient(1px 1px at 380px 420px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 690px 300px, #ffe14d, transparent);
+  background-size: 320px 240px, 470px 380px, 710px 560px;
+  background-repeat: repeat;
+}
+
+/* Rainbow trail along the bottom edge. One tile is exactly one 144px period, so the scroll loops
+without a seam. Sits above page content but never takes clicks. */
+[data-theme="nyan"] body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      #ff4d4d 0 24px,
+      #ffa500 24px 48px,
+      #ffe14d 48px 72px,
+      #6bd96b 72px 96px,
+      #4da6ff 96px 120px,
+      #b36bff 120px 144px
+    );
+  background-size: 144px 100%;
+}
+
+/* The pixel cat, bottom-left, above the trail. It is a pseudo-element on the html element, which
+is the element that carries data-theme. */
+html[data-theme="nyan"]::after {
+  content: "";
+  position: fixed;
+  left: 8px;
+  bottom: 14px;
+  width: 72px;
+  height: 48px;
+  z-index: 1;
+  pointer-events: none;
+  background: url("../../images/nyan-cat.svg") no-repeat center / contain;
+}
+
+/* Headings: monospace with a little weight, so the pixel feel does not cost readability */
+[data-theme="nyan"] h1,
+[data-theme="nyan"] h2,
+[data-theme="nyan"] h3 {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Pop-tart card headers get a plum rule under them */
+[data-theme="nyan"] .card-header {
+  border-bottom: 2px solid #3b1f4a;
+  font-weight: 700;
+}
+
+/* Links default to the light sky-blue token on the night background. The :where() keeps this at
+zero specificity, so component colors such as department links still win. */
+:where([data-theme="nyan"]) a {
+  color: var(--raw-link);
+}
+
+[data-theme="nyan"] .footer-links > a:hover {
+  color: #ffe14d;
+}
+
+/* Links inside cream surfaces switch to a darker purple to stay readable. Department links and
+buttons keep their own colors. */
+[data-theme="nyan"] .card-body a:not(.nav-link):not(.btn),
+[data-theme="nyan"] .modal-body a:not(.nav-link):not(.btn) {
+  color: #6a2bd0;
+}
+
+[data-theme="nyan"] .card-body a:not(.nav-link):not(.btn):hover,
+[data-theme="nyan"] .modal-body a:not(.nav-link):not(.btn):hover {
+  color: #b0107a;
+}
+
+/* Active nav item gets a rainbow underline */
+[data-theme="nyan"] .navbar-nav .nav-link {
+  position: relative;
+}
+
+[data-theme="nyan"] .navbar-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.2rem;
+  height: 3px;
+  background: linear-gradient(90deg, #ff4d4d, #ffa500, #ffe14d, #6bd96b, #4da6ff, #b36bff);
+}
+
+/* The page container leaves a gutter of about 15px + (viewport - container) / 2 on the left. The cat
+is about 80px wide, so it only fits clear of cards from 1280px up. Below that it is hidden. Phone
+widths are always hidden. */
+@media (max-width: 1279.98px) {
+  html[data-theme="nyan"]::after {
+    display: none;
+  }
+}
+
+@media (max-width: 599.98px) {
+  html[data-theme="nyan"]::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes nyan-trail {
+    from {
+      background-position: 144px 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  @keyframes nyan-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  [data-theme="nyan"] body::after {
+    animation: nyan-trail 1.2s linear infinite;
+  }
+
+  html[data-theme="nyan"]::after {
+    animation: nyan-bob 0.6s steps(2, end) infinite;
+  }
+}
