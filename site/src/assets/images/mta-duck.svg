@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="624" height="516" viewBox="288 -5 104 86" role="img" aria-labelledby="title desc">
   <title id="title">QuACS Q train duck badge</title>
   <desc id="desc">A black Q centered in the yellow Q train circle, with the original QuACS duck beak extending unrotated from its right edge.</desc>
-  <g id="yellow-duck-badge" fill="#FCCC0A">
+  <g id="yellow-duck-badge" fill="#F6BC26">
     <path id="original-duck-beak" d="m 354.33776,61.288204 c 0,0 19.2293,4.146856 26.62276,0.524377 7.39554,-3.621663 1.44382,-6.665356 -1.93838,-7.257772 -3.38411,-0.591241 -8.61248,-0.791579 -8.61248,-0.791579 0,0 8.36822,-3.247852 12.32377,-9.164659 3.95764,-5.915991 4.517,-13.788507 0.52909,-13.318977 -3.98908,0.467629 -14.83058,4.799933 -19.38286,5.213128 -4.5512,0.414101 -3.05177,11.255059 -3.05177,11.255059 z"/>
     <circle id="route-circle" cx="332.5" cy="38" r="38"/>
   </g>

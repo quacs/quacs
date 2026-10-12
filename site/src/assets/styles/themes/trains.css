@@ -5,9 +5,9 @@
   --background-image: url("../../images/mta-tracks.svg");
   --background-attachment: fixed;
   --global-text: #181818;
-  --global-text-hover: #0039a6;
+  --global-text-hover: #0062cf;
   --text-default: #181818;
-  --raw-link: #0039a6;
+  --raw-link: #0062cf;
   --font-body: "Helvetica Neue", helvetica, arial, sans-serif;
   --font-heading: var(--font-body);
   --card-background: #fff;
@@ -35,12 +35,12 @@
   --modal-body-text: #181818;
   --modal-footer-background: #f5f2e9;
   --modal-footer-text: #181818;
-  --modal-close-x-hover: #fccc0a;
-  --btn-primary-background: #0039a6;
+  --modal-close-x-hover: #f6bc26;
+  --btn-primary-background: #0062cf;
   --btn-primary-text: #fff;
   --btn-secondary-background: #181818;
   --btn-secondary-text: #fff;
-  --btn-border: 2px solid #0039a6;
+  --btn-border: 2px solid #0062cf;
   --btn-border-radius: 0;
   --btn-box-shadow: 0 3px 0 rgb(0 57 166 / 20%);
   --btn-transition: background-color 0.15s ease;
@@ -73,22 +73,22 @@
   --not-taken-course: #b9221c;
   --num-calendar-colors: 7;
   --calendar-bg-color-0: #dce7fa;
-  --calendar-border-color-0: #0039a6;
+  --calendar-border-color-0: #0062cf;
   --calendar-text-color-0: #181818;
   --calendar-bg-color-1: #ffe0de;
-  --calendar-border-color-1: #ee352e;
+  --calendar-border-color-1: #d82233;
   --calendar-text-color-1: #181818;
   --calendar-bg-color-2: #d8efdf;
-  --calendar-border-color-2: #00933c;
+  --calendar-border-color-2: #009952;
   --calendar-text-color-2: #181818;
   --calendar-bg-color-3: #fff1bc;
-  --calendar-border-color-3: #fccc0a;
+  --calendar-border-color-3: #f6bc26;
   --calendar-text-color-3: #181818;
   --calendar-bg-color-4: #ffe3d1;
-  --calendar-border-color-4: #ff6319;
+  --calendar-border-color-4: #eb6800;
   --calendar-text-color-4: #181818;
   --calendar-bg-color-5: #f3dcf0;
-  --calendar-border-color-5: #b933ad;
+  --calendar-border-color-5: #9a38a1;
   --calendar-text-color-5: #181818;
   --calendar-bg-color-6: #e7e7e7;
   --calendar-border-color-6: #808183;
@@ -96,7 +96,7 @@
 }
 
 [data-theme="trains"] :focus-visible {
-  outline: 3px solid #0039a6;
+  outline: 3px solid #0062cf;
   outline-offset: 3px;
 }
 
@@ -166,7 +166,7 @@
 /* The white rule above the lettering is the station-sign signature. */
 [data-theme="trains"] .navbar.bg-light {
   border-top: 5px solid #fff;
-  border-bottom: 5px solid #fccc0a;
+  border-bottom: 5px solid #f6bc26;
   padding: 0.8rem 1.5rem;
 }
 
@@ -208,7 +208,7 @@
 }
 
 [data-theme="trains"] .navbar-nav .nav-link.active {
-  box-shadow: inset 0 -3px #fccc0a;
+  box-shadow: inset 0 -3px #f6bc26;
 }
 
 [data-theme="trains"] .navbar-light .navbar-toggler {
@@ -225,7 +225,7 @@
 }
 
 [data-theme="trains"] #search-bar:focus {
-  outline: 3px solid #fccc0a;
+  outline: 3px solid #f6bc26;
   outline-offset: 3px;
   box-shadow: none;
 }
@@ -305,7 +305,7 @@
   height: 1.9rem;
   border-radius: 50%;
   color: #fff;
-  background: #0039a6;
+  background: #7c858c;
   font-weight: 700;
   font-size: 1.1rem;
 }
@@ -335,7 +335,7 @@
 }
 
 [data-theme="trains"] .transit-itinerary .transit-bullet {
-  background: #ee352e;
+  background: #d82233;
 }
 
 [data-theme="trains"] .transit-directory {
@@ -360,32 +360,53 @@
 /* Each school is a line; departments are stops. The original names and links
    remain intact, and the colors are decorative rather than the sole identifier. */
 [data-theme="trains"] .department-cards {
-  counter-reset: transit-line;
   column-gap: 1.5rem;
 }
 
+/* Valid NYC subway routes and their official MTA color families.
+   Source: https://data.ny.gov/resource/3uhz-sej2.json */
 [data-theme="trains"] .department-cards > .card {
-  --transit-line: #0039a6;
+  --transit-route: "1";
+  --transit-line: #d82233;
+  --transit-ink: #fff;
 
-  counter-increment: transit-line;
   margin-bottom: 1.5rem;
   break-inside: avoid;
 }
 
-[data-theme="trains"] .department-cards > .card:nth-child(5n + 2) {
-  --transit-line: #ee352e;
+[data-theme="trains"] .department-cards > .card:nth-child(8n + 2) {
+  --transit-route: "2";
 }
 
-[data-theme="trains"] .department-cards > .card:nth-child(5n + 3) {
-  --transit-line: #00933c;
+[data-theme="trains"] .department-cards > .card:nth-child(8n + 3) {
+  --transit-route: "4";
+  --transit-line: #009952;
 }
 
-[data-theme="trains"] .department-cards > .card:nth-child(5n + 4) {
-  --transit-line: #b933ad;
+[data-theme="trains"] .department-cards > .card:nth-child(8n + 4) {
+  --transit-route: "7";
+  --transit-line: #9a38a1;
 }
 
-[data-theme="trains"] .department-cards > .card:nth-child(5n) {
-  --transit-line: #c74b0a;
+[data-theme="trains"] .department-cards > .card:nth-child(8n + 5) {
+  --transit-route: "B";
+  --transit-line: #eb6800;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(8n + 6) {
+  --transit-route: "A";
+  --transit-line: #0062cf;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(8n + 7) {
+  --transit-route: "Q";
+  --transit-line: #f6bc26;
+  --transit-ink: #181818;
+}
+
+[data-theme="trains"] .department-cards > .card:nth-child(8n) {
+  --transit-route: "G";
+  --transit-line: #799534;
 }
 
 [data-theme="trains"] .department-cards .card-header {
@@ -402,14 +423,14 @@
 }
 
 [data-theme="trains"] .department-cards .card-header::before {
-  content: counter(transit-line);
+  content: var(--transit-route);
   display: grid;
   place-items: center;
   width: 2rem;
   height: 2rem;
   flex-shrink: 0;
   background: var(--transit-line);
-  color: #fff;
+  color: var(--transit-ink);
   border-radius: 50%;
   font-size: 1.35rem;
 }
@@ -456,18 +477,18 @@
 
 [data-theme="trains"] .course-card-header {
   border-top: 3px solid #fff;
-  border-left: 6px solid #0039a6;
+  border-left: 6px solid #0062cf;
 }
 
 [data-theme="trains"] .course-card .course-code {
-  color: #fccc0a;
+  color: #f6bc26;
   font-family: var(--font-body);
 }
 
 [data-theme="trains"] .unofficial-schedule-warning {
   background: #fff1bc;
   border: 1px solid #181818;
-  border-left: 6px solid #fccc0a;
+  border-left: 6px solid #f6bc26;
   color: #181818;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
@@ -527,7 +548,7 @@
 
 [data-theme="trains"] .modal-header {
   border-top: 4px solid #fff;
-  border-bottom: 5px solid #fccc0a;
+  border-bottom: 5px solid #f6bc26;
 }
 
 [data-theme="trains"] .custom-select {
@@ -542,7 +563,7 @@
 
 [data-theme="trains"] .navbar :focus-visible,
 [data-theme="trains"] .course-card-header:focus-visible {
-  outline-color: #fccc0a;
+  outline-color: #f6bc26;
 }
 
 [data-theme="trains"] .footer {
@@ -552,11 +573,11 @@
   background-image:
     linear-gradient(
       90deg,
-      #0039a6 0% 20%,
-      #ee352e 20% 40%,
-      #00933c 40% 60%,
-      #ff6319 60% 80%,
-      #b933ad 80%
+      #0062cf 0% 20%,
+      #d82233 20% 40%,
+      #009952 40% 60%,
+      #eb6800 60% 80%,
+      #9a38a1 80%
     );
   background-size: 100% 5px;
   background-repeat: no-repeat;
@@ -639,7 +660,7 @@
     top: -10px;
     height: 17px;
     width: 4px;
-    background: #ee352e;
+    background: #d82233;
   }
 
   [data-theme="trains"] .transit-directory {
