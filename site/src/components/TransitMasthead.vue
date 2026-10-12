@@ -33,12 +33,12 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <path d="M28 42H255L390 177H690" stroke="#ee352e" />
-          <path d="M28 74H235L369 208H690" stroke="#ff6319" />
-          <path d="M100 14V108L186 194H690" stroke="#00933c" />
-          <path d="M690 26H555L360 221H28" stroke="#0039a6" />
-          <path d="M690 58H570L398 230" stroke="#fccc0a" />
-          <path d="M28 184H235L390 29H690" stroke="#b933ad" />
+          <path d="M28 42H255L390 177H690" stroke="#d82233" />
+          <path d="M28 74H235L369 208H690" stroke="#eb6800" />
+          <path d="M100 14V108L186 194H690" stroke="#009952" />
+          <path d="M690 26H555L360 221H28" stroke="#0062cf" />
+          <path d="M690 58H570L398 230" stroke="#f6bc26" />
+          <path d="M28 184H235L390 29H690" stroke="#9a38a1" />
         </g>
         <g fill="#f5f2e9" stroke="#181818" stroke-width="2.5">
           <circle cx="100" cy="42" r="6" />
@@ -60,13 +60,13 @@
           <text x="582" y="235">Next semester</text>
         </g>
         <g font-size="17" font-weight="700" text-anchor="middle">
-          <circle cx="28" cy="42" r="15" fill="#ee352e" />
+          <circle cx="28" cy="42" r="15" fill="#d82233" />
           <text x="28" y="48" fill="white">1</text>
-          <circle cx="28" cy="184" r="15" fill="#b933ad" />
+          <circle cx="28" cy="184" r="15" fill="#9a38a1" />
           <text x="28" y="190" fill="white">7</text>
-          <circle cx="690" cy="26" r="15" fill="#0039a6" />
+          <circle cx="690" cy="26" r="15" fill="#0062cf" />
           <text x="690" y="32" fill="white">A</text>
-          <circle cx="690" cy="58" r="15" fill="#fccc0a" />
+          <circle cx="690" cy="58" r="15" fill="#f6bc26" />
           <text x="690" y="64" fill="#181818">Q</text>
         </g>
       </svg>

@@ -116,6 +116,7 @@
         </div>
       </div>
     </div>
+    <BackgroundTrains />
     <Settings></Settings>
     <AgentSetup></AgentSetup>
     <footer class="footer">
@@ -188,6 +189,7 @@ import {
   VBModal,
   VBTooltip,
 } from "bootstrap-vue";
+import BackgroundTrains from "@/components/BackgroundTrains.vue";
 import Settings from "@/components/Settings.vue";
 import AgentSetup from "@/components/AgentSetup.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
@@ -196,6 +198,7 @@ import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
 
 @Component({
   components: {
+    BackgroundTrains,
     Settings,
     AgentSetup,
     CourseSetEdit,
