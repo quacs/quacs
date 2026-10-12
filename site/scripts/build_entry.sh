@@ -1,8 +1,14 @@
 #!/bin/bash
 
-# Update our local dependencies (quacs-rs), or clone if possible
-echo Retrieving latest quacs-data
-git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=2 src/store/data || exit 1
+set -eu
+
+# Release workers use one pinned snapshot; local builds still fetch current data.
+if test -n "${QUACS_DATA_SHA:-}"; then
+  test "$(git -C src/store/data rev-parse HEAD)" = "$QUACS_DATA_SHA" || exit 1
+else
+  echo Retrieving latest quacs-data
+  git -C src/store/data pull || git clone https://github.com/quacs/quacs-data --depth=2 src/store/data || exit 1
+fi
 
 CURR_DIR=$(dirname "${BASH_SOURCE[0]}")
 
@@ -10,16 +16,26 @@ BUILD_ALL=false
 BUILD_FOR_TESTS=false
 
 OUTPUT_DIR=site
-while getopts ao:dt option; do
+PARTITION=0
+PARTITIONS=1
+SINGLE_FLAGS=()
+while getopts ao:dtbnp:c: option; do
 	case "${option}" in
 
 	a) BUILD_ALL=true ;;
 	o) OUTPUT_DIR=${OPTARG} ;;
-	d) DIFF_BUILD=true ;;
+	d) SINGLE_FLAGS+=(-d) ;;
+	b) SINGLE_FLAGS+=(-b) ;;
+	n) SINGLE_FLAGS+=(-n) ;;
+	p) PARTITION=${OPTARG} ;;
+	c) PARTITIONS=${OPTARG} ;;
 	t) BUILD_FOR_TESTS=true ;;
 	*) ;; # ignore other flags
 	esac
 done
+
+[[ "$PARTITION" =~ ^[0-9]+$ && "$PARTITIONS" =~ ^[1-9][0-9]*$ ]] || exit 1
+(( PARTITION < PARTITIONS )) || exit 1
 
 if test "$BUILD_ALL" != "true"; then
 	# We're only building one semester
@@ -31,23 +47,30 @@ if test "$BUILD_ALL" != "true"; then
 		SEMESTER="202105"
 	fi
 	echo "Building $SEMESTER..."
-	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
+	"$CURR_DIR/build_single.sh" "${SINGLE_FLAGS[@]}" -o "$OUTPUT_DIR" -s "$SEMESTER" || exit 1
 
 	exit 0
 fi
 
-if test "$DIFF_BUILD" != "true"; then
-	DIRECTORIES=$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0)
-else
-	DIRECTORIES=$(git -C src/store/data/ diff --name-only HEAD~1 HEAD | grep semester_data | tr "/" "\n" | grep [0-9] | sort -u)
-fi
-
-# We're trying to build all semesters, just do it back to back
-for directory in $DIRECTORIES; do
-	SEMESTER=$(basename "$directory")
-	echo "Building $SEMESTER..."
-	"$CURR_DIR/build_single.sh" "$@" -s "$SEMESTER" || exit 1
+# Each worker owns disjoint semesters and has its own Rust, .env and dist directory.
+# Rebuild every semester: shared JSON imports make a semester-only diff unsafe.
+DIRECTORIES=(src/store/data/semester_data/*)
+INDEX=0
+for directory in "${DIRECTORIES[@]}"; do
+  test -d "$directory" || continue
+  if (( INDEX % PARTITIONS == PARTITION )); then
+    SEMESTER=$(basename "$directory")
+    echo "Building $SEMESTER..."
+    "$CURR_DIR/build_single.sh" "${SINGLE_FLAGS[@]}" -o "$OUTPUT_DIR" -s "$SEMESTER" || exit 1
+  fi
+  INDEX=$((INDEX + 1))
 done
+
+# Only the first worker writes the root redirect; artifacts have no overlapping paths.
+if (( PARTITION != 0 )); then
+  exit 0
+fi
+mkdir -p "$OUTPUT_DIR"
 
 LATEST_SEMESTER=$(python scripts/short_sem_to_long_sem.py $(basename "$(find src/store/data/semester_data/* -type d -print0 -maxdepth 0 | xargs -0 | sed 's/ /\n/g' | sort -r | head -n1)"))
 

@@ -3,6 +3,8 @@
 # This script builds a single semester (stored in $CURR_SEMESTER).  It relies on some setup
 # from build_entry.sh (namely setting up one-time dependencies like Umami and quacs-data)
 # so it should never be called on its own.
+set -eu
+
 export NODE_OPTIONS=--openssl-legacy-provider # needed because OpenSSL deprecated hash used in Webpack 4
 
 ROOT_DIRECTORY=$(pwd)
@@ -40,7 +42,8 @@ if test "$DONT_BENCHMARK" = "false"; then
 fi
 
 echo Setting quacs-rs to build for "$CURR_SEMESTER"
-mkdir src/quacs-rs/src/data || rm -rf src/quacs-rs/src/data/*
+mkdir -p src/quacs-rs/src/data
+rm -f src/quacs-rs/src/data/*.rs
 cp src/store/data/semester_data/$CURR_SEMESTER/*.rs src/quacs-rs/src/data
 
 QUACS_COMMIT_HASH=$(git rev-parse HEAD)
@@ -50,7 +53,7 @@ echo "Got QuACS hash: $QUACS_COMMIT_HASH"
 echo "Got QUACS-data hash: $QUACS_DATA_COMMIT_HASH"
 
 echo Setting .env file
-rm .env
+rm -f .env
 echo "VUE_APP_CURR_SEM=$CURR_SEMESTER" >>.env
 echo -n "VUE_APP_ALL_SEMS=[" >>.env
 ITER=0
@@ -76,7 +79,8 @@ echo "VUE_APP_DATA_HASH=\"$QUACS_DATA_COMMIT_HASH\"" >> .env
 
 echo Building quacs-rs
 cd src/quacs-rs
-wasm-pack build $FLAGS && mv pkg/* .
+wasm-pack build $FLAGS
+mv pkg/* .
 echo WASM build complete
 
 cd "$ROOT_DIRECTORY"

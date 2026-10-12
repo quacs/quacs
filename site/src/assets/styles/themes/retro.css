@@ -4,9 +4,9 @@
   --raw-link: #5ce1e6;
   --background: #0b0b1e;
   --background-image:
-    repeating-linear-gradient(0deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 3px),
-    linear-gradient(rgb(11 11 30 / 50%), rgb(11 11 30 / 50%)),
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 12%) 0 1px, transparent 1px 4px),
     url("../../images/retro-arcade-bg.svg");
+  --background-attachment: fixed;
   --global-text: #e8e8ff;
   --global-text-hover: #ffd166;
   --card-body-background: #14142e;
@@ -65,8 +65,10 @@
   font-size: 1.4rem;
   line-height: 1.2;
 
-  /* Scanlines and the dimming overlay keep the auto size; the 384px pixel-art tile is drawn at 4px per art pixel */
-  background-size: auto, auto, 384px 384px;
+  /* One continuous, viewport-sized scene. Only the subtle scanline layer repeats. */
+  background-size: auto, cover;
+  background-repeat: repeat, no-repeat;
+  background-position: center, center bottom;
   image-rendering: pixelated;
 }
 
@@ -129,5 +131,83 @@
   /* Button press transition only when motion is allowed; otherwise the :root default (0s) applies */
   [data-theme="retro"] {
     --btn-transition: transform 0.05s;
+  }
+}
+
+[data-theme="retro"] .home .retro-masthead {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.75rem;
+  border: 3px solid #5ce1e6;
+  background: #101127;
+  box-shadow: 6px 6px #000, inset 0 0 0 5px #101127, inset 0 0 0 6px #33406d;
+}
+
+[data-theme="retro"] .retro-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+[data-theme="retro"] .retro-kicker {
+  color: #5ce1e6;
+  letter-spacing: 0.1em;
+  font-size: 1rem;
+}
+
+[data-theme="retro"] .retro-intro h1 {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  margin: 0.75rem 0;
+  text-shadow: 3px 3px #7a1f3d;
+}
+
+[data-theme="retro"] .retro-intro p {
+  margin: 0;
+}
+
+[data-theme="retro"] .retro-start {
+  padding: 0.75rem 1rem;
+  border: 2px solid #ff4d6d;
+  color: #fff;
+  background: #7a1f3d;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  line-height: 1.7;
+  text-decoration: none;
+  box-shadow: 4px 4px #000;
+}
+
+[data-theme="retro"] .retro-start:hover,
+[data-theme="retro"] .retro-start:focus-visible {
+  background: #9a2a4f;
+  outline: 2px solid #ffd166;
+  outline-offset: 4px;
+}
+
+[data-theme="retro"] .unofficial-warning-row {
+  margin-inline: 0;
+}
+
+[data-theme="retro"] .unofficial-schedule-warning {
+  padding: 0.75rem 1rem;
+  color: #ffd166;
+  font-size: 1.2rem;
+}
+
+[data-theme="retro"] .navbar-light .navbar-toggler {
+  border-color: #5ce1e6;
+}
+
+[data-theme="retro"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%235ce1e6' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 767.98px) {
+  [data-theme="retro"] .home .retro-masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem;
+    gap: 1rem;
   }
 }

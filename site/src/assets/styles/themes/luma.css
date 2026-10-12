@@ -1,13 +1,11 @@
-/* Luma (Calico): a tortoiseshell cat on a cream base. Charcoal is the text, navbar and primary button
-color. Tortoiseshell brown carries links and accents. Apricot fills card and modal headers, with charcoal
-text only. Kraft tan draws borders and the calendar grid. Scratcher blue marks the active nav underline
-and the focus ring. Cards are solid white chest, so text never sits on the page pattern. The page carries
-a faint blue quatrefoil tile at about 7% opacity, fixed behind everything. Under the tile sits a 5%
-watermark photo of Luma, so the tile stays on top of it. */
+/* Luma (Calico): a personal study nook with Luma's real photos, warm calico colors,
+solid cream surfaces, and soft patches of apricot and charcoal behind the page. */
 [data-theme="luma"] {
   /* Page and text */
   --background: #fbf5ea;
-  --background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='%233F7FA6' opacity='0.07'%3E%3Ccircle cx='48' cy='31' r='14'/%3E%3Ccircle cx='65' cy='48' r='14'/%3E%3Ccircle cx='48' cy='65' r='14'/%3E%3Ccircle cx='31' cy='48' r='14'/%3E%3Ccircle cx='0' cy='0' r='3'/%3E%3Ccircle cx='96' cy='0' r='3'/%3E%3Ccircle cx='0' cy='96' r='3'/%3E%3Ccircle cx='96' cy='96' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  --background-image:
+    radial-gradient(ellipse at 0% 30%, rgb(209 137 85 / 12%), transparent 35%),
+    radial-gradient(ellipse at 100% 65%, rgb(42 35 34 / 7%), transparent 30%);
   --background-attachment: fixed;
   --global-text: #2a2322;
   --global-text-hover: #8a4b22;
@@ -138,9 +136,7 @@ watermark photo of Luma, so the tile stays on top of it. */
   --calendar-sb-thumb-color-6: var(--calendar-border-color-6);
 }
 
-/* Page layers, all fixed and behind the content. The body stops drawing the tile itself. The tile
-is drawn on ::after instead, so the watermark on ::before (z-index -2, 5% opacity) sits under it.
-Cards and the footer have solid backgrounds, so the watermark only shows on the cream page. */
+/* Subtle page washes sit behind solid cards and never interfere with controls. */
 [data-theme="luma"] body {
   background-image: none;
 }
@@ -158,8 +154,8 @@ Cards and the footer have solid backgrounds, so the watermark only shows on the 
 }
 
 [data-theme="luma"] body::before {
-  background: url("../../images/luma-watermark.jpg") center 35% / cover no-repeat;
-  opacity: 5%;
+  background: radial-gradient(ellipse at 15% 90%, #f5dfc1, transparent 45%);
+  opacity: 60%;
 }
 
 [data-theme="luma"] body::after {
@@ -209,7 +205,7 @@ behaves as before. */
   vertical-align: middle;
   border: 2px solid #f2b48c;
   border-radius: 50%;
-  background: url("../../images/luma.jpg") center / cover no-repeat;
+  background: url("../../images/luma-tunnel.jpg") center 30% / cover no-repeat;
   pointer-events: none;
 }
 
@@ -255,7 +251,7 @@ luma hover has to win explicitly. */
   outline-offset: 2px;
 }
 
-/* Footer: Luma's round photo, with a caption under it. Both pseudo-elements sit ahead of the footer
+/* Footer: Luma's original photo, with a caption under it. Both pseudo-elements sit ahead of the footer
 links and take no pointer events. Footer text keeps the charcoal text color on the kraft footer. */
 [data-theme="luma"] .footer::before {
   content: "";
@@ -283,27 +279,215 @@ links and take no pointer events. Footer text keeps the charcoal text color on t
   pointer-events: none;
 }
 
-/* Prerequisites: the jumbotron gets the card radius. On 600px and up, a thin scratcher strip runs
-across its top. The strip bleeds into the jumbotron's top padding, and it hides below 600px. */
+/* Prerequisites uses the same rounded, clear surface as other panels. */
 [data-theme="luma"] .jumbotron {
   border-radius: var(--card-border-radius);
-}
-
-@media (min-width: 600px) {
-  [data-theme="luma"] .jumbotron::before {
-    content: "";
-    display: block;
-    height: 80px;
-    margin: -4rem -2rem 2rem;
-    border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
-    background: url("../../images/luma-scratcher.jpg") center 12% / cover no-repeat;
-    pointer-events: none;
-  }
 }
 
 /* Motion: a gentle color and shadow fade on buttons, only when the OS allows motion */
 @media (prefers-reduced-motion: no-preference) {
   [data-theme="luma"] {
     --btn-transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+}
+
+[data-theme="luma"] .home .luma-masthead {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.75rem;
+  border: 1px solid #c9a878;
+  border-radius: 24px 24px 24px 6px;
+  background: #fffdf9;
+  box-shadow: 0 6px 20px rgb(42 35 34 / 7%);
+}
+
+[data-theme="luma"] .luma-portrait {
+  flex: 0 0 170px;
+  margin: 0;
+  padding: 8px 8px 0;
+  border: 1px solid #e1d5c3;
+  background: #fff;
+  box-shadow: 2px 4px 0 #efe3d1;
+  transform: rotate(-3deg);
+}
+
+[data-theme="luma"] .luma-portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 65% center;
+}
+
+[data-theme="luma"] .luma-portrait figcaption {
+  padding: 0.5rem 0;
+  font-size: 0.65rem;
+  color: #6e5e56;
+  text-align: center;
+}
+
+[data-theme="luma"] .luma-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+[data-theme="luma"] .luma-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: #8a4b22;
+}
+
+[data-theme="luma"] .luma-intro h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1.2;
+  margin: 0.65rem 0;
+}
+
+[data-theme="luma"] .luma-intro p {
+  max-width: 34rem;
+  color: #6e5e56;
+  margin-bottom: 1rem;
+}
+
+[data-theme="luma"] .luma-plan {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  color: #fffdf9;
+  background: #2a2322;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+[data-theme="luma"] .luma-plan:hover,
+[data-theme="luma"] .luma-plan:focus-visible {
+  color: #fffdf9;
+  background: #8a4b22;
+}
+
+[data-theme="luma"] .luma-swatch {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1rem;
+  display: flex;
+  gap: 4px;
+}
+
+[data-theme="luma"] .luma-swatch span {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #c9a878;
+  border-radius: 50%;
+  background: #f2b48c;
+}
+
+[data-theme="luma"] .luma-swatch span:nth-child(2) {
+  background: #2a2322;
+}
+
+[data-theme="luma"] .luma-swatch span:nth-child(3) {
+  background: #fffdf9;
+}
+
+[data-theme="luma"] .department-cards > .card:nth-child(3n + 2) .card-header {
+  background: #efe3d1;
+}
+
+[data-theme="luma"] .department-cards > .card:nth-child(3n) .card-header {
+  background: #2a2322;
+  color: #fffdf9;
+}
+
+[data-theme="luma"] .department-cards .department-code {
+  color: #8a4b22;
+  font-size: 1.3rem;
+}
+
+[data-theme="luma"] .department-cards .department-link {
+  font-size: 1.05rem;
+  border-radius: 8px;
+}
+
+[data-theme="luma"] .unofficial-warning-row {
+  margin-inline: 0;
+}
+
+[data-theme="luma"] .unofficial-schedule-warning {
+  padding: 0.75rem 1rem;
+  background: #fffdf9;
+  font-size: 1rem;
+  border-radius: 12px;
+}
+
+[data-theme="luma"] .luma-office-photo {
+  flex: 0 0 155px;
+  margin: 0;
+  padding: 6px 6px 0;
+  border: 1px solid #e1d5c3;
+  background: #fff;
+  box-shadow: 2px 4px 0 #efe3d1;
+  transform: rotate(3deg);
+}
+
+[data-theme="luma"] .luma-office-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+[data-theme="luma"] .luma-office-photo figcaption {
+  padding: 0.5rem 0;
+  font-size: 0.65rem;
+  color: #6e5e56;
+  text-align: center;
+}
+
+@media (max-width: 1099.98px) {
+  [data-theme="luma"] .home .luma-masthead {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 1.25rem;
+  }
+
+  [data-theme="luma"] .luma-portrait,
+  [data-theme="luma"] .luma-office-photo {
+    grid-row: 1;
+    width: 100%;
+    max-width: 170px;
+    justify-self: center;
+    padding: 8px 8px 0;
+  }
+
+  [data-theme="luma"] .luma-office-photo {
+    grid-column: 2;
+  }
+
+  [data-theme="luma"] .luma-office-photo img {
+    aspect-ratio: 1;
+    object-position: 30% center;
+  }
+
+  [data-theme="luma"] .luma-intro {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 767.98px) {
+  [data-theme="luma"] .home .luma-masthead {
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  [data-theme="luma"] .luma-portrait figcaption,
+  [data-theme="luma"] .luma-office-photo figcaption {
+    font-size: 0.6rem;
   }
 }

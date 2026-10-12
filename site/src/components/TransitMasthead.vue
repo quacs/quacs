@@ -38,7 +38,7 @@
           <path d="M100 14V108L186 194H690" stroke="#009952" />
           <path d="M690 26H555L360 221H28" stroke="#0062cf" />
           <path d="M690 58H570L398 230" stroke="#f6bc26" />
-          <path d="M28 184H235L390 29H690" stroke="#9a38a1" />
+          <path d="M28 184H235L390 29H510" stroke="#9a38a1" />
         </g>
         <g fill="#f5f2e9" stroke="#181818" stroke-width="2.5">
           <circle cx="100" cy="42" r="6" />

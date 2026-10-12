@@ -1,97 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16" width="24" height="16" shape-rendering="crispEdges">
-<title>Nyan Cat</title>
-<g fill="#ffffff" shape-rendering="crispEdges">
-<rect x="1" y="1" width="1" height="1"/>
-<rect x="4" y="2" width="1" height="1"/>
-<rect x="13" y="5" width="1" height="1"/>
-<rect x="9" y="9" width="1" height="1"/>
-<rect x="2" y="13" width="1" height="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 24" width="40" height="24" shape-rendering="crispEdges">
+<title>Nyan Cat: a smiling gray cat with a pink frosted pastry body and a rainbow trail</title>
+<!-- Original pixel drawing. All coordinates stay on the integer grid. -->
+<g id="rainbow">
+<path fill="#ff4242" d="M0 6h12v2H0z"/><path fill="#ffab36" d="M0 8h12v2H0z"/>
+<path fill="#ffe94a" d="M0 10h12v2H0z"/><path fill="#69df52" d="M0 12h12v2H0z"/>
+<path fill="#46b6ff" d="M0 14h12v2H0z"/><path fill="#a779ff" d="M0 16h12v2H0z"/>
 </g>
-<g fill="#3b1f4a" shape-rendering="crispEdges">
-<rect x="17" y="1" width="1" height="3"/>
-<rect x="23" y="1" width="1" height="6"/>
-<rect x="19" y="2" width="3" height="1"/>
-<rect x="6" y="4" width="12" height="1"/>
-<rect x="6" y="5" width="1" height="6"/>
-<rect x="16" y="5" width="2" height="2"/>
-<rect x="16" y="7" width="1" height="4"/>
-<rect x="18" y="7" width="5" height="1"/>
-<rect x="6" y="11" width="11" height="1"/>
-<rect x="8" y="13" width="2" height="1"/>
-<rect x="13" y="13" width="2" height="1"/>
-</g>
-<g fill="#ff8fb3" shape-rendering="crispEdges">
-<rect x="18" y="2" width="1" height="1"/>
-<rect x="22" y="2" width="1" height="1"/>
-<rect x="18" y="5" width="1" height="1"/>
-<rect x="22" y="5" width="1" height="1"/>
-</g>
-<g fill="#9e9ea8" shape-rendering="crispEdges">
-<rect x="18" y="3" width="5" height="1"/>
-<rect x="18" y="4" width="1" height="1"/>
-<rect x="20" y="4" width="1" height="1"/>
-<rect x="22" y="4" width="1" height="1"/>
-<rect x="19" y="5" width="3" height="1"/>
-<rect x="18" y="6" width="2" height="1"/>
-<rect x="21" y="6" width="2" height="1"/>
-<rect x="8" y="12" width="2" height="1"/>
-<rect x="13" y="12" width="2" height="1"/>
-</g>
-<g fill="#ff4d4d" shape-rendering="crispEdges">
-<rect x="0" y="4" width="6" height="1"/>
-</g>
-<g fill="#1b1030" shape-rendering="crispEdges">
-<rect x="19" y="4" width="1" height="1"/>
-<rect x="21" y="4" width="1" height="1"/>
-</g>
-<g fill="#ffa500" shape-rendering="crispEdges">
-<rect x="0" y="5" width="6" height="1"/>
-</g>
-<g fill="#ff7eb9" shape-rendering="crispEdges">
-<rect x="7" y="5" width="1" height="1"/>
-<rect x="9" y="5" width="2" height="1"/>
-<rect x="12" y="5" width="1" height="1"/>
-<rect x="14" y="5" width="2" height="1"/>
-<rect x="7" y="6" width="2" height="1"/>
-<rect x="10" y="6" width="2" height="1"/>
-<rect x="13" y="6" width="1" height="1"/>
-<rect x="15" y="6" width="1" height="1"/>
-<rect x="7" y="7" width="3" height="1"/>
-<rect x="11" y="7" width="2" height="1"/>
-<rect x="14" y="7" width="2" height="2"/>
-<rect x="7" y="8" width="2" height="1"/>
-</g>
-<g fill="#ffe14d" shape-rendering="crispEdges">
-<rect x="8" y="5" width="1" height="1"/>
-<rect x="0" y="6" width="6" height="1"/>
-<rect x="14" y="6" width="1" height="1"/>
-<rect x="11" y="9" width="1" height="1"/>
-</g>
-<g fill="#b36bff" shape-rendering="crispEdges">
-<rect x="11" y="5" width="1" height="1"/>
-<rect x="10" y="7" width="1" height="1"/>
-<rect x="0" y="9" width="6" height="1"/>
-</g>
-<g fill="#6bd96b" shape-rendering="crispEdges">
-<rect x="9" y="6" width="1" height="1"/>
-<rect x="0" y="7" width="6" height="1"/>
-<rect x="13" y="7" width="1" height="1"/>
-</g>
-<g fill="#4da6ff" shape-rendering="crispEdges">
-<rect x="12" y="6" width="1" height="1"/>
-<rect x="0" y="8" width="6" height="1"/>
-<rect x="12" y="9" width="1" height="1"/>
-</g>
-<g fill="#e0457b" shape-rendering="crispEdges">
-<rect x="20" y="6" width="1" height="1"/>
-</g>
-<g fill="#c9aabb" shape-rendering="crispEdges">
-<rect x="9" y="8" width="5" height="1"/>
-<rect x="7" y="9" width="2" height="1"/>
-<rect x="10" y="9" width="1" height="1"/>
-<rect x="13" y="9" width="3" height="1"/>
-</g>
-<g fill="#a98a9e" shape-rendering="crispEdges">
-<rect x="7" y="10" width="9" height="1"/>
-</g>
+<!-- Tail and four little paws, behind the pastry. -->
+<path fill="#20212b" d="M6 12h3v2h4v5h-3v-3H7v-1H6zM13 18h4v4h-4zM20 18h4v3h-4zM28 18h4v4h-4zM33 17h4v4h-4z"/>
+<path fill="#999da7" d="M7 13h2v2h4v2h-3v-2H7zM14 18h2v3h-2zM21 18h2v2h-2zM29 18h2v3h-2zM34 17h2v3h-2z"/>
+<!-- Toasted crust, thick dark outline, pink frosting, cherry sprinkles. -->
+<path fill="#20212b" d="M13 3h16v1h2v1h1v13h-1v1h-2v1H13v-1h-2v-1h-1V5h1V4h2z"/>
+<path fill="#efc58d" d="M13 4h16v1h2v13h-2v1H13v-1h-2V5h2z"/>
+<path fill="#ff9ecb" d="M14 6h13v1h2v9h-2v1H14v-1h-1V7h1z"/>
+<path fill="#e85398" d="M15 7h1v1h-1zM20 6h1v1h-1zM24 8h1v1h-1zM17 10h1v1h-1zM22 11h1v1h-1zM14 13h1v1h-1zM19 15h1v1h-1zM25 14h1v1h-1z"/>
+<!-- Wide gray face, upright ears, dark eyes, blush and the recognizable smile. -->
+<path fill="#20212b" d="M26 7h3v1h1v1h4V8h1V7h3v2h1v8h-1v2h-2v1h-9v-1h-2v-2h-1v-6h1V8h1z"/>
+<path fill="#999da7" d="M27 8h1v2h2v1h4v-1h2V8h1v3h1v6h-1v1h-2v1h-7v-1h-2v-1h-1v-5h2z"/>
+<path fill="#ff9ecb" d="M27 9h1v1h-1zM36 9h1v1h-1zM26 15h2v2h-2zM36 15h2v2h-2z"/>
+<path fill="#20212b" d="M28 12h1v2h-1zM35 12h1v2h-1zM31 14h2v1h-2zM29 16h1v1h1v-1h2v1h1v-1h1v2h-6z"/>
 </svg>
