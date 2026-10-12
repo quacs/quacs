@@ -21,7 +21,7 @@ fi
 git -C gh-pages-site checkout -B ${BRANCH} || exit 1
 
 cp scripts/service-worker.js gh-pages-site/service-worker.js
-cp LICENSE gh-pages-site/LICENSE
+cp ../LICENSE gh-pages-site/LICENSE
 echo ${CNAME} >gh-pages-site/CNAME
 
 if test -n "${PREBUILT_SITE:-}"; then
