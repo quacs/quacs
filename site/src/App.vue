@@ -1,13 +1,13 @@
 <template>
   <div id="app">
     <div id="wrapper">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-xl navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
           ><img :src="getLogo" alt="QuACS Home" style="height: 27px"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
-          <b-input-group>
+          <b-input-group class="navbar-search">
             <input
               id="search-bar"
               placeholder="Search Courses"
@@ -438,9 +438,31 @@ body,
 }
 /* End for sticky footer */
 
-@media (min-width: 992px) {
-  #search-bar {
-    width: 300px;
+@media (max-width: 1199px) {
+  .navbar .desktop-only {
+    display: none;
+  }
+
+  .navbar .mobile-only {
+    display: block;
+  }
+}
+
+/* Keep navigation usable between tablet and full desktop widths. */
+@media (min-width: 1200px) {
+  #nav-collapse {
+    min-width: 0;
+  }
+
+  .navbar-search {
+    flex: 1 1 300px;
+    min-width: 0;
+    max-width: 300px;
+    margin-right: 1rem;
+  }
+
+  #nav-collapse > .navbar-nav {
+    flex-shrink: 0;
   }
 }
 
