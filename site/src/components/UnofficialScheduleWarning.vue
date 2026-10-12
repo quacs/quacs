@@ -1,5 +1,5 @@
 <template>
-  <div class="row" style="padding-top: 1rem">
+  <div class="row unofficial-warning-row" style="padding-top: 1rem">
     <div class="col-lg-1"></div>
     <div class="col-lg">
       <div class="unofficial-schedule-warning">

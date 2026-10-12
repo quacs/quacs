@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+<title>Illuminated Q with gold leaf and curling botanical ornament</title>
+<rect x="4" y="4" width="112" height="132" rx="2" fill="#8b1a1a" stroke="#785325" stroke-width="2"/>
+<rect x="10" y="10" width="100" height="120" fill="none" stroke="#d6ac53"/>
+<path d="M14 122C45 108 12 85 28 70S50 45 17 17M106 18C75 32 111 48 91 67S72 95 104 123" fill="none" stroke="#d6ac53" stroke-width="2"/>
+<g fill="#d6ac53"><path d="M22 40q-20-4-7-18q14 5 7 18M27 67q18-5 13-19q-17 0-13 19M24 96q-17-1-13-16q15-1 13 16M94 44q18-5 13-17q-16 0-13 17M89 76q-18-1-13-15q16 0 13 15M98 106q17-2 12-16q-15 0-12 16"/>
+<circle cx="17" cy="117" r="3"/><circle cx="101" cy="22" r="3"/></g>
+<text x="60" y="100" text-anchor="middle" font-family="Georgia,serif" font-size="86" fill="#f9e9b1">Q</text>
+<path d="M35 118h50M35 22h50" stroke="#d6ac53"/>
+</svg>

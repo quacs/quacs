@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -x
+set -ex
 
 # If current branch == staging
 if git rev-parse --abbrev-ref HEAD | grep -w staging >/dev/null; then
@@ -24,7 +24,14 @@ cp scripts/service-worker.js gh-pages-site/service-worker.js
 cp LICENSE gh-pages-site/LICENSE
 echo ${CNAME} >gh-pages-site/CNAME
 
-yarn ${ACTION} ${BUILD_ARGS} -a -o gh-pages-site || exit 1
+if test -n "${PREBUILT_SITE:-}"; then
+  for semester in "$PREBUILT_SITE"/*/; do
+    rsync -a --delete "$semester" "gh-pages-site/$(basename "$semester")/"
+  done
+  cp "$PREBUILT_SITE/index.html" gh-pages-site/index.html
+else
+  yarn ${ACTION} ${BUILD_ARGS:-} -a -o gh-pages-site || exit 1
+fi
 
 git -C gh-pages-site add --all || exit 1
 git -C gh-pages-site commit -m "$(date -u)" || { echo "No site changes to commit!"; exit 0; }

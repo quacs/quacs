@@ -401,7 +401,7 @@
 }
 
 [data-theme="trains"] .department-cards > .card:nth-child(8n + 7) {
-  --transit-route: "Q";
+  --transit-route: "N";
   --transit-line: #f6bc26;
   --transit-ink: #181818;
 }

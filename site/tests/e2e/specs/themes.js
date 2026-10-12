@@ -186,7 +186,7 @@ describe("MTA route badges", () => {
       ["7", "rgb(154, 56, 161)"],
       ["B", "rgb(235, 104, 0)"],
       ["A", "rgb(0, 98, 207)"],
-      ["Q", "rgb(246, 188, 38)"],
+      ["N", "rgb(246, 188, 38)"],
       ["G", "rgb(121, 149, 52)"],
     ];
     cy.get(".department-cards .card-header").each(($header, index) => {

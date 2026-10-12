@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <TransitMasthead />
+    <ThemeMastheads />
     <b-card-group columns class="department-cards">
       <b-card
         v-for="school in schools"
@@ -24,11 +25,13 @@
 import { Component, Vue } from "vue-property-decorator";
 import { mapState } from "vuex";
 import { BCard, BCardGroup } from "bootstrap-vue";
+import ThemeMastheads from "@/components/ThemeMastheads.vue";
 import TransitMasthead from "@/components/TransitMasthead.vue";
 
 @Component({
   components: {
     TransitMasthead,
+    ThemeMastheads,
     "b-card": BCard,
     "b-card-group": BCardGroup,
   },

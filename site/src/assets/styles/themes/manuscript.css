@@ -95,3 +95,149 @@
   line-height: 0.8;
   color: #8b1a1a;
 }
+
+[data-theme="manuscript"] .home .manuscript-masthead {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  padding: 1.5rem 2rem;
+  margin: 0.5rem 0 2rem;
+  border: 4px double #987537;
+  outline: 1px solid #987537;
+  outline-offset: 4px;
+  background: #fbf4df;
+}
+
+[data-theme="manuscript"] .manuscript-initial {
+  width: 100px;
+  flex: 0 0 100px;
+}
+
+[data-theme="manuscript"] .manuscript-intro {
+  min-width: 0;
+}
+
+[data-theme="manuscript"] .manuscript-kicker {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: #6b4423;
+}
+
+[data-theme="manuscript"] .manuscript-intro h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  margin: 0.4rem 0;
+  line-height: 1.25;
+}
+
+[data-theme="manuscript"] .manuscript-intro p {
+  margin: 0 0 0.5rem;
+}
+
+[data-theme="manuscript"] .manuscript-link {
+  color: #8b1a1a;
+  font-variant: small-caps;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[data-theme="manuscript"] .manuscript-folio {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.5rem;
+  color: #785325;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+[data-theme="manuscript"] body::before,
+[data-theme="manuscript"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0 auto 0 1rem;
+  width: 40px;
+  z-index: -1;
+  opacity: 65%;
+  background: url("../../images/manuscript-vine.svg") repeat-y;
+  pointer-events: none;
+}
+
+[data-theme="manuscript"] body::after {
+  left: auto;
+  right: 1rem;
+  transform: scaleX(-1);
+}
+
+[data-theme="manuscript"] .department-cards .card {
+  margin-bottom: 1.5rem;
+  border: 3px double #7a4e22;
+}
+
+[data-theme="manuscript"] .department-cards .card-header {
+  font-family: var(--font-body);
+  border-bottom: 1px solid #987537;
+  background: #efe0b8;
+  font-weight: 400;
+}
+
+[data-theme="manuscript"] .department-cards .department-code {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  color: #8b1a1a;
+}
+
+[data-theme="manuscript"] .department-cards .department-link {
+  font-size: 1.1rem;
+  border-bottom: 1px solid #e7d8b3;
+}
+
+[data-theme="manuscript"] .navbar.bg-light {
+  border-bottom: 4px double #987537;
+}
+
+[data-theme="manuscript"] .footer {
+  border-top: 4px double #987537;
+}
+
+[data-theme="manuscript"] .footer::before {
+  content: "Here begins the next chapter.";
+  margin-bottom: 1rem;
+  color: #8b1a1a;
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+}
+
+[data-theme="manuscript"] .unofficial-warning-row {
+  margin-inline: 0;
+}
+
+[data-theme="manuscript"] .unofficial-schedule-warning {
+  padding: 0.75rem 1rem;
+  background: #fbf4df;
+  color: #8b1a1a;
+  font-size: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  [data-theme="manuscript"] .home .manuscript-masthead {
+    padding: 1.25rem;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  [data-theme="manuscript"] .manuscript-initial {
+    width: 55px;
+    flex-basis: 55px;
+  }
+
+  [data-theme="manuscript"] .manuscript-kicker {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+  }
+
+  [data-theme="manuscript"] body::before,
+  [data-theme="manuscript"] body::after {
+    display: none;
+  }
+}

@@ -5,8 +5,8 @@ Every decorative layer has pointer-events: none. Motion only runs when the OS do
 reduced motion. */
 [data-theme="nyan"] {
   /* Page and text */
-  --background: #0d0f2b;
-  --background-image: linear-gradient(180deg, #1b1f4b 0%, #0d0f2b 100%);
+  --background: #081b38;
+  --background-image: linear-gradient(180deg, #12335b 0%, #081b38 100%);
   --background-attachment: fixed;
   --global-text: #f4efff;
   --global-text-hover: #ffe14d;
@@ -20,7 +20,13 @@ reduced motion. */
     "Helvetica Neue",
     arial,
     sans-serif;
-  --font-heading: ui-monospace, "SFMono-Regular", menlo, consolas, "Liberation Mono", monospace;
+  --font-heading:
+    ui-monospace,
+    "SFMono-Regular",
+    menlo,
+    consolas,
+    "Liberation Mono",
+    monospace;
   --warning-color: #ffa0c8;
 
   /* Cards: pastel pop-tart header over a cream body */
@@ -120,30 +126,14 @@ reduced motion. */
   --calendar-text-color-6: #2e1a2e;
 }
 
-/* Starfield: fixed, behind everything, three layers of stars at different densities */
+/* Crisp pixel stars, rather than soft dots. */
 [data-theme="nyan"] body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 12px 34px, #fff, transparent),
-    radial-gradient(1px 1px at 88px 120px, #fff, transparent),
-    radial-gradient(1px 1px at 157px 46px, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 201px 178px, #ffe14d, transparent),
-    radial-gradient(1px 1px at 240px 92px, #fff, transparent),
-    radial-gradient(1px 1px at 300px 20px, #cdc4f2, transparent),
-    radial-gradient(1px 1px at 35px 300px, #fff, transparent),
-    radial-gradient(2px 2px at 320px 60px, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 410px 200px, #ff7eb9, transparent),
-    radial-gradient(1px 1px at 255px 330px, #fff, transparent),
-    radial-gradient(1px 1px at 600px 80px, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 120px 470px, #c9b8ff, transparent),
-    radial-gradient(1px 1px at 380px 420px, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 690px 300px, #ffe14d, transparent);
-  background-size: 320px 240px, 470px 380px, 710px 560px;
-  background-repeat: repeat;
+  background: url("../../images/nyan-stars.svg") repeat;
 }
 
 /* Rainbow trail along the bottom edge. One tile is exactly one 144px period, so the scroll loops
@@ -177,8 +167,9 @@ html[data-theme="nyan"]::after {
   position: fixed;
   left: 8px;
   bottom: 14px;
-  width: 72px;
+  width: 80px;
   height: 48px;
+  image-rendering: pixelated;
   z-index: 1;
   pointer-events: none;
   background: url("../../images/nyan-cat.svg") no-repeat center / contain;
@@ -232,19 +223,22 @@ buttons keep their own colors. */
   right: 0.6rem;
   bottom: 0.2rem;
   height: 3px;
-  background: linear-gradient(90deg, #ff4d4d, #ffa500, #ffe14d, #6bd96b, #4da6ff, #b36bff);
+  background:
+    linear-gradient(
+      90deg,
+      #ff4d4d,
+      #ffa500,
+      #ffe14d,
+      #6bd96b,
+      #4da6ff,
+      #b36bff
+    );
 }
 
 /* The page container leaves a gutter of about 15px + (viewport - container) / 2 on the left. The cat
 is about 80px wide, so it only fits clear of cards from 1280px up. Below that it is hidden. Phone
 widths are always hidden. */
 @media (max-width: 1279.98px) {
-  html[data-theme="nyan"]::after {
-    display: none;
-  }
-}
-
-@media (max-width: 599.98px) {
   html[data-theme="nyan"]::after {
     display: none;
   }
@@ -278,5 +272,184 @@ widths are always hidden. */
 
   html[data-theme="nyan"]::after {
     animation: nyan-bob 0.6s steps(2, end) infinite;
+  }
+}
+
+/* A compact launch panel, visible only in Nyan Cat. */
+[data-theme="nyan"] .home .nyan-masthead {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  margin: 0 0 1.75rem;
+  padding: 1.5rem;
+  color: #fff;
+  border: 2px solid #84bbeb;
+  border-radius: 2px;
+  background: #0a2348;
+  box-shadow: 5px 5px 0 #040e20;
+}
+
+[data-theme="nyan"] .nyan-masthead::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -8px;
+  height: 6px;
+  background:
+    linear-gradient(
+      90deg,
+      #ff4242 0 16.66%,
+      #ffab36 16.66% 33.33%,
+      #ffe94a 33.33% 50%,
+      #69df52 50% 66.66%,
+      #46b6ff 66.66% 83.33%,
+      #a779ff 83.33%
+    );
+}
+
+[data-theme="nyan"] .nyan-flight {
+  flex: 0 0 160px;
+}
+
+[data-theme="nyan"] .nyan-flight img {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+[data-theme="nyan"] .nyan-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+[data-theme="nyan"] .nyan-kicker {
+  font: 700 0.7rem var(--font-heading);
+  letter-spacing: 0.12em;
+  color: #a5d7ff;
+}
+
+[data-theme="nyan"] .nyan-intro h1 {
+  margin: 0.5rem 0;
+  font-size: clamp(1.4rem, 2.7vw, 2rem);
+  line-height: 1.2;
+  text-shadow: 3px 3px #050c25;
+}
+
+[data-theme="nyan"] .nyan-intro p {
+  margin: 0;
+  color: #d2e7ff;
+}
+
+[data-theme="nyan"] .nyan-launch {
+  flex-shrink: 0;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #25213e;
+  color: #25213e;
+  background: #ffe94a;
+  box-shadow: 3px 3px 0 #ff7eb9;
+  font: 700 0.9rem var(--font-heading);
+}
+
+[data-theme="nyan"] .nyan-launch:hover,
+[data-theme="nyan"] .nyan-launch:focus-visible {
+  background: #fff3a9;
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+/* Pastry edges and frosting highlights keep the lists themselves clear. */
+[data-theme="nyan"] .department-cards > .card {
+  border: 3px solid #39233c;
+  box-shadow: 5px 5px 0 #040e20;
+}
+
+[data-theme="nyan"] .department-cards .card-header {
+  background-image: linear-gradient(180deg, #ffd7eb 0 4px, transparent 4px);
+  border-bottom: 3px solid #b3738d;
+}
+
+[data-theme="nyan"] .department-code {
+  color: #80436f;
+}
+
+[data-theme="nyan"] .navbar.bg-light {
+  border-bottom: 3px solid #9fb9f9;
+}
+
+[data-theme="nyan"] .navbar-light .navbar-toggler {
+  border-color: #a5d7ff;
+}
+
+[data-theme="nyan"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23d2e7ff' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+[data-theme="nyan"] .footer {
+  border-top: 2px solid #719bcb;
+  padding-bottom: 2.5rem;
+}
+
+@media (max-width: 767.98px) {
+  [data-theme="nyan"] .home .nyan-masthead {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.2rem;
+  }
+
+  [data-theme="nyan"] .nyan-flight {
+    flex-basis: 80px;
+  }
+
+  [data-theme="nyan"] .nyan-intro {
+    flex-basis: calc(100% - 100px);
+  }
+
+  [data-theme="nyan"] .nyan-launch {
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="nyan"] .nyan-flight img {
+    animation: nyan-bob 0.6s steps(2, end) infinite;
+  }
+}
+
+[data-theme="nyan"] .unofficial-warning-row {
+  margin-inline: 0;
+}
+
+[data-theme="nyan"] .unofficial-schedule-warning {
+  padding: 0.75rem 1rem;
+  background: #152a4c;
+  color: #ffcee5;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 479.98px) {
+  [data-theme="nyan"] .nyan-flight {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 60px;
+  }
+
+  [data-theme="nyan"] .nyan-intro {
+    flex-basis: 100%;
+  }
+
+  [data-theme="nyan"] .nyan-kicker {
+    display: block;
+    padding-right: 70px;
+    font-size: 0.65rem;
+  }
+
+  [data-theme="nyan"] .nyan-intro h1 {
+    margin-top: 1rem;
+  }
+
+  [data-theme="nyan"] .nyan-launch {
+    margin-left: 0;
   }
 }
