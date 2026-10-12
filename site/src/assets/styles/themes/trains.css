@@ -106,24 +106,26 @@
   background-position: center top;
 }
 
+[data-theme="trains"] body .background-trains {
+  display: block;
+}
+
 /* Rail centers match x=41 and x=1399 in the 1440px wallpaper.
    Fixed, non-interactive trains stay behind the content as the page scrolls. */
-[data-theme="trains"] body::before,
-[data-theme="trains"] body::after {
-  content: "";
+[data-theme="trains"] .mta-background-train-uptown,
+[data-theme="trains"] .mta-background-train-downtown {
   position: fixed;
   top: 0;
   left: calc(100% * 41 / 1440);
   z-index: -1;
   width: clamp(9px, 2.1vw, 30px);
-  height: clamp(27px, 6.3vw, 90px);
-  background: url("../../images/mta-train.svg") center / contain no-repeat;
+  height: auto;
   pointer-events: none;
   animation: mta-uptown 24s linear infinite;
   will-change: transform;
 }
 
-[data-theme="trains"] body::after {
+[data-theme="trains"] .mta-background-train-downtown {
   left: calc(100% * 1399 / 1440);
   animation: mta-downtown 29s linear infinite;
   animation-delay: -12s;
@@ -140,13 +142,13 @@
   }
 
   100% {
-    transform: translate(-50%, -100px);
+    transform: translate(-50%, -100%);
   }
 }
 
 @keyframes mta-downtown {
   0% {
-    transform: translate(-50%, -100px) rotate(180deg);
+    transform: translate(-50%, -100%) rotate(180deg);
   }
 
   35%,
@@ -674,17 +676,17 @@
     --btn-transition: none;
   }
 
-  [data-theme="trains"] body::before,
-  [data-theme="trains"] body::after {
+  [data-theme="trains"] .mta-background-train-uptown,
+  [data-theme="trains"] .mta-background-train-downtown {
     animation: none;
     will-change: auto;
   }
 
-  [data-theme="trains"] body::before {
+  [data-theme="trains"] .mta-background-train-uptown {
     transform: translate(-50%, 140px);
   }
 
-  [data-theme="trains"] body::after {
+  [data-theme="trains"] .mta-background-train-downtown {
     transform: translate(-50%, 360px) rotate(180deg);
   }
 }

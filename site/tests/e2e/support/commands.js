@@ -59,5 +59,12 @@ Cypress.Commands.add("getBody", () => {
 });
 
 Cypress.Commands.add("getNav", () => {
-  return cy.getOne("nav");
+  return cy.getOne("nav").then(($nav) => {
+    const toggle = $nav.find(".navbar-toggler");
+    if (toggle.is(":visible") && !$nav.find("#nav-collapse").is(":visible")) {
+      cy.wrap(toggle).click();
+      cy.get("#nav-collapse").should("be.visible");
+    }
+    return cy.wrap($nav);
+  });
 });
