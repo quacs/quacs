@@ -111,6 +111,81 @@ class ReleaseTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse((self.root / "vue-ran").exists())
 
+    def test_prebuilt_publication_on_master_and_staging(self):
+        # Exercise the actual publisher against a local bare remote, never GitHub.
+        for branch in ("master", "staging"):
+            with self.subTest(branch=branch):
+                repo = self.root / branch
+                site = repo / "site"
+                site.mkdir(parents=True)
+                env = {**os.environ, "PREBUILT_SITE": "release-site"}
+
+                def git(*args, cwd=repo):
+                    return subprocess.run(
+                        ["git", *args],
+                        cwd=cwd,
+                        env=env,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    ).stdout
+
+                git("init", "-b", branch)
+                git("config", "user.name", "Release test")
+                git("config", "user.email", "release@example.invalid")
+                (repo / "LICENSE").write_text("Fixture MIT license")
+                git("add", "LICENSE")
+                git("commit", "-m", "Source fixture")
+                scripts = site / "scripts"
+                scripts.mkdir()
+                shutil.copy(SCRIPTS / "gh-pages-deploy.sh", scripts)
+                shutil.copy(SCRIPTS / "service-worker.js", scripts)
+                remote = repo / "destination.git"
+                git("init", "--bare", "--initial-branch=master", str(remote))
+                git("clone", str(remote), "gh-pages-site", cwd=site)
+                destination = site / "gh-pages-site"
+                git("config", "user.name", "Release test", cwd=destination)
+                git("config", "user.email", "release@example.invalid", cwd=destination)
+                (destination / "spring2000").mkdir()
+                (destination / "spring2000/stale.js").write_text("old asset")
+                git("add", ".", cwd=destination)
+                git("commit", "-m", "Previous release", cwd=destination)
+                git("push", "origin", "master", cwd=destination)
+                output = site / "release-site"
+                (output / "spring2000").mkdir(parents=True)
+                (output / "index.html").write_text("root redirect")
+                (output / "spring2000/index.html").write_text("semester app")
+                (output / "spring2000/app.wasm").write_bytes(b"fixture wasm")
+                result = subprocess.run(
+                    ["sh", "scripts/gh-pages-deploy.sh"],
+                    cwd=site,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(
+                    git("show", f"{branch}:LICENSE", cwd=remote), "Fixture MIT license"
+                )
+                expected_cname = (
+                    "staging.quacs.org" if branch == "staging" else "quacs.org"
+                )
+                self.assertEqual(
+                    git("show", f"{branch}:CNAME", cwd=remote).strip(), expected_cname
+                )
+                self.assertEqual(
+                    git("show", f"{branch}:index.html", cwd=remote), "root redirect"
+                )
+                self.assertEqual(
+                    git("show", f"{branch}:spring2000/index.html", cwd=remote),
+                    "semester app",
+                )
+                self.assertEqual(
+                    git("show", f"{branch}:service-worker.js", cwd=remote),
+                    (scripts / "service-worker.js").read_text(),
+                )
+                self.assertFalse((destination / "spring2000/stale.js").exists())
+
     def test_missing_semester_blocks_publication(self):
         self.semesters(1)
         output = self.root / "release"
