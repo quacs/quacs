@@ -1,0 +1,134 @@
+/* GeoCities (the QuACS Academy): a teacher's homepage from GeoCities' Athens neighborhood, its education
+quarter, around 1999, in the look of that decade's CD-ROM encyclopedias and textbooks (the "Utopian
+Scholastic" style): white marble, navy and gold, classical serif type, spinning globes, a professor
+owl, books and quills, a "Did You Know?" box of Rensselaer facts, a marquee of famous words on
+learning, and a webring that tours RPI's departments. The duck wears a mortarboard. Shared GeoCities
+styles are in geocities.css. */
+html[data-theme="geocities"] {
+  --geo-bg: #eef1f2;
+  --geo-tile: url("../../images/geocities/academy/marble.jpg");
+  --geo-ink: #000;
+  --geo-page-ink: #0f1f55;
+  --geo-page-link: #00e;
+  --geo-panel: #fff;
+  --geo-bevel: #2c4590;
+  --geo-head-bg: linear-gradient(#3557b5, #142a70);
+  --geo-head-ink: #fff3b0;
+  --geo-head-text-on-panel: #142a70;
+  --geo-title-font: "Book Antiqua", "Palatino Linotype", palatino, "Times New Roman", times, serif;
+  --geo-title-color: #142a70;
+  --geo-title-shadow: 1px 1px 0 #f1cf62, 2px 2px 0 #b8902a, 0 0 10px #fff;
+  --geo-subtitle-color: #7a1f1f;
+  --geo-link: #00e;
+  --geo-link-visited: #551a8b;
+  --geo-link-hover: #e00000;
+  --geo-code-color: #7a1f1f;
+  --geo-hover-bg: #fff6cc;
+  --geo-selected: #fff1a8;
+  --geo-selected-hover: #ffe680;
+  --geo-nav-bg: #13286b;
+  --geo-nav-ink: #fff;
+  --geo-nav-hover: #ffd34d;
+  --geo-foot-bg: #0e1f55;
+  --geo-foot-ink: #fff;
+  --geo-foot-link: #ffd34d;
+  --geo-marquee-bg: #0e1f55;
+  --geo-marquee-ink: #ffd34d;
+  --geo-frame: #b8902a;
+  --geo-flank-width-small: 52px;
+  --geo-bullet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-8 -8 16 16'%3E%3Cpath d='M0 -7.5 L2.2 -2.4 7.6 -2.3 3.4 1.1 4.9 6.6 0 3.5 -4.9 6.6 -3.4 1.1 -7.6 -2.3 -2.2 -2.4 Z' fill='%23ffd34d' stroke='%23b8860b' stroke-width='.9' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  /* Calendar: the colors of textbook covers and school folders */
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #dbe4ff;
+  --calendar-border-color-0: #142a70;
+  --calendar-text-color-0: #000;
+  --calendar-bg-color-1: #ffe1e1;
+  --calendar-border-color-1: #7a1f1f;
+  --calendar-text-color-1: #000;
+  --calendar-bg-color-2: #dff3dc;
+  --calendar-border-color-2: #1f6b2a;
+  --calendar-text-color-2: #000;
+  --calendar-bg-color-3: #fff1b8;
+  --calendar-border-color-3: #b8902a;
+  --calendar-text-color-3: #000;
+  --calendar-bg-color-4: #ece0ff;
+  --calendar-border-color-4: #5b2f9a;
+  --calendar-text-color-4: #000;
+  --calendar-bg-color-5: #d7f2f2;
+  --calendar-border-color-5: #11727a;
+  --calendar-text-color-5: #000;
+  --calendar-bg-color-6: #ffe6cc;
+  --calendar-border-color-6: #c25a0a;
+  --calendar-text-color-6: #000;
+  --calendar-sb-track-color-0: #fff;
+  --calendar-sb-thumb-color-0: #808080;
+  --calendar-sb-track-color-1: #fff;
+  --calendar-sb-thumb-color-1: #808080;
+  --calendar-sb-track-color-2: #fff;
+  --calendar-sb-thumb-color-2: #808080;
+  --calendar-sb-track-color-3: #fff;
+  --calendar-sb-thumb-color-3: #808080;
+  --calendar-sb-track-color-4: #fff;
+  --calendar-sb-thumb-color-4: #808080;
+  --calendar-sb-track-color-5: #fff;
+  --calendar-sb-thumb-color-5: #808080;
+  --calendar-sb-track-color-6: #fff;
+  --calendar-sb-thumb-color-6: #808080;
+}
+
+/* The mortarboard makes the logo taller */
+html[data-theme="geocities"] .navbar-brand img {
+  height: 43px !important;
+}
+
+html[data-theme="geocities"] .navbar-light .navbar-toggler-icon {
+  filter: none;
+}
+
+/* The title in gold WordArt, standing out from the page in navy */
+html[data-theme="geocities"] .geo-title {
+  background: linear-gradient(#fff6c2 8%, #f3c63d 42%, #c08d1e 58%, #f6d36a 86%);
+  background-clip: text;
+  color: transparent;
+  font-size: 3.1rem;
+  letter-spacing: 0.02em;
+  text-shadow: none;
+  filter:
+    drop-shadow(1px 1px 0 #142a70)
+    drop-shadow(1px 1px 0 #142a70)
+    drop-shadow(1px 1px 0 #0b1640)
+    drop-shadow(3px 4px 3px rgb(0 0 0 / 30%));
+}
+
+html[data-theme="geocities"] .geo-subtitle {
+  font-family: var(--geo-title-font);
+}
+
+html[data-theme="geocities"] .geo-topline {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+/* School headers like a textbook's chapters: small capitals in gold on navy */
+html[data-theme="geocities"] .department-cards .card-header {
+  font-family: var(--geo-title-font);
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+html[data-theme="geocities"] .geo-facts {
+  border-color: var(--geo-bevel);
+  box-shadow: 3px 3px 0 rgb(15 31 85 / 25%);
+}
+
+html[data-theme="geocities"] .geo-facts-title {
+  border-bottom: 2px solid #f1cf62;
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="geocities"] .geo-title {
+    font-size: 2rem;
+  }
+}

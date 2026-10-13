@@ -60,11 +60,39 @@ import { ARTISANAL_THEME, THEME_OPTIONS } from "@/utilities";
   },
   watch: {
     timePreference: function (val) {
+      // A preference the dialog only followed (see below) is already in the store
+      if (val === (this as Settings).followedTimePreference) {
+        (this as Settings).followedTimePreference = null;
+        return;
+      }
       this.$store.commit("settings/setTimePreference", val);
     },
+    // The time preference can also change outside this dialog (the Liquid Glass theme's Control
+    // Centre, or another tab), so the dropdown follows the store without committing it again
+    "$store.state.settings.timePreference": function (val) {
+      const settings = this as Settings;
+      if (settings.timePreference !== val) {
+        settings.followedTimePreference = val;
+        settings.timePreference = val;
+      }
+    },
     colorTheme: function (val) {
+      // A theme the dropdown only followed (see below) is already in the store
+      if (val === (this as Settings).followedColorTheme) {
+        (this as Settings).followedColorTheme = null;
+        return;
+      }
       this.$store.commit("settings/setColorTheme", val);
       trackAgentAction("theme_selected", { theme: val });
+    },
+    // The theme can also change in another tab, so the dropdown follows the store. It doesn't
+    // commit those changes again, or two tabs could echo a change between them forever.
+    "$store.state.settings.colorTheme": function (val) {
+      const settings = this as Settings;
+      if (settings.colorTheme !== val) {
+        settings.followedColorTheme = val;
+        settings.colorTheme = val;
+      }
     },
   },
   computed: {
@@ -96,12 +124,14 @@ import { ARTISANAL_THEME, THEME_OPTIONS } from "@/utilities";
 })
 export default class Settings extends Vue {
   timePreference = this.$store.state.settings.timePreference;
+  followedTimePreference: string | null = null;
   timeOptions: { value: string; text: string }[] = [
     { value: "S", text: "12 Hour" },
     { value: "M", text: "24 Hour" },
   ];
 
   colorTheme = this.$store.state.settings.colorTheme;
+  followedColorTheme: string | null = null;
   themeOptions: { value: string; text: string }[] = THEME_OPTIONS.map(
     ({ value, text }) => ({ value, text })
   );

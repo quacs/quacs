@@ -1,0 +1,1824 @@
+/* Liquid Glass, after Apple's 2025 design language and macOS Tahoe: everything floats over a duck pond
+as glass, built with liquidglass.dev's engine and components (src/vendor/; LiquidGlassDecor.vue and
+components/themes/liquid-glass/).
+- Panes on the pond bend an aligned copy of the pond, so the lensing works in every browser, with a
+  bright rim facing the light. Panes floating over the page (the menu bar, menus, dialogs) bend what is
+  behind them in Chromium and are frosted elsewhere.
+- The navbar is a macOS menu bar: a glass rod with a sliding glass highlight, a clock and status items,
+  dark with white text over the pond and light while a pane passes under it. Its menus are frosted
+  glass with the library's sliding highlight.
+- The library's Dock sits along the bottom, and its Control Centre opens from the menu bar.
+- Buttons, switches and the 12/24 hour choice are the library's glass button, switch and segmented
+  control; copying a CRN shows its toast; a magnifier lens follows the pointer over the calendar.
+Until a pane's glass is ready (and without JavaScript) it is frosted glass. With "reduce transparency"
+on, the glass turns nearly opaque.
+Background: "Duck Water" (a wood duck) by Bob Richards, CC0 (stocksnap.io/photo/duck-water-MS42VO9HTG). */
+[data-theme="liquid-glass"] {
+  --lg-label: #1c1c1e;
+  --lg-label-2: rgb(46 46 52 / 86%);
+  --lg-label-3: rgb(60 60 67 / 55%);
+  --lg-hairline: rgb(60 60 67 / 16%);
+  --lg-blue: #007aff;
+  --lg-blue-strong: #0060df;
+  --lg-green: #34c759;
+  --lg-red: #ff3b30;
+  --lg-orange: #ff9500;
+  --lg-tint-clear: rgb(255 255 255 / 20%);
+  --lg-tint-regular: rgb(255 255 255 / 52%);
+  --lg-tint-thick: rgb(255 255 255 / 70%);
+  --lg-frost: blur(16px) saturate(185%);
+  --lg-frost-light: blur(3px) saturate(170%) brightness(1.06);
+  --lg-shadow: 0 10px 34px rgb(0 0 0 / 22%), 0 2px 6px rgb(0 0 0 / 12%);
+  --lg-inner: inset 0 1px 1px rgb(255 255 255 / 85%), inset 0 -1px 1px rgb(255 255 255 / 28%);
+  --lg-rim:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 95%) 0%,
+      rgb(255 255 255 / 30%) 28%,
+      rgb(255 255 255 / 0%) 50%,
+      rgb(255 255 255 / 22%) 72%,
+      rgb(255 255 255 / 80%) 100%
+    );
+  --lg-spring: cubic-bezier(0.2, 0.9, 0.25, 1.25);
+  --lg-font:
+    -apple-system,
+    blinkmacsystemfont,
+    "SF Pro Text",
+    "SF Pro Display",
+    "Inter",
+    "Helvetica Neue",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+
+  /* QuACS tokens */
+  --background: #3c4a12;
+  --background-image: none;
+  --global-text: var(--lg-label);
+  --global-text-hover: var(--lg-blue);
+  --raw-link: var(--lg-blue);
+  --text-default: var(--lg-label);
+  --footer-background: transparent;
+  --font-body: var(--lg-font);
+  --font-heading: var(--lg-font);
+  --warning-color: #b3261e;
+  --warning-border-width: 0;
+  --card-background: var(--lg-tint-regular);
+  --card-body-background: transparent;
+  --card-body-text: var(--lg-label);
+  --card-header-background: transparent;
+  --card-header-text: var(--lg-label);
+  --card-header-hover: rgb(255 255 255 / 28%);
+  --card-border-color: transparent;
+  --card-border-width: 0;
+  --card-border-radius: 28px;
+  --card-shadow: var(--lg-shadow), var(--lg-inner);
+  --card-backdrop-filter: var(--lg-frost);
+  --navbar-backdrop-filter: var(--lg-frost-light);
+  --navbar-background: var(--lg-tint-clear);
+  --navbar-unselected-text: var(--lg-label);
+  --navbar-unselected-text-hover: var(--lg-label);
+  --navbar-text-focus: var(--lg-label);
+  --navbar-text-disabled: var(--lg-label-3);
+  --navbar-text-active: var(--lg-label);
+  --navbar-text-show: var(--lg-label);
+  --modal-header-background: transparent;
+  --modal-header-text: var(--lg-label);
+  --modal-body-background: transparent;
+  --modal-body-text: var(--lg-label);
+  --modal-footer-background: transparent;
+  --modal-footer-text: var(--lg-label);
+  --modal-close-x-hover: var(--lg-label);
+  --btn-primary-background: var(--lg-blue);
+  --btn-primary-text: #fff;
+  --btn-border: 0;
+  --btn-border-radius: 999px;
+  --btn-box-shadow: none;
+  --btn-transition: transform 0.35s var(--lg-spring), background-color 0.2s;
+  --btn-secondary-background: rgb(255 255 255 / 38%);
+  --btn-secondary-text: var(--lg-label);
+  --department-link-hover: transparent;
+  --select-background: rgb(255 255 255 / 55%);
+  --select-text: var(--lg-label);
+  --table-text: var(--lg-label);
+  --table-border: var(--lg-hairline);
+  --course-row-hover: rgb(255 255 255 / 35%);
+  --conflict-row: rgb(255 59 48 / 14%);
+  --conflict-row-hover: rgb(255 59 48 / 20%);
+  --selected-row: rgb(0 122 255 / 16%);
+  --selected-row-hover: rgb(0 122 255 / 22%);
+  --list-group-item-background: transparent;
+  --search-bar-background: rgb(255 255 255 / 42%);
+  --search-bar-border: transparent;
+  --overlay-background: rgb(255 255 255 / 55%);
+  --trash-btn: var(--lg-label-2);
+  --trash-btn-hover: var(--lg-red);
+  --prerequisite-jumbotron: var(--lg-tint-regular);
+  --prerequisite-text: #fff;
+  --prerequisite-warn-icon: var(--lg-orange);
+  --prerequisite-error-icon: var(--lg-red);
+  --taken-course: #248a3d;
+  --not-taken-course: #d70015;
+  --toast-background: rgb(30 30 30 / 72%);
+  --toast-text: #fff;
+
+  /* Calendar: iOS Calendar colors as translucent fills with a solid leading edge */
+  --calendar-grid-color: rgb(60 60 67 / 14%);
+  --calendar-label: var(--lg-label-2);
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: rgb(0 122 255 / 24%);
+  --calendar-border-color-0: #007aff;
+  --calendar-text-color-0: #003e85;
+  --calendar-bg-color-1: rgb(52 199 89 / 26%);
+  --calendar-border-color-1: #28a745;
+  --calendar-text-color-1: #145a24;
+  --calendar-bg-color-2: rgb(255 149 0 / 26%);
+  --calendar-border-color-2: #ff9500;
+  --calendar-text-color-2: #7a4300;
+  --calendar-bg-color-3: rgb(255 45 85 / 22%);
+  --calendar-border-color-3: #ff2d55;
+  --calendar-text-color-3: #8a0021;
+  --calendar-bg-color-4: rgb(175 82 222 / 24%);
+  --calendar-border-color-4: #af52de;
+  --calendar-text-color-4: #561a74;
+  --calendar-bg-color-5: rgb(48 176 199 / 26%);
+  --calendar-border-color-5: #30b0c7;
+  --calendar-text-color-5: #0d5160;
+  --calendar-bg-color-6: rgb(255 204 0 / 30%);
+  --calendar-border-color-6: #f4b400;
+  --calendar-text-color-6: #6b4e00;
+  --calendar-sb-track-color-0: transparent;
+  --calendar-sb-thumb-color-0: rgb(0 0 0 / 22%);
+  --calendar-sb-track-color-1: transparent;
+  --calendar-sb-thumb-color-1: rgb(0 0 0 / 22%);
+  --calendar-sb-track-color-2: transparent;
+  --calendar-sb-thumb-color-2: rgb(0 0 0 / 22%);
+  --calendar-sb-track-color-3: transparent;
+  --calendar-sb-thumb-color-3: rgb(0 0 0 / 22%);
+  --calendar-sb-track-color-4: transparent;
+  --calendar-sb-thumb-color-4: rgb(0 0 0 / 22%);
+  --calendar-sb-track-color-5: transparent;
+  --calendar-sb-thumb-color-5: rgb(0 0 0 / 22%);
+  --calendar-sb-track-color-6: transparent;
+  --calendar-sb-thumb-color-6: rgb(0 0 0 / 22%);
+
+  scrollbar-color: rgb(0 0 0 / 30%) transparent;
+}
+
+html[data-theme="liquid-glass"] ::selection {
+  background: rgb(0 122 255 / 35%);
+}
+
+/* The pond, on a fixed layer */
+html[data-theme="liquid-glass"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: url("../../images/liquid-glass/duck-pond.jpg") 60% 45% / cover no-repeat, #3c4a12;
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="liquid-glass"] body::before,
+  html[data-theme="liquid-glass"] .lg-glass-copy {
+    background: url("../../images/liquid-glass/duck-pond-small.jpg") 66% 45% / cover no-repeat, #3c4a12;
+  }
+
+  html[data-theme="liquid-glass"] .lg-pane-frost .lg-glass-copy {
+    background-image: url("../../images/liquid-glass/duck-pond-small-frost.jpg");
+  }
+}
+
+html[data-theme="liquid-glass"] body {
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+html[data-theme="liquid-glass"] h1,
+html[data-theme="liquid-glass"] h2,
+html[data-theme="liquid-glass"] h3,
+html[data-theme="liquid-glass"] h4,
+html[data-theme="liquid-glass"] h5 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+:where([data-theme="liquid-glass"]) a {
+  color: var(--lg-blue);
+}
+
+/* ---------- Glass: shared by every pane ---------- */
+html[data-theme="liquid-glass"] .card,
+html[data-theme="liquid-glass"] .jumbotron,
+html[data-theme="liquid-glass"] .unofficial-schedule-warning,
+html[data-theme="liquid-glass"] .modal-content,
+html[data-theme="liquid-glass"] .dropdown-menu,
+html[data-theme="liquid-glass"] .navbar.bg-light,
+html[data-theme="liquid-glass"] .schedule-select,
+html[data-theme="liquid-glass"] .calendar,
+html[data-theme="liquid-glass"] .footer,
+html[data-theme="liquid-glass"] .btn {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The rim: a bright edge on the top left and bottom right, like light caught in thick glass */
+html[data-theme="liquid-glass"] .card::before,
+html[data-theme="liquid-glass"] .jumbotron::before,
+html[data-theme="liquid-glass"] .unofficial-schedule-warning::before,
+html[data-theme="liquid-glass"] .modal-content::before,
+html[data-theme="liquid-glass"] .dropdown-menu::before,
+html[data-theme="liquid-glass"] .navbar.bg-light::before,
+html[data-theme="liquid-glass"] .schedule-select::before,
+html[data-theme="liquid-glass"] .calendar::before,
+html[data-theme="liquid-glass"] .footer::before,
+html[data-theme="liquid-glass"] .btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: var(--lg-rim);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* The pointer light: LiquidGlassDecor.vue sets --lg-mx, --lg-my and --lg-lit on the pane under the pointer */
+html[data-theme="liquid-glass"] .card::after,
+html[data-theme="liquid-glass"] .jumbotron::after,
+html[data-theme="liquid-glass"] .modal-content::after,
+html[data-theme="liquid-glass"] .navbar.bg-light::after,
+html[data-theme="liquid-glass"] .calendar::after,
+html[data-theme="liquid-glass"] .footer::after,
+html[data-theme="liquid-glass"] .btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      220px circle at var(--lg-mx, 50%) var(--lg-my, 50%),
+      rgb(255 255 255 / 34%),
+      rgb(255 255 255 / 0%) 70%
+    );
+  opacity: var(--lg-lit, 0%);
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+/* ---------- Live glass, from LiquidGlassDecor.vue ---------- */
+
+/* A pane with live glass paints nothing itself. Its glass layer holds the refracted pond (or the bent
+backdrop) under a tint, and the engine draws the rim light, so the pane's own rim goes too. It comes
+back while the lens rests or where there is none (lg-pane-rim) and on frosted glass. */
+html[data-theme="liquid-glass"] .lg-pane.lg-pane {
+  background: transparent;
+  backdrop-filter: none;
+}
+
+html[data-theme="liquid-glass"] .lg-pane:not(.lg-pane-frosted, .lg-pane-rim)::before {
+  display: none;
+}
+
+html[data-theme="liquid-glass"] .lg-glass {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+html[data-theme="liquid-glass"] .lg-glass-lens {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #3c4a12;
+  will-change: filter;
+}
+
+html[data-theme="liquid-glass"] .lg-glass-copy {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url("../../images/liquid-glass/duck-pond.jpg") 60% 45% / cover no-repeat, #3c4a12;
+}
+
+/* The same pond blurred ahead of time, so frosted panes don't blur it live on every frame */
+html[data-theme="liquid-glass"] .lg-pane-frost .lg-glass-copy {
+  background-image: url("../../images/liquid-glass/duck-pond-frost.jpg");
+}
+
+html[data-theme="liquid-glass"] .lg-glass-tint {
+  position: absolute;
+  inset: 0;
+  background: var(--lg-pane-tint);
+}
+
+/* How white each kind of glass is: clear where it holds little text, whiter under dense text */
+html[data-theme="liquid-glass"] .lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 40%);
+}
+
+html[data-theme="liquid-glass"] .schedule-select.lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 30%);
+}
+
+html[data-theme="liquid-glass"] .unofficial-schedule-warning.lg-pane,
+html[data-theme="liquid-glass"] .card.lg-pane,
+html[data-theme="liquid-glass"] .jumbotron.lg-pane,
+html[data-theme="liquid-glass"] .calendar.lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 52%);
+}
+
+html[data-theme="liquid-glass"] .department-cards > .card.lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 42%);
+}
+
+html[data-theme="liquid-glass"] .modal-content.lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 58%);
+}
+
+html[data-theme="liquid-glass"] .lg-pane-frosted {
+  --lg-pane-tint: rgb(255 255 255 / 66%);
+}
+
+/* ---------- Menu bar: the navbar as a macOS menu bar (liquid-glass/menubar.ts) ---------- */
+
+/* A glass rod floating at the top: dark glass and white text over the pond, light glass and dark text
+while a pane passes under it */
+html[data-theme="liquid-glass"] .navbar.bg-light {
+  --lg-bar-ink: #fff;
+  --lg-bar-field: rgb(255 255 255 / 18%);
+  --lg-bar-field-focus: rgb(255 255 255 / 30%);
+  --lg-bar-placeholder: rgb(255 255 255 / 78%);
+  --lg-bar-hover: rgb(255 255 255 / 20%);
+  --lg-bar-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E");
+  --lg-indicator: rgb(255 255 255 / 86%);
+
+  position: sticky;
+  top: 10px;
+  z-index: 1030;
+  width: calc(100% - 24px);
+  max-width: 1400px;
+  min-height: 50px;
+  margin: 10px auto 0;
+  padding: 5px 8px 5px 18px;
+  border-radius: 999px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 22%), 0 1px 3px rgb(0 0 0 / 14%);
+  color: var(--lg-bar-ink);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 35%);
+  backdrop-filter: blur(4px) saturate(170%) brightness(0.92);
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+html[data-theme="liquid-glass"] .navbar.lg-pane {
+  --lg-pane-tint: rgb(17 24 39 / 24%);
+}
+
+/* With live glass the bar paints nothing itself. A backdrop-filter of its own would also stop its glass
+from seeing the page behind it. */
+html[data-theme="liquid-glass"] .navbar.bg-light.lg-pane {
+  --navbar-background: transparent;
+
+  backdrop-filter: none;
+}
+
+html[data-theme="liquid-glass"] .navbar.lg-menubar-light {
+  --lg-bar-ink: #1c1c1e;
+  --lg-bar-field: rgb(255 255 255 / 48%);
+  --lg-bar-field-focus: rgb(255 255 255 / 75%);
+  --lg-bar-placeholder: rgb(60 60 67 / 70%);
+  --lg-bar-hover: rgb(0 0 0 / 7%);
+  --lg-bar-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%233c3c43' stroke-opacity='.75' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E");
+
+  text-shadow: none;
+}
+
+html[data-theme="liquid-glass"] .navbar.lg-menubar-light.lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 55%);
+}
+
+html[data-theme="liquid-glass"] .navbar .lg-glass-tint {
+  transition: background-color 0.3s ease;
+}
+
+html[data-theme="liquid-glass"] .navbar-brand {
+  position: relative;
+  z-index: 2;
+  padding: 0;
+}
+
+html[data-theme="liquid-glass"] .navbar-brand img {
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 30%));
+}
+
+/* Menu titles */
+html[data-theme="liquid-glass"] .navbar-nav .nav-link {
+  position: relative;
+  z-index: 2;
+  margin: 0 1px;
+  padding: 0.4rem 0.85rem !important;
+  border-radius: 999px;
+  color: var(--lg-bar-ink) !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+html[data-theme="liquid-glass"] .navbar-nav .nav-text {
+  font-size: 0.95rem;
+}
+
+html[data-theme="liquid-glass"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="liquid-glass"] .navbar-light .navbar-toggler {
+  position: relative;
+  z-index: 2;
+  border: 0;
+  border-radius: 999px;
+  background: var(--lg-bar-hover);
+}
+
+html[data-theme="liquid-glass"] .navbar:not(.lg-menubar-light) .navbar-toggler-icon {
+  filter: invert(100%) drop-shadow(0 1px 1px rgb(0 0 0 / 40%));
+}
+
+/* The sliding highlight: a white copy of the titles, clipped by the engine to a glass lens. It starts
+clipped away, until the engine has placed the lens. */
+html[data-theme="liquid-glass"] .lg-nav-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border-radius: inherit;
+  background: var(--lg-indicator);
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+
+html[data-theme="liquid-glass"] .lg-nav-copy .nav-link {
+  color: #1c1c1e !important;
+  text-shadow: none;
+}
+
+html[data-theme="liquid-glass"] .lg-nav-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 14%), 0 4px 12px rgb(0 0 0 / 10%);
+  opacity: 0%;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+/* Status items: Control Centre, Wi-Fi, battery and the clock */
+html[data-theme="liquid-glass"] .lg-menubar-status {
+  position: relative;
+  z-index: 2;
+  display: none;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
+  color: var(--lg-bar-ink);
+  font-size: 0.92rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+html[data-theme="liquid-glass"] .lg-menubar-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+html[data-theme="liquid-glass"] .lg-menubar-item[hidden] {
+  display: none;
+}
+
+html[data-theme="liquid-glass"] button.lg-menubar-item:hover,
+html[data-theme="liquid-glass"] button.lg-menubar-item[aria-expanded="true"] {
+  background: var(--lg-bar-hover);
+}
+
+html[data-theme="liquid-glass"] .lg-menubar-item .lg-icon {
+  width: 17px;
+  height: 17px;
+}
+
+html[data-theme="liquid-glass"] .navbar:not(.lg-menubar-light) .lg-menubar-item .lg-icon {
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 35%));
+}
+
+html[data-theme="liquid-glass"] .lg-clock {
+  padding: 0 10px 0 6px;
+}
+
+/* Search: a Spotlight field */
+html[data-theme="liquid-glass"] .navbar-search {
+  position: relative;
+  z-index: 2;
+}
+
+html[data-theme="liquid-glass"] #search-bar {
+  height: 36px;
+  padding-left: 40px;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--lg-bar-field);
+  background-image: var(--lg-bar-search);
+  background-position: 14px 50%;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 10%), inset 0 0 0 0.5px rgb(255 255 255 / 25%);
+  color: var(--lg-bar-ink);
+  text-shadow: none;
+}
+
+html[data-theme="liquid-glass"] #search-bar::placeholder {
+  color: var(--lg-bar-placeholder);
+}
+
+html[data-theme="liquid-glass"] #search-bar:focus {
+  background-color: var(--lg-bar-field-focus);
+  box-shadow: 0 0 0 3px rgb(10 132 255 / 45%);
+}
+
+@media (min-width: 1200px) {
+  html[data-theme="liquid-glass"] .lg-menubar-status {
+    display: inline-flex;
+  }
+
+  /* The highlight shows which title is under the pointer, so titles don't light up themselves */
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link:hover,
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link:focus-visible {
+    background: transparent;
+  }
+}
+
+/* From 1200px to 1440px the bar is tight: slimmer titles, and only the Control Centre and the clock
+among the status items, leave the search field room */
+@media (min-width: 1200px) and (max-width: 1439.98px) {
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.9rem;
+  }
+
+  html[data-theme="liquid-glass"] .navbar-nav .nav-text {
+    font-size: 0.9rem;
+  }
+
+  html[data-theme="liquid-glass"] .lg-wifi,
+  html[data-theme="liquid-glass"] .lg-battery {
+    display: none;
+  }
+
+  html[data-theme="liquid-glass"] .navbar-search {
+    min-width: 160px;
+  }
+}
+
+/* ---------- Menus: liquidglass.dev's <lg-menu> (liquid-glass/menus.ts) ---------- */
+html[data-theme="liquid-glass"] .dropdown-menu {
+  min-width: 220px;
+  margin-top: 10px !important;
+  padding: 6px;
+  border: 0;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 55%);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 22%), 0 2px 8px rgb(0 0 0 / 10%);
+  color: var(--lg-label);
+  text-shadow: none;
+  backdrop-filter: blur(24px) saturate(180%);
+}
+
+html[data-theme="liquid-glass"] .dropdown-menu.lg-pane {
+  --lg-pane-tint: rgb(255 255 255 / 55%);
+}
+
+html[data-theme="liquid-glass"] .dropdown-item {
+  position: relative;
+  z-index: 1;
+  padding: 0.38rem 0.75rem;
+  border-radius: 8px;
+  color: var(--lg-label);
+  font-size: 0.93rem;
+  font-weight: 500;
+}
+
+/* The sliding lens shows the highlighted item, so items don't light up themselves */
+html[data-theme="liquid-glass"] .dropdown-item:hover,
+html[data-theme="liquid-glass"] .dropdown-item:focus,
+html[data-theme="liquid-glass"] .dropdown-item:active {
+  background: transparent;
+  color: var(--lg-label);
+}
+
+html[data-theme="liquid-glass"] .dropdown-divider {
+  margin: 4px 10px;
+  border-top-color: rgb(0 0 0 / 10%);
+}
+
+html[data-theme="liquid-glass"] .lg-menu-copy {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  margin: 0;
+  padding: inherit;
+  border-radius: inherit;
+  background: #0a84ff;
+  color: #fff;
+  list-style: none;
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+
+html[data-theme="liquid-glass"] .lg-menu-copy .dropdown-item,
+html[data-theme="liquid-glass"] .lg-menu-copy .dropdown-item:hover {
+  color: #fff;
+}
+
+html[data-theme="liquid-glass"] .lg-menu-copy .dropdown-divider {
+  opacity: 0%;
+}
+
+/* Menus the highlight hasn't reached yet light their items up themselves */
+html[data-theme="liquid-glass"] .dropdown-menu:not(.lg-menu) .dropdown-item:hover,
+html[data-theme="liquid-glass"] .dropdown-menu:not(.lg-menu) .dropdown-item:focus {
+  background: #0a84ff;
+  color: #fff;
+}
+
+html[data-theme="liquid-glass"] .lg-menu-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0%;
+  pointer-events: none;
+}
+
+/* ---------- Warning ---------- */
+html[data-theme="liquid-glass"] .unofficial-schedule-warning {
+  margin-top: 1.25rem;
+  padding: 1rem 1.5rem 1.1rem 4.4rem;
+  border-radius: 26px;
+  background: rgb(255 255 255 / 58%);
+  box-shadow: var(--lg-shadow), var(--lg-inner);
+  color: #9b1c13;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+  text-align: left;
+  backdrop-filter: var(--lg-frost);
+}
+
+html[data-theme="liquid-glass"] .unofficial-schedule-warning::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 1.25rem;
+  width: 2.3rem;
+  height: 2.3rem;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 6.5v7' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='17.4' r='1.5' fill='%23fff'/%3E%3C/svg%3E") center / 60% no-repeat, linear-gradient(#ff6259, #ff3b30);
+  box-shadow: 0 3px 8px rgb(255 59 48 / 40%), inset 0 1px 1px rgb(255 255 255 / 60%);
+}
+
+/* ---------- Panes ---------- */
+html[data-theme="liquid-glass"] .card {
+  backdrop-filter: var(--lg-frost);
+}
+
+html[data-theme="liquid-glass"] .card-header {
+  border: 0;
+}
+
+html[data-theme="liquid-glass"] .card-body {
+  background: transparent;
+}
+
+/* School panes: a large bold title over iOS list rows */
+html[data-theme="liquid-glass"] .department-cards .card {
+  margin-bottom: 1.25rem;
+}
+
+html[data-theme="liquid-glass"] .department-cards .card-header {
+  padding: 1.1rem 1.35rem 0.4rem !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+html[data-theme="liquid-glass"] .department-cards .card-body {
+  padding: 0.25rem 0.6rem 0.75rem;
+}
+
+html[data-theme="liquid-glass"] .department-cards .department-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 16px;
+  color: var(--lg-label) !important;
+  font-size: 1rem !important;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: background-color 0.2s ease, transform 0.35s var(--lg-spring);
+}
+
+html[data-theme="liquid-glass"] .department-cards .department-link::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 14px;
+  margin-left: auto;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M1.5 1.5 6.5 7l-5 5.5' fill='none' stroke='%233c3c43' stroke-opacity='.4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+html[data-theme="liquid-glass"] .department-cards .department-link:hover,
+html[data-theme="liquid-glass"] .department-cards .department-link:focus-visible {
+  background: rgb(255 255 255 / 55%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 85%), 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+html[data-theme="liquid-glass"] .department-code {
+  flex: 0 0 auto;
+  min-width: 3.6rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 62%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 80%);
+  color: var(--lg-blue-strong);
+  font-family: var(--lg-font) !important;
+  font-size: 0.8rem !important;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* Course panes */
+html[data-theme="liquid-glass"] .course-card {
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+html[data-theme="liquid-glass"] .course-card-header {
+  padding: 1rem 1.25rem 1.05rem;
+  background: transparent !important;
+  color: var(--lg-label-2) !important;
+  font-size: 0.97rem;
+  line-height: 1.45;
+}
+
+html[data-theme="liquid-glass"] .course-card-header:hover {
+  background: rgb(255 255 255 / 22%) !important;
+}
+
+html[data-theme="liquid-glass"] .course-card-header .course-code {
+  margin-left: 0.2rem;
+  color: var(--lg-label);
+  font-family: var(--lg-font);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+html[data-theme="liquid-glass"] .course-card-header .font-weight-bold {
+  color: var(--lg-label);
+  font-weight: 650 !important;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="liquid-glass"] .course-card .open_close_icon {
+  color: var(--lg-blue);
+}
+
+html[data-theme="liquid-glass"] .header_expanded {
+  border-bottom: 1px solid var(--lg-hairline);
+}
+
+html[data-theme="liquid-glass"] .prerequisiteError {
+  border-radius: 999px;
+  font-size: 0.82em;
+  font-weight: 600;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Tables: list rows with hairlines ---------- */
+html[data-theme="liquid-glass"] .table {
+  margin-bottom: 0;
+}
+
+html[data-theme="liquid-glass"] .table-bordered,
+html[data-theme="liquid-glass"] .table-bordered td,
+html[data-theme="liquid-glass"] .table-bordered th {
+  border-right: 0;
+  border-left: 0;
+  border-color: var(--lg-hairline);
+}
+
+html[data-theme="liquid-glass"] .table thead th {
+  border-top: 0;
+  color: var(--lg-label-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+html[data-theme="liquid-glass"] .table tbody tr.selected .font-weight-bold {
+  color: var(--lg-blue-strong);
+}
+
+html[data-theme="liquid-glass"] .info-icon {
+  color: var(--lg-blue);
+}
+
+html[data-theme="liquid-glass"] .current-schedule-badge {
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgb(0 122 255 / 90%);
+  color: #fff;
+}
+
+/* ---------- Buttons: liquidglass.dev's <lg-button> (liquid-glass/controls.ts) ---------- */
+
+/* Before the glass attaches, and for buttons it skips, a frosted pill */
+html[data-theme="liquid-glass"] .btn {
+  min-height: 40px;
+  padding: 0.45rem 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 14%), var(--lg-inner);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  backdrop-filter: var(--lg-frost-light);
+}
+
+html[data-theme="liquid-glass"] .btn-primary {
+  background: rgb(0 122 255 / 88%);
+  color: #fff;
+}
+
+html[data-theme="liquid-glass"] .btn-secondary,
+html[data-theme="liquid-glass"] .btn-outline-secondary {
+  background: rgb(255 255 255 / 40%);
+  color: var(--lg-label);
+}
+
+html[data-theme="liquid-glass"] .btn-outline-danger {
+  background: rgb(255 255 255 / 45%);
+  color: var(--lg-red);
+}
+
+html[data-theme="liquid-glass"] .btn:disabled,
+html[data-theme="liquid-glass"] .btn.disabled {
+  opacity: 50%;
+}
+
+/* With live glass the button paints nothing itself: the library's glass body sits under the label */
+html[data-theme="liquid-glass"] .btn.lg-btn {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+html[data-theme="liquid-glass"] .lg-btn > .lg-surface {
+  z-index: -1;
+}
+
+html[data-theme="liquid-glass"] .lg-btn::before {
+  display: none;
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn .lg-surface__shadow {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 14%), 0 1px 2px rgb(0 0 0 / 10%);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn .lg-surface__tint {
+  transition: background-color 0.2s ease;
+}
+/* stylelint-enable selector-class-pattern */
+
+/* Tinted: the accent showing through the glass, for the main action */
+html[data-theme="liquid-glass"] .btn.lg-btn-tinted,
+html[data-theme="liquid-glass"] .btn.lg-btn-tinted:hover,
+html[data-theme="liquid-glass"] .btn.lg-btn-tinted:focus {
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 20%);
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn-tinted .lg-surface__tint {
+  background: rgb(10 132 255 / 62%);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* Light: white glass with dark text */
+html[data-theme="liquid-glass"] .btn.lg-btn-light,
+html[data-theme="liquid-glass"] .btn.lg-btn-light:hover,
+html[data-theme="liquid-glass"] .btn.lg-btn-light:focus {
+  color: var(--lg-label);
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn-light .lg-surface__tint,
+html[data-theme="liquid-glass"] .lg-btn-danger .lg-surface__tint {
+  background: rgb(255 255 255 / 55%);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn-light:hover .lg-surface__tint {
+  background: rgb(255 255 255 / 70%);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn-tinted:hover .lg-surface__tint {
+  background: rgb(10 132 255 / 74%);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* Danger: red text that fills red on hover */
+html[data-theme="liquid-glass"] .btn.lg-btn-danger {
+  color: #d70015;
+}
+
+html[data-theme="liquid-glass"] .btn.lg-btn-danger:hover,
+html[data-theme="liquid-glass"] .btn.lg-btn-danger:focus {
+  color: #fff;
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-btn-danger:hover .lg-surface__tint,
+html[data-theme="liquid-glass"] .lg-btn-danger:focus .lg-surface__tint {
+  background: rgb(255 59 48 / 78%);
+}
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="liquid-glass"] .btn.lg-btn:focus {
+  box-shadow: none;
+}
+
+/* Fields */
+html[data-theme="liquid-glass"] .form-control,
+html[data-theme="liquid-glass"] .custom-select {
+  height: auto;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 14px;
+  background-color: rgb(255 255 255 / 55%);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 10%), inset 0 -1px 0 rgb(255 255 255 / 60%);
+  color: var(--lg-label);
+}
+
+html[data-theme="liquid-glass"] .custom-select {
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 16'%3E%3Cpath d='M3 6l3-3 3 3M3 10l3 3 3-3' fill='none' stroke='%233c3c43' stroke-opacity='.7' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 10px 14px;
+}
+
+html[data-theme="liquid-glass"] .form-control:focus,
+html[data-theme="liquid-glass"] .custom-select:focus {
+  background-color: rgb(255 255 255 / 75%);
+  box-shadow: 0 0 0 4px rgb(0 122 255 / 30%);
+  color: var(--lg-label);
+}
+
+/* ---------- Switches: liquidglass.dev's <lg-switch> (liquid-glass/controls.ts) ---------- */
+
+/* Before the glass attaches: an iOS switch drawn by Bootstrap's own pseudo-elements */
+html[data-theme="liquid-glass"] .custom-switch {
+  padding-left: 4.6rem;
+  min-height: 2rem;
+}
+
+html[data-theme="liquid-glass"] .custom-switch .custom-control-label::before {
+  top: 0;
+  left: -4.6rem;
+  width: 64px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background-color: #d1d5db;
+  box-shadow: none;
+}
+
+html[data-theme="liquid-glass"] .custom-switch .custom-control-label::after {
+  top: 2px;
+  left: calc(-4.6rem + 2px);
+  width: 36px;
+  height: 24px;
+  border-radius: 999px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 18%);
+}
+
+html[data-theme="liquid-glass"] .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #34c759;
+}
+
+html[data-theme="liquid-glass"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background-color: #fff;
+  transform: translateX(24px);
+}
+
+html[data-theme="liquid-glass"] .custom-control-label {
+  line-height: 28px;
+}
+
+/* With live glass: the label's pseudo-elements become an invisible place to click, and the library's
+switch is drawn over them */
+html[data-theme="liquid-glass"] .custom-switch.lg-sw-host {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  padding-left: calc(64px + 0.85rem);
+}
+
+html[data-theme="liquid-glass"] .lg-sw-host .custom-control-label {
+  line-height: 1.35;
+}
+
+html[data-theme="liquid-glass"] .custom-switch.lg-sw-host + .custom-switch.lg-sw-host {
+  margin-top: 0.6rem;
+}
+
+html[data-theme="liquid-glass"] .custom-switch.lg-sw-host .custom-control-input ~ .custom-control-label::before {
+  top: 50%;
+  left: calc(-64px - 0.85rem);
+  transform: translateY(-50%);
+  opacity: 0%;
+}
+
+html[data-theme="liquid-glass"] .custom-switch.lg-sw-host .custom-control-input ~ .custom-control-label::after {
+  display: none;
+}
+
+html[data-theme="liquid-glass"] .lg-sw {
+  --p: 0;
+
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 64px;
+  height: 28px;
+  margin-top: -14px;
+  pointer-events: none;
+}
+
+html[data-theme="liquid-glass"] .lg-sw-track,
+html[data-theme="liquid-glass"] .lg-sw-fill {
+  border-radius: 14px;
+  background: color-mix(in srgb, #d1d5db, #34c759 calc(var(--p) * 100%));
+}
+
+html[data-theme="liquid-glass"] .lg-sw-track {
+  position: absolute;
+  inset: 0;
+}
+
+html[data-theme="liquid-glass"] .lg-sw-refract {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  z-index: 1;
+  width: 96px;
+  height: 60px;
+}
+
+html[data-theme="liquid-glass"] .lg-sw-fill {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 64px;
+  height: 28px;
+}
+
+html[data-theme="liquid-glass"] .lg-sw-thumb,
+html[data-theme="liquid-glass"] .lg-sw-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+html[data-theme="liquid-glass"] .lg-sw-thumb {
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 18%), 0 3px 8px rgb(0 0 0 / 10%);
+}
+
+html[data-theme="liquid-glass"] .lg-sw-shadow {
+  z-index: 2;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+  opacity: 0%;
+}
+
+html[data-theme="liquid-glass"] .custom-control-input:focus-visible ~ .lg-sw .lg-sw-thumb {
+  outline: 2px solid #0a84ff;
+  outline-offset: 2px;
+}
+
+html[data-theme="liquid-glass"] .lg-sw-disabled {
+  opacity: 50%;
+}
+
+/* ---------- Segmented controls: liquidglass.dev's <lg-segmented> (liquid-glass/controls.ts) ---------- */
+html[data-theme="liquid-glass"] .lg-replaced {
+  display: none !important;
+}
+
+html[data-theme="liquid-glass"] .lg-seg-select {
+  --lg-track: rgb(120 120 128 / 16%);
+
+  display: flex;
+  margin-top: 0.35rem;
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-seg-select .lg-seg__option {
+  flex: 1;
+  min-width: 0;
+  color: var(--lg-label-2);
+  font-size: 0.95rem;
+}
+
+html[data-theme="liquid-glass"] .lg-seg-select .lg-refract .lg-seg__option {
+  color: var(--lg-label);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Prerequisites ---------- */
+html[data-theme="liquid-glass"] .jumbotron {
+  border-radius: 32px;
+  box-shadow: var(--lg-shadow), var(--lg-inner);
+  backdrop-filter: var(--lg-frost);
+}
+
+/* Page titles: iOS large titles, white over the pond. The prerequisites title sits on glass instead. */
+html[data-theme="liquid-glass"] h1 {
+  color: #fff;
+  font-size: 2.4rem;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 45%);
+}
+
+html[data-theme="liquid-glass"] .jumbotron h1 {
+  color: var(--lg-label);
+  font-size: 2.6rem;
+  letter-spacing: -0.03em;
+  text-shadow: none;
+}
+
+html[data-theme="liquid-glass"] .jumbotron .lead {
+  color: var(--lg-label-2);
+  font-weight: 500;
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="liquid-glass"] .schedule-select {
+  width: fit-content;
+  margin: 0.5rem auto 0;
+  padding: 0.35rem 0.5rem !important;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 45%);
+  box-shadow: var(--lg-shadow), var(--lg-inner);
+  backdrop-filter: var(--lg-frost-light);
+}
+
+html[data-theme="liquid-glass"] .schedule-num {
+  font-weight: 600;
+}
+
+html[data-theme="liquid-glass"] .schedule-select-button {
+  width: 2.3rem;
+  height: 2.3rem;
+  padding: 0.55rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 70%);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%), inset 0 1px 1px #fff;
+  color: var(--lg-blue);
+  font-size: 1rem !important;
+  transition: transform 0.35s var(--lg-spring);
+}
+
+html[data-theme="liquid-glass"] .calendar {
+  padding: 0.5rem 0;
+  border-radius: 28px;
+  background: rgb(255 255 255 / 52%);
+  box-shadow: var(--lg-shadow), var(--lg-inner);
+  backdrop-filter: var(--lg-frost);
+}
+
+html[data-theme="liquid-glass"] .calendar-event {
+  border: 0 !important;
+  border-left: 3px solid !important;
+  border-radius: 8px;
+}
+
+html[data-theme="liquid-glass"] .calendar-event .event-text {
+  font-weight: 600;
+}
+
+html[data-theme="liquid-glass"] .crn-list,
+html[data-theme="liquid-glass"] .credits {
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 50%);
+}
+
+html[data-theme="liquid-glass"] .b-overlay .bg-light {
+  border-radius: 28px;
+  backdrop-filter: blur(20px);
+}
+
+/* ---------- Dialogs: sheets ---------- */
+html[data-theme="liquid-glass"] .modal-content {
+  overflow: hidden;
+  border: 0;
+  border-radius: 34px;
+  background: var(--lg-tint-thick);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 35%), var(--lg-inner);
+  backdrop-filter: blur(34px) saturate(190%);
+}
+
+html[data-theme="liquid-glass"] .modal-header {
+  padding: 1.15rem 1.4rem 0.6rem;
+  border-bottom: 0;
+}
+
+html[data-theme="liquid-glass"] .modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+html[data-theme="liquid-glass"] .modal-header .close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: -0.2rem -0.4rem 0 auto;
+  padding: 0 0 2px;
+  border-radius: 50%;
+  background: rgb(120 120 128 / 20%);
+  color: rgb(60 60 67 / 75%);
+  font-size: 1.35rem;
+  font-weight: 600;
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-theme="liquid-glass"] .modal-header .close:hover {
+  background: rgb(120 120 128 / 32%);
+}
+
+html[data-theme="liquid-glass"] .modal-body {
+  padding: 0.6rem 1.4rem 1rem;
+}
+
+html[data-theme="liquid-glass"] .modal-footer {
+  padding: 0.6rem 1.2rem 1.2rem;
+  border-top: 0;
+}
+
+html[data-theme="liquid-glass"] .modal-backdrop {
+  background: rgb(0 0 0 / 100%);
+}
+
+html[data-theme="liquid-glass"] .modal-backdrop.show {
+  opacity: 20%;
+}
+
+/* Tooltips */
+html[data-theme="liquid-glass"] .tooltip-inner {
+  padding: 0.45rem 0.8rem;
+  border-radius: 14px;
+  background: rgb(40 40 40 / 72%);
+  backdrop-filter: blur(20px) saturate(180%);
+  font-weight: 500;
+}
+
+html[data-theme="liquid-glass"] .tooltip .arrow {
+  display: none;
+}
+
+/* ---------- Footer: a glass pane resting at the bottom, with room under it for the Dock ---------- */
+html[data-theme="liquid-glass"] .footer {
+  width: calc(100% - 32px);
+  max-width: 900px;
+  margin: 3rem auto 104px;
+  padding: 1.5rem 1rem 1.4rem;
+  border-radius: 32px;
+  background: rgb(255 255 255 / 45%);
+  box-shadow: var(--lg-shadow), var(--lg-inner);
+  backdrop-filter: var(--lg-frost);
+}
+
+html[data-theme="liquid-glass"] .footer-links > * {
+  color: var(--lg-label);
+  font-size: 2rem;
+}
+
+html[data-theme="liquid-glass"] .footer-links > a:hover {
+  color: var(--lg-blue);
+}
+
+html[data-theme="liquid-glass"] #footer-logo {
+  filter: brightness(0) opacity(80%);
+}
+
+html[data-theme="liquid-glass"] .footer-updated,
+html[data-theme="liquid-glass"] .footer-copyright {
+  color: var(--lg-label-2);
+  font-size: 0.9rem;
+}
+
+html[data-theme="liquid-glass"] :focus-visible {
+  outline: 3px solid rgb(0 122 255 / 55%);
+  outline-offset: 2px;
+}
+
+/* ---------- The pond, for glass that bends a copy of it (LiquidGlassDecor.vue) ---------- */
+html[data-theme="liquid-glass"] .lg-pond {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  visibility: hidden;
+  background: url("../../images/liquid-glass/duck-pond.jpg") 60% 45% / cover no-repeat, #3c4a12;
+  pointer-events: none;
+}
+
+html[data-theme="liquid-glass"] .lg-pond-frost {
+  background-image: url("../../images/liquid-glass/duck-pond-frost.jpg");
+}
+
+/* Tinted glass (the Control Centre's Glass setting): the panes frost over more */
+html[data-theme="liquid-glass"][data-lg-glass="tinted"] .lg-pane-copy .lg-glass-tint {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 28%);
+}
+
+/* ---------- Dock: liquidglass.dev's <lg-dock> (liquid-glass/dock.ts) ---------- */
+html[data-theme="liquid-glass"] .lg-dock-wrap {
+  position: fixed;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: 50%;
+  z-index: 1025;
+  transform: translateX(-50%);
+}
+
+html[data-theme="liquid-glass"] .lg-quacs-dock {
+  --lg-tint: rgb(255 255 255 / 24%);
+  --lg-shadow-2: 0 10px 30px rgb(0 0 0 / 24%), 0 1px 3px rgb(0 0 0 / 14%);
+
+  padding: 7px;
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-quacs-dock .lg-dock__items {
+  align-items: center;
+  gap: 9px;
+  padding: 4px 4px 9px;
+}
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="liquid-glass"] .lg-app {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 40%),
+    inset 0 -1px 1px rgb(0 0 0 / 12%);
+  color: #fff;
+  cursor: pointer;
+}
+
+html[data-theme="liquid-glass"] .lg-app .lg-app-glyph {
+  width: 27px;
+  height: 27px;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 22%));
+}
+
+html[data-theme="liquid-glass"] .lg-app:focus-visible {
+  outline: 2px solid #0a84ff;
+  outline-offset: 3px;
+}
+
+html[data-theme="liquid-glass"] .lg-app-courses {
+  background: linear-gradient(#45a6ff, #0063e6);
+}
+
+html[data-theme="liquid-glass"] .lg-app-calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(#fff, #ececf0);
+  color: #1c1c1e;
+}
+
+html[data-theme="liquid-glass"] .lg-cal-day {
+  margin-top: 5px;
+  color: #ff3b30;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+html[data-theme="liquid-glass"] .lg-cal-date {
+  margin-top: 1px;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+html[data-theme="liquid-glass"] .lg-app-prerequisites {
+  background: linear-gradient(#5fdc7f, #18a345);
+}
+
+html[data-theme="liquid-glass"] .lg-app-search {
+  background: linear-gradient(#8b9bb4, #4b5a72);
+}
+
+html[data-theme="liquid-glass"] .lg-app-settings {
+  background: linear-gradient(#b4b4ba, #6c6c72);
+}
+
+html[data-theme="liquid-glass"] .lg-app-discord {
+  background: linear-gradient(#7c87f7, #4f5bea);
+}
+
+html[data-theme="liquid-glass"] .lg-app-github {
+  background: linear-gradient(#444b55, #15191f);
+}
+
+html[data-theme="liquid-glass"] .lg-app-discord .lg-app-glyph,
+html[data-theme="liquid-glass"] .lg-app-github .lg-app-glyph {
+  width: 29px;
+  height: 29px;
+}
+
+/* The open page's app */
+html[data-theme="liquid-glass"] .lg-app-running::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: rgb(28 28 30 / 70%);
+}
+
+html[data-theme="liquid-glass"] .lg-dock-divider {
+  align-self: stretch;
+  width: 1px;
+  margin: 4px 2px 0;
+  background: rgb(255 255 255 / 50%);
+  box-shadow: 1px 0 0 rgb(0 0 0 / 10%);
+}
+
+/* The app's name above it */
+html[data-theme="liquid-glass"] .lg-dock-tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: rgb(36 36 40 / 80%);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0%;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+}
+
+html[data-theme="liquid-glass"] .lg-dock-tip-shown {
+  opacity: 100%;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Control Centre: a dark glass <lg-panel> (liquid-glass/controlCentre.ts) ---------- */
+html[data-theme="liquid-glass"] .lg-cc {
+  --lg-tint: rgb(17 24 39 / 52%);
+  --lg-track: rgb(255 255 255 / 20%);
+  --lg-track-off: rgb(255 255 255 / 30%);
+  --lg-surface: transparent;
+  --lg-indicator: rgb(255 255 255 / 86%);
+  --lg-on: #34c759;
+  --lg-accent: #0a84ff;
+  --lg-shadow-2: 0 18px 50px rgb(0 0 0 / 30%), 0 2px 6px rgb(0 0 0 / 14%);
+
+  position: fixed;
+  z-index: 1040;
+  width: 320px;
+  padding: 16px;
+  color: #fff;
+  font-size: 14px;
+  text-shadow: none;
+  opacity: 0%;
+  transform: translateY(-8px) scale(0.96);
+  transform-origin: top right;
+  transition: opacity 0.18s ease, transform 0.26s var(--lg-spring);
+}
+
+html[data-theme="liquid-glass"] .lg-cc[hidden] {
+  display: none;
+}
+
+html[data-theme="liquid-glass"] .lg-cc.lg-cc-open {
+  opacity: 100%;
+  transform: none;
+}
+
+html[data-theme="liquid-glass"] .lg-cc-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+html[data-theme="liquid-glass"] .lg-cc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+html[data-theme="liquid-glass"] .lg-cc lg-switch {
+  width: 100%;
+  color: inherit;
+  font-size: 14px;
+}
+
+html[data-theme="liquid-glass"] .lg-cc-label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 12px;
+  opacity: 85%;
+}
+
+html[data-theme="liquid-glass"] .lg-cc-value {
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="liquid-glass"] .lg-cc lg-slider {
+  width: 100%;
+}
+
+html[data-theme="liquid-glass"] .lg-cc lg-segmented {
+  display: flex;
+  margin-top: 8px;
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-cc .lg-cc-segmented .lg-seg__option {
+  flex: 1;
+  min-width: 0;
+  color: rgb(255 255 255 / 86%);
+}
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="liquid-glass"] .lg-cc .lg-cc-segmented .lg-refract {
+  background: var(--lg-indicator);
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+html[data-theme="liquid-glass"] .lg-cc .lg-cc-segmented .lg-refract .lg-seg__option {
+  color: #111827;
+}
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Toasts: liquidglass.dev's toast() (liquid-glass/controls.ts) ---------- */
+html[data-theme="liquid-glass"] {
+  --lg-toast-top: 78px;
+}
+
+html[data-theme="liquid-glass"] .lg-toast-region {
+  z-index: 1045;
+}
+
+html[data-theme="liquid-glass"] lg-toast {
+  --lg-tint: rgb(17 24 39 / 50%);
+
+  color: #fff;
+}
+
+html[data-theme="liquid-glass"] #crn-copy-indicator {
+  display: none;
+}
+
+/* ---------- The calendar's magnifier (liquid-glass/controls.ts) ---------- */
+html[data-theme="liquid-glass"] .lg-cal-lens-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 22%), 0 0 0 0.5px rgb(0 0 0 / 10%);
+  opacity: 0%;
+  pointer-events: none;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="liquid-glass"] .navbar.bg-light {
+    top: 8px;
+    width: calc(100% - 16px);
+    margin-top: 8px;
+    padding: 6px 8px 6px 16px;
+    border-radius: 26px;
+  }
+
+  html[data-theme="liquid-glass"] .navbar-collapse {
+    padding: 0.6rem 0.2rem 0.4rem;
+  }
+
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link {
+    margin: 2px 0;
+  }
+
+  /* No sliding highlight on the collapsed bar: titles light up themselves */
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link:hover,
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link:focus-visible,
+  html[data-theme="liquid-glass"] .navbar-nav .nav-link.active,
+  html[data-theme="liquid-glass"] .navbar-nav .show > .nav-link {
+    background: var(--lg-bar-hover);
+  }
+}
+
+/* A smaller Dock on phones, without the links on the narrowest */
+@media (max-width: 575.98px) {
+  html[data-theme="liquid-glass"] .lg-app {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  html[data-theme="liquid-glass"] .lg-app .lg-app-glyph {
+    width: 21px;
+    height: 21px;
+  }
+
+  html[data-theme="liquid-glass"] .lg-cal-day {
+    margin-top: 4px;
+    font-size: 7.5px;
+  }
+
+  html[data-theme="liquid-glass"] .lg-cal-date {
+    font-size: 20px;
+  }
+
+  /* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+  html[data-theme="liquid-glass"] .lg-quacs-dock .lg-dock__items {
+    gap: 6px;
+  }
+  /* stylelint-enable selector-class-pattern */
+
+  html[data-theme="liquid-glass"] .footer {
+    margin-bottom: 88px;
+  }
+}
+
+@media (max-width: 419.98px) {
+  html[data-theme="liquid-glass"] .lg-dock-divider,
+  html[data-theme="liquid-glass"] .lg-app-discord,
+  html[data-theme="liquid-glass"] .lg-app-github {
+    display: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="liquid-glass"] .unofficial-schedule-warning {
+    padding: 0.9rem 1rem 1rem 3.7rem;
+    font-size: 1rem;
+  }
+
+  html[data-theme="liquid-glass"] .unofficial-schedule-warning::after {
+    left: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  html[data-theme="liquid-glass"] h1 {
+    font-size: 2rem;
+  }
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme="liquid-glass"] .btn:not(.lg-btn):hover,
+  html[data-theme="liquid-glass"] .schedule-select-button:hover {
+    transform: scale(1.06);
+  }
+
+  /* Pressed glass squishes: wider and shorter, then springs back. Glass buttons squish their glass
+  instead (controls.ts). */
+  html[data-theme="liquid-glass"] .btn:not(.lg-btn):active,
+  html[data-theme="liquid-glass"] .schedule-select-button:active {
+    transform: scale(1.07, 0.9);
+  }
+
+  @keyframes lg-menu-in {
+    from {
+      opacity: 0%;
+      transform: translateY(-4px) scale(0.98);
+    }
+  }
+
+  html[data-theme="liquid-glass"] .dropdown-menu.show {
+    transform-origin: top left;
+    animation: lg-menu-in 0.18s ease-out;
+  }
+
+  html[data-theme="liquid-glass"] .department-cards .department-link:hover {
+    transform: scale(1.015);
+  }
+}
+
+/* ---------- Reduce transparency: frosted glass becomes solid ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  [data-theme="liquid-glass"] {
+    --lg-tint-clear: rgb(246 246 248 / 96%);
+    --lg-tint-regular: rgb(246 246 248 / 96%);
+    --lg-tint-thick: rgb(246 246 248 / 98%);
+  }
+
+  /* Nothing bends, so the menu bar is a solid light bar with dark text */
+  html[data-theme="liquid-glass"] .navbar.bg-light {
+    --lg-bar-ink: #1c1c1e;
+    --lg-bar-field: rgb(120 120 128 / 12%);
+    --lg-bar-field-focus: rgb(120 120 128 / 18%);
+    --lg-bar-placeholder: rgb(60 60 67 / 70%);
+    --lg-bar-hover: rgb(0 0 0 / 7%);
+    --navbar-background: rgb(246 246 248 / 96%);
+
+    text-shadow: none;
+  }
+
+  html[data-theme="liquid-glass"] .navbar .navbar-toggler-icon {
+    filter: none;
+  }
+
+  /* The library turns its glass white; the Control Centre follows with dark text */
+  html[data-theme="liquid-glass"] .lg-cc {
+    --lg-indicator: #fff;
+    --lg-track: rgb(120 120 128 / 16%);
+    --lg-track-off: #d1d5db;
+
+    color: var(--lg-label);
+  }
+
+  /* stylelint-disable selector-class-pattern -- liquidglass.dev's own class names */
+  html[data-theme="liquid-glass"] .lg-cc .lg-cc-segmented .lg-seg__option {
+    color: var(--lg-label-2);
+  }
+  /* stylelint-enable selector-class-pattern */
+
+  html[data-theme="liquid-glass"] lg-toast {
+    color: var(--lg-label);
+  }
+}

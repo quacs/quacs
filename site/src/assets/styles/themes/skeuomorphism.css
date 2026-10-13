@@ -1,0 +1,1412 @@
+/* Skeuomorphism, after Apple's look of 2011 and 2012 (OS X Lion and iOS 6), when software dressed up
+as the things it replaced. The page is a desk covered in charcoal linen, like Lion's login screen.
+The navbar is iCal's stitched leather, with the stubs of torn-off pages hanging under it, and the
+logo is a glossy iOS app icon. Schools are yellow legal pads with leather tops, like the Notes app;
+courses are index cards; the data notice is a sticky note; the prerequisites sheet is on a
+clipboard; the schedule is iCal's week view under its leather toolbar, with the CRNs on label-maker
+tape. Buttons, switches and menus are iOS 6's glossy controls, dialogs are the iOS Settings app, and
+your courses stand on an iBooks wooden shelf above the leather footer (SkeuomorphismDecor.vue).
+Leather, linen and wood are ambientCG textures (CC0), lit and graded for QuACS; the torn paper and
+the logo are made for QuACS. Type: Helvetica Neue, with Arimo where it's missing; Notes' Noteworthy,
+with Patrick Hand where it's missing; and Arial Narrow on the label tape, with Roboto Condensed
+where it's missing (the stand-ins are open-licensed Google Fonts). */
+[data-theme="skeuomorphism"] {
+  --sk-ui: "Helvetica Neue", helvetica, arimo, arial, sans-serif;
+  --sk-hand: noteworthy, "Marker Felt", "Patrick Hand", "Segoe Print", "Bradley Hand", cursive;
+  --sk-label: "Arial Narrow", "Roboto Condensed", arimo, arial, sans-serif;
+  --sk-leather: url("../../images/skeuomorphism/leather.jpg");
+  --sk-linen: url("../../images/skeuomorphism/linen.jpg");
+  --sk-wood: url("../../images/skeuomorphism/wood.jpg");
+
+  /* A seam of cream thread in a pressed groove, across and down */
+  --sk-stitch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 3.5h12' stroke='%23000' stroke-opacity='.3'/%3E%3Cpath d='M0 4.6h12' stroke='%23fff' stroke-opacity='.12' stroke-width='.8'/%3E%3Cpath d='M2.6 4h6.8' stroke='%23000' stroke-opacity='.55' stroke-width='1.9' stroke-linecap='round'/%3E%3Cpath d='M2.6 3.1h6.8' stroke='%23efddb9' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* Paper grain: faint speckle, plus soft blotches */
+  --sk-grain:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .28 0 0 0 0 .24 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .45 0 0 0 0 .35 0 0 0 .1 -.03'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* iOS 6's glossy fills: a bright upper half over a deeper lower half */
+  --sk-gloss-blue: linear-gradient(180deg, #8dbbf7 0%, #5194eb 50%, #2c73e0 50%, #3d86ea 100%);
+  --sk-gloss-gray: linear-gradient(180deg, #fefefe 0%, #f1f1f1 50%, #e0e0e0 50%, #e9e9e9 100%);
+  --sk-gloss-red: linear-gradient(180deg, #f6968e 0%, #e54a3f 50%, #d02b20 50%, #db3a2f 100%);
+  --sk-gloss-green: linear-gradient(180deg, #a3dc89 0%, #62b744 50%, #47a229 50%, #56ae37 100%);
+
+  /* The iOS navigation bar, and the pinstripes behind its grouped tables */
+  --sk-ios-bar: linear-gradient(180deg, #b6c2d2 0%, #8b9db5 50%, #7389a5 50%, #6d84a2 100%);
+  --sk-pinstripe: repeating-linear-gradient(90deg, #c5ccd4 0 5px, #cbd2d8 5px 7px);
+  --sk-ios-header: #4c566c;
+  --sk-ios-value: #385487;
+  --sk-ink: #262626;
+
+  /* Leather, lit from above, for bars and buttons */
+  --sk-leather-bar:
+    linear-gradient(180deg, rgb(255 240 220 / 14%), rgb(255 240 220 / 0%) 45%, rgb(0 0 0 / 22%)),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #62452d;
+
+  /* QuACS tokens */
+  --background: #3b3c3f;
+  --background-image: none;
+  --global-text: #e2e2e2;
+  --global-text-hover: #fff;
+  --raw-link: #f2d7a6;
+  --text-default: var(--sk-ink);
+  --footer-background: transparent;
+  --font-body: var(--sk-ui);
+  --font-heading: var(--sk-ui);
+  --warning-color: #2f2a1a;
+  --warning-border-width: 0;
+  --warning-font-size: 1.3rem;
+  --card-background: #fbfaf6;
+  --card-body-background: transparent;
+  --card-body-text: var(--sk-ink);
+  --card-header-background: transparent;
+  --card-header-text: var(--sk-ink);
+  --card-header-hover: rgb(255 248 205 / 55%);
+  --card-border-color: rgb(0 0 0 / 0%);
+  --card-border-width: 0;
+  --card-border-radius: 3px;
+  --card-inner-radius: 3px;
+  --card-shadow: 0 1px 1px rgb(0 0 0 / 30%), 0 6px 14px rgb(0 0 0 / 45%);
+  --card-backdrop-filter: none;
+  --navbar-background: #62452d;
+  --navbar-backdrop-filter: none;
+  --navbar-unselected-text: #f4e6cd;
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: #f4e6cd;
+  --navbar-text-active: #fff;
+  --navbar-text-show: #fff;
+  --modal-header-background: transparent;
+  --modal-header-text: #fff;
+  --modal-body-background: transparent;
+  --modal-body-text: #000;
+  --modal-footer-background: transparent;
+  --modal-footer-text: #000;
+  --modal-close-x-hover: #fff;
+  --btn-primary-background: #2c73e0;
+  --btn-primary-text: #fff;
+  --btn-border: 1px solid #1d55ab;
+  --btn-border-radius: 6px;
+  --btn-box-shadow: none;
+  --btn-transition: none;
+  --btn-secondary-background: #e9e9e9;
+  --btn-secondary-text: #2f2f2f;
+  --department-link-hover: transparent;
+  --select-background: #fff;
+  --select-text: #000;
+  --table-text: var(--sk-ink);
+  --table-border: #d6d6d6;
+  --course-row-hover: rgb(56 84 135 / 7%);
+  --conflict-row: repeating-linear-gradient(-45deg, rgb(214 58 47 / 9%) 0 6px, rgb(214 58 47 / 17%) 6px 12px);
+  --conflict-row-hover: repeating-linear-gradient(-45deg, rgb(214 58 47 / 14%) 0 6px, rgb(214 58 47 / 23%) 6px 12px);
+
+  /* A yellow highlighter run across the chosen sections */
+  --selected-row: rgb(255 234 70 / 58%);
+  --selected-row-hover: rgb(255 228 40 / 72%);
+  --list-group-item-background: #fbfaf6;
+  --search-bar-background: #fff;
+  --search-bar-border: #2a1a0d;
+  --overlay-background: #fbfaf6;
+  --trash-btn: #8a8a8a;
+  --trash-btn-hover: #d02b20;
+  --prerequisite-jumbotron: #fbfaf6;
+  --prerequisite-text: #3a2600;
+  --prerequisite-warn-icon: #ffe36e;
+  --prerequisite-error-icon: #ffb2a8;
+  --taken-course: #23620f;
+  --not-taken-course: #a51d14;
+  --toast-background: rgb(0 0 0 / 75%);
+  --toast-text: #fff;
+
+  /* Calendar: iCal's calendar colors, each a light wash with a solid bar on the left */
+  --calendar-grid-color: #e2e2e5;
+  --calendar-label: #6c6c71;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: rgb(63 127 220 / 20%);
+  --calendar-border-color-0: #3f7fdc;
+  --calendar-text-color-0: #1b4b94;
+  --calendar-bg-color-1: rgb(76 158 51 / 22%);
+  --calendar-border-color-1: #4c9e33;
+  --calendar-text-color-1: #275f15;
+  --calendar-bg-color-2: rgb(217 73 59 / 19%);
+  --calendar-border-color-2: #d9493b;
+  --calendar-text-color-2: #8e1f15;
+  --calendar-bg-color-3: rgb(229 137 42 / 23%);
+  --calendar-border-color-3: #e5892a;
+  --calendar-text-color-3: #7f4206;
+  --calendar-bg-color-4: rgb(143 92 196 / 21%);
+  --calendar-border-color-4: #8f5cc4;
+  --calendar-text-color-4: #552a84;
+  --calendar-bg-color-5: rgb(217 178 31 / 27%);
+  --calendar-border-color-5: #d0a91c;
+  --calendar-text-color-5: #5f4c00;
+  --calendar-bg-color-6: rgb(154 106 66 / 22%);
+  --calendar-border-color-6: #9a6a42;
+  --calendar-text-color-6: #57381c;
+  --calendar-sb-track-color-0: transparent;
+  --calendar-sb-thumb-color-0: rgb(0 0 0 / 30%);
+  --calendar-sb-track-color-1: transparent;
+  --calendar-sb-thumb-color-1: rgb(0 0 0 / 30%);
+  --calendar-sb-track-color-2: transparent;
+  --calendar-sb-thumb-color-2: rgb(0 0 0 / 30%);
+  --calendar-sb-track-color-3: transparent;
+  --calendar-sb-thumb-color-3: rgb(0 0 0 / 30%);
+  --calendar-sb-track-color-4: transparent;
+  --calendar-sb-thumb-color-4: rgb(0 0 0 / 30%);
+  --calendar-sb-track-color-5: transparent;
+  --calendar-sb-thumb-color-5: rgb(0 0 0 / 30%);
+  --calendar-sb-track-color-6: transparent;
+  --calendar-sb-thumb-color-6: rgb(0 0 0 / 30%);
+
+  scrollbar-color: #8d8d90 #2c2d30;
+}
+
+html[data-theme="skeuomorphism"] ::selection {
+  background: #b5d5ff;
+  color: #000;
+}
+
+/* The desk: charcoal linen, a little lighter in the middle and darker at the edges */
+html[data-theme="skeuomorphism"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 30%, rgb(255 255 255 / 6%), rgb(0 0 0 / 0%) 55%, rgb(0 0 0 / 42%) 100%),
+    var(--sk-linen) 0 0 / 512px 512px,
+    #3b3c3f;
+}
+
+/* Page titles: pressed into the linen */
+html[data-theme="skeuomorphism"] h1 {
+  margin-bottom: 1rem;
+  color: #ededed;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 75%), 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+:where(html[data-theme="skeuomorphism"]) a {
+  color: #1c5bbd;
+}
+
+/* ---------- Navbar: iCal's stitched leather, with the stubs of torn-off pages under it ---------- */
+html[data-theme="skeuomorphism"] .navbar.bg-light {
+  margin-bottom: 10px;
+  padding: 0.6rem 1rem 0.7rem;
+  border-bottom: 1px solid #24160b;
+  background:
+    var(--sk-stitch) 0 3px / 12px 7px repeat-x,
+    var(--sk-stitch) 6px calc(100% - 3px) / 12px 7px repeat-x,
+    var(--sk-leather-bar) !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 230 200 / 25%),
+    0 1px 0 rgb(0 0 0 / 35%);
+}
+
+html[data-theme="skeuomorphism"] .navbar.bg-light::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: url("../../images/skeuomorphism/torn-white.png") 0 0 / 300px 15px repeat-x;
+  pointer-events: none;
+}
+
+html[data-theme="skeuomorphism"] .navbar-brand {
+  padding: 0;
+}
+
+html[data-theme="skeuomorphism"] .navbar-brand img {
+  height: 40px !important;
+}
+
+/* Nav links: buttons cut from the same leather, like iCal's Day | Week | Month control */
+html[data-theme="skeuomorphism"] .navbar-nav .nav-link {
+  margin: 3px;
+  padding: 0.28rem 0.8rem !important;
+  border: 1px solid rgb(24 13 5 / 85%);
+  border-radius: 5px;
+  background:
+    linear-gradient(180deg, rgb(255 240 220 / 16%), rgb(0 0 0 / 14%)),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #5a3e28;
+  box-shadow:
+    inset 0 1px 0 rgb(255 235 205 / 22%),
+    0 1px 0 rgb(255 235 205 / 14%);
+  color: #f4e6cd;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 75%);
+  white-space: nowrap;
+}
+
+html[data-theme="skeuomorphism"] .navbar-nav .nav-text {
+  font-size: 0.92rem;
+}
+
+html[data-theme="skeuomorphism"] .navbar-nav .nav-link:hover {
+  background:
+    linear-gradient(180deg, rgb(255 240 220 / 24%), rgb(0 0 0 / 8%)),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #5a3e28;
+  color: #fff;
+}
+
+/* The current page, and an open menu: pressed in */
+html[data-theme="skeuomorphism"] .navbar-nav .nav-link.active,
+html[data-theme="skeuomorphism"] .navbar-nav .show > .nav-link {
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 38%), rgb(0 0 0 / 16%)),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #4a321f;
+  box-shadow:
+    inset 0 2px 4px rgb(0 0 0 / 55%),
+    0 1px 0 rgb(255 235 205 / 16%);
+  color: #fff;
+}
+
+html[data-theme="skeuomorphism"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+/* From 1200px to 1440px the bar is tight: slimmer buttons leave the search box room */
+@media (min-width: 1200px) and (max-width: 1439.98px) {
+  html[data-theme="skeuomorphism"] .navbar-nav .nav-link {
+    margin: 3px 2px;
+    padding: 0.28rem 0.55rem !important;
+    font-size: 0.85rem;
+  }
+
+  html[data-theme="skeuomorphism"] .navbar-nav .nav-text {
+    font-size: 0.85rem;
+  }
+
+  html[data-theme="skeuomorphism"] .navbar-search {
+    min-width: 150px;
+  }
+}
+
+html[data-theme="skeuomorphism"] .navbar-light .navbar-toggler {
+  border: 1px solid rgb(24 13 5 / 85%);
+  border-radius: 5px;
+  background:
+    linear-gradient(180deg, rgb(255 240 220 / 16%), rgb(0 0 0 / 14%)),
+    var(--sk-leather) 0 0 / 400px 400px;
+  box-shadow: inset 0 1px 0 rgb(255 235 205 / 22%), 0 1px 0 rgb(255 235 205 / 14%);
+}
+
+html[data-theme="skeuomorphism"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='%23000' stroke-opacity='.6' stroke-linecap='round' stroke-width='2.4' d='M5 7h20M5 15h20M5 23h20' transform='translate(0 -1)'/%3E%3Cpath stroke='%23f4e6cd' stroke-linecap='round' stroke-width='2.4' d='M5 7h20M5 15h20M5 23h20'/%3E%3C/svg%3E");
+}
+
+/* The search field: a white capsule pressed into the leather, as in iCal's toolbar */
+html[data-theme="skeuomorphism"] #search-bar {
+  padding: 5px 12px 5px 34px;
+  border: 1px solid #2a1a0d;
+  border-radius: 16px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23707070' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='6.5'/%3E%3Cpath d='M15 15l5.5 5.5'/%3E%3C/svg%3E") 11px 50% / 16px no-repeat,
+    linear-gradient(180deg, #e6e6e6, #fff 35%);
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 55%),
+    0 1px 0 rgb(255 230 200 / 22%);
+  color: #1a1a1a;
+  font-size: 15px;
+}
+
+html[data-theme="skeuomorphism"] #search-bar::placeholder {
+  color: #8a8a8a;
+}
+
+html[data-theme="skeuomorphism"] #search-bar:focus {
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 55%),
+    0 0 0 3px rgb(80 160 250 / 75%);
+}
+
+html[data-theme="skeuomorphism"] .navbar .loading-spinner {
+  color: #707070;
+}
+
+/* Menus: a Lion menu, with the blue highlight */
+html[data-theme="skeuomorphism"] .dropdown-menu {
+  padding: 4px 0;
+  border: 1px solid rgb(0 0 0 / 22%);
+  border-radius: 6px;
+  background: rgb(255 255 255 / 97%);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 45%);
+  font-family: var(--sk-ui);
+}
+
+html[data-theme="skeuomorphism"] .dropdown-item {
+  padding: 3px 20px;
+  color: #111;
+  font-size: 0.95rem;
+}
+
+html[data-theme="skeuomorphism"] .dropdown-item:hover,
+html[data-theme="skeuomorphism"] .dropdown-item:focus {
+  background: linear-gradient(180deg, #6aa1f1, #2c6de5);
+  color: #fff;
+}
+
+html[data-theme="skeuomorphism"] .dropdown-divider {
+  margin: 4px 0;
+  border-top-color: #e2e2e2;
+}
+
+/* ---------- The data notice: a sticky note, taped to the linen ---------- */
+html[data-theme="skeuomorphism"] .unofficial-schedule-warning {
+  position: relative;
+  max-width: 44rem;
+  margin: 1.4rem auto 0.6rem;
+  padding: 1.45rem 1.8rem 1.35rem;
+  border: 0;
+  background:
+    linear-gradient(172deg, rgb(255 255 255 / 30%), rgb(255 255 255 / 0%) 35%),
+    radial-gradient(ellipse 120% 70% at 50% 100%, rgb(190 160 0 / 14%), rgb(190 160 0 / 0%) 60%),
+    var(--sk-grain),
+    linear-gradient(180deg, #fff7a6, #fdee86);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 20%),
+    0 18px 14px -12px rgb(0 0 0 / 55%);
+  color: #2f2a1a;
+  font-family: var(--sk-hand);
+  line-height: 1.38;
+  transform: rotate(-1.1deg);
+}
+
+/* A strip of tape across the top */
+html[data-theme="skeuomorphism"] .unofficial-schedule-warning::before {
+  content: "";
+  position: absolute;
+  top: -13px;
+  left: calc(50% - 64px);
+  width: 128px;
+  height: 30px;
+  background:
+    linear-gradient(100deg, rgb(255 255 255 / 0%) 30%, rgb(255 255 255 / 28%) 45%, rgb(255 255 255 / 0%) 60%),
+    linear-gradient(180deg, rgb(255 255 255 / 42%), rgb(255 255 255 / 22%));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 18%),
+    0 1px 1px rgb(0 0 0 / 12%);
+  transform: rotate(2.5deg);
+  clip-path:
+    polygon(
+      0 6%,
+      3% 0,
+      6% 12%,
+      9% 2%,
+      12% 10%,
+      15% 0,
+      85% 1%,
+      88% 11%,
+      91% 0,
+      94% 10%,
+      97% 1%,
+      100% 9%,
+      100% 92%,
+      97% 100%,
+      94% 89%,
+      91% 99%,
+      88% 90%,
+      85% 100%,
+      15% 99%,
+      12% 89%,
+      9% 98%,
+      6% 88%,
+      3% 99%,
+      0 91%
+    );
+}
+
+html[data-theme="skeuomorphism"] .unofficial-schedule-warning > span {
+  color: #c0261b;
+}
+
+/* ---------- Paper ---------- */
+
+/* Cards are index cards: white stock with a faint grain */
+html[data-theme="skeuomorphism"] .card {
+  background: var(--sk-grain), linear-gradient(180deg, #fefefc, #f8f7f2);
+}
+
+html[data-theme="skeuomorphism"] .card-header {
+  border-bottom-color: #e3e1da;
+}
+
+/* Schools are yellow legal pads with leather tops, like the Notes app */
+html[data-theme="skeuomorphism"] .department-cards .card {
+  margin-bottom: 1.7rem;
+  border-radius: 5px 5px 2px 2px;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0%) 2.4rem,
+      rgb(222 82 82 / 55%) 2.4rem 2.48rem,
+      rgb(0 0 0 / 0%) 2.48rem 2.64rem,
+      rgb(222 82 82 / 55%) 2.64rem 2.72rem,
+      rgb(0 0 0 / 0%) 2.72rem
+    ),
+    var(--sk-grain),
+    linear-gradient(180deg, #fef7b4, #fcef94);
+
+  /* The sheets of the pad under the top one */
+  box-shadow:
+    0 1px 0 #e6d77f,
+    0 2px 0 #fcf2a2,
+    0 3px 0 #ddcd76,
+    0 4px 0 #faf0a0,
+    0 5px 1px #d0c06b,
+    0 10px 18px rgb(0 0 0 / 55%);
+}
+
+html[data-theme="skeuomorphism"] .department-cards .card-header {
+  position: relative;
+  padding: 0.75rem 1rem 1rem;
+  border: 0;
+  border-radius: 5px 5px 0 0 !important;
+  background:
+    var(--sk-stitch) 0 calc(100% - 4px) / 12px 7px repeat-x,
+    var(--sk-leather-bar);
+  box-shadow:
+    inset 0 1px 0 rgb(255 230 200 / 25%),
+    0 1px 0 #2a1a0d;
+  color: #f6ead3;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 75%);
+}
+
+/* The stubs of the sheets already torn off */
+html[data-theme="skeuomorphism"] .department-cards .card-header::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: url("../../images/skeuomorphism/torn-yellow.png") 0 0 / 300px 15px repeat-x;
+  pointer-events: none;
+}
+
+/* Blue rules every line. The links are exactly one rule tall, so the writing sits on the lines. */
+html[data-theme="skeuomorphism"] .department-cards .card-body {
+  --sk-rule: 1.95rem;
+
+  padding: 1.15rem 0.8rem 1.1rem 3.05rem;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgb(0 0 0 / 0%) 0 calc(var(--sk-rule) - 1px),
+      rgb(96 140 200 / 42%) calc(var(--sk-rule) - 1px) var(--sk-rule)
+    )
+    0 calc(1.15rem - 0.42rem) / 100% var(--sk-rule);
+}
+
+html[data-theme="skeuomorphism"] .department-cards .department-link {
+  display: block;
+  min-height: var(--sk-rule);
+  padding: 0 0.35rem;
+  border-radius: 2px;
+  color: #2b2414;
+  font-family: var(--sk-hand);
+  font-size: 1.22rem;
+  line-height: var(--sk-rule);
+}
+
+/* The code in red ink, in the same hand */
+html[data-theme="skeuomorphism"] .department-cards .department-code {
+  margin-right: 0.3em;
+  color: #a0281c;
+  font-family: inherit;
+  font-size: 1.32rem;
+  font-weight: 400;
+}
+
+/* Hovered, a stroke of pink highlighter */
+html[data-theme="skeuomorphism"] .department-cards .department-link:hover,
+html[data-theme="skeuomorphism"] .department-cards .department-link:focus-visible {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(255 110 170 / 0%) 18%,
+      rgb(255 110 170 / 32%) 18% 82%,
+      rgb(255 110 170 / 0%) 82%
+    );
+  color: #000;
+}
+
+/* Courses are index cards: a red rule under the title, blue rules under the description. The
+blue rules are counted up from the bottom of the header, where the description ends, so they
+stay under its lines however tall the title row is. */
+html[data-theme="skeuomorphism"] .course-card {
+  --sk-rule: 1.5rem;
+
+  margin-bottom: 1.1rem;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 30%),
+    0 6px 14px rgb(0 0 0 / 45%);
+}
+
+html[data-theme="skeuomorphism"] .course-card .course-card-header {
+  padding: 0.65rem 1.05rem 0.55rem;
+  border: 0;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgb(0 0 0 / 0%) 0 calc(var(--sk-rule) - 1px),
+      rgb(110 160 215 / 38%) calc(var(--sk-rule) - 1px) var(--sk-rule)
+    )
+    0 calc(100% - 0.86rem) / 100% var(--sk-rule);
+  color: #4a4a4a !important;
+  line-height: var(--sk-rule);
+}
+
+html[data-theme="skeuomorphism"] .course-card .course-card-header:hover {
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgb(0 0 0 / 0%) 0 calc(var(--sk-rule) - 1px),
+      rgb(110 160 215 / 38%) calc(var(--sk-rule) - 1px) var(--sk-rule)
+    )
+    0 calc(100% - 0.86rem) / 100% var(--sk-rule),
+    rgb(255 248 205 / 55%);
+}
+
+/* The title row sits above the red rule, on clean card */
+html[data-theme="skeuomorphism"] .course-card-header > div:first-child {
+  margin: -0.65rem -1.05rem 0.35rem;
+  padding: 0.6rem 1.05rem 0.35rem;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #fefefc, #fcfbf8);
+  box-shadow:
+    0 2px 0 rgb(226 110 110 / 75%),
+    0 3px 0 rgb(255 255 255 / 70%);
+  line-height: 1.5;
+}
+
+html[data-theme="skeuomorphism"] .course-card-header .course-code {
+  margin: 0 0.2rem 0 0.25rem;
+  color: #b02a20;
+  font-family: var(--sk-ui);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+html[data-theme="skeuomorphism"] .course-card-header .font-weight-bold {
+  color: #1d1d1d;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="skeuomorphism"] .course-card-header .open_close_icon {
+  color: #8a8a8a;
+}
+
+/* Flags on the card: little paper stickers */
+html[data-theme="skeuomorphism"] .prerequisiteError {
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 25%), inset 0 1px 0 rgb(255 255 255 / 50%);
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="skeuomorphism"] .trash-btn:hover {
+  color: var(--trash-btn-hover);
+}
+
+/* ---------- Section tables: a printed form ---------- */
+html[data-theme="skeuomorphism"] .table {
+  margin-bottom: 0;
+  background: rgb(255 255 255 / 55%);
+}
+
+html[data-theme="skeuomorphism"] .table thead th {
+  border-bottom: 1px solid #b9b9bd;
+  background: linear-gradient(180deg, #fbfbfb, #e6e6e9);
+  color: var(--sk-ios-header);
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-shadow: 0 1px 0 #fff;
+}
+
+html[data-theme="skeuomorphism"] .table tbody tr.selected .font-weight-bold {
+  color: #000;
+}
+
+html[data-theme="skeuomorphism"] .info-icon {
+  color: #2c73e0;
+}
+
+html[data-theme="skeuomorphism"] .current-schedule-badge {
+  border-color: #2f7a17 !important;
+  border-radius: 9px !important;
+  color: #2f7a17;
+  font-weight: 700;
+}
+
+/* ---------- Buttons: iOS 6's glossy buttons ---------- */
+html[data-theme="skeuomorphism"] .btn {
+  --sk-btn: var(--sk-gloss-gray);
+
+  padding: 0.34rem 1rem 0.38rem;
+  border: 1px solid #959595;
+  border-radius: 6px;
+  background: var(--sk-btn);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 75%),
+    0 1px 1px rgb(0 0 0 / 22%);
+  color: #2f2f2f;
+  font-family: var(--sk-ui);
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 80%);
+}
+
+/* The schedule's Export button keeps its own height beside the CRNs */
+html[data-theme="skeuomorphism"] .info-container + .btn {
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  white-space: nowrap;
+}
+
+html[data-theme="skeuomorphism"] .btn-primary,
+html[data-theme="skeuomorphism"] .btn-info {
+  --sk-btn: var(--sk-gloss-blue);
+
+  border-color: #1d55ab;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 45%),
+    0 1px 1px rgb(0 0 0 / 25%);
+  color: #fff;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 35%);
+}
+
+html[data-theme="skeuomorphism"] .btn-danger,
+html[data-theme="skeuomorphism"] .btn-outline-danger {
+  --sk-btn: var(--sk-gloss-red);
+
+  border-color: #98190f;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 40%),
+    0 1px 1px rgb(0 0 0 / 25%);
+  color: #fff;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 35%);
+}
+
+html[data-theme="skeuomorphism"] .btn-success {
+  --sk-btn: var(--sk-gloss-green);
+
+  border-color: #2c7614;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 45%),
+    0 1px 1px rgb(0 0 0 / 25%);
+  color: #fff;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 35%);
+}
+
+html[data-theme="skeuomorphism"] .btn:hover,
+html[data-theme="skeuomorphism"] .btn:focus {
+  background: var(--sk-btn);
+  color: inherit;
+  filter: brightness(104%);
+}
+
+html[data-theme="skeuomorphism"] .btn-primary:hover,
+html[data-theme="skeuomorphism"] .btn-primary:focus,
+html[data-theme="skeuomorphism"] .btn-danger:hover,
+html[data-theme="skeuomorphism"] .btn-outline-danger:hover,
+html[data-theme="skeuomorphism"] .btn-outline-danger:focus,
+html[data-theme="skeuomorphism"] .btn-success:hover {
+  color: #fff;
+}
+
+html[data-theme="skeuomorphism"] .btn:disabled,
+html[data-theme="skeuomorphism"] .btn.disabled {
+  filter: saturate(30%);
+  opacity: 55%;
+}
+
+html[data-theme="skeuomorphism"] .btn:not(:disabled):not(.disabled):active {
+  background: var(--sk-btn);
+  box-shadow: inset 0 2px 5px rgb(0 0 0 / 45%);
+  filter: brightness(86%);
+}
+
+/* Fields: white, pressed in */
+html[data-theme="skeuomorphism"] .form-control {
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #ececec, #fff 30%);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 35%);
+  color: #111;
+}
+
+/* Lion's pop-up buttons, with the up and down arrows */
+html[data-theme="skeuomorphism"] .custom-select {
+  padding-right: 2.2rem;
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' fill='%23333'%3E%3Cpath d='M5 1 9 6.3H1zM5 15 1 9.7h8z'/%3E%3C/svg%3E") right 0.85rem center / 9px 15px no-repeat,
+    var(--sk-gloss-gray);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 85%),
+    0 1px 1px rgb(0 0 0 / 20%);
+  color: #111;
+  font-weight: 600;
+}
+
+html[data-theme="skeuomorphism"] .form-control:focus,
+html[data-theme="skeuomorphism"] .custom-select:focus {
+  border-color: #5a8fd6;
+  box-shadow: 0 0 0 3px rgb(80 160 250 / 55%);
+  color: #111;
+}
+
+/* Switches: iOS 6's switch, ON in blue and OFF in gray, with the words on the track */
+html[data-theme="skeuomorphism"] .custom-switch {
+  min-height: 28px;
+  padding-left: 78px;
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-label {
+  padding-top: 2px;
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-label::before {
+  content: "OFF";
+  top: 0;
+  left: -78px;
+  width: 66px;
+  height: 27px;
+  padding-right: 9px;
+  border: 1px solid #a9a9a9;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #dcdcdc, #f7f7f7 55%, #fdfdfd);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 35%);
+  color: #686868;
+  font: 700 13px/25px var(--sk-ui);
+  text-align: right;
+  text-shadow: 0 1px 0 #fff;
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-label::after {
+  top: 0;
+  left: -78px;
+  width: 27px;
+  height: 27px;
+  border: 1px solid #9c9c9c;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #cfcfcf, #f4f4f4 60%, #fff);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 1px 2px rgb(0 0 0 / 40%);
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+  content: "ON";
+  padding-right: 0;
+  padding-left: 11px;
+  border-color: #1d55ab;
+  background: linear-gradient(180deg, #1c5ac4, #3d87ee 55%, #4f95f3);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 45%);
+  color: #fff;
+  text-align: left;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 40%);
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background: linear-gradient(180deg, #cfcfcf, #f4f4f4 60%, #fff);
+  transform: translateX(39px);
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 35%),
+    0 0 0 3px rgb(80 160 250 / 55%);
+}
+
+html[data-theme="skeuomorphism"] .custom-switch .custom-control-input:disabled ~ .custom-control-label {
+  opacity: 55%;
+}
+
+/* ---------- Prerequisites: a sheet on a clipboard ---------- */
+html[data-theme="skeuomorphism"] .jumbotron {
+  position: relative;
+  margin-top: 2.6rem;
+  padding: 3.1rem 2.4rem 2.2rem;
+  border: 15px solid transparent;
+  border-radius: 14px;
+  background:
+    var(--sk-grain) padding-box,
+    linear-gradient(180deg, #fefefc, #f8f7f2) padding-box,
+    linear-gradient(180deg, rgb(255 230 190 / 18%), rgb(0 0 0 / 22%)) border-box,
+    var(--sk-wood) 0 0 / 256px 80px border-box !important;
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 12%),
+    0 2px 2px rgb(0 0 0 / 35%),
+    0 16px 28px rgb(0 0 0 / 55%);
+  color: var(--sk-ink);
+}
+
+/* The clip: a chrome plate riveted to the board, and the arm that holds the sheet */
+html[data-theme="skeuomorphism"] .jumbotron::before {
+  content: "";
+  position: absolute;
+  top: -44px;
+  left: calc(50% - 90px);
+  width: 180px;
+  height: 64px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 64'%3E%3Cdefs%3E%3ClinearGradient id='c' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fdfdfd'/%3E%3Cstop offset='.45' stop-color='%23b9bcc1'/%3E%3Cstop offset='.55' stop-color='%23a2a6ac'/%3E%3Cstop offset='1' stop-color='%23e3e5e8'/%3E%3C/linearGradient%3E%3ClinearGradient id='a' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f4f5f6'/%3E%3Cstop offset='.5' stop-color='%23c3c6cb'/%3E%3Cstop offset='1' stop-color='%23898d94'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='14' y='30' width='152' height='30' rx='7' fill='%23000' fill-opacity='.35' transform='translate(0 3)'/%3E%3Crect x='14' y='30' width='152' height='30' rx='7' fill='url(%23c)' stroke='%235d6168' stroke-width='1.2'/%3E%3Cpath d='M20 34h140' stroke='%23fff' stroke-opacity='.8'/%3E%3Cpath d='M40 30 C40 10 56 4 90 4 C124 4 140 10 140 30' fill='none' stroke='%23000' stroke-opacity='.3' stroke-width='9' transform='translate(0 2)'/%3E%3Cpath d='M40 30 C40 10 56 4 90 4 C124 4 140 10 140 30' fill='none' stroke='%235d6168' stroke-width='9'/%3E%3Cpath d='M40 30 C40 10 56 4 90 4 C124 4 140 10 140 30' fill='none' stroke='url(%23a)' stroke-width='6.6'/%3E%3Cellipse cx='90' cy='45' rx='22' ry='7' fill='%233a3d42'/%3E%3Cellipse cx='90' cy='46' rx='20' ry='5.5' fill='%23121315'/%3E%3Ccircle cx='28' cy='45' r='4' fill='url(%23a)' stroke='%235d6168'/%3E%3Ccircle cx='152' cy='45' r='4' fill='url(%23a)' stroke='%235d6168'/%3E%3C/svg%3E") center / contain no-repeat;
+  pointer-events: none;
+}
+
+html[data-theme="skeuomorphism"] .jumbotron h1 {
+  margin-bottom: 0.6rem;
+  color: #222;
+  font-size: 2.7rem;
+  font-weight: 700;
+  text-shadow: 0 1px 0 #fff;
+}
+
+html[data-theme="skeuomorphism"] .jumbotron .lead {
+  color: #444;
+}
+
+/* ---------- Schedule: iCal's week view under its leather toolbar ---------- */
+html[data-theme="skeuomorphism"] .schedule-select {
+  position: relative;
+  margin-bottom: 0 !important;
+  padding: 0.55rem 0.9rem 0.65rem !important;
+  border: 1px solid #24160b;
+  border-radius: 6px 6px 0 0;
+  background:
+    var(--sk-stitch) 0 2px / 12px 7px repeat-x,
+    var(--sk-leather-bar);
+  box-shadow: inset 0 1px 0 rgb(255 230 200 / 25%);
+}
+
+html[data-theme="skeuomorphism"] .schedule-select::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: url("../../images/skeuomorphism/torn-white.png") 0 0 / 300px 15px repeat-x;
+  pointer-events: none;
+}
+
+html[data-theme="skeuomorphism"] .schedule-num {
+  color: #f6ead3;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 75%);
+}
+
+/* The arrows: small leather buttons */
+html[data-theme="skeuomorphism"] .schedule-select-button {
+  width: 2.3rem;
+  height: 1.9rem;
+  padding: 0.35rem;
+  border: 1px solid rgb(24 13 5 / 85%);
+  border-radius: 5px;
+  background:
+    linear-gradient(180deg, rgb(255 240 220 / 16%), rgb(0 0 0 / 14%)),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #5a3e28;
+  box-shadow:
+    inset 0 1px 0 rgb(255 235 205 / 22%),
+    0 1px 0 rgb(255 235 205 / 14%);
+  color: #f4e6cd;
+  font-size: 1rem !important;
+  filter: drop-shadow(0 -1px 0 rgb(0 0 0 / 40%));
+}
+
+html[data-theme="skeuomorphism"] .schedule-select-button:active {
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 38%), rgb(0 0 0 / 16%)),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #4a321f;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 55%);
+}
+
+/* The page: drawn on a layer behind the grid, because the grid runs one header row past the
+calendar's own box, and the page has to reach its bottom */
+html[data-theme="skeuomorphism"] .calendar {
+  --sk-day-row: 1.8rem;
+
+  isolation: isolate;
+  margin: 0 0 calc(var(--sk-day-row) + 1.6rem);
+}
+
+html[data-theme="skeuomorphism"] .calendar::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 calc(-1 * var(--sk-day-row) - 0.6rem);
+  border-radius: 0 0 4px 4px;
+  background:
+    linear-gradient(180deg, #fbfbfb, #e8e8eb) 0 0 / 100% var(--sk-day-row) no-repeat,
+    var(--sk-grain),
+    linear-gradient(180deg, #fefefe, #fbfbf8);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 30%),
+    0 10px 22px rgb(0 0 0 / 50%);
+}
+
+html[data-theme="skeuomorphism"] .calendar .day-label {
+  height: var(--sk-day-row);
+  border-bottom: 1px solid #c4c4c9;
+  color: #535358;
+  font-size: 0.74rem;
+  font-variant: normal;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: var(--sk-day-row);
+  text-shadow: 0 1px 0 #fff;
+  text-transform: uppercase;
+}
+
+/* Hour labels sit just under their line, clear of the day names */
+html[data-theme="skeuomorphism"] .calendar .calendar-times {
+  top: calc(var(--sk-day-row) + 3px);
+  padding-left: 4px;
+}
+
+html[data-theme="skeuomorphism"] .calendar .hour-label {
+  font-size: 0.66rem;
+  font-variant: normal;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+html[data-theme="skeuomorphism"] .calendar-event {
+  border-style: solid !important;
+  border-width: 0 0 0 4px !important;
+  border-right-color: rgb(0 0 0 / 0%) !important;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 60%),
+    0 1px 1px rgb(0 0 0 / 12%);
+}
+
+html[data-theme="skeuomorphism"] .calendar-event .event-text {
+  font-family: var(--sk-ui);
+}
+
+/* CRNs on label-maker tape */
+html[data-theme="skeuomorphism"] .crn-list {
+  margin-top: 0.4rem;
+  color: #d8d8d8;
+  font-size: 0;
+}
+
+html[data-theme="skeuomorphism"] .crn-list::before {
+  content: "CRNs";
+  margin-right: 0.6rem;
+  color: #d8d8d8;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 70%);
+  vertical-align: middle;
+}
+
+html[data-theme="skeuomorphism"] .crn {
+  display: inline-block;
+  margin: 0.2rem 0.45rem 0.2rem 0;
+  padding: 0.12rem 0.55rem 0.1rem;
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 12%), rgb(255 255 255 / 0%) 40%, rgb(0 0 0 / 25%)),
+    #1e1f22;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+  color: #f3f3f3;
+  cursor: pointer;
+  font-family: var(--sk-label);
+  font-size: 0.95rem;
+  font-stretch: condensed;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-shadow:
+    0 -1px 0 rgb(0 0 0 / 80%),
+    0 1px 0 rgb(255 255 255 / 25%);
+  transform: rotate(-1deg);
+}
+
+html[data-theme="skeuomorphism"] .crn:nth-of-type(2n) {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 14%), rgb(255 255 255 / 0%) 40%, rgb(0 0 0 / 25%)),
+    #b8231a;
+  transform: rotate(0.8deg);
+}
+
+html[data-theme="skeuomorphism"] .crn:nth-of-type(3n) {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 14%), rgb(255 255 255 / 0%) 40%, rgb(0 0 0 / 25%)),
+    #1d4f9a;
+  transform: rotate(-0.4deg);
+}
+
+html[data-theme="skeuomorphism"] .crn:hover {
+  filter: brightness(125%);
+}
+
+html[data-theme="skeuomorphism"] .credits {
+  color: #d8d8d8;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 70%);
+}
+
+/* "Copied!": an iOS HUD */
+html[data-theme="skeuomorphism"] #crn-copy-indicator {
+  border-radius: 10px;
+  background: rgb(0 0 0 / 75%);
+  color: #fff;
+  font-family: var(--sk-ui);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+html[data-theme="skeuomorphism"] .b-overlay .bg-light {
+  background: var(--sk-grain), #fbfaf6 !important;
+}
+
+html[data-theme="skeuomorphism"] .b-overlay h3,
+html[data-theme="skeuomorphism"] .b-overlay h4 {
+  color: #333;
+  text-shadow: 0 1px 0 #fff;
+}
+
+html[data-theme="skeuomorphism"] .warning-message .navbar-brand {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.35rem 1.1rem 0.4rem;
+  border: 1px solid #1d55ab;
+  border-radius: 6px;
+  background: var(--sk-gloss-blue);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%), 0 1px 1px rgb(0 0 0 / 25%);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 35%);
+}
+
+/* ---------- Dialogs: the iOS Settings app ---------- */
+html[data-theme="skeuomorphism"] .modal-content {
+  overflow: hidden;
+  border: 1px solid #2d3542;
+  border-radius: 9px;
+  background: var(--sk-pinstripe);
+  box-shadow: 0 22px 60px rgb(0 0 0 / 65%);
+}
+
+html[data-theme="skeuomorphism"] .modal-header {
+  align-items: center;
+  min-height: 46px;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid #2d3542;
+  border-radius: 0;
+  background: var(--sk-ios-bar);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+
+/* The title in the middle of the bar, balanced against the close button */
+html[data-theme="skeuomorphism"] .modal-title {
+  flex: 1;
+  margin-left: 2.6rem;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 50%);
+}
+
+/* The close button: a bordered bar button */
+html[data-theme="skeuomorphism"] .modal-header .close {
+  min-width: 2.6rem;
+  margin: 0;
+  padding: 0.15rem 0.55rem 0.25rem;
+  border: 1px solid #3c4f6b;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #8fa3be, #5d7595 50%, #4e688a 50%, #5a739a);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 35%),
+    0 1px 0 rgb(255 255 255 / 25%);
+  color: #fff;
+  font-size: 1.35rem;
+  line-height: 1;
+  opacity: 100%;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 50%);
+}
+
+html[data-theme="skeuomorphism"] .modal-header .close:hover,
+html[data-theme="skeuomorphism"] .modal-header .close:focus {
+  color: #fff;
+  filter: brightness(108%);
+}
+
+html[data-theme="skeuomorphism"] .modal-body {
+  color: #000;
+}
+
+/* Links and code on the pinstripes, dark enough to read there */
+html[data-theme="skeuomorphism"] .modal-body a,
+html[data-theme="skeuomorphism"] .modal-footer a {
+  color: #174a96;
+}
+
+html[data-theme="skeuomorphism"] .modal-body code {
+  color: #a3173a;
+}
+
+/* Text set out in a block (the AI agent setup prompt and command): an iOS text field */
+html[data-theme="skeuomorphism"] .modal-body .prompt-preview,
+html[data-theme="skeuomorphism"] .modal-body .setup-command {
+  border: 1px solid #a8aeb6;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 18%),
+    0 1px 0 rgb(255 255 255 / 70%);
+  color: #1a1a1a;
+}
+
+html[data-theme="skeuomorphism"] .modal-footer {
+  border-top: 1px solid rgb(0 0 0 / 14%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+
+html[data-theme="skeuomorphism"] .modal-backdrop.show {
+  opacity: 55%;
+}
+
+/* In Settings, each label heads a group, and the menus and switches are rounded white cells */
+html[data-theme="skeuomorphism"] #settings-modal .modal-body {
+  padding: 0.9rem 1.1rem 1.3rem;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .modal-body > label {
+  display: block;
+  margin: 0.4rem 0.7rem;
+  color: var(--sk-ios-header);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 85%);
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-select {
+  height: 46px;
+  padding-left: 1rem;
+  border: 1px solid #a8aeb6;
+  border-radius: 10px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' fill='none' stroke='%237f7f7f' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 2.5 8 8l-5.5 5.5'/%3E%3C/svg%3E") right 1rem center / 9px 14px no-repeat,
+    #fff;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 80%);
+  color: var(--sk-ios-value);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch {
+  min-height: 0;
+  padding: 0.8rem 6.4rem 0.8rem 1rem;
+  border: 1px solid #a8aeb6;
+  background: #fff;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch:first-of-type {
+  border-radius: 10px 10px 0 0;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch:last-of-type {
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 80%);
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch + .custom-switch {
+  border-top: 1px solid #e0e0e0;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch:only-of-type {
+  border-radius: 10px;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch .custom-control-label {
+  position: static;
+  padding-top: 0;
+  color: #000;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch .custom-control-label::before,
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch .custom-control-label::after {
+  top: calc(50% - 14px);
+  left: auto;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch .custom-control-label::before {
+  right: 1rem;
+}
+
+html[data-theme="skeuomorphism"] #settings-modal .custom-switch .custom-control-label::after {
+  right: calc(1rem + 39px);
+}
+
+/* Tooltips: Mac OS X's pale yellow tags */
+html[data-theme="skeuomorphism"] .tooltip-inner {
+  padding: 3px 8px;
+  border: 1px solid rgb(0 0 0 / 22%);
+  border-radius: 2px;
+  background: #ffffc9;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 30%);
+  color: #000;
+  font-family: var(--sk-ui);
+  font-size: 0.8rem;
+}
+
+html[data-theme="skeuomorphism"] .tooltip .arrow {
+  display: none;
+}
+
+/* The loading spinner: iOS's gray spokes, ticking round */
+html[data-theme="skeuomorphism"] .spinner-border {
+  border: 0;
+  border-radius: 0;
+  background: conic-gradient(from 15deg, rgb(255 255 255 / 0%), currentColor);
+  color: #d8d8d8;
+  mask:
+    radial-gradient(circle closest-side, rgb(0 0 0 / 0%) 46%, #000 47% 98%, rgb(0 0 0 / 0%) 100%),
+    repeating-conic-gradient(from -7deg, #000 0 14deg, rgb(0 0 0 / 0%) 14deg 30deg);
+  mask-composite: intersect;
+  animation: sk-tick 1s steps(12) infinite;
+}
+
+html[data-theme="skeuomorphism"] .b-overlay .spinner-border {
+  color: #6b6b6b;
+}
+
+/* ---------- Footer: the back cover, in the same stitched leather ---------- */
+html[data-theme="skeuomorphism"] .footer {
+  position: relative;
+  margin-top: 0;
+  padding-top: 2.4rem;
+  border-top: 1px solid #1d1209;
+  background:
+    var(--sk-stitch) 0 7px / 12px 7px repeat-x,
+    linear-gradient(180deg, rgb(0 0 0 / 28%), rgb(0 0 0 / 0%) 14px),
+    var(--sk-leather) 0 0 / 400px 400px,
+    #5d412b;
+  box-shadow: inset 0 1px 0 rgb(255 230 200 / 18%);
+}
+
+html[data-theme="skeuomorphism"] .footer-updated a {
+  color: #fff3d8 !important;
+  font-weight: 700;
+}
+
+/* The links are pressed into the leather */
+html[data-theme="skeuomorphism"] .footer-links > a {
+  color: #2e1d10;
+  filter: drop-shadow(0 1px 0 rgb(255 228 190 / 30%));
+}
+
+html[data-theme="skeuomorphism"] .footer-links > a:hover {
+  color: #f4e6cd;
+  filter: drop-shadow(0 -1px 0 rgb(0 0 0 / 70%));
+}
+
+html[data-theme="skeuomorphism"] #footer-logo {
+  filter: brightness(0) invert(11%) sepia(45%) saturate(320%) drop-shadow(0 1px 0 rgb(255 228 190 / 30%));
+}
+
+html[data-theme="skeuomorphism"] .footer-updated,
+html[data-theme="skeuomorphism"] .footer-copyright {
+  color: #efdcbc;
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 75%);
+}
+
+/* The Aqua focus ring: a soft blue glow */
+html[data-theme="skeuomorphism"] :focus-visible {
+  outline: 3px solid rgb(80 160 250 / 70%);
+  outline-offset: 1px;
+}
+
+/* ---------- Narrower screens ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="skeuomorphism"] .navbar-collapse {
+    padding: 0.5rem 0 0.3rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="skeuomorphism"] .navbar-brand img {
+    height: 34px !important;
+  }
+
+  html[data-theme="skeuomorphism"] h1 {
+    font-size: 1.75rem;
+  }
+
+  html[data-theme="skeuomorphism"] .unofficial-schedule-warning {
+    margin: 1.4rem 0.4rem 0.6rem;
+    padding: 1.3rem 1.2rem 1.15rem;
+    font-size: 1.1rem;
+    transform: rotate(-0.6deg);
+  }
+
+  html[data-theme="skeuomorphism"] .jumbotron {
+    padding: 2.8rem 1.2rem 1.6rem;
+    border-width: 11px;
+  }
+
+  html[data-theme="skeuomorphism"] .jumbotron h1 {
+    font-size: 2rem;
+  }
+
+  html[data-theme="skeuomorphism"] .schedule-num {
+    font-size: 0.9rem;
+  }
+
+  html[data-theme="skeuomorphism"] .department-cards .department-link {
+    font-size: 1.15rem;
+  }
+}
+
+/* On a phone the day columns are narrow, so the day names get smaller and never spill over */
+@media (max-width: 575.98px) {
+  html[data-theme="skeuomorphism"] .calendar .day-label {
+    overflow: hidden;
+    font-size: 0.58rem;
+    letter-spacing: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Motion ---------- */
+@keyframes sk-tick {
+  to {
+    transform: rotate(360deg);
+  }
+}

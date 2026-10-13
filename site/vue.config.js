@@ -55,4 +55,23 @@ module.exports = {
       ...config.output,
     };
   },
+  chainWebpack: (config) => {
+    // The vendored Liquid Glass library (src/vendor/) defines custom elements, which have to stay real
+    // classes: the project's ES5 target turns classes into functions, and browsers refuse to construct
+    // those as elements. Its newer syntax (?. and ??) is still compiled for webpack.
+    const vendor = /src[\\/]vendor[\\/]/;
+    config.module.rule("ts").exclude.add(vendor);
+    config.module
+      .rule("vendor-ts")
+      .test(/\.ts$/)
+      .include.add(vendor)
+      .end()
+      .use("ts-loader")
+      .loader("ts-loader")
+      .options({
+        transpileOnly: true,
+        instance: "vendor",
+        compilerOptions: { target: "es2017" },
+      });
+  },
 };

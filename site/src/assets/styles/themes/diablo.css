@@ -1,0 +1,907 @@
+/* Diablo II, after Blizzard's own Diablo II strategy site on classic.battle.net: a granite page with
+black panels inside carved stone frames, riveted header bars, stone buttons engraved in Exocet, and
+Diablo II's item colors (unique gold, set green, magic blue, rare yellow, crafted orange) on the
+text. The control panel's statues hold the life and mana globes in the bottom corners, and the globes
+follow your schedule; Kurast temple braziers burn in the margins and a fan-site flame bar runs along
+the footer (DiabloDecor.vue).
+Assets: frames, buttons, headers, potions, Town Portal and Waypoint animations from classic.battle.net
+("(C) 2000 Blizzard Entertainment. All rights reserved."); the statues and globes from Diablo II's
+800x600 control panel, lifted out of gameplay screenshots on the Game UI Database; the temple brazier
+and its fire from The Spriters Resource's Diablo II sheet; the flame bar from GeoCities via the
+Internet Archive's GifCities; Exocet Blizzard OT (Emigre, Blizzard's cut) for type. */
+@font-face {
+  font-family: "Exocet Blizzard";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../fonts/exocet/exocet-blizzard-light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Exocet Blizzard";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../../fonts/exocet/exocet-blizzard-medium.woff2") format("woff2");
+}
+
+[data-theme="diablo"] {
+  /* Diablo II's palette */
+  --d2-gold: #c7b377;
+  --d2-gold-bright: #ead9a3;
+  --d2-text: #afafaf;
+  --d2-link: #928a70;
+  --d2-link-visited: #706850;
+  --d2-white: #fff;
+  --d2-magic: #8080ff;
+  --d2-rare: #ffff64;
+  --d2-set: #00e100;
+  --d2-crafted: #ffa800;
+  --d2-red: #ff5a5a;
+  --d2-gray: #8f8f8f;
+  --d2-bronze: #6e5a36;
+  --d2-bronze-dark: #3b3122;
+  --d2-ember: #ffb347;
+  --d2-exocet: "Exocet Blizzard", "Cinzel", "Trajan Pro", georgia, serif;
+
+  /* A length, even at zero: calc(15px + 0) would be invalid and drop the page padding */
+  /* stylelint-disable-next-line length-zero-no-unit */
+  --d2-gutter: 0px;
+  --d2-frame:
+    url("../../images/diablo/frame-textboxtop-left.gif") left top no-repeat,
+    url("../../images/diablo/frame-textboxtop-right.gif") right top no-repeat,
+    url("../../images/diablo/frame-textboxbot-left.gif") left bottom no-repeat,
+    url("../../images/diablo/frame-textboxbot-right.gif") right bottom no-repeat,
+    url("../../images/diablo/frame-textboxtop-back.gif") left top repeat-x,
+    url("../../images/diablo/frame-textboxbot-back.gif") left bottom repeat-x,
+    url("../../images/diablo/frame-textboxleft.gif") left top repeat-y,
+    url("../../images/diablo/frame-textboxright.gif") right top repeat-y,
+    #000;
+  --d2-linkbar:
+    url("../../images/diablo/frame-linkbar-left.gif") left center no-repeat,
+    url("../../images/diablo/frame-linkbar-right.gif") right center no-repeat,
+    url("../../images/diablo/frame-linkbar-back.gif") center center repeat-x,
+    #0b0b0b;
+  --d2-header-bar:
+    url("../../images/diablo/header-cap-left.gif") left center no-repeat,
+    url("../../images/diablo/header-cap-right.gif") right center no-repeat,
+    url("../../images/diablo/header-bar.gif") center center repeat-x;
+
+  /* QuACS tokens */
+  --background: #2a2a2a;
+  --background-image: url("../../images/diablo/granite.jpg");
+  --background-attachment: fixed;
+  --global-text: var(--d2-text);
+  --global-text-hover: var(--d2-white);
+  --raw-link: var(--d2-link);
+  --text-default: var(--d2-text);
+  --footer-background: #000;
+  --font-body: arial, helvetica, sans-serif;
+  --font-heading: var(--d2-exocet);
+  --warning-color: var(--d2-red);
+  --card-background: #000;
+  --card-body-background: transparent;
+  --card-body-text: var(--d2-text);
+  --card-header-background: transparent;
+  --card-header-text: var(--d2-gold);
+  --card-header-hover: transparent;
+  --card-border-color: transparent;
+  --card-border-width: 0;
+  --card-border-radius: 0;
+  --card-shadow: none;
+  --navbar-background: #000;
+  --navbar-unselected-text: #dccb94;
+  --navbar-unselected-text-hover: var(--d2-ember);
+  --navbar-text-focus: var(--d2-ember);
+  --navbar-text-disabled: #444;
+  --navbar-text-active: var(--d2-ember);
+  --navbar-text-show: var(--d2-ember);
+  --modal-header-background: transparent;
+  --modal-header-text: var(--d2-gold);
+  --modal-body-background: transparent;
+  --modal-body-text: var(--d2-text);
+  --modal-footer-background: transparent;
+  --modal-footer-text: var(--d2-text);
+  --modal-close-x-hover: var(--d2-white);
+  --btn-primary-background: transparent;
+  --btn-primary-text: #dccb94;
+  --btn-border: 0;
+  --btn-border-radius: 0;
+  --btn-box-shadow: none;
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: transparent;
+  --btn-secondary-text: #dccb94;
+  --department-link-hover: transparent;
+  --select-background: #050505;
+  --select-text: var(--d2-gold);
+  --table-text: var(--d2-text);
+  --table-border: #2c2619;
+  --course-row-hover: #14110b;
+  --conflict-row: #2a0606;
+  --conflict-row-hover: #3a0909;
+  --selected-row: #062106;
+  --selected-row-hover: #0a2e0a;
+  --list-group-item-background: #000;
+  --search-bar-background: #050505;
+  --search-bar-border: var(--d2-bronze);
+  --overlay-background: #000;
+  --trash-btn: var(--d2-gray);
+  --trash-btn-hover: var(--d2-red);
+  --prerequisite-jumbotron: transparent;
+  --prerequisite-text: #000;
+  --prerequisite-warn-icon: var(--d2-crafted);
+  --prerequisite-error-icon: var(--d2-red);
+  --taken-course: var(--d2-set);
+  --not-taken-course: var(--d2-red);
+  --toast-background: rgb(0 0 0 / 88%);
+  --toast-text: var(--d2-gold);
+
+  /* Calendar: each course is an item tooltip in one of Diablo II's item qualities */
+  --calendar-grid-color: #262116;
+  --calendar-label: var(--d2-gold);
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #0d0b06;
+  --calendar-border-color-0: #c7b377;
+  --calendar-text-color-0: #c7b377;
+  --calendar-bg-color-1: #030d03;
+  --calendar-border-color-1: #00e100;
+  --calendar-text-color-1: #3ef03e;
+  --calendar-bg-color-2: #05051a;
+  --calendar-border-color-2: #6969ff;
+  --calendar-text-color-2: #9696ff;
+  --calendar-bg-color-3: #10100a;
+  --calendar-border-color-3: #ffff64;
+  --calendar-text-color-3: #ffff64;
+  --calendar-bg-color-4: #140c00;
+  --calendar-border-color-4: #ffa800;
+  --calendar-text-color-4: #ffb52e;
+  --calendar-bg-color-5: #0c0c0c;
+  --calendar-border-color-5: #fff;
+  --calendar-text-color-5: #fff;
+  --calendar-bg-color-6: #0b0b0b;
+  --calendar-border-color-6: #8f8f8f;
+  --calendar-text-color-6: #b8b8b8;
+  --calendar-sb-track-color-0: #000;
+  --calendar-sb-thumb-color-0: var(--d2-bronze);
+  --calendar-sb-track-color-1: #000;
+  --calendar-sb-thumb-color-1: var(--d2-bronze);
+  --calendar-sb-track-color-2: #000;
+  --calendar-sb-thumb-color-2: var(--d2-bronze);
+  --calendar-sb-track-color-3: #000;
+  --calendar-sb-thumb-color-3: var(--d2-bronze);
+  --calendar-sb-track-color-4: #000;
+  --calendar-sb-thumb-color-4: var(--d2-bronze);
+  --calendar-sb-track-color-5: #000;
+  --calendar-sb-thumb-color-5: var(--d2-bronze);
+  --calendar-sb-track-color-6: #000;
+  --calendar-sb-thumb-color-6: var(--d2-bronze);
+
+  scrollbar-color: var(--d2-bronze) #000;
+}
+
+@media (min-width: 1200px) {
+  [data-theme="diablo"] {
+    --d2-gutter: 110px;
+  }
+}
+
+@media (min-width: 1440px) {
+  [data-theme="diablo"] {
+    --d2-gutter: 160px;
+  }
+}
+
+html[data-theme="diablo"] ::selection {
+  background: #5a0b0b;
+  color: var(--d2-white);
+}
+
+/* The granite gets darker toward the edges, like torchlight falling off */
+html[data-theme="diablo"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 65% at 50% 40%, rgb(0 0 0 / 0%) 40%, rgb(0 0 0 / 55%) 100%);
+}
+
+html[data-theme="diablo"] body {
+  font-size: 0.95rem;
+}
+
+html[data-theme="diablo"] h1,
+html[data-theme="diablo"] h2,
+html[data-theme="diablo"] h3,
+html[data-theme="diablo"] h4,
+html[data-theme="diablo"] h5 {
+  color: var(--d2-gold);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* Links, like the strategy site: bold khaki, white on hover */
+:where([data-theme="diablo"]) a {
+  color: var(--d2-link);
+  font-weight: 700;
+}
+
+html[data-theme="diablo"] a:hover {
+  color: var(--d2-white);
+}
+
+/* ---------- Page layout: content sits between the torches and orbs ---------- */
+html[data-theme="diablo"] #wrapper > .container-fluid,
+html[data-theme="diablo"] .d2-hearth {
+  padding-right: calc(15px + var(--d2-gutter));
+  padding-left: calc(15px + var(--d2-gutter));
+}
+
+html[data-theme="diablo"] #wrapper .col-lg-1 {
+  flex: 0 0 2%;
+  max-width: 2%;
+}
+
+/* ---------- Navbar: a riveted header bar on black ---------- */
+html[data-theme="diablo"] .navbar.bg-light {
+  min-height: 78px;
+  padding: 0.4rem 5.25rem 0.4rem 3.6rem;
+  background: var(--d2-header-bar), #000 !important;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 70%);
+}
+
+html[data-theme="diablo"] .navbar-brand {
+  padding: 0;
+  margin-right: 1rem;
+}
+
+html[data-theme="diablo"] .navbar-brand img {
+  height: 66px !important;
+  margin: -6px 0 -4px;
+  filter: drop-shadow(0 2px 4px #000);
+}
+
+html[data-theme="diablo"] .navbar-light .navbar-toggler {
+  border: 0;
+  border-image: url("../../images/diablo/button.png") 9 10 fill / 9px 10px;
+}
+
+html[data-theme="diablo"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='%23dccb94' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.4' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Nav links are the strategy site's stone menu buttons */
+html[data-theme="diablo"] .navbar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  margin: 2px 3px;
+  padding: 0.2rem 0.85rem !important;
+  border: 0;
+  border-image: url("../../images/diablo/button.png") 9 10 fill / 9px 10px;
+  color: #dccb94;
+  font-family: var(--d2-exocet);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow:
+    0 1px 1px #000,
+    0 0 3px #000;
+  white-space: nowrap;
+}
+
+html[data-theme="diablo"] .navbar-nav .nav-text {
+  font-size: 0.9rem;
+}
+
+/* From 1200px to 1440px the bar is tight: smaller buttons leave the search box room */
+@media (min-width: 1200px) and (max-width: 1439.98px) {
+  html[data-theme="diablo"] .navbar.bg-light {
+    padding-right: 4rem;
+    padding-left: 2.8rem;
+  }
+
+  html[data-theme="diablo"] .navbar-brand img {
+    height: 58px !important;
+  }
+
+  html[data-theme="diablo"] .navbar-nav .nav-link {
+    margin: 2px;
+    padding: 0.2rem 0.55rem !important;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  html[data-theme="diablo"] .navbar-nav .nav-text {
+    font-size: 0.8rem;
+  }
+
+  html[data-theme="diablo"] .navbar-search {
+    min-width: 150px;
+  }
+}
+
+html[data-theme="diablo"] .navbar-nav .nav-link:hover,
+html[data-theme="diablo"] .navbar-nav .nav-link:focus-visible,
+html[data-theme="diablo"] .navbar-nav .nav-link.active,
+html[data-theme="diablo"] .navbar-nav .show > .nav-link {
+  color: var(--d2-ember);
+  text-shadow:
+    0 0 4px #ff7a00,
+    0 0 9px rgb(255 90 0 / 60%);
+}
+
+html[data-theme="diablo"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="diablo"] #search-bar {
+  border: 1px solid var(--d2-bronze);
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px #000, inset 0 2px 6px rgb(0 0 0 / 90%), 0 0 0 1px #000;
+  background-color: #050505;
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="diablo"] #search-bar::placeholder {
+  color: #6f6550;
+}
+
+html[data-theme="diablo"] #search-bar:focus {
+  border-color: var(--d2-gold);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 90%), 0 0 8px rgb(255 140 0 / 55%);
+}
+
+/* Dropdown menus: a black panel with a bronze rim, gold Exocet entries */
+html[data-theme="diablo"] .dropdown-menu {
+  padding: 6px;
+  border: 2px solid var(--d2-bronze);
+  border-radius: 0;
+  background: #000;
+  box-shadow: 0 0 0 1px #000, 0 10px 30px rgb(0 0 0 / 85%);
+}
+
+html[data-theme="diablo"] .dropdown-item {
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="diablo"] .dropdown-item:hover,
+html[data-theme="diablo"] .dropdown-item:focus {
+  background: #1a140b;
+  color: var(--d2-white);
+}
+
+html[data-theme="diablo"] .dropdown-divider {
+  border-top-color: var(--d2-bronze-dark);
+}
+
+/* The semester list is the Waypoint menu */
+/* stylelint-disable-next-line selector-class-pattern -- semDropDown is the class App.vue gives it */
+html[data-theme="diablo"] .semDropDown .dropdown-menu::before {
+  content: "Waypoint";
+  display: block;
+  height: 104px;
+  margin-bottom: 4px;
+  padding-top: 82px;
+  border-bottom: 1px solid var(--d2-bronze-dark);
+  background: url("../../images/diablo/waypoint.gif") center 0 / 160px 80px no-repeat;
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+
+/* ---------- Warning: red text in a carved panel ---------- */
+html[data-theme="diablo"] .unofficial-schedule-warning {
+  margin-top: 1.25rem;
+  padding: 1.6rem 2rem 1.9rem;
+  border: 0;
+  background: var(--d2-frame);
+  color: var(--d2-red);
+  font-family: var(--d2-exocet);
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+}
+
+/* ---------- Carved stone panels ---------- */
+html[data-theme="diablo"] .card {
+  padding: 23px 21px 26px 20px;
+  border: 0;
+  background: var(--d2-frame);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 65%);
+}
+
+html[data-theme="diablo"] .card-header {
+  border: 0;
+  border-radius: 0 !important;
+}
+
+html[data-theme="diablo"] .card-body {
+  background: transparent;
+}
+
+/* School panels: the link bar holds the title, departments below in unique gold */
+html[data-theme="diablo"] .department-cards .card-header {
+  padding: 0.45rem 1.6rem 0.4rem !important;
+  background: var(--d2-linkbar);
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-align: center;
+}
+
+html[data-theme="diablo"] .department-cards .card-body {
+  padding: 0.6rem 0.4rem 0.2rem;
+}
+
+html[data-theme="diablo"] .department-cards .department-link {
+  padding: 0.2rem 0.6rem !important;
+  color: var(--d2-text) !important;
+  font-size: 1rem !important;
+  font-weight: 400;
+}
+
+html[data-theme="diablo"] .department-cards .department-link:hover,
+html[data-theme="diablo"] .department-cards .department-link:focus-visible {
+  background: linear-gradient(90deg, rgb(110 90 54 / 35%), rgb(110 90 54 / 0%));
+  color: var(--d2-white) !important;
+}
+
+html[data-theme="diablo"] .department-code {
+  display: inline-block;
+  min-width: 3.6em;
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet) !important;
+  font-size: 1.05rem !important;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* Course panels read like item tooltips: the name in unique gold, the affixes in magic blue */
+html[data-theme="diablo"] .course-card {
+  margin-bottom: 1rem;
+}
+
+html[data-theme="diablo"] .course-card-header {
+  padding: 0.35rem 0.75rem 0.6rem;
+  background: transparent !important;
+  color: var(--d2-text) !important;
+  line-height: 1.5;
+}
+
+html[data-theme="diablo"] .course-card-header > div:first-child > span:first-child {
+  color: var(--d2-magic);
+}
+
+html[data-theme="diablo"] .course-card-header .course-code,
+html[data-theme="diablo"] .course-card-header .font-weight-bold {
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="diablo"] .course-card-header .course-code {
+  font-size: 1.35rem;
+}
+
+html[data-theme="diablo"] .course-card-header:hover .course-code,
+html[data-theme="diablo"] .course-card-header:hover .font-weight-bold {
+  color: var(--d2-gold-bright);
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="diablo"] .course-card .open_close_icon {
+  color: var(--d2-gold);
+}
+
+html[data-theme="diablo"] .header_expanded {
+  border-bottom: 1px solid var(--d2-bronze-dark);
+}
+
+/* Unmet requirements are red, like an item you can't use yet */
+html[data-theme="diablo"] .prerequisiteError {
+  border: 1px solid currentColor;
+  background: transparent !important;
+  color: var(--d2-red);
+  font-family: var(--d2-exocet);
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
+}
+
+html[data-theme="diablo"] .prerequisiteBkgWarn {
+  color: var(--d2-crafted);
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Section tables: a stash grid ---------- */
+html[data-theme="diablo"] .table {
+  margin-bottom: 0;
+}
+
+html[data-theme="diablo"] .table-bordered,
+html[data-theme="diablo"] .table-bordered td,
+html[data-theme="diablo"] .table-bordered th {
+  border-color: var(--table-border);
+}
+
+html[data-theme="diablo"] .table thead th {
+  border-bottom: 1px solid var(--d2-bronze);
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+html[data-theme="diablo"] .table tbody tr.selected {
+  box-shadow: inset 3px 0 var(--d2-set);
+  color: #b8ffb8;
+}
+
+html[data-theme="diablo"] .table tbody tr.selected .font-weight-bold {
+  color: var(--d2-set);
+}
+
+html[data-theme="diablo"] .table tbody tr.conflict {
+  box-shadow: inset 3px 0 var(--d2-red);
+  color: #d98080;
+}
+
+html[data-theme="diablo"] .info-icon {
+  color: var(--d2-magic);
+}
+
+html[data-theme="diablo"] .current-schedule-badge {
+  border-radius: 0 !important;
+  color: var(--d2-rare);
+  font-family: var(--d2-exocet);
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Page titles get the riveted header bar ---------- */
+html[data-theme="diablo"] h1 {
+  height: 60px;
+  margin: 0.4rem 0 1rem;
+  padding: 0 90px;
+  overflow: hidden;
+  background: var(--d2-header-bar);
+  color: #d7d7d7;
+  font-size: 1.35rem;
+  letter-spacing: 0.18em;
+  line-height: 61px;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 2px #000;
+  white-space: nowrap;
+}
+
+/* ---------- Prerequisites ---------- */
+html[data-theme="diablo"] .jumbotron {
+  padding: 30px 32px 34px;
+  border-radius: 0;
+  background: var(--d2-frame) !important;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 65%);
+}
+
+html[data-theme="diablo"] .jumbotron h1 {
+  margin: -6px -10px 1.2rem;
+}
+
+html[data-theme="diablo"] .jumbotron .lead {
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  letter-spacing: 0.05em;
+}
+
+html[data-theme="diablo"] .jumbotron span.font-weight-bold {
+  color: var(--d2-crafted);
+}
+
+html[data-theme="diablo"] .home h3 {
+  font-size: 1.15rem;
+}
+
+/* ---------- Buttons: engraved stone ---------- */
+html[data-theme="diablo"] .btn {
+  min-height: 34px;
+  padding: 0.25rem 1rem;
+  border: 0;
+  border-image: url("../../images/diablo/button.png") 9 10 fill / 9px 10px;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none !important;
+  color: #dccb94;
+  font-family: var(--d2-exocet);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow:
+    0 1px 1px #000,
+    0 0 3px #000;
+}
+
+html[data-theme="diablo"] .btn:disabled,
+html[data-theme="diablo"] .btn.disabled {
+  opacity: 50%;
+}
+
+html[data-theme="diablo"] .btn:hover,
+html[data-theme="diablo"] .btn:focus,
+html[data-theme="diablo"] .btn:not(:disabled):not(.disabled):active {
+  border-color: transparent;
+  background: transparent;
+  color: var(--d2-ember);
+  text-shadow:
+    0 0 4px #ff7a00,
+    0 0 9px rgb(255 90 0 / 60%);
+}
+
+html[data-theme="diablo"] .btn-outline-danger {
+  color: #ff7b6b;
+}
+
+html[data-theme="diablo"] .form-control,
+html[data-theme="diablo"] .custom-select {
+  border: 1px solid var(--d2-bronze);
+  border-radius: 0;
+  background-color: #050505;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 90%);
+  color: var(--d2-gold);
+}
+
+html[data-theme="diablo"] .form-control:focus,
+html[data-theme="diablo"] .custom-select:focus {
+  border-color: var(--d2-gold);
+  background-color: #050505;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 90%), 0 0 8px rgb(255 140 0 / 55%);
+  color: var(--d2-gold);
+}
+
+html[data-theme="diablo"] .custom-select option {
+  background: #000;
+  color: var(--d2-gold);
+}
+
+html[data-theme="diablo"] .custom-control-label::before {
+  border-color: var(--d2-bronze);
+  background-color: #000;
+}
+
+html[data-theme="diablo"] .custom-switch .custom-control-label::after {
+  background-color: var(--d2-bronze);
+}
+
+html[data-theme="diablo"] .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #9a0000;
+  background-color: #6a0000;
+}
+
+html[data-theme="diablo"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background-color: var(--d2-ember);
+  box-shadow: 0 0 6px var(--d2-ember);
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="diablo"] .schedule-select {
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="diablo"] .schedule-select-button {
+  width: 44px;
+  height: 43px;
+  padding: 0;
+  background: url("../../images/diablo/button-prev.gif") center / contain no-repeat;
+  color: transparent;
+}
+
+html[data-theme="diablo"] .schedule-select-button:last-child {
+  background-image: url("../../images/diablo/button-next.gif");
+}
+
+html[data-theme="diablo"] .schedule-select-button:hover {
+  filter: brightness(130%) drop-shadow(0 0 6px rgb(255 120 0 / 70%));
+}
+
+html[data-theme="diablo"] .schedule-select-button path {
+  display: none;
+}
+
+html[data-theme="diablo"] .calendar {
+  padding: 4px 0;
+  background: rgb(0 0 0 / 88%);
+  outline: 2px solid var(--d2-bronze-dark);
+  outline-offset: 6px;
+  box-shadow: 0 0 0 7px #000, 0 10px 24px rgb(0 0 0 / 70%);
+}
+
+html[data-theme="diablo"] .calendar .day-label,
+html[data-theme="diablo"] .calendar .hour-label {
+  font-family: var(--d2-exocet);
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="diablo"] .calendar-event {
+  border: 1px solid #000 !important;
+  border-left: 3px solid !important;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 6%);
+}
+
+html[data-theme="diablo"] .calendar-event .event-text {
+  text-align: center;
+}
+
+html[data-theme="diablo"] .crn-list,
+html[data-theme="diablo"] .credits {
+  color: var(--d2-gold);
+}
+
+html[data-theme="diablo"] .b-overlay .bg-light {
+  background: #000 !important;
+}
+
+/* ---------- Dialogs: carved panels with the round close button ---------- */
+html[data-theme="diablo"] .modal-content {
+  padding: 18px 20px 22px;
+  border: 0;
+  border-radius: 0;
+  background: var(--d2-frame);
+  box-shadow: 0 0 0 2px #000, 0 20px 50px rgb(0 0 0 / 90%);
+}
+
+html[data-theme="diablo"] .modal-header {
+  margin-bottom: 0.5rem;
+  border-bottom: 0;
+  background: var(--d2-linkbar);
+  justify-content: center;
+  position: relative;
+}
+
+html[data-theme="diablo"] .modal-title {
+  color: var(--d2-gold);
+  font-family: var(--d2-exocet);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+html[data-theme="diablo"] .modal-header .close {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0;
+  padding: 0;
+  overflow: hidden;
+  background: url("../../images/diablo/button-close.gif") center / contain no-repeat;
+  color: transparent;
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-theme="diablo"] .modal-header .close:hover {
+  filter: brightness(130%) drop-shadow(0 0 6px rgb(255 120 0 / 70%));
+}
+
+html[data-theme="diablo"] .modal-footer {
+  border-top: 1px solid var(--d2-bronze-dark);
+}
+
+html[data-theme="diablo"] .modal-backdrop.show {
+  opacity: 70%;
+}
+
+/* Tooltips: Diablo II's floating item descriptions */
+html[data-theme="diablo"] .tooltip-inner {
+  border-radius: 0;
+  background: rgb(0 0 0 / 88%);
+  color: var(--d2-white);
+  font-family: var(--d2-exocet);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+html[data-theme="diablo"] .tooltip .arrow {
+  display: none;
+}
+
+html[data-theme="diablo"] #crn-copy-indicator {
+  border: 1px solid var(--d2-bronze);
+  font-family: var(--d2-exocet);
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Footer: a stone control panel with flames along its top ---------- */
+html[data-theme="diablo"] .footer {
+  position: relative;
+  margin-top: 4.5rem;
+  padding-top: 2.6rem;
+  background: url("../../images/diablo/frame-linkbar-back.gif") center / auto 100% repeat-x, #0b0b0b;
+  border-top: 2px solid var(--d2-bronze);
+}
+
+html[data-theme="diablo"] .footer::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 62px;
+  background:
+    url("../../images/diablo/fire-bar.gif") 0 bottom / auto 62px repeat-x,
+    url("../../images/diablo/fire-bar.gif") 300px bottom / auto 62px repeat-x;
+  background-blend-mode: screen;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+html[data-theme="diablo"] .footer-links > * {
+  color: var(--d2-gold);
+}
+
+html[data-theme="diablo"] .footer-updated a {
+  color: var(--d2-gold) !important;
+}
+
+html[data-theme="diablo"] .footer-links > a:hover {
+  color: var(--d2-ember);
+  filter: drop-shadow(0 0 6px rgb(255 100 0 / 80%));
+}
+
+html[data-theme="diablo"] #footer-logo {
+  filter: sepia(100%) saturate(150%) brightness(85%);
+}
+
+html[data-theme="diablo"] .footer-updated,
+html[data-theme="diablo"] .footer-copyright {
+  color: var(--d2-text);
+  font-family: var(--d2-exocet);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="diablo"] :focus-visible {
+  outline: 2px solid var(--d2-ember);
+  outline-offset: 2px;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="diablo"] .navbar.bg-light {
+    padding: 0.4rem 0.75rem;
+    background: url("../../images/diablo/header-bar.gif") center 0 / auto 60px repeat-x, #000 !important;
+  }
+
+  html[data-theme="diablo"] .navbar-brand img {
+    height: 54px !important;
+  }
+
+  html[data-theme="diablo"] .navbar-collapse {
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="diablo"] h1 {
+    padding: 0 70px;
+    font-size: 1rem;
+  }
+
+  html[data-theme="diablo"] .unofficial-schedule-warning {
+    padding: 1.4rem 1.3rem 1.7rem;
+    font-size: 0.95rem;
+  }
+}

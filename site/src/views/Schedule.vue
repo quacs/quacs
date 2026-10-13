@@ -538,6 +538,18 @@ export default class Schedule extends Vue {
   text-color: var(--global-text);
 }
 
+/* The overlay sizes itself to this message, so a theme with very wide letters (Wingdings) could make
+it wider than a phone. Breaking anywhere keeps it inside. */
+.warning-message,
+.warning-message h3 {
+  overflow-wrap: anywhere;
+}
+
+/* The link styles as a navbar brand, which never wraps */
+.warning-message .navbar-brand {
+  white-space: normal;
+}
+
 .schedule-select {
   display: flex;
   align-items: center;

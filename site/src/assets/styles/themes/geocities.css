@@ -1,0 +1,916 @@
+/* GeoCities homepages: the shared look of the GeoCities homepage themes, so far just the GeoCities
+theme (the QuACS Academy), built like a lovingly made 1998 GeoCities homepage. A tiled background,
+Times New Roman, blue underlined links, beveled tables, bracketed nav links, Windows 95 buttons, a
+masthead with spinning GIFs over a marquee of quotes, an "Under Construction" notice, and a guestbook,
+webring and hit counter above the footer. setColorTheme marks these themes with data-geocities; each
+theme's own file (academy.css) fills in the --geo-* palette.
+GIFs are real GeoCities GIFs from the Internet Archive's GifCities (assets/images/geocities). */
+html[data-geocities] {
+  --geo-body-font: "Times New Roman", times, serif;
+  --geo-ui-font: tahoma, "MS Sans Serif", "Microsoft Sans Serif", geneva, arial, sans-serif;
+  --geo-win-gray: #c0c0c0;
+
+  /* QuACS tokens, drawn from the page's palette */
+  --background: var(--geo-bg);
+  --background-image: var(--geo-tile);
+  --background-attachment: scroll;
+  --global-text: var(--geo-page-ink);
+  --global-text-hover: var(--geo-link-hover);
+  --raw-link: var(--geo-link);
+  --text-default: var(--geo-link);
+  --footer-background: var(--geo-foot-bg);
+  --font-body: var(--geo-body-font);
+  --font-heading: var(--geo-title-font);
+  --warning-color: #c00000;
+  --card-background: var(--geo-panel);
+  --card-body-background: var(--geo-panel);
+  --card-body-text: var(--geo-ink);
+  --card-header-background: var(--geo-head-bg);
+  --card-header-text: var(--geo-head-ink);
+  --card-header-hover: var(--geo-hover-bg);
+  --card-border-color: var(--geo-bevel);
+  --card-border-width: 4px;
+  --card-border-radius: 0;
+  --card-inner-radius: 0;
+  --card-shadow: none;
+  --card-backdrop-filter: none;
+  --navbar-backdrop-filter: none;
+  --navbar-background: var(--geo-nav-bg);
+  --navbar-unselected-text: var(--geo-nav-ink);
+  --navbar-unselected-text-hover: var(--geo-nav-hover);
+  --navbar-text-focus: var(--geo-nav-hover);
+  --navbar-text-disabled: var(--geo-nav-ink);
+  --navbar-text-active: var(--geo-nav-hover);
+  --navbar-text-show: var(--geo-nav-hover);
+  --modal-header-background: var(--geo-head-bg);
+  --modal-header-text: var(--geo-head-ink);
+  --modal-body-background: var(--geo-panel);
+  --modal-body-text: var(--geo-ink);
+  --modal-footer-background: var(--geo-panel);
+  --modal-footer-text: var(--geo-ink);
+  --modal-close-x-hover: #000;
+  --btn-primary-background: var(--geo-win-gray);
+  --btn-primary-text: #000;
+  --btn-border: 2px outset #dcdcdc;
+  --btn-border-radius: 0;
+  --btn-box-shadow: none;
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: var(--geo-win-gray);
+  --btn-secondary-text: #000;
+  --department-link-hover: var(--geo-hover-bg);
+  --select-background: #fff;
+  --select-text: #000;
+  --table-text: var(--geo-ink);
+  --table-border: var(--geo-bevel);
+  --course-row-hover: var(--geo-hover-bg);
+  --conflict-row: #ffc4c4;
+  --conflict-row-hover: #ffadad;
+  --selected-row: var(--geo-selected);
+  --selected-row-hover: var(--geo-selected-hover);
+  --list-group-item-background: var(--geo-panel);
+  --search-bar-background: #fff;
+  --search-bar-border: #808080;
+  --overlay-background: var(--geo-panel);
+  --trash-btn: var(--geo-ink);
+  --trash-btn-hover: #f00;
+  --prerequisite-jumbotron: var(--geo-panel);
+  --prerequisite-text: #000;
+  --prerequisite-warn-icon: #ffd700;
+  --prerequisite-error-icon: #ff8080;
+  --taken-course: #007000;
+  --not-taken-course: #c00000;
+  --toast-background: #ffffc0;
+  --toast-text: #000;
+  --calendar-grid-color: #b8b8b8;
+  --calendar-label: var(--geo-page-ink);
+}
+
+html[data-geocities] body {
+  font-size: 1.05rem;
+}
+
+/* Links: underlined, the classic way */
+:where(html[data-geocities]) a {
+  color: var(--geo-link);
+  text-decoration: underline;
+}
+
+html[data-geocities] a:hover {
+  color: var(--geo-link-hover);
+}
+
+:where(html[data-geocities]) a:visited {
+  color: var(--geo-link-visited);
+}
+
+html[data-geocities] h1 {
+  margin: 0.5rem 0 1rem;
+  color: var(--geo-title-color);
+  font-family: var(--geo-title-font);
+  font-size: 2.4rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: var(--geo-title-shadow);
+}
+
+/* ---------- Navbar: a colored bar of [ bracketed ] links ---------- */
+html[data-geocities] .navbar.bg-light {
+  padding: 0.35rem 1rem;
+  border-bottom: 4px ridge var(--geo-bevel);
+}
+
+html[data-geocities] .navbar-brand {
+  padding: 0;
+}
+
+html[data-geocities] .navbar-nav .nav-link {
+  padding: 0.3rem 0.45rem !important;
+  font-family: var(--geo-body-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+html[data-geocities] .navbar-nav .nav-text {
+  font-size: 1.1rem;
+}
+
+html[data-geocities] .navbar-nav .nav-link:not(.dropdown-toggle)::before {
+  content: "[ ";
+  text-decoration: none;
+}
+
+html[data-geocities] .navbar-nav .nav-link:not(.dropdown-toggle)::after {
+  content: " ]";
+}
+
+html[data-geocities] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-geocities] .navbar-light .navbar-toggler {
+  border: 2px outset #dcdcdc;
+  border-radius: 0;
+  background: var(--geo-win-gray);
+}
+
+html[data-geocities] #search-bar {
+  border: 2px inset var(--geo-win-gray);
+  border-radius: 0;
+  background-color: #fff;
+  color: #000;
+  font-family: var(--geo-body-font);
+  font-size: 1.05rem;
+}
+
+html[data-geocities] #search-bar:focus {
+  box-shadow: none;
+}
+
+html[data-geocities] .dropdown-menu {
+  padding: 2px;
+  border: 2px outset var(--geo-bevel);
+  border-radius: 0;
+  background: var(--geo-panel);
+  font-family: var(--geo-body-font);
+}
+
+html[data-geocities] .dropdown-item {
+  color: var(--geo-ink);
+}
+
+html[data-geocities] .dropdown-item:hover,
+html[data-geocities] .dropdown-item:focus {
+  background: var(--geo-head-bg);
+  color: var(--geo-head-ink);
+}
+
+/* ---------- Masthead (GeocitiesDecor.vue) ---------- */
+.geo-masthead {
+  margin: 1rem 1rem 0;
+  text-align: center;
+}
+
+.geo-topline {
+  display: block;
+  margin: 0 auto 0.4rem;
+  padding: 3px 10px;
+  border: 3px ridge var(--geo-bevel);
+  background: var(--geo-panel);
+}
+
+.geo-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.geo-flank {
+  flex: none;
+  width: var(--geo-flank-width, auto);
+  height: auto;
+}
+
+.geo-title {
+  color: var(--geo-title-color);
+  font-family: var(--geo-title-font);
+  font-size: 2.7rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-shadow: var(--geo-title-shadow);
+}
+
+.geo-subtitle {
+  margin-top: 0.3rem;
+  color: var(--geo-subtitle-color);
+  text-shadow: var(--geo-page-shadow, none);
+  font-family: var(--geo-body-font);
+  font-size: 1.2rem;
+  font-style: italic;
+}
+
+.geo-updated {
+  display: inline-block;
+  color: var(--geo-updated-color, #f00);
+  font-style: normal;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.geo-updated img {
+  vertical-align: middle;
+}
+
+/* The marquee: two copies of the quotes scroll by, so the loop has no gap */
+.geo-marquee {
+  max-width: 940px;
+  margin: 0.9rem auto 0.3rem;
+  padding: 0.3rem 0;
+  overflow: hidden;
+  border: 3px inset var(--geo-bevel);
+  background: var(--geo-marquee-bg);
+  color: var(--geo-marquee-ink);
+  font-family: var(--geo-body-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.geo-marquee-track {
+  display: inline-block;
+}
+
+.geo-verse {
+  margin-right: 3.5em;
+}
+
+.geo-verse cite {
+  font-weight: 400;
+}
+
+.geo-divider {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.6rem auto;
+}
+
+/* ---------- The data notice is an "Under Construction" sign ---------- */
+html[data-geocities] .unofficial-schedule-warning {
+  min-height: 128px;
+  margin: 0.4rem 0 0;
+  padding: 0.6rem 1rem 0.8rem 124px;
+  border: 4px ridge var(--geo-bevel);
+  background: var(--geo-panel) url("../../images/geocities/under-construction.gif") 10px 50% no-repeat;
+  color: #c00000;
+  font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  text-align: left;
+}
+
+html[data-geocities] .unofficial-schedule-warning::before {
+  content: "This page is under construction!";
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #ff8c00;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 #000;
+  text-transform: uppercase;
+}
+
+/* ---------- Panels: beveled tables ---------- */
+html[data-geocities] .card {
+  border: 4px outset var(--geo-bevel);
+  color: var(--geo-ink);
+}
+
+html[data-geocities] .card-header {
+  border-bottom: 3px groove var(--geo-bevel);
+  border-radius: 0 !important;
+}
+
+html[data-geocities] .department-cards .card {
+  margin-bottom: 1rem;
+}
+
+html[data-geocities] .department-cards .card-header {
+  padding: 0.35rem 0.6rem !important;
+  font-family: var(--geo-title-font);
+  font-size: 1.35rem !important;
+  text-align: center;
+}
+
+html[data-geocities] .department-cards .card-body {
+  padding: 0.5rem 0.4rem;
+}
+
+html[data-geocities] .department-cards .department-link {
+  padding: 0.15rem 0.5rem 0.15rem 1.9rem !important;
+  background: var(--geo-bullet) 0.45rem 50% / 15px 15px no-repeat;
+  color: var(--geo-link) !important;
+  font-size: 1.1rem !important;
+  text-decoration: underline;
+}
+
+html[data-geocities] .department-cards .department-link:hover,
+html[data-geocities] .department-cards .department-link:focus-visible {
+  background: var(--geo-bullet) 0.45rem 50% / 15px 15px no-repeat, var(--geo-hover-bg);
+  color: var(--geo-link-hover) !important;
+}
+
+html[data-geocities] .department-code,
+html[data-geocities] .course-code {
+  color: var(--geo-code-color);
+  font-family: "Courier New", courier, monospace !important;
+  font-weight: 700;
+}
+
+html[data-geocities] .department-code {
+  font-size: 1.15rem !important;
+}
+
+html[data-geocities] .course-card {
+  margin-bottom: 1rem;
+}
+
+html[data-geocities] .course-card-header {
+  background: var(--geo-panel) !important;
+  color: var(--geo-ink) !important;
+}
+
+html[data-geocities] .course-card-header:hover {
+  background: var(--geo-hover-bg) !important;
+}
+
+html[data-geocities] .course-card-header .font-weight-bold {
+  color: var(--geo-head-text-on-panel);
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-geocities] .header_expanded {
+  border-bottom: 3px groove var(--geo-bevel);
+}
+
+html[data-geocities] .course-card .open_close_icon {
+  color: var(--geo-head-text-on-panel);
+}
+
+html[data-geocities] .prerequisiteError {
+  border: 1px solid #000;
+  font-family: var(--geo-ui-font);
+  font-size: 0.85em;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* Tables with cellspacing, the old way */
+html[data-geocities] .table {
+  border-collapse: separate;
+  border-spacing: 2px;
+  border: 2px outset var(--geo-bevel);
+}
+
+html[data-geocities] .table-bordered td,
+html[data-geocities] .table-bordered th {
+  border: 1px inset var(--geo-bevel);
+}
+
+html[data-geocities] .table thead th {
+  background: var(--geo-head-bg);
+  color: var(--geo-head-ink);
+  border-bottom-width: 1px;
+}
+
+html[data-geocities] .current-schedule-badge {
+  border-radius: 0 !important;
+  background: #ffff80;
+  color: #000;
+}
+
+html[data-geocities] .info-icon {
+  color: var(--geo-head-text-on-panel);
+}
+
+/* ---------- Buttons and fields: Windows 95 ---------- */
+html[data-geocities] .btn {
+  padding: 0.2rem 0.9rem;
+  border: 2px outset #dcdcdc;
+  border-radius: 0;
+  background: var(--geo-win-gray);
+  box-shadow: none !important;
+  color: #000;
+  font-family: var(--geo-ui-font);
+  font-size: 0.92rem;
+}
+
+html[data-geocities] .btn:hover,
+html[data-geocities] .btn:focus {
+  border-color: #dcdcdc;
+  background: #cfcfcf;
+  color: #000;
+}
+
+html[data-geocities] .btn:not(:disabled):not(.disabled):active {
+  border-style: inset;
+  background: #b4b4b4;
+  color: #000;
+}
+
+html[data-geocities] .btn-primary {
+  font-weight: 700;
+}
+
+html[data-geocities] .btn-outline-danger {
+  color: #b00000;
+}
+
+html[data-geocities] .form-control,
+html[data-geocities] .custom-select {
+  border: 2px inset var(--geo-win-gray);
+  border-radius: 0;
+  background-color: #fff;
+  color: #000;
+  font-family: var(--geo-body-font);
+}
+
+html[data-geocities] .form-control:focus,
+html[data-geocities] .custom-select:focus {
+  border-color: var(--geo-win-gray);
+  box-shadow: none;
+  outline: 1px dotted #000;
+}
+
+html[data-geocities] .custom-control-label::before {
+  border: 2px inset var(--geo-win-gray);
+  border-radius: 0 !important;
+  background: #fff;
+}
+
+html[data-geocities] .custom-switch .custom-control-label::after {
+  border-radius: 0;
+  background: #808080;
+}
+
+html[data-geocities] .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: var(--geo-win-gray);
+  background: var(--geo-head-bg);
+}
+
+html[data-geocities] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background: #fff;
+}
+
+/* ---------- Prerequisites ---------- */
+html[data-geocities] .jumbotron {
+  border: 4px ridge var(--geo-bevel);
+  border-radius: 0;
+  background: var(--geo-panel) !important;
+  color: var(--geo-ink);
+}
+
+html[data-geocities] .jumbotron h1 {
+  color: var(--geo-head-text-on-panel);
+  text-shadow: none;
+}
+
+html[data-geocities] .jumbotron .lead {
+  font-style: italic;
+}
+
+/* ---------- Schedule ---------- */
+html[data-geocities] .schedule-select {
+  font-family: var(--geo-body-font);
+  font-weight: 700;
+}
+
+html[data-geocities] .schedule-select-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0.25rem;
+  border: 2px outset #dcdcdc;
+  background: var(--geo-win-gray);
+  color: #000;
+  font-size: 1rem !important;
+}
+
+html[data-geocities] .schedule-select-button:active {
+  border-style: inset;
+}
+
+html[data-geocities] .calendar {
+  padding: 0.25rem 0;
+  border: 4px ridge var(--geo-bevel);
+  background: var(--geo-panel);
+
+  --calendar-label: var(--geo-ink);
+}
+
+html[data-geocities] .calendar-event {
+  border: 1px solid #000 !important;
+  border-left: 4px solid !important;
+}
+
+html[data-geocities] .b-overlay {
+  color: var(--geo-ink);
+}
+
+html[data-geocities] .b-overlay .bg-light {
+  border: 4px ridge var(--geo-bevel);
+  border-radius: 0 !important;
+}
+
+/* ---------- Dialogs ---------- */
+html[data-geocities] .modal-content {
+  border: 4px ridge var(--geo-bevel);
+  border-radius: 0;
+  box-shadow: 6px 6px 0 rgb(0 0 0 / 45%);
+}
+
+html[data-geocities] .modal-header {
+  border-bottom: 3px groove var(--geo-bevel);
+  border-radius: 0;
+}
+
+html[data-geocities] .modal-title {
+  font-family: var(--geo-title-font);
+  font-weight: 700;
+}
+
+html[data-geocities] .modal-header .close {
+  width: 1.7rem;
+  height: 1.55rem;
+  margin: 0 0 0 auto;
+  padding: 0 0 2px;
+  border: 2px outset #dcdcdc;
+  background: var(--geo-win-gray);
+  color: #000;
+  font-family: var(--geo-ui-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-geocities] .modal-footer {
+  border-top: 3px groove var(--geo-bevel);
+}
+
+html[data-geocities] .tooltip-inner {
+  border: 1px solid #000;
+  border-radius: 0;
+  background: #ffffe1;
+  color: #000;
+  font-family: var(--geo-ui-font);
+}
+
+html[data-geocities] .tooltip .arrow {
+  display: none;
+}
+
+html[data-geocities] #crn-copy-indicator {
+  border: 2px outset #dcdcdc;
+  border-radius: 0;
+  font-family: var(--geo-ui-font);
+}
+
+/* ---------- Guestbook, webring and counter (GeocitiesDecor.vue) ---------- */
+.geo-guestbook {
+  max-width: 1100px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+  color: var(--geo-page-ink);
+  text-shadow: var(--geo-page-shadow, none);
+  font-family: var(--geo-body-font);
+  text-align: center;
+}
+
+.geo-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.25rem 2rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.geo-gallery img {
+  width: auto;
+  max-height: 170px;
+}
+
+.geo-gallery .geo-framed {
+  border: 6px ridge var(--geo-frame);
+  background: #000;
+}
+
+.geo-webring {
+  text-shadow: none;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 1.25rem;
+  margin: 0.25rem 0 1rem;
+  padding: 0.55rem 1rem;
+  border: 4px ridge var(--geo-bevel);
+  background: var(--geo-panel);
+  color: var(--geo-ink);
+  line-height: 1.25;
+}
+
+.geo-webring button {
+  padding: 0.15rem 0.8rem;
+  border: 2px outset #dcdcdc;
+  background: var(--geo-win-gray);
+  color: #000;
+  font-family: var(--geo-ui-font);
+  font-size: 0.9rem;
+}
+
+.geo-webring button:active {
+  border-style: inset;
+}
+
+.geo-counter {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.geo-odometer {
+  display: inline-flex;
+  gap: 1px;
+  padding: 2px;
+  border: 2px inset #808080;
+  background: #000;
+  vertical-align: middle;
+}
+
+.geo-odometer span {
+  width: 1.05em;
+  background: linear-gradient(#2a2a2a, #000 46%, #111 54%, #2a2a2a);
+  color: #39ff14;
+  font-family: "Courier New", courier, monospace;
+  font-size: 1.25rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.geo-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1rem 2.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.geo-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--geo-page-link) !important;
+  font-weight: 700;
+}
+
+span.geo-badge {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.geo-fineprint {
+  margin: 0 0 0.5rem;
+  font-size: 0.92rem;
+  font-style: italic;
+}
+
+.geo-fineprint img {
+  margin: 0 0.25rem 0.35rem;
+}
+
+.geo-address {
+  font-style: normal;
+}
+
+/* "Did You Know?": one fact at a time beside a light bulb, on pages that have facts */
+.geo-facts {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  max-width: 780px;
+  margin: 0.5rem auto 1.25rem;
+  padding: 0.75rem 1.1rem;
+  border: 5px double var(--geo-bevel);
+  background: var(--geo-panel);
+  color: var(--geo-ink);
+  text-align: left;
+  text-shadow: none;
+}
+
+.geo-facts-bulb {
+  flex: none;
+}
+
+.geo-facts-title {
+  color: var(--geo-head-text-on-panel);
+  font-family: var(--geo-title-font);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.geo-facts-text {
+  min-height: 2.8em;
+  margin: 0.15rem 0 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.geo-facts-next {
+  padding: 0.15rem 0.8rem;
+  border: 2px outset #dcdcdc;
+  background: var(--geo-win-gray);
+  color: #000;
+  font-family: var(--geo-ui-font);
+  font-size: 0.9rem;
+}
+
+.geo-facts-next:active {
+  border-style: inset;
+}
+
+.geo-webring-post {
+  flex: none;
+}
+
+.geo-webring .geo-webring-random {
+  display: block;
+  margin: 0.4rem auto 0;
+}
+
+/* ---------- Footer ---------- */
+html[data-geocities] .footer {
+  margin-top: 1rem;
+  border-top: 4px ridge var(--geo-bevel);
+  color: var(--geo-foot-ink);
+}
+
+html[data-geocities] .footer-links > * {
+  color: var(--geo-foot-ink);
+}
+
+html[data-geocities] .footer-links > a:hover {
+  color: var(--geo-foot-link);
+}
+
+html[data-geocities] .footer-updated,
+html[data-geocities] .footer-copyright {
+  color: var(--geo-foot-ink);
+  font-family: var(--geo-body-font);
+}
+
+html[data-geocities] .footer .footer-updated a {
+  color: var(--geo-foot-link) !important;
+}
+
+html[data-geocities] #footer-logo {
+  filter: brightness(0) invert(100%);
+}
+
+/* ---------- The overlay: a cursor trail ---------- */
+.geo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1035;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.geo-sparkle {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  background: 50% 50% / contain no-repeat;
+  opacity: 0%;
+}
+
+.geo-sparkle-on {
+  animation: geo-sparkle 0.9s ease-out forwards;
+}
+
+@keyframes geo-sparkle {
+  from {
+    opacity: 100%;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+
+  to {
+    opacity: 0%;
+    transform: translate(var(--geo-drift, 0), 46px) scale(0.35) rotate(150deg);
+  }
+}
+
+@keyframes geo-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes geo-blink {
+  50% {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .geo-marquee-track {
+    animation: geo-marquee linear infinite;
+  }
+
+  .geo-marquee:hover .geo-marquee-track {
+    animation-play-state: paused;
+  }
+
+  html[data-geocities] .unofficial-schedule-warning > span {
+    animation: geo-blink 1.2s steps(1) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .geo-marquee {
+    padding: 0.4rem 1rem;
+    white-space: normal;
+  }
+
+  .geo-marquee-track > [aria-hidden="true"] {
+    display: none;
+  }
+
+  .geo-verse {
+    display: block;
+    margin: 0.15rem 0;
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 991.98px) {
+  .geo-title-row {
+    gap: 0.6rem;
+  }
+
+  .geo-flank {
+    width: var(--geo-flank-width-small, 44px);
+  }
+
+  .geo-title {
+    font-size: 1.7rem;
+  }
+
+  .geo-subtitle {
+    font-size: 1rem;
+  }
+
+  html[data-geocities] .unofficial-schedule-warning {
+    padding-left: 1rem;
+    padding-top: 128px;
+    background-position: 50% 8px;
+    font-size: 1.05rem;
+  }
+
+  html[data-geocities] h1 {
+    font-size: 1.8rem;
+  }
+
+  .geo-gallery img {
+    max-height: 110px;
+  }
+}
