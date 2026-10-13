@@ -38,6 +38,17 @@ module.exports = {
       skipWaiting: true,
     },
   },
+  devServer: {
+    host: "0.0.0.0",
+    port: 8080,
+    disableHostCheck: true,
+    // The app is only served under the semester path; send / there.
+    before(app) {
+      app.get("/", (req, res) =>
+        res.redirect(shortSemToURL(process.env.VUE_APP_CURR_SEM) + "/")
+      );
+    },
+  },
   configureWebpack: (config) => {
     config.module.rules = [
       {
