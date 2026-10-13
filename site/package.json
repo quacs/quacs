@@ -8,6 +8,7 @@
     "test:serve": "./scripts/build_entry.sh -d -t",
     "test:e2e": "cypress open --e2e --browser electron --config baseUrl=http://localhost:8080/summer2021/",
     "test:e2e:headless": "cypress run --config baseUrl=http://localhost:8080/summer2021/",
+    "test:e2e:ci": "./scripts/e2e.sh",
     "debug-build": "./scripts/build_entry.sh -d -b",
     "lint": "./scripts/lint.sh",
     "gh-pages-deploy": "sh scripts/gh-pages-deploy.sh",
