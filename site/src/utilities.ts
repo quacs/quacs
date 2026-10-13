@@ -1,3 +1,4 @@
+import Vue from "vue";
 import { CourseSection, Day, Prerequisite, Timeslot } from "@/typings";
 import store from "@/store";
 import { applyTicker } from "@/themeTicker";
@@ -177,6 +178,14 @@ const THEME_FONT_QUERIES: { [theme: string]: string } = {
   manuscript: "family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia",
   retro: "family=Press+Start+2P&family=VT323",
   artisanal: "family=Comic+Neue:wght@400;700",
+  gwern: "family=Source+Sans+3:wght@400;600",
+  "liquid-glass": "family=Inter:wght@400;500;600;700",
+  "flappy-bird": "family=Pixelify+Sans:wght@400;600",
+  neumorphism: "family=Nunito:wght@400;600;700;800;900",
+  skeuomorphism:
+    "family=Arimo:ital,wght@0,400;0,700;1,400&family=Patrick+Hand&family=Roboto+Condensed:wght@700",
+  steampunk:
+    "family=Cinzel:wght@600;700&family=Cinzel+Decorative:wght@700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Special+Elite&family=Nixie+One",
 };
 
 function loadThemeFont(theme: string): void {
@@ -198,26 +207,111 @@ export const ARTISANAL_THEME = "artisanal";
 // The theme used when nothing valid is saved
 export const DEFAULT_THEME = SYSTEM_THEME;
 
+const LOGO_DIR = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/img/logos/`;
+
+// The GeoCities homepage themes, so far just the QuACS Academy (theme "geocities"). They share their
+// decorations (GeocitiesDecor.vue) and base styles (themes/geocities.css).
+export const GEOCITIES_PAGES = ["geocities"] as const;
+export type GeocitiesPage = typeof GEOCITIES_PAGES[number];
+
+export interface ThemeOption {
+  value: string;
+  text: string;
+  // false means the theme is applied but never saved, so a reload restores the previously saved theme
+  saved: boolean;
+  // Navbar logo for this theme, shown instead of the regular or holiday logo
+  logo?: string;
+}
+
 //Add color theme option here, in the order the settings dropdown shows them
-// saved: false means the theme is applied but never saved, so a reload restores the previously saved theme
-export const THEME_OPTIONS: { value: string; text: string; saved: boolean }[] =
-  [
-    { value: SYSTEM_THEME, text: "Follow Device Theme", saved: true },
-    { value: "light", text: "Light", saved: true },
-    { value: "dark", text: "Dark", saved: true },
-    { value: "dark black", text: "Black", saved: true },
-    { value: RANDOM_THEME, text: "Random", saved: true },
-    { value: "yacs", text: "YACS", saved: true },
-    { value: "true-dark", text: "True Dark", saved: false },
-    { value: "manuscript", text: "Illuminated Manuscript", saved: true },
-    { value: "retro", text: "Retro Arcade", saved: true },
-    { value: "web1", text: "Classic Web", saved: true },
-    { value: "nyan", text: "Nyan Cat", saved: true },
-    { value: ARTISANAL_THEME, text: "Artisanal", saved: true },
-    { value: "luma", text: "Luma (Calico)", saved: true },
-    { value: "trains", text: "MTA", saved: true },
-    { value: "wingdings", text: "Wingdings", saved: false },
-  ];
+export const THEME_OPTIONS: ThemeOption[] = [
+  { value: SYSTEM_THEME, text: "Follow Device Theme", saved: true },
+  { value: "light", text: "Light", saved: true },
+  { value: "dark", text: "Dark", saved: true },
+  { value: "dark black", text: "Black", saved: true },
+  { value: RANDOM_THEME, text: "Random", saved: true },
+  { value: "yacs", text: "YACS", saved: true },
+  { value: "true-dark", text: "True Dark", saved: false },
+  { value: "manuscript", text: "Illuminated Manuscript", saved: true },
+  { value: "retro", text: "Retro Arcade", saved: true },
+  { value: "web1", text: "Classic Web", saved: true },
+  { value: "nyan", text: "Nyan Cat", saved: true },
+  { value: ARTISANAL_THEME, text: "Artisanal", saved: true },
+  { value: "luma", text: "Luma (Calico)", saved: true },
+  { value: "trains", text: "MTA", saved: true },
+  {
+    value: "frutiger-aero",
+    text: "Frutiger Aero",
+    saved: true,
+    logo: require("@/assets/images/aero/logo.png"),
+  },
+  {
+    value: "gwern",
+    text: "Gwern",
+    saved: true,
+    logo: require("@/assets/images/gwern/logo.svg"),
+  },
+  {
+    value: "diablo",
+    text: "Diablo II",
+    saved: true,
+    logo: require("@/assets/images/diablo/logo.webp"),
+  },
+  { value: "liquid-glass", text: "Liquid Glass", saved: true },
+  {
+    value: "flappy-bird",
+    text: "Flappy Bird",
+    saved: true,
+    logo: require("@/assets/images/flappy/logo.gif"),
+  },
+  { value: "neumorphism", text: "Neumorphism", saved: true },
+  {
+    value: "skeuomorphism",
+    text: "Skeuomorphism",
+    saved: true,
+    logo: require("@/assets/images/skeuomorphism/logo.png"),
+  },
+  {
+    value: "steampunk",
+    text: "Steampunk",
+    saved: true,
+    logo: require("@/assets/images/steampunk/logo.png"),
+  },
+  {
+    value: "geocities",
+    text: "GeoCities",
+    saved: true,
+    logo: require("@/assets/images/geocities/logo-mortarboard.png"),
+  },
+  { value: "wingdings", text: "Wingdings", saved: false },
+];
+
+// The theme that is showing right now, after "system" and "random" are resolved. It is reactive,
+// so components can follow theme changes (see ThemeDecor.vue and the logo in App.vue).
+export const themeState = Vue.observable({ applied: "" });
+
+// The Gwern theme follows the device's dark mode unless its toolbar pins light or dark
+// (GwernDecor.vue). The pinned mode is applied here, with the theme, so the page never flashes.
+export const GWERN_MODE_KEY = "gwern-mode";
+
+export function applyGwernMode(theme: string): void {
+  let mode: string | null = null;
+  try {
+    mode = localStorage.getItem(GWERN_MODE_KEY);
+  } catch (e) {
+    // Storage can be blocked; that just means auto
+  }
+  if (theme === "gwern" && (mode === "light" || mode === "dark")) {
+    document.documentElement.setAttribute("data-gwern-mode", mode);
+  } else {
+    document.documentElement.removeAttribute("data-gwern-mode");
+  }
+}
+
+export function themeLogo(theme: string): string | undefined {
+  return THEME_OPTIONS.find((option) => option.value.split(" ")[0] === theme)
+    ?.logo;
+}
 
 // Themes that are applied but never saved, so a reload restores the previously saved theme
 export const UNSAVED_THEMES = THEME_OPTIONS.filter(
@@ -232,18 +326,115 @@ const RANDOM_THEMES = THEME_OPTIONS.filter(
     option.value !== SYSTEM_THEME
 ).map((option) => option.value);
 
-export function setColorTheme(colorTheme: string): void {
-  let newColorTheme = colorTheme;
+// The newer themes bring a lot of CSS, so each one's CSS loads when someone picks it, instead of
+// every visitor downloading all of it with the page. Their CSS can load after a page's own CSS, so
+// don't rely on source order to beat a page's rules.
+const THEME_STYLES: { [theme: string]: () => Promise<unknown> } = {
+  "frutiger-aero": () =>
+    import(
+      /* webpackChunkName: "theme-frutiger-aero" */ "@/assets/styles/themes/frutiger-aero.css"
+    ),
+  gwern: () =>
+    import(
+      /* webpackChunkName: "theme-gwern" */ "@/assets/styles/themes/gwern.css"
+    ),
+  diablo: () =>
+    import(
+      /* webpackChunkName: "theme-diablo" */ "@/assets/styles/themes/diablo.css"
+    ),
+  "liquid-glass": () =>
+    import(
+      /* webpackChunkName: "theme-liquid-glass" */ "@/assets/styles/themes/liquid-glass.css"
+    ),
+  "flappy-bird": () =>
+    import(
+      /* webpackChunkName: "theme-flappy-bird" */ "@/assets/styles/themes/flappy-bird.css"
+    ),
+  neumorphism: () =>
+    import(
+      /* webpackChunkName: "theme-neumorphism" */ "@/assets/styles/themes/neumorphism.css"
+    ),
+  skeuomorphism: () =>
+    import(
+      /* webpackChunkName: "theme-skeuomorphism" */ "@/assets/styles/themes/skeuomorphism.css"
+    ),
+  steampunk: () =>
+    import(
+      /* webpackChunkName: "theme-steampunk" */ "@/assets/styles/themes/steampunk.css"
+    ),
+  geocities: () =>
+    import(
+      /* webpackChunkName: "theme-geocities" */ "@/assets/styles/themes/geocities-ring.css"
+    ),
+};
+const loadedThemeStyles = new Set<() => Promise<unknown>>();
+
+// Turns "system" and "random" into the theme to show, e.g. "dark" or "dark black"
+export function resolveColorTheme(colorTheme: string): string {
   if (colorTheme === SYSTEM_THEME) {
-    newColorTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
   } else if (colorTheme === RANDOM_THEME) {
-    newColorTheme =
-      RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
+    return RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
   }
+  return colorTheme;
+}
+
+function themeStylesLoaded(theme: string): boolean {
+  const load = THEME_STYLES[theme];
+  return load === undefined || loadedThemeStyles.has(load);
+}
+
+// Starts loading a theme's web font, and its CSS if it has its own (THEME_STYLES). Resolves once
+// the CSS is in, which is right away for themes without their own CSS.
+export function loadThemeStyles(colorTheme: string): Promise<void> {
+  const theme = colorTheme.split(" ")[0];
+  loadThemeFont(theme);
+  const load = THEME_STYLES[theme];
+  if (themeStylesLoaded(theme)) {
+    return Promise.resolve();
+  }
+  return load().then(() => {
+    loadedThemeStyles.add(load);
+  });
+}
+
+// Counts setColorTheme calls, so a theme whose CSS finishes loading late doesn't replace a later pick
+let themeRequest = 0;
+
+// newColorTheme is colorTheme with "system" and "random" resolved, for when that's already done
+export function setColorTheme(
+  colorTheme: string,
+  newColorTheme = resolveColorTheme(colorTheme)
+): void {
+  const request = ++themeRequest;
+  if (themeStylesLoaded(newColorTheme.split(" ")[0])) {
+    applyColorTheme(colorTheme, newColorTheme);
+    return;
+  }
+  // The current theme stays until the new one's CSS is in, so nothing shows half styled
+  loadThemeStyles(newColorTheme).then(
+    () => {
+      if (request === themeRequest) {
+        applyColorTheme(colorTheme, newColorTheme);
+      }
+    },
+    () => {
+      // The CSS couldn't load (e.g. offline), so the current theme stays
+    }
+  );
+}
+
+function applyColorTheme(colorTheme: string, newColorTheme: string): void {
   const theme = newColorTheme.split(" ")[0];
   document.documentElement.setAttribute("data-theme", theme);
+  document.documentElement.toggleAttribute(
+    "data-geocities",
+    (GEOCITIES_PAGES as readonly string[]).includes(theme)
+  );
+  applyGwernMode(theme);
+  themeState.applied = theme;
   if (theme === ARTISANAL_THEME) {
     applyTicker();
   }
@@ -426,7 +617,6 @@ export function shuffleArray<T>(a: T[]): T[] {
 }
 
 export function getLogo(): string {
-  const baseUrl = `${shortSemToURL()(process.env.VUE_APP_CURR_SEM)}/img/logos/`;
   const defaultLogo = ["quacs_logo_white_duck.svg"];
 
   // Returns a date in the current year with the specified month and day
@@ -465,5 +655,5 @@ export function getLogo(): string {
 
   // Randomly shuffle and select the first element
   shuffleArray(logos);
-  return `${baseUrl}${logos[0]}`;
+  return `${LOGO_DIR}${logos[0]}`;
 }

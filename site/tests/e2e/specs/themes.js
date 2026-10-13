@@ -3,7 +3,24 @@ const NEW_THEMES = {
   "Retro Arcade": "retro",
   "Classic Web": "web1",
   MTA: "trains",
+  "Frutiger Aero": "frutiger-aero",
+  Gwern: "gwern",
+  "Diablo II": "diablo",
+  "Liquid Glass": "liquid-glass",
+  "Flappy Bird": "flappy-bird",
+  Neumorphism: "neumorphism",
+  Skeuomorphism: "skeuomorphism",
+  Steampunk: "steampunk",
+  GeoCities: "geocities",
 };
+
+// Picks a theme in the settings dialog and closes it
+function selectTheme(label) {
+  cy.getNav().find("svg[data-icon=cog]").click();
+  cy.getOne("#colorTheme").select(label);
+  cy.getOne(".modal-footer").containsOne("Close").click();
+  cy.get(".modal-footer").should("not.exist");
+}
 
 describe("Test color themes", () => {
   it("Applies each new theme from settings and remembers it", () => {
@@ -16,7 +33,8 @@ describe("Test color themes", () => {
     }
 
     cy.reload();
-    cy.get("html").should("have.attr", "data-theme", "trains");
+    const lastTheme = Object.values(NEW_THEMES).slice(-1)[0];
+    cy.get("html").should("have.attr", "data-theme", lastTheme);
   });
 
   it("Keeps the transit layout scoped to MTA on desktop and mobile", () => {
@@ -51,6 +69,155 @@ describe("Test color themes", () => {
     cy.get(".department-cards .card")
       .first()
       .should("have.css", "border-radius", "4px");
+  });
+
+  it("Loads a newer theme's CSS only once someone picks it", () => {
+    // Stylesheets from other sites (the web fonts) can't be read, so those are skipped
+    const hasRule = (doc, text) =>
+      [...doc.styleSheets].some((sheet) => {
+        try {
+          return [...sheet.cssRules].some((rule) =>
+            rule.cssText.includes(text)
+          );
+        } catch (e) {
+          return false;
+        }
+      });
+    selectTheme("Light");
+    cy.document().then((doc) =>
+      expect(hasRule(doc, 'data-theme="diablo"')).to.equal(false)
+    );
+    selectTheme("Diablo II");
+    cy.get("html").should("have.attr", "data-theme", "diablo");
+    cy.document().should((doc) =>
+      expect(hasRule(doc, 'data-theme="diablo"')).to.equal(true)
+    );
+  });
+
+  it("Shows a theme's own logo, and the regular one again after", () => {
+    selectTheme("Light");
+    cy.getOne("nav img")
+      .should("have.attr", "src")
+      .and("contain", "quacs_logo");
+    selectTheme("GeoCities");
+    cy.getOne("nav img")
+      .should("have.attr", "src")
+      .and("not.contain", "quacs_logo");
+    selectTheme("Light");
+    cy.getOne("nav img")
+      .should("have.attr", "src")
+      .and("contain", "quacs_logo");
+  });
+
+  it("Pins the Gwern theme to light or dark and remembers it", () => {
+    selectTheme("Gwern");
+    cy.get("html").should("not.have.attr", "data-gwern-mode");
+    cy.getOne(".gwern-toolbar").contains("Dark").click();
+    cy.get("html").should("have.attr", "data-gwern-mode", "dark");
+    cy.reload();
+    cy.get("html").should("have.attr", "data-gwern-mode", "dark");
+
+    // Other themes never get the Gwern mode
+    selectTheme("Light");
+    cy.get("html").should("not.have.attr", "data-gwern-mode");
+  });
+
+  it("Opens QuACSy Bird from the Flappy Bird theme", () => {
+    selectTheme("Flappy Bird");
+    cy.getOne(".flappy-perch-duck").click();
+    cy.getOne("canvas.flappy-canvas");
+    cy.get("body").type("{esc}");
+    cy.get(".flappy-game").should("not.exist");
+
+    // Typing "flap" outside a text field opens it too
+    cy.get("body").type("flap");
+    cy.getOne("canvas.flappy-canvas");
+    cy.getOne(".flappy-close").click();
+    cy.get(".flappy-game").should("not.exist");
+  });
+
+  it("Tours RPI's departments through the GeoCities Academy's webring", () => {
+    selectTheme("GeoCities");
+    cy.get("html").should("have.attr", "data-theme", "geocities");
+    cy.getOne(".geo-facts").containsOne("Did You Know?");
+
+    // From the course list, Next goes to the first department, then on through the list
+    cy.getOne(".geo-webring").containsOne("Next").click();
+    cy.location("hash").should("match", /^#\/department\/[A-Z]{4}$/);
+    cy.location("hash").then((first) => {
+      cy.getOne(".geo-webring").containsOne("Next").click();
+      cy.location("hash").should("not.equal", first);
+      cy.getOne(".geo-webring").containsOne("Prev").click();
+      cy.location("hash").should("equal", first);
+    });
+  });
+
+  it("Holds the Diablo II globes in the control panel's statues", () => {
+    selectTheme("Diablo II");
+    // Each orb's hit area lies over its statue, so check the statues loaded, not that they show
+    for (const orb of ["life", "mana"]) {
+      cy.get(`.d2-orb-${orb} .d2-orb-hit`).should("be.visible");
+      cy.get(`.d2-orb-${orb} .d2-orb-statue`).should(($img) =>
+        expect($img[0].naturalWidth).to.be.greaterThan(0)
+      );
+    }
+    cy.get(".d2-orb-life .d2-orb-globe")
+      .should("have.attr", "style")
+      .and("contain", "inset(");
+    cy.get("img[src*='flaming-diablo']").should("not.exist");
+  });
+
+  it("Gives Liquid Glass a macOS menu bar, Dock and Control Centre", () => {
+    selectTheme("Liquid Glass");
+    cy.getOne(".lg-menubar-status .lg-clock")
+      .invoke("text")
+      .should("match", /\d/);
+    cy.getOne(".lg-quacs-dock .lg-app-calendar").click();
+    cy.location("hash").should("equal", "#/schedule");
+    cy.getOne(".lg-quacs-dock .lg-app-calendar").should(
+      "have.class",
+      "lg-app-running"
+    );
+
+    // The Control Centre's 24-hour switch is the same setting as the one in Settings
+    cy.getOne(".lg-cc-toggle").click();
+    cy.getOne(".lg-cc").should("be.visible");
+    cy.get(".lg-cc lg-switch input").first().check({ force: true });
+    cy.get("body").type("{esc}");
+    cy.get(".lg-cc").should("not.be.visible");
+    cy.getNav().find("svg[data-icon=cog]").click();
+    // Settings shows the setting as a glass segmented control, over the select it stands in for
+    cy.getOne(".lg-seg-select");
+    cy.get("#timePreference").should("have.value", "M");
+    cy.getOne(".modal-footer").containsOne("Close").click();
+  });
+
+  it("Bends the duck pond through Liquid Glass panes", () => {
+    selectTheme("Liquid Glass");
+    cy.get(".department-cards > .card.lg-pane-copy .lg-glass-lens")
+      .first()
+      .should("have.attr", "style")
+      .and("contain", "url(");
+  });
+
+  it("Stands your courses on the Skeuomorphism theme's bookshelf", () => {
+    selectTheme("Skeuomorphism");
+    // With nothing chosen, the shelf holds the QuACS handbook
+    cy.getOne(".sk-shelf .sk-book").should("contain", "QuACS Handbook");
+
+    // Choose a section, and its course takes the shelf, opening the course when clicked
+    cy.containsOne("CSCI").click();
+    cy.getBody()
+      .get(".course-card")
+      .first()
+      .within(() => {
+        cy.get(".card-header").containsOne("CSCI-1100").click();
+        cy.getOne("#section-grow-CSCI-1100").within(() => {
+          cy.get(".course-row").first().click();
+        });
+      });
+    cy.getOne(".sk-shelf .sk-book").should("contain", "CSCI 1100").click();
+    cy.location("hash").should("equal", "#/search?CSCI-1100");
   });
 
   it("Keeps the look of the existing light theme", () => {

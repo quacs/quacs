@@ -1,0 +1,800 @@
+/* Flappy Bird: the page is a level. Sky and the pixel skyline behind everything, green pipes in the
+margins, panels cut from the game's scoreboard, buttons like its play button, 04B_19 for headings,
+and the footer is the scrolling ground. A pixel QuACS duck perches on the ground; click it (or type
+"flap") to play QuACSy Bird, the game with the duck as the bird (FlappyDecor.vue, FlappyGame.vue).
+Art, sounds and the 04B_19 font are the original game's (.GEARS; 04B_19 by Yuji Oshimoto). Pixelify
+Sans (SIL OFL) sets the smaller text. Pixel art is drawn at 2 CSS pixels per art pixel. */
+@font-face {
+  font-family: "04b19";
+  font-display: swap;
+  src: url("../../fonts/04b19/04b19.woff2") format("woff2");
+}
+
+[data-theme="flappy-bird"] {
+  --fb-sky: #4ec0ca;
+  --fb-ink: #543847;
+  --fb-panel: #ded895;
+  --fb-panel-light: #f0eaa1;
+  --fb-panel-dark: #c7c286;
+  --fb-salmon: #fc7858;
+  --fb-orange: #fca048;
+  --fb-orange-dark: #e46018;
+  --fb-green: #73bf2e;
+  --fb-green-light: #9ce659;
+  --fb-green-dark: #558022;
+  --fb-white: #fafafa;
+  --fb-gray: #ededed;
+  --fb-lip: #d6be9b;
+  --fb-title: "04b19", "Press Start 2P", monospace;
+  --fb-text: "Pixelify Sans", "Trebuchet MS", sans-serif;
+
+  /* White text with the game's dark outline, as on the score and the title */
+  --fb-outline:
+    2px 0 0 var(--fb-ink),
+    -2px 0 0 var(--fb-ink),
+    0 2px 0 var(--fb-ink),
+    0 -2px 0 var(--fb-ink),
+    2px 2px 0 var(--fb-ink),
+    -2px 2px 0 var(--fb-ink),
+    2px -2px 0 var(--fb-ink),
+    -2px -2px 0 var(--fb-ink),
+    0 4px 0 var(--fb-ink);
+  --fb-panel-image: url("../../images/flappy/panel.png") 12 fill / 24px / 0 stretch;
+
+  /* The play button: two-tone, dark outline, stepped corners, a tan lip */
+  --fb-button:
+    linear-gradient(var(--fb-ink), var(--fb-ink)) left top / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-ink), var(--fb-ink)) right top / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-ink), var(--fb-ink)) left bottom / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-ink), var(--fb-ink)) right bottom / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-lip), var(--fb-lip)) left 4px bottom / calc(100% - 8px) 4px no-repeat padding-box,
+    linear-gradient(var(--fb-white) 50%, var(--fb-gray) 50%) padding-box;
+  --fb-steps:
+    polygon(
+      4px 0,
+      calc(100% - 4px) 0,
+      calc(100% - 4px) 4px,
+      100% 4px,
+      100% calc(100% - 4px),
+      calc(100% - 4px) calc(100% - 4px),
+      calc(100% - 4px) 100%,
+      4px 100%,
+      4px calc(100% - 4px),
+      0 calc(100% - 4px),
+      0 4px,
+      4px 4px
+    );
+
+  /* QuACS tokens */
+  --background: var(--fb-sky);
+  --background-image: none;
+  --global-text: var(--fb-ink);
+  --global-text-hover: var(--fb-orange-dark);
+  --raw-link: var(--fb-orange-dark);
+  --text-default: var(--fb-ink);
+  --footer-background: transparent;
+  --font-body: var(--fb-text);
+  --font-heading: var(--fb-title);
+  --warning-color: var(--fb-ink);
+  --card-background: transparent;
+  --card-body-background: transparent;
+  --card-body-text: var(--fb-ink);
+  --card-header-background: transparent;
+  --card-header-text: var(--fb-salmon);
+  --card-header-hover: transparent;
+  --card-border-color: transparent;
+  --card-border-width: 0;
+  --card-border-radius: 0;
+  --card-shadow: none;
+  --navbar-background: transparent;
+  --navbar-unselected-text: var(--fb-ink);
+  --navbar-unselected-text-hover: var(--fb-orange-dark);
+  --navbar-text-focus: var(--fb-orange-dark);
+  --navbar-text-disabled: var(--fb-ink);
+  --navbar-text-active: var(--fb-orange-dark);
+  --navbar-text-show: var(--fb-orange-dark);
+  --modal-header-background: transparent;
+  --modal-header-text: var(--fb-white);
+  --modal-body-background: transparent;
+  --modal-body-text: var(--fb-ink);
+  --modal-footer-background: transparent;
+  --modal-footer-text: var(--fb-ink);
+  --modal-close-x-hover: var(--fb-white);
+  --btn-primary-background: var(--fb-button);
+  --btn-primary-text: var(--fb-ink);
+  --btn-border: 4px solid var(--fb-ink);
+  --btn-border-radius: 0;
+  --btn-box-shadow: none;
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: var(--fb-button);
+  --btn-secondary-text: var(--fb-ink);
+  --department-link-hover: transparent;
+  --select-background: var(--fb-white);
+  --select-text: var(--fb-ink);
+  --table-text: var(--fb-ink);
+  --table-border: var(--fb-panel-dark);
+  --course-row-hover: var(--fb-panel-light);
+  --conflict-row: #f6b39e;
+  --conflict-row-hover: #f8a68c;
+  --selected-row: #b8e986;
+  --selected-row-hover: #a8e070;
+  --list-group-item-background: transparent;
+  --search-bar-background: var(--fb-white);
+  --search-bar-border: var(--fb-ink);
+  --overlay-background: var(--fb-panel);
+  --trash-btn: var(--fb-ink);
+  --trash-btn-hover: var(--fb-orange-dark);
+  --prerequisite-jumbotron: transparent;
+  --prerequisite-text: var(--fb-white);
+  --prerequisite-warn-icon: var(--fb-orange);
+  --prerequisite-error-icon: var(--fb-salmon);
+  --taken-course: var(--fb-green-dark);
+  --not-taken-course: #c84a2c;
+  --toast-background: var(--fb-ink);
+  --toast-text: var(--fb-white);
+
+  /* Calendar: flat pixel blocks in the game's colors */
+  --calendar-grid-color: var(--fb-panel-dark);
+  --calendar-label: var(--fb-ink);
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #9ce659;
+  --calendar-border-color-0: var(--fb-ink);
+  --calendar-text-color-0: var(--fb-ink);
+  --calendar-bg-color-1: #8fdce3;
+  --calendar-border-color-1: var(--fb-ink);
+  --calendar-text-color-1: var(--fb-ink);
+  --calendar-bg-color-2: #fcbf7d;
+  --calendar-border-color-2: var(--fb-ink);
+  --calendar-text-color-2: var(--fb-ink);
+  --calendar-bg-color-3: #fc9f8a;
+  --calendar-border-color-3: var(--fb-ink);
+  --calendar-text-color-3: var(--fb-ink);
+  --calendar-bg-color-4: #fae16b;
+  --calendar-border-color-4: var(--fb-ink);
+  --calendar-text-color-4: var(--fb-ink);
+  --calendar-bg-color-5: #f5f5f5;
+  --calendar-border-color-5: var(--fb-ink);
+  --calendar-text-color-5: var(--fb-ink);
+  --calendar-bg-color-6: #e2c18a;
+  --calendar-border-color-6: var(--fb-ink);
+  --calendar-text-color-6: var(--fb-ink);
+}
+
+/* The sky and the skyline, fixed behind the page at 2x */
+html[data-theme="flappy-bird"] body {
+  background: var(--fb-sky) url("../../images/flappy/background-day.png") left bottom / 576px 1024px repeat-x fixed;
+  image-rendering: pixelated;
+  font-size: 1.05rem;
+}
+
+html[data-theme="flappy-bird"] img {
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] h1,
+html[data-theme="flappy-bird"] h2,
+html[data-theme="flappy-bird"] h3,
+html[data-theme="flappy-bird"] h4,
+html[data-theme="flappy-bird"] h5 {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* Page titles are the game's outlined white lettering */
+html[data-theme="flappy-bird"] h1 {
+  margin: 0.5rem 0 1.4rem;
+  color: var(--fb-white);
+  font-size: 2.6rem;
+  text-shadow: var(--fb-outline);
+}
+
+:where([data-theme="flappy-bird"]) a {
+  color: var(--fb-orange-dark);
+}
+
+/* ---------- Navbar: outlined lettering on the sky, pixel buttons ---------- */
+html[data-theme="flappy-bird"] .navbar.bg-light {
+  padding: 0.6rem 1.25rem;
+}
+
+html[data-theme="flappy-bird"] .navbar-brand img {
+  height: 56px !important;
+}
+
+html[data-theme="flappy-bird"] .navbar-nav .nav-link {
+  margin: 3px 4px;
+  padding: 0.35rem 0.9rem 0.55rem !important;
+  border: 4px solid var(--fb-ink);
+  background: var(--fb-button);
+  clip-path: var(--fb-steps);
+  color: var(--fb-ink);
+  font-family: var(--fb-title);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+html[data-theme="flappy-bird"] .navbar-nav .nav-text {
+  font-size: 1rem;
+}
+
+/* From 1200px to 1440px the bar is tight: smaller buttons leave the search box room */
+@media (min-width: 1200px) and (max-width: 1439.98px) {
+  html[data-theme="flappy-bird"] .navbar-brand img {
+    height: 46px !important;
+  }
+
+  html[data-theme="flappy-bird"] .navbar-nav .nav-link {
+    margin: 3px 2px;
+    padding: 0.3rem 0.6rem 0.5rem !important;
+    font-size: 0.85rem;
+  }
+
+  html[data-theme="flappy-bird"] .navbar-nav .nav-text {
+    font-size: 0.85rem;
+  }
+
+  html[data-theme="flappy-bird"] .navbar-search {
+    min-width: 150px;
+  }
+}
+
+html[data-theme="flappy-bird"] .navbar-nav .nav-link:hover,
+html[data-theme="flappy-bird"] .navbar-nav .nav-link:focus-visible {
+  color: var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] .navbar-nav .nav-link.active,
+html[data-theme="flappy-bird"] .navbar-nav .show > .nav-link {
+  background:
+    linear-gradient(var(--fb-ink), var(--fb-ink)) left top / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-ink), var(--fb-ink)) right top / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-ink), var(--fb-ink)) left bottom / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-ink), var(--fb-ink)) right bottom / 4px 4px no-repeat padding-box,
+    linear-gradient(var(--fb-orange-dark), var(--fb-orange-dark))
+    left 4px bottom / calc(100% - 8px) 4px no-repeat padding-box,
+    linear-gradient(var(--fb-orange) 50%, #f88a2e 50%) padding-box;
+  color: var(--fb-white);
+  text-shadow: 0 2px 0 var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="flappy-bird"] .navbar-light .navbar-toggler {
+  border: 4px solid var(--fb-ink);
+  border-radius: 0;
+  background: var(--fb-button);
+  clip-path: var(--fb-steps);
+}
+
+html[data-theme="flappy-bird"] #search-bar {
+  border: 4px solid var(--fb-ink);
+  border-radius: 0;
+  background-color: var(--fb-white);
+  box-shadow: inset 0 -4px 0 var(--fb-gray);
+  clip-path: var(--fb-steps);
+  color: var(--fb-ink);
+  font-family: var(--fb-text);
+  font-size: 1.05rem;
+}
+
+html[data-theme="flappy-bird"] #search-bar::placeholder {
+  color: #8d7a83;
+}
+
+html[data-theme="flappy-bird"] #search-bar:focus {
+  border-color: var(--fb-orange-dark);
+}
+
+/* Menus: scoreboard panels */
+html[data-theme="flappy-bird"] .dropdown-menu {
+  padding: 0;
+  border: 14px solid transparent;
+  border-image: var(--fb-panel-image);
+  border-radius: 0;
+  background: transparent;
+  filter: drop-shadow(0 4px 0 rgb(84 56 71 / 35%));
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] .dropdown-item {
+  margin: 0 -8px;
+  padding: 0.2rem 1rem;
+  width: calc(100% + 16px);
+  color: var(--fb-ink);
+  font-family: var(--fb-text);
+}
+
+html[data-theme="flappy-bird"] .dropdown-item:hover,
+html[data-theme="flappy-bird"] .dropdown-item:focus {
+  background: var(--fb-orange);
+  color: var(--fb-white);
+}
+
+html[data-theme="flappy-bird"] .dropdown-divider {
+  border-top: 4px solid var(--fb-panel-dark);
+}
+
+/* ---------- Warning: a scoreboard with the salmon labels ---------- */
+html[data-theme="flappy-bird"] .unofficial-schedule-warning {
+  margin-top: 1rem;
+  padding: 0.3rem 1rem 0.5rem;
+  border: 14px solid transparent;
+  border-image: var(--fb-panel-image);
+  color: var(--fb-salmon);
+  filter: drop-shadow(0 6px 0 rgb(84 56 71 / 30%));
+  font-family: var(--fb-title);
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-shadow: 0 2px 0 var(--fb-panel-light);
+  image-rendering: pixelated;
+}
+
+/* ---------- Panels ---------- */
+html[data-theme="flappy-bird"] .card {
+  border: 14px solid transparent;
+  border-image: var(--fb-panel-image);
+  filter: drop-shadow(0 6px 0 rgb(84 56 71 / 30%));
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] .card-header {
+  border: 0;
+  border-radius: 0 !important;
+}
+
+html[data-theme="flappy-bird"] .card-body {
+  background: transparent;
+}
+
+html[data-theme="flappy-bird"] .department-cards .card {
+  margin-bottom: 1.5rem;
+}
+
+html[data-theme="flappy-bird"] .department-cards .card-header {
+  padding: 0 0.4rem 0.3rem !important;
+  color: var(--fb-salmon);
+  font-family: var(--fb-title);
+  font-size: 1.3rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-shadow: 0 2px 0 var(--fb-panel-light);
+}
+
+html[data-theme="flappy-bird"] .department-cards .card-body {
+  padding: 0.2rem 0 0;
+}
+
+html[data-theme="flappy-bird"] .department-cards .department-link {
+  padding: 0.25rem 0.4rem !important;
+  color: var(--fb-ink) !important;
+  font-size: 1.05rem !important;
+  line-height: 1.3;
+}
+
+html[data-theme="flappy-bird"] .department-cards .department-link:hover,
+html[data-theme="flappy-bird"] .department-cards .department-link:focus-visible {
+  background: var(--fb-panel-light);
+  color: var(--fb-orange-dark) !important;
+}
+
+html[data-theme="flappy-bird"] .department-code {
+  display: inline-block;
+  min-width: 3.3em;
+  color: var(--fb-white);
+  font-family: var(--fb-title) !important;
+  font-size: 1.15rem !important;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-shadow:
+    2px 0 0 var(--fb-ink),
+    -2px 0 0 var(--fb-ink),
+    0 2px 0 var(--fb-ink),
+    0 -2px 0 var(--fb-ink),
+    2px 2px 0 var(--fb-ink),
+    -2px 2px 0 var(--fb-ink),
+    2px -2px 0 var(--fb-ink),
+    -2px -2px 0 var(--fb-ink);
+}
+
+/* Course panels */
+html[data-theme="flappy-bird"] .course-card {
+  margin-bottom: 1.25rem;
+}
+
+html[data-theme="flappy-bird"] .course-card-header {
+  padding: 0 0.4rem 0.4rem;
+  background: transparent !important;
+  color: var(--fb-ink) !important;
+  line-height: 1.4;
+}
+
+html[data-theme="flappy-bird"] .course-card-header .course-code {
+  margin-right: 0.2rem;
+  color: var(--fb-white);
+  font-family: var(--fb-title);
+  font-size: 1.45rem;
+  letter-spacing: 0.04em;
+  text-shadow:
+    2px 0 0 var(--fb-ink),
+    -2px 0 0 var(--fb-ink),
+    0 2px 0 var(--fb-ink),
+    0 -2px 0 var(--fb-ink),
+    2px 2px 0 var(--fb-ink),
+    -2px 2px 0 var(--fb-ink),
+    2px -2px 0 var(--fb-ink),
+    -2px -2px 0 var(--fb-ink);
+}
+
+html[data-theme="flappy-bird"] .course-card-header:hover .course-code {
+  color: var(--fb-orange);
+}
+
+html[data-theme="flappy-bird"] .course-card-header .font-weight-bold {
+  color: var(--fb-salmon);
+  font-family: var(--fb-title);
+  font-weight: 400 !important;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 0 var(--fb-panel-light);
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="flappy-bird"] .course-card .open_close_icon {
+  color: var(--fb-green-dark);
+}
+
+html[data-theme="flappy-bird"] .header_expanded {
+  border-bottom: 4px solid var(--fb-panel-dark);
+}
+
+html[data-theme="flappy-bird"] .prerequisiteError {
+  border: 2px solid var(--fb-ink);
+  color: var(--fb-white);
+  font-family: var(--fb-title);
+  font-size: 0.9em;
+  text-shadow: 0 2px 0 var(--fb-ink);
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Tables ---------- */
+html[data-theme="flappy-bird"] .table {
+  margin-bottom: 0;
+  font-family: var(--fb-text);
+}
+
+html[data-theme="flappy-bird"] .table-bordered,
+html[data-theme="flappy-bird"] .table-bordered td,
+html[data-theme="flappy-bird"] .table-bordered th {
+  border: 2px solid var(--fb-panel-dark);
+}
+
+html[data-theme="flappy-bird"] .table thead th {
+  border-bottom: 4px solid var(--fb-panel-dark);
+  color: var(--fb-salmon);
+  font-family: var(--fb-title);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 0 var(--fb-panel-light);
+}
+
+html[data-theme="flappy-bird"] .table tbody tr.selected {
+  box-shadow: inset 6px 0 0 var(--fb-green-dark);
+}
+
+html[data-theme="flappy-bird"] .table tbody tr.conflict {
+  box-shadow: inset 6px 0 0 var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] .info-icon {
+  color: var(--fb-green-dark);
+}
+
+html[data-theme="flappy-bird"] .current-schedule-badge {
+  border: 2px solid var(--fb-ink) !important;
+  border-radius: 0 !important;
+  background: var(--fb-white);
+  font-family: var(--fb-title);
+}
+
+/* ---------- Buttons: the play button ---------- */
+html[data-theme="flappy-bird"] .btn {
+  padding: 0.4rem 1.1rem 0.6rem;
+  border: 4px solid var(--fb-ink);
+  border-radius: 0;
+  background: var(--fb-button);
+  box-shadow: none !important;
+  clip-path: var(--fb-steps);
+  color: var(--fb-ink);
+  font-family: var(--fb-title);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}
+
+html[data-theme="flappy-bird"] .btn-primary {
+  color: #00a848;
+}
+
+html[data-theme="flappy-bird"] .btn-outline-danger {
+  color: var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] .btn:disabled,
+html[data-theme="flappy-bird"] .btn.disabled {
+  opacity: 55%;
+}
+
+html[data-theme="flappy-bird"] .btn:hover,
+html[data-theme="flappy-bird"] .btn:focus,
+html[data-theme="flappy-bird"] .btn:not(:disabled):not(.disabled):active {
+  border-color: var(--fb-ink);
+  background: var(--fb-button);
+  color: var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] .btn:not(:disabled):not(.disabled):active {
+  transform: translateY(2px);
+}
+
+html[data-theme="flappy-bird"] .form-control,
+html[data-theme="flappy-bird"] .custom-select {
+  border: 4px solid var(--fb-ink);
+  border-radius: 0;
+  background-color: var(--fb-white);
+  box-shadow: inset 0 -4px 0 var(--fb-gray);
+  clip-path: var(--fb-steps);
+  color: var(--fb-ink);
+  font-family: var(--fb-text);
+}
+
+html[data-theme="flappy-bird"] .form-control:focus,
+html[data-theme="flappy-bird"] .custom-select:focus {
+  border-color: var(--fb-orange-dark);
+  background-color: #fff;
+  box-shadow: inset 0 -4px 0 var(--fb-gray);
+  color: var(--fb-ink);
+}
+
+/* Switches: a pipe with the duck's yellow knob */
+html[data-theme="flappy-bird"] .custom-switch .custom-control-label::before {
+  border: 3px solid var(--fb-ink);
+  border-radius: 0;
+  background: var(--fb-panel-dark);
+}
+
+html[data-theme="flappy-bird"] .custom-switch .custom-control-label::after {
+  border-radius: 0;
+  background-color: var(--fb-ink);
+}
+
+html[data-theme="flappy-bird"] .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: var(--fb-ink);
+  background: linear-gradient(90deg, var(--fb-green-dark), var(--fb-green-light) 40%, var(--fb-green));
+}
+
+html[data-theme="flappy-bird"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background-color: #ffb300;
+  box-shadow: 0 0 0 2px var(--fb-ink);
+}
+
+/* ---------- Prerequisites ---------- */
+html[data-theme="flappy-bird"] .jumbotron {
+  padding: 0.5rem 1rem 1rem;
+  border: 14px solid transparent;
+  border-image: var(--fb-panel-image);
+  border-radius: 0;
+  filter: drop-shadow(0 6px 0 rgb(84 56 71 / 30%));
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] .jumbotron .lead {
+  color: var(--fb-salmon);
+  font-family: var(--fb-title);
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 0 var(--fb-panel-light);
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="flappy-bird"] .schedule-select {
+  color: var(--fb-white);
+  font-family: var(--fb-title);
+  text-shadow: var(--fb-outline);
+}
+
+html[data-theme="flappy-bird"] .schedule-num {
+  font-size: 1.35rem;
+}
+
+html[data-theme="flappy-bird"] .schedule-select-button {
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0.45rem;
+  border: 4px solid var(--fb-ink);
+  background: var(--fb-button);
+  clip-path: var(--fb-steps);
+  color: #00a848;
+}
+
+html[data-theme="flappy-bird"] .calendar {
+  padding: 0.25rem 0;
+  border: 14px solid transparent;
+  border-image: var(--fb-panel-image);
+  filter: drop-shadow(0 6px 0 rgb(84 56 71 / 30%));
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] .calendar-event {
+  border: 2px solid var(--fb-ink) !important;
+  border-left-width: 4px !important;
+  font-family: var(--fb-text);
+}
+
+html[data-theme="flappy-bird"] .crn-list,
+html[data-theme="flappy-bird"] .credits {
+  color: var(--fb-white);
+  font-family: var(--fb-title);
+  text-shadow: var(--fb-outline);
+}
+
+html[data-theme="flappy-bird"] .b-overlay .bg-light {
+  background: var(--fb-panel) !important;
+}
+
+html[data-theme="flappy-bird"] .b-overlay h3,
+html[data-theme="flappy-bird"] .b-overlay h4 {
+  color: var(--fb-salmon);
+}
+
+/* ---------- Dialogs: a Game Over scoreboard ---------- */
+html[data-theme="flappy-bird"] .modal-content {
+  padding: 0.2rem 0.6rem 0.4rem;
+  border: 14px solid transparent;
+  border-image: var(--fb-panel-image);
+  border-radius: 0;
+  background: transparent;
+  filter: drop-shadow(0 8px 0 rgb(84 56 71 / 35%));
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] .modal-header {
+  padding: 0.3rem 0.4rem 0.8rem;
+  border-bottom: 4px solid var(--fb-panel-dark);
+}
+
+html[data-theme="flappy-bird"] .modal-title {
+  color: var(--fb-orange);
+  font-family: var(--fb-title);
+  font-size: 1.8rem;
+  text-shadow:
+    2px 0 0 var(--fb-white),
+    -2px 0 0 var(--fb-white),
+    0 2px 0 var(--fb-white),
+    0 -2px 0 var(--fb-white),
+    4px 0 0 var(--fb-ink),
+    -4px 0 0 var(--fb-ink),
+    0 4px 0 var(--fb-ink),
+    0 -4px 0 var(--fb-ink),
+    4px 4px 0 var(--fb-ink),
+    -4px 4px 0 var(--fb-ink),
+    4px -4px 0 var(--fb-ink),
+    -4px -4px 0 var(--fb-ink),
+    0 6px 0 var(--fb-ink);
+}
+
+html[data-theme="flappy-bird"] .modal-header .close {
+  width: 2.4rem;
+  height: 2.4rem;
+  margin: 0 0 0 auto;
+  padding: 0 0 4px;
+  border: 4px solid var(--fb-ink);
+  background: var(--fb-button);
+  clip-path: var(--fb-steps);
+  color: var(--fb-ink);
+  font-family: var(--fb-title);
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-theme="flappy-bird"] .modal-header .close:hover {
+  color: var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] .modal-footer {
+  border-top: 4px solid var(--fb-panel-dark);
+}
+
+html[data-theme="flappy-bird"] .modal-backdrop.show {
+  opacity: 35%;
+}
+
+html[data-theme="flappy-bird"] .tooltip-inner {
+  border: 3px solid var(--fb-ink);
+  border-radius: 0;
+  background: var(--fb-panel);
+  color: var(--fb-ink);
+  font-family: var(--fb-text);
+}
+
+html[data-theme="flappy-bird"] .tooltip .arrow {
+  display: none;
+}
+
+html[data-theme="flappy-bird"] #crn-copy-indicator {
+  border: 4px solid var(--fb-ink);
+  border-radius: 0;
+  font-family: var(--fb-title);
+}
+
+/* ---------- Footer: the ground, scrolling like the game ---------- */
+html[data-theme="flappy-bird"] .footer {
+  margin-top: 3rem;
+  padding-top: 3.4rem;
+  background: var(--fb-panel) url("../../images/flappy/base.png") 0 0 / 672px 224px repeat-x;
+  image-rendering: pixelated;
+}
+
+html[data-theme="flappy-bird"] .footer-links > * {
+  color: var(--fb-ink);
+}
+
+html[data-theme="flappy-bird"] .footer-updated a {
+  color: var(--fb-orange-dark) !important;
+}
+
+html[data-theme="flappy-bird"] .footer-links > a:hover {
+  color: var(--fb-orange-dark);
+}
+
+html[data-theme="flappy-bird"] #footer-logo {
+  filter: brightness(0) saturate(100%) invert(22%) sepia(14%) saturate(1300%) hue-rotate(275deg);
+}
+
+html[data-theme="flappy-bird"] .footer-updated,
+html[data-theme="flappy-bird"] .footer-copyright {
+  color: var(--fb-ink);
+  font-family: var(--fb-text);
+}
+
+html[data-theme="flappy-bird"] :focus-visible {
+  outline: 4px solid var(--fb-orange-dark);
+  outline-offset: 2px;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="flappy-bird"] .navbar-brand img {
+    height: 42px !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="flappy-bird"] h1 {
+    font-size: 1.9rem;
+  }
+
+  html[data-theme="flappy-bird"] .unofficial-schedule-warning {
+    font-size: 1.05rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fb-ground {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: -48px 0;
+    }
+  }
+
+  html[data-theme="flappy-bird"] .footer {
+    animation: fb-ground 0.4s steps(12) infinite;
+  }
+}

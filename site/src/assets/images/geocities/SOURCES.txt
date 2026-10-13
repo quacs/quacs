@@ -1,0 +1,6 @@
+under-construction.gif: https://web.archive.org/web/20091026215925/http://geocities.com/ResearchTriangle/Facility/8180/images/ani-constructionguy.gif
+construction-sign.gif: https://web.archive.org/web/20091026221833/http://geocities.com/supremefan/background/construction.gif
+guestbook.gif: https://web.archive.org/web/20090821101641/http://geocities.com/CapeCanaveral/Galaxy/1508/guestbookBLK.gif
+netscape-now.gif: https://web.archive.org/web/20050506081656/http://geocities.com/tranvietdaihung/netscapenow.gif
+internet-explorer.gif: https://web.archive.org/web/20090830180626/http://geocities.com/gsss1/ienow.gif
+new.gif: https://web.archive.org/web/20091028042715/http://www.geocities.com/angeljulie2/ani-new.gif

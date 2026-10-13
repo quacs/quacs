@@ -1,0 +1,13 @@
+globe.gif: https://web.archive.org/web/20090820094839/http://geocities.com/adarshapradhan/images/globe.gif
+chalkboard-welcome.gif: https://web.archive.org/web/20091020002120/http://www.geocities.com/naynay222/chalkboard.gif
+owl-graduate.gif: https://web.archive.org/web/20091025172410/http://www.geocities.com/mrssommers/graduation_owl_md_clr.gif
+book-quill.gif: https://web.archive.org/web/20091026192551/http://geocities.com/angelkat50/gbook.gif
+atom.gif: https://web.archive.org/web/20091021094900/http://www.geocities.com/chem416/bluratom.gif
+teacher.gif: https://web.archive.org/web/20090804032835/http://www.geocities.com/dreamy0215/teacherchalkboard.gif
+cap-diploma.gif: https://web.archive.org/web/20090822004340/http://geocities.com/astalum/images/Graduation.gif
+donkey-emc2.gif: https://web.archive.org/web/20091027112826/http://geocities.com/xileshui2002/smart_donkey_chalkboard.gif
+lightbulb.gif: https://web.archive.org/web/20091027041653/http://geocities.com/pstrainer/pics/bulb.gif
+email-quill.gif: https://web.archive.org/web/20090831000151/http://geocities.com/colonial_school/email.gif
+divider-owl.gif: https://web.archive.org/web/20090830145448/http://geocities.com/dreamr144/images/owl.gif
+column-flame.gif: https://web.archive.org/web/20090808083910/http://www.geocities.com/fiu_sgrho/columntorch.gif
+marble.jpg: https://web.archive.org/web/20000814152411/http://www.geocities.com:80/Athens/1163/marble.jpg

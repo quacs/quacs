@@ -3,7 +3,7 @@
     <div id="wrapper">
       <nav class="navbar navbar-expand-xl navbar-light bg-light">
         <router-link class="navbar-brand" to="/"
-          ><img :src="getLogo" alt="QuACS Home" style="height: 27px"
+          ><img :src="logo" alt="QuACS Home" style="height: 27px"
         /></router-link>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
@@ -81,6 +81,7 @@
         </b-collapse>
       </nav>
 
+      <ThemeDecor place="top" />
       <div v-if="unofficialSchedule">
         <UnofficialScheduleWarning />
       </div>
@@ -119,6 +120,7 @@
     <BackgroundTrains />
     <Settings></Settings>
     <AgentSetup></AgentSetup>
+    <ThemeDecor place="bottom" />
     <footer class="footer">
       <div class="footer-links">
         <a
@@ -168,6 +170,7 @@
         Scheduler
       </div>
     </footer>
+    <ThemeDecor place="overlay" />
   </div>
 </template>
 
@@ -194,7 +197,14 @@ import Settings from "@/components/Settings.vue";
 import AgentSetup from "@/components/AgentSetup.vue";
 import CourseSetEdit from "@/components/CourseSetEdit.vue";
 import UnofficialScheduleWarning from "@/components/UnofficialScheduleWarning.vue";
-import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
+import ThemeDecor from "@/components/ThemeDecor.vue";
+import {
+  getLogo,
+  shortSemToLongSem,
+  shortSemToURL,
+  themeLogo,
+  themeState,
+} from "@/utilities";
 
 @Component({
   components: {
@@ -203,6 +213,7 @@ import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
     AgentSetup,
     CourseSetEdit,
     UnofficialScheduleWarning,
+    ThemeDecor,
     "b-alert": BAlert,
     "b-button": BButton,
     "b-collapse": BCollapse,
@@ -225,7 +236,6 @@ import { getLogo, shortSemToLongSem, shortSemToURL } from "@/utilities";
     ...mapState("schedule", ["wasmLoaded", "currentCourseSet", "courseSets"]),
     shortSemToURL,
     shortSemToLongSem,
-    getLogo,
     updateAvailable: {
       get() {
         return this.$store.state.updateAvailable;
@@ -241,6 +251,11 @@ export default class App extends Vue {
   searching = false;
   installable = false;
   installEvent: Event | null = null;
+
+  // A theme's own logo wins over the regular and holiday ones
+  get logo(): string {
+    return themeLogo(themeState.applied) ?? getLogo();
+  }
 
   get allSems(): string[] {
     return JSON.parse(process.env.VUE_APP_ALL_SEMS);

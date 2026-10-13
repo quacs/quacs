@@ -1,0 +1,1055 @@
+/* Frutiger Aero, after the Frutiger Aero Archive (frutigeraeroarchive.org): the site sits in one
+dark glass window over a dewy grass photo. The navbar is the window's glossy black header with big
+rounded corners, the page is a smoked glass panel, and the footer closes the window off. Title bars
+use the archive's split black gloss, links glow green, buttons are glossy green candy, and dialogs
+are Windows 7 style glass windows with the red close button. Soap bubbles drift up behind the glass
+(ThemeDecor, AeroDecor.vue) when the OS allows motion.
+Background photo: "Water Droplets" by Ylanite Koppens, CC0 (stocksnap.io/photo/water-droplets-YCPR5MQTRP).
+Type is Segoe UI where installed, then Selawik, Microsoft's open-source (OFL) stand-in for it. */
+@font-face {
+  font-family: Selawik;
+  font-weight: 300;
+  font-display: swap;
+  src: url("../../fonts/selawik/selawkl.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Selawik;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../fonts/selawik/selawk.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Selawik;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../../fonts/selawik/selawksb.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Selawik;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../../fonts/selawik/selawkb.woff2") format("woff2");
+}
+
+[data-theme="frutiger-aero"] {
+  /* The archive's recipes, shared by several rules below */
+  --aero-title-gloss: linear-gradient(to bottom, #bebebe 0, #777 3%, #232323 55%, #000 55%, #161616 98%, #000 100%);
+  --aero-header-gloss:
+    linear-gradient(
+      180deg,
+      rgb(172 172 172 / 90%) 0,
+      rgb(71 71 71 / 90%) 20%,
+      rgb(19 19 19 / 90%) 40%,
+      rgb(7 7 7 / 93%) 100%
+    );
+  --aero-button-gloss:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 25%) 0,
+      rgb(117 117 117 / 15%) 20%,
+      rgb(92 92 92 / 15%) 60%,
+      rgb(0 0 0 / 30%) 60%,
+      rgb(41 41 41 / 30%) 100%
+    );
+  --aero-button-gloss-hover:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 25%) 0,
+      rgb(117 117 117 / 20%) 20%,
+      rgb(92 92 92 / 20%) 50%,
+      rgb(43 43 43 / 30%) 50%,
+      rgb(161 161 161 / 30%) 100%
+    );
+  --aero-button-gloss-active:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 25%) 0,
+      rgb(117 117 117 / 20%) 20%,
+      rgb(92 92 92 / 20%) 40%,
+      rgb(29 73 23 / 30%) 40%,
+      rgb(43 240 36 / 70%) 100%
+    );
+  --aero-green-gloss:
+    linear-gradient(
+      to bottom,
+      #fff 0,
+      #82f577 3%,
+      #32912a 40%,
+      #185815 55%,
+      #0b3112 55%,
+      #1a5c1e 100%
+    );
+  --aero-green-gloss-hover:
+    linear-gradient(
+      to bottom,
+      #fff 0,
+      #9efd96 3%,
+      #32912a 40%,
+      #185815 55%,
+      #0b3112 55%,
+      #47e951 100%
+    );
+  --aero-red-gloss: linear-gradient(to bottom, #ffebeb 0, #fa8c8c 3%, #f31414 55%, #a30909 55%, #eb1717 100%);
+  --aero-red-gloss-hover: linear-gradient(to bottom, #ffebeb 0, #fa8c8c 3%, #f31414 55%, #a30909 55%, #ff7c7c 100%);
+  --aero-glass-border: rgb(236 242 249 / 50%);
+  --aero-link: #3cda56;
+  --aero-link-hover: #8dff9d;
+  --aero-text-shadow: 0 0 3px #000;
+
+  /* Page and text */
+  --background: #0c2a10;
+  --background-image: none;
+  --global-text: #e6e6e6;
+  --global-text-hover: #8dff9d;
+  --raw-link: #3cda56;
+  --text-default: #e6e6e6;
+  --footer-background: transparent;
+  --font-body: "Segoe UI", selawik, "Frutiger", "Myriad Pro", "Lucida Grande", tahoma, geneva, verdana, sans-serif;
+  --font-heading: var(--font-body);
+  --warning-color: #ff8f8f;
+  --warning-border-style: solid;
+  --warning-border-width: 1px;
+  --warning-font-size: 1.5rem;
+
+  /* Cards: smoked glass with a light glass edge */
+  --card-background: rgb(27 27 27 / 83%);
+  --card-body-background: transparent;
+  --card-body-text: #e6e6e6;
+  --card-header-background: var(--aero-title-gloss);
+  --card-header-text: #fff;
+  --card-header-hover:
+    linear-gradient(
+      to bottom,
+      #d6d6d6 0,
+      #8f8f8f 3%,
+      #2f2f2f 55%,
+      #0b0b0b 55%,
+      #232323 98%,
+      #000 100%
+    );
+  --card-border-color: #707070;
+  --card-border-width: 1px;
+  --card-border-radius: 6px;
+  --card-shadow: rgb(0 0 0 / 30%) 0 3px 8px;
+  --card-backdrop-filter: none;
+  --navbar-backdrop-filter: blur(6px) saturate(140%);
+
+  /* Navbar */
+  --navbar-background: var(--aero-header-gloss);
+  --navbar-unselected-text: #eee;
+  --navbar-unselected-text-hover: #fff;
+  --navbar-text-focus: #fff;
+  --navbar-text-disabled: rgb(238 238 238 / 40%);
+  --navbar-text-active: #57fa6f;
+  --navbar-text-show: #57fa6f;
+
+  /* Modals: Windows 7 glass windows */
+  --modal-header-background: transparent;
+  --modal-header-text: #fff;
+  --modal-body-background: rgb(24 24 24 / 92%);
+  --modal-body-text: #e6e6e6;
+  --modal-footer-background: rgb(24 24 24 / 92%);
+  --modal-footer-text: #e6e6e6;
+  --modal-close-x-hover: #fff;
+
+  /* Buttons */
+  --btn-primary-background: var(--aero-green-gloss);
+  --btn-primary-text: #fff;
+  --btn-border: 1px solid #000;
+  --btn-border-radius: 3px;
+  --btn-box-shadow: 1px 1px 5px rgb(0 0 0 / 20%);
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: var(--aero-button-gloss);
+  --btn-secondary-text: #eee;
+
+  /* Lists, tables and course rows */
+  --department-link-hover: transparent;
+  --select-background: rgb(19 19 19 / 85%);
+  --select-text: #eee;
+  --table-text: #e6e6e6;
+  --table-border: rgb(255 255 255 / 12%);
+  --course-row-hover: rgb(255 255 255 / 8%);
+  --conflict-row:
+    linear-gradient(
+      to bottom,
+      rgb(255 120 120 / 30%) 0,
+      rgb(170 20 20 / 35%) 50%,
+      rgb(120 0 0 / 45%) 50%,
+      rgb(200 30 30 / 45%) 100%
+    );
+  --conflict-row-hover:
+    linear-gradient(
+      to bottom,
+      rgb(255 140 140 / 38%) 0,
+      rgb(190 30 30 / 42%) 50%,
+      rgb(140 0 0 / 52%) 50%,
+      rgb(225 40 40 / 52%) 100%
+    );
+  --selected-row:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 22%) 0,
+      rgb(117 117 117 / 18%) 20%,
+      rgb(92 92 92 / 18%) 40%,
+      rgb(29 73 23 / 35%) 40%,
+      rgb(43 200 36 / 45%) 100%
+    );
+  --selected-row-hover:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 28%) 0,
+      rgb(117 117 117 / 22%) 20%,
+      rgb(92 92 92 / 22%) 40%,
+      rgb(29 90 23 / 40%) 40%,
+      rgb(43 240 36 / 58%) 100%
+    );
+  --list-group-item-background: rgb(27 27 27 / 83%);
+  --search-bar-background: rgb(255 255 255 / 92%);
+  --search-bar-border: #5b5b5b;
+  --overlay-background: rgb(16 16 16 / 80%);
+  --trash-btn: #d8d8d8;
+  --trash-btn-hover: #ff6b6b;
+  --prerequisite-jumbotron: rgb(27 27 27 / 83%);
+  --prerequisite-text: #111;
+  --prerequisite-warn-icon: #f5c400;
+  --prerequisite-error-icon: #ff5c5c;
+  --taken-course: #57fa6f;
+  --not-taken-course: #ff7b7b;
+  --toast-background: rgb(10 10 10 / 92%);
+  --toast-text: #fff;
+
+  /* Calendar: candy-colored events. The gloss sits on top of these colors (see .calendar-event). */
+  --calendar-grid-color: rgb(255 255 255 / 11%);
+  --calendar-label: #cfcfcf;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #2f9bea;
+  --calendar-border-color-0: #9fdcff;
+  --calendar-text-color-0: #fff;
+  --calendar-bg-color-1: #4cb82b;
+  --calendar-border-color-1: #b4ff8f;
+  --calendar-text-color-1: #fff;
+  --calendar-bg-color-2: #e8851c;
+  --calendar-border-color-2: #ffd29a;
+  --calendar-text-color-2: #fff;
+  --calendar-bg-color-3: #c6328f;
+  --calendar-border-color-3: #ffa6dc;
+  --calendar-text-color-3: #fff;
+  --calendar-bg-color-4: #7b4fd1;
+  --calendar-border-color-4: #cdb6ff;
+  --calendar-text-color-4: #fff;
+  --calendar-bg-color-5: #13a89e;
+  --calendar-border-color-5: #8ff5ec;
+  --calendar-text-color-5: #fff;
+  --calendar-bg-color-6: #c8a312;
+  --calendar-border-color-6: #fff09a;
+  --calendar-text-color-6: #fff;
+  --calendar-sb-track-color-0: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-0: rgb(255 255 255 / 60%);
+  --calendar-sb-track-color-1: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-1: rgb(255 255 255 / 60%);
+  --calendar-sb-track-color-2: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-2: rgb(255 255 255 / 60%);
+  --calendar-sb-track-color-3: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-3: rgb(255 255 255 / 60%);
+  --calendar-sb-track-color-4: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-4: rgb(255 255 255 / 60%);
+  --calendar-sb-track-color-5: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-5: rgb(255 255 255 / 60%);
+  --calendar-sb-track-color-6: rgb(0 0 0 / 20%);
+  --calendar-sb-thumb-color-6: rgb(255 255 255 / 60%);
+
+  scrollbar-color: rgb(35 105 47 / 80%) rgb(31 31 31 / 65%);
+}
+
+[data-theme="frutiger-aero"] ::selection {
+  background: #148d28;
+  color: #fff;
+}
+
+/* The photo lives on a fixed layer, so it does not rescale with the page on phones that ignore
+background-attachment: fixed */
+html[data-theme="frutiger-aero"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 45% at 18% 0%, rgb(255 255 240 / 28%), transparent 70%),
+    url("../../images/aero/background.jpg") center 30% / cover no-repeat,
+    #0c2a10;
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="frutiger-aero"] body::before {
+    background:
+      radial-gradient(ellipse 60% 45% at 18% 0%, rgb(255 255 240 / 28%), transparent 70%),
+      url("../../images/aero/background-small.jpg") center 30% / cover no-repeat,
+      #0c2a10;
+  }
+}
+
+/* Text on smoked glass gets the archive's soft black halo */
+html[data-theme="frutiger-aero"] body {
+  text-shadow: var(--aero-text-shadow);
+}
+
+/* ---------- The window: header, glass panel and footer share one width ---------- */
+@media (min-width: 992px) {
+  html[data-theme="frutiger-aero"] #wrapper,
+  html[data-theme="frutiger-aero"] .footer {
+    width: calc(100% - 4rem);
+    max-width: 1520px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  html[data-theme="frutiger-aero"] #wrapper {
+    margin-top: 18px;
+    border-radius: 44px 44px 0 0;
+  }
+
+  html[data-theme="frutiger-aero"] .navbar.bg-light {
+    border-radius: 44px 44px 0 0;
+    padding-left: 2rem;
+    padding-right: 1.5rem;
+  }
+
+  html[data-theme="frutiger-aero"] .footer {
+    margin-bottom: 18px;
+    border-radius: 0 0 44px 44px;
+  }
+}
+
+html[data-theme="frutiger-aero"] #wrapper {
+  background: rgb(39 39 39 / 50%);
+  border: 1px solid #3b3b3b;
+  border-top: 0;
+  box-shadow:
+    rgb(0 0 0 / 40%) 0 14px 28px,
+    rgb(0 0 0 / 40%) 0 10px 10px;
+}
+
+html[data-theme="frutiger-aero"] #wrapper > .container-fluid {
+  padding-top: 0.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* ---------- Header ---------- */
+html[data-theme="frutiger-aero"] .navbar.bg-light {
+  border: 1px solid #4e4e4e;
+  border-top: 2px solid #4e4e4e;
+  box-shadow:
+    rgb(0 0 0 / 30%) 0 14px 28px,
+    rgb(0 0 0 / 30%) 0 10px 10px,
+    inset 0 1px 0 rgb(255 255 255 / 25%);
+  z-index: 10;
+}
+
+/* The glossy logo carries its own reflection, which hangs below the usual 27px line */
+html[data-theme="frutiger-aero"] .navbar-brand img {
+  height: 40px !important;
+  margin-bottom: -13px;
+  transition: filter 0.4s, transform 0.4s;
+}
+
+html[data-theme="frutiger-aero"] .navbar-brand:hover img {
+  filter: brightness(115%);
+}
+
+html[data-theme="frutiger-aero"] .navbar-light .navbar-toggler {
+  border: 1px solid #0f0f0f;
+  background: var(--aero-button-gloss);
+}
+
+html[data-theme="frutiger-aero"] .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='%23EEEEEE' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Nav links are the archive's glossy menu buttons, side by side */
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link {
+  position: relative;
+  margin: 2px 3px;
+  padding: 0.3rem 0.8rem !important;
+  border: 1px solid #0f0f0f;
+  border-radius: 5px;
+  background: var(--aero-button-gloss);
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 50%), inset 0 0 0 1px rgb(255 255 255 / 6%);
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+html[data-theme="frutiger-aero"] .navbar-nav .nav-text {
+  font-size: 1rem;
+}
+
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5%;
+  width: 90%;
+  height: 45%;
+  border-radius: 20px;
+  background: linear-gradient(to bottom, rgb(117 117 117 / 70%) 0, rgb(255 255 255 / 10%) 100%);
+  opacity: 30%;
+  pointer-events: none;
+}
+
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link:hover,
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link:focus-visible {
+  background: var(--aero-button-gloss-hover);
+}
+
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link.active,
+html[data-theme="frutiger-aero"] .navbar-nav .show > .nav-link {
+  background: var(--aero-button-gloss-active) !important;
+  color: #57fa6f;
+}
+
+/* The "|" spacer becomes a thin etched divider */
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link.disabled {
+  width: 2px;
+  min-width: 0;
+  margin: 6px;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 0;
+  border-left: 1px solid #000;
+  border-right: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: transparent;
+}
+
+html[data-theme="frutiger-aero"] .navbar-nav .nav-link.disabled::before {
+  display: none;
+}
+
+/* Search: a Windows 7 search box */
+html[data-theme="frutiger-aero"] #search-bar {
+  border: 1px solid #5b5b5b;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 35%),
+    0 1px 0 rgb(255 255 255 / 12%);
+  color: #111;
+  text-shadow: none;
+}
+
+html[data-theme="frutiger-aero"] #search-bar::placeholder {
+  color: #6d6d6d;
+  font-style: italic;
+}
+
+html[data-theme="frutiger-aero"] #search-bar:focus {
+  border-color: #3cda56;
+  background-color: #fff;
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 25%),
+    0 0 7px rgb(60 218 86 / 85%);
+}
+
+/* Dropdown menus: dark glass with the green highlight */
+html[data-theme="frutiger-aero"] .dropdown-menu {
+  padding: 3px;
+  border: 1px solid var(--aero-glass-border);
+  border-radius: 6px;
+  background: rgb(22 22 22 / 92%);
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 80%), inset -1px -1px 0 rgb(255 255 255 / 20%), 0 10px 25px rgb(0 0 0 / 50%);
+  backdrop-filter: blur(8px);
+}
+
+html[data-theme="frutiger-aero"] .dropdown-item,
+html[data-theme="frutiger-aero"] .dropdown-menu .b-dropdown-text {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #eee;
+  text-shadow: var(--aero-text-shadow);
+}
+
+html[data-theme="frutiger-aero"] .dropdown-item:hover,
+html[data-theme="frutiger-aero"] .dropdown-item:focus {
+  border-color: #0f0f0f;
+  background: var(--aero-button-gloss-active);
+  color: #fff;
+}
+
+html[data-theme="frutiger-aero"] .dropdown-divider {
+  border-top-color: rgb(255 255 255 / 15%);
+}
+
+/* ---------- Warning banner: a glass info bar with a warning shield ---------- */
+html[data-theme="frutiger-aero"] .unofficial-schedule-warning {
+  position: relative;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem 0.9rem 4.25rem;
+  border-color: rgb(255 143 143 / 55%);
+  border-radius: 6px;
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 10%) 0, rgb(255 255 255 / 2%) 50%, transparent 50%),
+    rgb(70 6 6 / 55%);
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 80%), inset -1px -1px 0 rgb(255 255 255 / 15%);
+  line-height: 1.35;
+}
+
+html[data-theme="frutiger-aero"] .unofficial-schedule-warning::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  transform: translateY(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff6b0'/%3E%3Cstop offset='.5' stop-color='%23ffd21f'/%3E%3Cstop offset='.5' stop-color='%23f2b600'/%3E%3Cstop offset='1' stop-color='%23ffcf33'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M24 3 46 43H2Z' fill='url(%23g)' stroke='%23855f00' stroke-width='2' stroke-linejoin='round'/%3E%3Crect x='21.5' y='16' width='5' height='15' rx='2.5' fill='%23222'/%3E%3Ccircle cx='24' cy='36.5' r='3' fill='%23222'/%3E%3C/svg%3E") center / contain no-repeat;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 60%));
+}
+
+/* ---------- Title bars ---------- */
+html[data-theme="frutiger-aero"] h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px 5px;
+  border: 1px solid #4b4b4b;
+  border-bottom-color: #000;
+  background: var(--aero-title-gloss);
+  box-shadow: rgb(0 0 0 / 30%) 0 3px 8px;
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+html[data-theme="frutiger-aero"] h2,
+html[data-theme="frutiger-aero"] h3,
+html[data-theme="frutiger-aero"] h4 {
+  color: #fff;
+  font-weight: 400;
+}
+
+/* ---------- Cards ---------- */
+html[data-theme="frutiger-aero"] .card {
+  overflow: hidden;
+  outline: 1px solid rgb(28 49 39 / 50%);
+}
+
+html[data-theme="frutiger-aero"] .card-header {
+  border-bottom: 1px solid #000;
+  text-shadow: 0 1px 2px #000;
+}
+
+/* School cards on the home page: centered single-line title bars, like the archive's sections */
+html[data-theme="frutiger-aero"] .department-cards .card-header {
+  padding: 4px 10px 6px !important;
+  font-size: 1.05rem !important;
+  font-weight: 400 !important;
+  text-align: center;
+}
+
+html[data-theme="frutiger-aero"] .department-cards .card-body {
+  padding: 8px;
+}
+
+/* Departments are the archive's sidebar buttons, each with a little glossy orb */
+html[data-theme="frutiger-aero"] .department-cards .department-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 auto 3px;
+  padding: 0.3rem 0.6rem 0.35rem !important;
+  border: 1px solid #0f0f0f;
+  border-radius: 5px;
+  background: var(--aero-button-gloss);
+  box-shadow: 1px 1px 3px rgb(0 0 0 / 50%);
+  color: #eee !important;
+  font-size: 0.98rem !important;
+  line-height: 1.25;
+  transition: transform 0.12s, background 0.12s;
+}
+
+html[data-theme="frutiger-aero"] .department-cards .department-link::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 18%, rgb(255 255 255 / 95%) 0, rgb(255 255 255 / 15%) 38%, transparent 40%),
+    radial-gradient(circle at 50% 120%, #b4ff9e 0, #3cda56 35%, #146b23 75%, #0a3a12 100%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 70%), inset 0 0 0 1px rgb(0 40 0 / 50%);
+}
+
+html[data-theme="frutiger-aero"] .department-cards .department-link:hover,
+html[data-theme="frutiger-aero"] .department-cards .department-link:focus-visible {
+  background: var(--aero-button-gloss-active);
+  color: #fff !important;
+  transform: scale(1.02);
+}
+
+html[data-theme="frutiger-aero"] .department-cards .department-code {
+  min-width: 3.4rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Course cards: a dark glass header with a glassy top edge, title bars stay for single lines */
+html[data-theme="frutiger-aero"] .course-card-header {
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 16%) 0, rgb(255 255 255 / 4%) 14px, transparent 15px),
+    rgb(14 14 14 / 82%) !important;
+  color: #dadada !important;
+  line-height: 1.45;
+}
+
+html[data-theme="frutiger-aero"] .course-card-header:hover {
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 20%) 0, rgb(255 255 255 / 6%) 14px, transparent 15px),
+    rgb(30 30 30 / 85%) !important;
+}
+
+html[data-theme="frutiger-aero"] .course-card-header .course-code {
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+html[data-theme="frutiger-aero"] .course-card-header .font-weight-bold {
+  color: #fff;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="frutiger-aero"] .course-card .open_close_icon {
+  color: var(--aero-link);
+  filter: drop-shadow(0 0 3px rgb(60 218 86 / 70%));
+}
+
+html[data-theme="frutiger-aero"] .prerequisiteError {
+  border-radius: 3px;
+  text-shadow: none;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Tables ---------- */
+html[data-theme="frutiger-aero"] .table {
+  background: rgb(10 10 10 / 35%);
+}
+
+html[data-theme="frutiger-aero"] .table-bordered,
+html[data-theme="frutiger-aero"] .table-bordered td,
+html[data-theme="frutiger-aero"] .table-bordered th {
+  border-color: var(--table-border);
+}
+
+html[data-theme="frutiger-aero"] .table thead th {
+  border-bottom: 1px solid #000;
+  background: var(--aero-title-gloss);
+  color: #fff;
+  font-weight: 400;
+}
+
+html[data-theme="frutiger-aero"] .current-schedule-badge {
+  border-color: #57fa6f !important;
+  color: #57fa6f;
+}
+
+/* ---------- Buttons ---------- */
+html[data-theme="frutiger-aero"] .btn {
+  position: relative;
+  border: 1px solid #000;
+  border-radius: 3px;
+  box-shadow: 1px 1px 5px rgb(0 0 0 / 30%);
+  color: #fff;
+  text-shadow: 0 0 3px #000;
+}
+
+html[data-theme="frutiger-aero"] .btn-primary,
+html[data-theme="frutiger-aero"] .btn-success {
+  background: var(--aero-green-gloss);
+}
+
+html[data-theme="frutiger-aero"] .btn-primary:hover,
+html[data-theme="frutiger-aero"] .btn-primary:focus,
+html[data-theme="frutiger-aero"] .btn-primary:not(:disabled):not(.disabled):active,
+html[data-theme="frutiger-aero"] .btn-success:hover,
+html[data-theme="frutiger-aero"] .btn-success:focus {
+  border-color: #000;
+  background: var(--aero-green-gloss-hover);
+  color: #fff;
+}
+
+html[data-theme="frutiger-aero"] .btn-secondary,
+html[data-theme="frutiger-aero"] .btn-outline-secondary {
+  background: var(--aero-button-gloss), rgb(30 30 30 / 80%);
+  color: #eee;
+}
+
+html[data-theme="frutiger-aero"] .btn-secondary:hover,
+html[data-theme="frutiger-aero"] .btn-secondary:focus,
+html[data-theme="frutiger-aero"] .btn-outline-secondary:hover {
+  border-color: #000;
+  background: var(--aero-button-gloss-hover), rgb(40 40 40 / 85%);
+  color: #fff;
+}
+
+html[data-theme="frutiger-aero"] .btn-outline-danger,
+html[data-theme="frutiger-aero"] .btn-danger {
+  border-color: #790000;
+  background: var(--aero-red-gloss);
+  color: #fff;
+}
+
+html[data-theme="frutiger-aero"] .btn-outline-danger:hover,
+html[data-theme="frutiger-aero"] .btn-outline-danger:focus,
+html[data-theme="frutiger-aero"] .btn-danger:hover {
+  border-color: #790000;
+  background: var(--aero-red-gloss-hover);
+  color: #fff;
+}
+
+html[data-theme="frutiger-aero"] .btn:disabled,
+html[data-theme="frutiger-aero"] .btn.disabled {
+  opacity: 55%;
+}
+
+/* Form fields: Windows 7 text boxes */
+html[data-theme="frutiger-aero"] .form-control,
+html[data-theme="frutiger-aero"] .custom-select {
+  border: 1px solid #5b5b5b;
+  border-radius: 3px;
+  background-color: rgb(255 255 255 / 94%);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%);
+  color: #111;
+  text-shadow: none;
+}
+
+html[data-theme="frutiger-aero"] .form-control:focus,
+html[data-theme="frutiger-aero"] .custom-select:focus {
+  border-color: #3cda56;
+  background-color: #fff;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 25%), 0 0 7px rgb(60 218 86 / 85%);
+  color: #111;
+}
+
+html[data-theme="frutiger-aero"] .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #0b3112;
+  background: var(--aero-green-gloss);
+}
+
+/* ---------- Links ---------- */
+:where([data-theme="frutiger-aero"]) a {
+  color: var(--aero-link);
+}
+
+/* ---------- Prerequisites ---------- */
+html[data-theme="frutiger-aero"] .jumbotron {
+  overflow: hidden;
+  padding-top: 0;
+  border: 1px solid var(--aero-glass-border);
+  border-radius: 6px;
+  background: linear-gradient(to bottom, rgb(66 66 66 / 35%), rgb(20 20 20 / 60%)) !important;
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 80%), inset -1px -1px 0 rgb(255 255 255 / 20%);
+  color: #e6e6e6;
+}
+
+html[data-theme="frutiger-aero"] .jumbotron h1 {
+  justify-content: flex-start;
+  margin: 0 -2rem 1.5rem;
+  padding: 8px 1.25rem 10px;
+  border: 0;
+  border-bottom: 1px solid #000;
+  border-radius: 5px 5px 0 0;
+  font-size: 1.6rem;
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="frutiger-aero"] .schedule-select {
+  margin: 0 auto;
+  border: 1px solid #4b4b4b;
+  background: var(--aero-title-gloss);
+  box-shadow: rgb(0 0 0 / 30%) 0 3px 8px;
+  color: #fff;
+}
+
+html[data-theme="frutiger-aero"] .schedule-select-button {
+  color: var(--aero-link);
+  filter: drop-shadow(0 0 3px rgb(60 218 86 / 80%));
+}
+
+html[data-theme="frutiger-aero"] .calendar {
+  padding: 0.6rem 0;
+  border: 1px solid var(--aero-glass-border);
+  border-radius: 6px;
+  background: rgb(15 15 15 / 55%);
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 80%), inset -1px -1px 0 rgb(255 255 255 / 20%);
+}
+
+/* Glossy candy events: a white sheen on the top half over the color the calendar sets inline */
+html[data-theme="frutiger-aero"] .calendar-event {
+  border: 1px solid rgb(0 0 0 / 55%) !important;
+  border-radius: 6px;
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 55%) 0,
+      rgb(255 255 255 / 18%) 12px,
+      rgb(255 255 255 / 6%) 50%,
+      rgb(0 0 0 / 8%) 51%,
+      rgb(0 0 0 / 0%) 85%,
+      rgb(255 255 255 / 18%) 100%
+    );
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 35%),
+    0 2px 5px rgb(0 0 0 / 45%);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+}
+
+html[data-theme="frutiger-aero"] .crn-list,
+html[data-theme="frutiger-aero"] .credits {
+  color: #e6e6e6;
+}
+
+html[data-theme="frutiger-aero"] .b-overlay .bg-light {
+  border-radius: 6px;
+}
+
+html[data-theme="frutiger-aero"] .b-overlay h3,
+html[data-theme="frutiger-aero"] .b-overlay h4 {
+  color: #fff;
+}
+
+/* Windows 7 progress bars, with the moving shine when motion is allowed */
+html[data-theme="frutiger-aero"] .progress {
+  border: 1px solid #333;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #f3f3f3, #d6d6d6 50%, #c8c8c8 50%, #e0e0e0);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%);
+}
+
+html[data-theme="frutiger-aero"] .progress-bar:not(.bg-transparent):not(.bg-light):not(.bg-dark) {
+  background: linear-gradient(to bottom, #c4f7a8 0, #4cd82a 45%, #1fae14 50%, #34d11e 100%);
+  color: #072e00;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 50%);
+}
+
+/* ---------- Modals: Windows 7 glass windows ---------- */
+html[data-theme="frutiger-aero"] .modal-content {
+  padding: 0 7px 7px;
+  overflow: hidden;
+  border: 1px solid rgb(0 0 0 / 70%);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      115deg,
+      transparent 0 22%,
+      rgb(255 255 255 / 9%) 23% 26%,
+      transparent 27% 31%,
+      rgb(255 255 255 / 7%) 32% 33%,
+      transparent 34%
+    ),
+    linear-gradient(to bottom, rgb(150 190 160 / 45%), rgb(70 110 80 / 40%) 60px, rgb(40 60 45 / 55%));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 45%),
+    0 12px 40px rgb(0 0 0 / 65%);
+  backdrop-filter: blur(10px) saturate(150%);
+}
+
+html[data-theme="frutiger-aero"] .modal-header {
+  padding: 0.45rem 0.25rem 0.45rem 0.5rem;
+  border-bottom: 0;
+  background: transparent;
+  text-shadow:
+    0 0 8px rgb(255 255 255 / 85%),
+    0 0 2px rgb(255 255 255 / 90%);
+}
+
+html[data-theme="frutiger-aero"] .modal-title {
+  color: #000;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+html[data-theme="frutiger-aero"] .modal-body {
+  border: 1px solid rgb(0 0 0 / 60%);
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  text-shadow: var(--aero-text-shadow);
+}
+
+html[data-theme="frutiger-aero"] .modal-footer {
+  border: 1px solid rgb(0 0 0 / 60%);
+  border-top-color: rgb(255 255 255 / 10%);
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(to bottom, rgb(40 40 40 / 92%), rgb(20 20 20 / 92%));
+}
+
+/* The red close button */
+html[data-theme="frutiger-aero"] .modal-header .close {
+  width: 43px;
+  height: 19px;
+  margin: -0.35rem 0 0 auto;
+  padding: 0;
+  border: 1px solid #3f0e0e;
+  border-radius: 0 0 4px 4px;
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 55%) 0, rgb(255 255 255 / 10%) 45%, transparent 46%),
+    linear-gradient(to bottom, #e9a99b, #c7442d 50%, #b02913 50%, #d6573b);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 40%), 0 0 6px rgb(255 120 90 / 0%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 15px;
+  opacity: 100%;
+  text-shadow: 0 0 3px #400;
+  transition: box-shadow 0.2s;
+}
+
+html[data-theme="frutiger-aero"] .modal-header .close:hover,
+html[data-theme="frutiger-aero"] .modal-header .close:focus {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 55%), 0 0 10px rgb(255 120 90 / 90%);
+  color: #fff;
+  opacity: 100%;
+}
+
+html[data-theme="frutiger-aero"] .modal-backdrop {
+  background: #000;
+}
+
+html[data-theme="frutiger-aero"] .modal-backdrop.show {
+  opacity: 35%;
+}
+
+/* ---------- Tooltips and toasts ---------- */
+html[data-theme="frutiger-aero"] .tooltip-inner {
+  border: 1px solid #767676;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #fff, #e4e5f0);
+  box-shadow: 2px 2px 4px rgb(0 0 0 / 35%);
+  color: #575757;
+  text-shadow: none;
+}
+
+html[data-theme="frutiger-aero"] .tooltip .arrow::before {
+  display: none;
+}
+
+html[data-theme="frutiger-aero"] #crn-copy-indicator {
+  border: 1px solid var(--aero-glass-border);
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 60%);
+}
+
+/* ---------- Footer: the bottom of the window ---------- */
+html[data-theme="frutiger-aero"] .footer {
+  margin-top: 0;
+  border: 1px solid #3b3b3b;
+  border-top: 1px solid #000;
+  background: linear-gradient(to bottom, #3d3d3d 0, #1a1a1a 18%, #121212 60%, #070707 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 18%),
+    rgb(0 0 0 / 40%) 0 14px 28px;
+  color: #dadada;
+}
+
+html[data-theme="frutiger-aero"] .footer-links > * {
+  color: #eee;
+}
+
+html[data-theme="frutiger-aero"] .footer-updated a {
+  color: var(--aero-link) !important;
+}
+
+html[data-theme="frutiger-aero"] .footer-links > a:hover {
+  color: #57fa6f;
+  filter: drop-shadow(0 0 6px rgb(60 218 86 / 90%));
+}
+
+html[data-theme="frutiger-aero"] .footer-copyright,
+html[data-theme="frutiger-aero"] .footer-updated {
+  color: #c9c9c9;
+}
+
+/* ---------- Links in cards, the prerequisites intro and dialogs light up on hover ----------
+Last among the link rules, because it is the most specific of them */
+html[data-theme="frutiger-aero"] .jumbotron a:not(.btn):hover,
+html[data-theme="frutiger-aero"] .modal-body a:not(.btn):hover,
+html[data-theme="frutiger-aero"] .card-body a:not(.btn):not(.department-link):hover {
+  color: var(--aero-link-hover);
+}
+
+/* ---------- Focus ---------- */
+html[data-theme="frutiger-aero"] :focus-visible {
+  outline: 2px solid #57fa6f;
+  outline-offset: 2px;
+}
+
+/* ---------- Phones: the window goes edge to edge, like the archive's mobile layout ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="frutiger-aero"] .navbar-nav .nav-link {
+    margin: 3px 0;
+    text-align: left;
+  }
+
+  html[data-theme="frutiger-aero"] .navbar-nav .nav-link.disabled {
+    display: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="frutiger-aero"] #wrapper {
+    border-right: 0;
+    border-left: 0;
+  }
+
+  html[data-theme="frutiger-aero"] .unofficial-schedule-warning {
+    padding-left: 3.6rem;
+    font-size: 1.15rem;
+  }
+
+  html[data-theme="frutiger-aero"] .unofficial-schedule-warning::before {
+    left: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes aero-progress-shine {
+    from {
+      background-position: -200px 0, 0 0;
+    }
+
+    to {
+      background-position: calc(100% + 200px) 0, 0 0;
+    }
+  }
+
+  html[data-theme="frutiger-aero"] .navbar-nav .nav-link,
+  html[data-theme="frutiger-aero"] .btn {
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.2s ease;
+  }
+
+  html[data-theme="frutiger-aero"] .navbar-nav .nav-link:hover {
+    transform: scale(1.04);
+  }
+
+  html[data-theme="frutiger-aero"] .progress-bar:not(.bg-transparent):not(.bg-light):not(.bg-dark) {
+    background:
+      linear-gradient(90deg, transparent, rgb(255 255 255 / 55%), transparent) no-repeat,
+      linear-gradient(to bottom, #c4f7a8 0, #4cd82a 45%, #1fae14 50%, #34d11e 100%);
+    background-size: 200px 100%, 100% 100%;
+    animation: aero-progress-shine 2.4s linear infinite;
+  }
+}

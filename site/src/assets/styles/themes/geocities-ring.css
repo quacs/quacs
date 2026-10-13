@@ -1,0 +1,4 @@
+/* The GeoCities homepage themes, after their shared styles. utilities.ts loads this file when one of
+them is picked (THEME_STYLES). */
+@import "./geocities.css";
+@import "./academy.css";

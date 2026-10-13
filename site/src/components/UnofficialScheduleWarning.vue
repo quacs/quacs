@@ -14,3 +14,12 @@
     <div class="col-lg-1"></div>
   </div>
 </template>
+
+<style scoped>
+/* This row sits outside the page's .container-fluid, so a row's usual -15px side margins would push
+it past the window and let every theme scroll sideways. Without them it lines up with the page. */
+.unofficial-warning-row {
+  margin-right: 0;
+  margin-left: 0;
+}
+</style>

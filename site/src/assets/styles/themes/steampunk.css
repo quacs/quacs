@@ -1,0 +1,1120 @@
+/* Steampunk: a Victorian engine room. Dark walnut paneling under a warm lamp, with brass gear trains
+turning in the margins as you scroll and an engine-room control panel of gauges above the footer
+(SteampunkDecor.vue). The navbar is riveted copper with a brass steam pipe, and nav links are brass
+nameplates with indicator lamps. Panels are parchment in riveted brass frames. The data notice is
+an enamel railway sign, page titles are ship's plaques, the schedule counter glows like nixie tubes,
+the calendar is a blueprint, dialogs close with a valve wheel, and the footer icons sit in
+portholes. The duck wears brass aviator goggles.
+Walnut texture and logo are made for QuACS. Type: Cinzel, Cinzel Decorative, Crimson Pro, Special
+Elite and Nixie One (all SIL OFL or Apache). */
+[data-theme="steampunk"] {
+  --sp-brass: linear-gradient(180deg, #f5df98 0%, #d5ae55 32%, #a5782a 56%, #e6c776 78%, #9a6c22 100%);
+  --sp-brass-flat: #c9a24a;
+  --sp-brass-dark: #6b4a14;
+  --sp-copper: linear-gradient(180deg, #f0a46a 0%, #c7743b 35%, #8f4a1d 60%, #d58b52 82%, #7a3c15 100%);
+  --sp-iron: linear-gradient(180deg, #4a4a4a, #2b2b2b 55%, #1c1c1c);
+
+  /* A brass steam pipe with a flanged joint every 250px */
+  --sp-pipe:
+    repeating-linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0%) 0 234px,
+      rgb(0 0 0 / 45%) 234px 235px,
+      rgb(0 0 0 / 0%) 235px 249px,
+      rgb(0 0 0 / 45%) 249px 250px
+    ),
+    linear-gradient(90deg, rgb(0 0 0 / 0%) 0 234px, rgb(255 240 200 / 25%) 234px 250px) 0 0 / 250px 100%,
+    linear-gradient(180deg, #f8e6a8 0%, #d5ae55 30%, #8f6420 70%, #5e3f10 100%);
+  --sp-ink: #3b2412;
+  --sp-ink-soft: #6b4f33;
+  --sp-paper: #efe1bd;
+  --sp-amber: #ffb347;
+  --sp-verdigris: #4f9d8a;
+  --sp-display: "Cinzel Decorative", "Cinzel", "Trajan Pro", georgia, serif;
+  --sp-caps: cinzel, "Trajan Pro", georgia, serif;
+  --sp-text: "Crimson Pro", "Crimson Text", georgia, serif;
+  --sp-type: "Special Elite", "Courier New", courier, monospace;
+  --sp-nixie: "Nixie One", "Share Tech Mono", ui-monospace, monospace;
+  --sp-rivet:
+    radial-gradient(
+      circle at 40% 35%,
+      #fff4c8 0 1px,
+      #d9b25c 1.8px,
+      #6b4a14 3px,
+      rgb(0 0 0 / 35%) 3.6px,
+      rgb(0 0 0 / 0%) 4.2px
+    );
+
+  /* Rivets all around a 7px frame. Used on an overlay (::before) that covers the frame, because the
+  frame itself is a border-image, which paints above backgrounds. */
+  --sp-frame-rivets:
+    var(--sp-rivet) 0 -1px / 24px 9px repeat-x,
+    var(--sp-rivet) 12px calc(100% + 1px) / 24px 9px repeat-x,
+    var(--sp-rivet) -1px 0 / 9px 24px repeat-y,
+    var(--sp-rivet) calc(100% + 1px) 12px / 9px 24px repeat-y;
+  --sp-parchment:
+    radial-gradient(ellipse 80% 60% at 25% 15%, rgb(255 250 230 / 55%), rgb(255 250 230 / 0%) 70%),
+    radial-gradient(ellipse 120% 100% at 50% 50%, rgb(0 0 0 / 0%) 55%, rgb(120 80 30 / 22%) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .12 0 0 0 .22 -.04'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .28 0 0 0 0 .12 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #efe1bd;
+
+  /* QuACS tokens */
+  --background: #2a1a0f;
+  --background-image: none;
+  --global-text: #f1e4c4;
+  --global-text-hover: var(--sp-amber);
+  --raw-link: #f0c36a;
+  --text-default: var(--sp-ink);
+  --footer-background: transparent;
+  --font-body: var(--sp-text);
+  --font-heading: var(--sp-caps);
+  --warning-color: #8b1a1a;
+  --warning-border-width: 0;
+  --card-background: var(--sp-paper);
+  --card-body-background: transparent;
+  --card-body-text: var(--sp-ink);
+  --card-header-background: transparent;
+  --card-header-text: var(--sp-ink);
+  --card-header-hover: rgb(120 80 30 / 8%);
+  --card-border-color: transparent;
+  --card-border-width: 7px;
+  --card-border-radius: 6px;
+  --card-inner-radius: 0;
+  --card-shadow: 0 8px 18px rgb(0 0 0 / 60%);
+  --navbar-background: #8f4a1d;
+  --navbar-unselected-text: #2b1a08;
+  --navbar-unselected-text-hover: #000;
+  --navbar-text-focus: #000;
+  --navbar-text-disabled: #2b1a08;
+  --navbar-text-active: #2b1a08;
+  --navbar-text-show: #2b1a08;
+  --modal-header-background: transparent;
+  --modal-header-text: #2b1a08;
+  --modal-body-background: transparent;
+  --modal-body-text: var(--sp-ink);
+  --modal-footer-background: transparent;
+  --modal-footer-text: var(--sp-ink);
+  --modal-close-x-hover: #000;
+  --btn-primary-background: #c7743b;
+  --btn-primary-text: #2b1004;
+  --btn-border: 0;
+  --btn-border-radius: 4px;
+  --btn-box-shadow: none;
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: var(--sp-brass-flat);
+  --btn-secondary-text: #2b1a08;
+  --department-link-hover: transparent;
+  --select-background: var(--sp-paper);
+  --select-text: var(--sp-ink);
+  --table-text: var(--sp-ink);
+  --table-border: #c9b07c;
+  --course-row-hover: rgb(160 110 40 / 10%);
+  --conflict-row: rgb(139 26 26 / 12%);
+  --conflict-row-hover: rgb(139 26 26 / 18%);
+  --selected-row: rgb(79 157 138 / 20%);
+  --selected-row-hover: rgb(79 157 138 / 28%);
+  --list-group-item-background: var(--sp-paper);
+  --search-bar-background: var(--sp-paper);
+  --search-bar-border: transparent;
+  --overlay-background: var(--sp-paper);
+  --trash-btn: var(--sp-ink-soft);
+  --trash-btn-hover: #8b1a1a;
+  --prerequisite-jumbotron: var(--sp-paper);
+  --prerequisite-text: #2b1a08;
+  --prerequisite-warn-icon: #e8c26a;
+  --prerequisite-error-icon: #e8a39a;
+  --taken-course: #2e6b4f;
+  --not-taken-course: #8b1a1a;
+  --toast-background: #2b1a08;
+  --toast-text: #f5df98;
+
+  /* Calendar: a blueprint. Each class is a part drawn on it in its own pencil color. */
+  --calendar-grid-color: rgb(255 255 255 / 30%);
+  --calendar-label: #eaf2ff;
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: rgb(255 255 255 / 14%);
+  --calendar-border-color-0: #fff;
+  --calendar-text-color-0: #fff;
+  --calendar-bg-color-1: rgb(255 214 120 / 18%);
+  --calendar-border-color-1: #ffd678;
+  --calendar-text-color-1: #fff4d6;
+  --calendar-bg-color-2: rgb(130 230 255 / 16%);
+  --calendar-border-color-2: #82e6ff;
+  --calendar-text-color-2: #e6fbff;
+  --calendar-bg-color-3: rgb(255 150 130 / 18%);
+  --calendar-border-color-3: #ff9682;
+  --calendar-text-color-3: #ffe9e4;
+  --calendar-bg-color-4: rgb(150 255 190 / 15%);
+  --calendar-border-color-4: #96ffbe;
+  --calendar-text-color-4: #e6fff0;
+  --calendar-bg-color-5: rgb(210 180 255 / 17%);
+  --calendar-border-color-5: #d2b4ff;
+  --calendar-text-color-5: #f3ebff;
+  --calendar-bg-color-6: rgb(255 190 110 / 17%);
+  --calendar-border-color-6: #ffbe6e;
+  --calendar-text-color-6: #fff0dc;
+  --calendar-sb-track-color-0: transparent;
+  --calendar-sb-thumb-color-0: rgb(255 255 255 / 45%);
+  --calendar-sb-track-color-1: transparent;
+  --calendar-sb-thumb-color-1: rgb(255 255 255 / 45%);
+  --calendar-sb-track-color-2: transparent;
+  --calendar-sb-thumb-color-2: rgb(255 255 255 / 45%);
+  --calendar-sb-track-color-3: transparent;
+  --calendar-sb-thumb-color-3: rgb(255 255 255 / 45%);
+  --calendar-sb-track-color-4: transparent;
+  --calendar-sb-thumb-color-4: rgb(255 255 255 / 45%);
+  --calendar-sb-track-color-5: transparent;
+  --calendar-sb-thumb-color-5: rgb(255 255 255 / 45%);
+  --calendar-sb-track-color-6: transparent;
+  --calendar-sb-thumb-color-6: rgb(255 255 255 / 45%);
+
+  scrollbar-color: var(--sp-brass-flat) #1c120a;
+}
+
+html[data-theme="steampunk"] ::selection {
+  background: #d5ae55;
+  color: #1c120a;
+}
+
+/* The engine room: walnut paneling, a warm lamp overhead, darkness at the edges */
+html[data-theme="steampunk"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 12%, rgb(255 190 110 / 16%), rgb(255 190 110 / 0%) 70%),
+    radial-gradient(ellipse 90% 85% at 50% 45%, rgb(0 0 0 / 0%) 50%, rgb(0 0 0 / 62%) 100%),
+    url("../../images/steampunk/walnut.jpg") 0 0 / 512px 512px,
+    #2a1a0f;
+}
+
+html[data-theme="steampunk"] body {
+  font-size: 1.1rem;
+}
+
+html[data-theme="steampunk"] h2,
+html[data-theme="steampunk"] h3,
+html[data-theme="steampunk"] h4 {
+  font-family: var(--sp-caps);
+  font-weight: 700;
+}
+
+:where([data-theme="steampunk"]) a {
+  color: #8f4a1d;
+}
+
+/* ---------- Navbar: riveted copper with a brass steam pipe along its edge ---------- */
+html[data-theme="steampunk"] .navbar.bg-light {
+  margin-bottom: 18px;
+  padding: 0.75rem 1.25rem 0.9rem;
+  background:
+    var(--sp-rivet) 0 4px / 26px 9px repeat-x,
+    var(--sp-rivet) 13px calc(100% - 5px) / 26px 9px repeat-x,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 5%) 0 1px, rgb(0 0 0 / 5%) 1px 3px),
+    radial-gradient(ellipse 50% 140% at 30% 0%, rgb(255 210 160 / 22%), rgb(255 210 160 / 0%) 70%),
+    var(--sp-copper) !important;
+  box-shadow:
+    inset 0 2px 0 rgb(255 220 180 / 40%),
+    inset 0 -2px 0 rgb(0 0 0 / 35%),
+    0 6px 16px rgb(0 0 0 / 55%);
+}
+
+/* The pipe: a brass cylinder with flanged joints, running under the copper plate */
+html[data-theme="steampunk"] .navbar.bg-light::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--sp-pipe);
+  box-shadow: 0 5px 10px rgb(0 0 0 / 50%);
+  pointer-events: none;
+}
+
+html[data-theme="steampunk"] .navbar-brand {
+  padding: 0;
+}
+
+html[data-theme="steampunk"] .navbar-brand img {
+  height: 36px !important;
+}
+
+/* Nav links: brass nameplates with two screws and an indicator lamp that lights on the current page */
+html[data-theme="steampunk"] .navbar-nav .nav-link {
+  --sp-lamp: radial-gradient(circle at 40% 35%, #c86a5a 0 1px, #6b1a12 3px, #2b0806 5px, rgb(0 0 0 / 0%) 5.6px);
+
+  margin: 3px 4px;
+  padding: 0.32rem 0.95rem 0.36rem 2rem !important;
+  border-radius: 3px;
+  background:
+    var(--sp-rivet) 4px 50% / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 4px) 50% / 9px 9px no-repeat,
+    var(--sp-lamp) 15px 50% / 12px 12px no-repeat,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 8%) 0 1px, rgb(0 0 0 / 6%) 1px 2px),
+    var(--sp-brass);
+  box-shadow:
+    inset 0 1px 0 rgb(255 248 220 / 75%),
+    inset 0 -1px 0 rgb(0 0 0 / 40%),
+    0 0 0 1px #4a3008,
+    0 3px 5px rgb(0 0 0 / 50%);
+  color: #2b1a08;
+  font-family: var(--sp-caps);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 0 rgb(255 240 200 / 70%);
+  white-space: nowrap;
+}
+
+html[data-theme="steampunk"] .navbar-nav .nav-text {
+  font-size: 0.95rem;
+}
+
+/* From 1200px to 1440px the bar is tight: slimmer nameplates leave the search box room */
+@media (min-width: 1200px) and (max-width: 1439.98px) {
+  html[data-theme="steampunk"] .navbar-nav .nav-link {
+    margin: 3px 2px;
+    padding: 0.32rem 0.6rem 0.36rem 1.75rem !important;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+  }
+
+  html[data-theme="steampunk"] .navbar-nav .nav-text {
+    font-size: 0.85rem;
+  }
+
+  html[data-theme="steampunk"] .navbar-search {
+    min-width: 150px;
+  }
+}
+
+html[data-theme="steampunk"] .navbar-nav .nav-link:hover,
+html[data-theme="steampunk"] .navbar-nav .nav-link:focus-visible,
+html[data-theme="steampunk"] .navbar-nav .nav-link.active,
+html[data-theme="steampunk"] .navbar-nav .show > .nav-link {
+  --sp-lamp:
+    radial-gradient(
+      circle at 40% 35%,
+      #fffbe0 0 1px,
+      #ffd27a 2.2px,
+      #ff9a1f 4px,
+      rgb(255 140 20 / 45%) 6px,
+      rgb(255 140 20 / 0%) 8px
+    );
+
+  color: #000;
+}
+
+html[data-theme="steampunk"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="steampunk"] .navbar-light .navbar-toggler {
+  border: 0;
+  border-radius: 3px;
+  background: var(--sp-brass);
+  box-shadow: 0 0 0 1px #4a3008, 0 3px 5px rgb(0 0 0 / 50%);
+}
+
+html[data-theme="steampunk"] #search-bar {
+  border: 3px solid transparent;
+  border-radius: 4px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%236b4a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") 12px 50% / 18px no-repeat padding-box,
+    linear-gradient(#f6ebcf, #efe1bd) padding-box,
+    var(--sp-brass) border-box;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 25%), 0 2px 4px rgb(0 0 0 / 45%);
+  color: var(--sp-ink);
+  font-family: var(--sp-type);
+  font-size: 0.98rem;
+}
+
+html[data-theme="steampunk"] #search-bar::placeholder {
+  color: #8a6d48;
+}
+
+html[data-theme="steampunk"] #search-bar:focus {
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 25%), 0 0 0 3px rgb(255 179 71 / 55%);
+}
+
+/* Menus: a parchment tag */
+html[data-theme="steampunk"] .dropdown-menu {
+  padding: 5px;
+  border: 3px solid;
+  border-image: var(--sp-brass) 1;
+  border-radius: 0;
+  background: var(--sp-parchment);
+  background-clip: padding-box;
+  box-shadow: 0 0 0 1px #2b1a08, 0 10px 26px rgb(0 0 0 / 60%);
+  font-family: var(--sp-text);
+}
+
+html[data-theme="steampunk"] .dropdown-item {
+  color: var(--sp-ink);
+  font-size: 1.05rem;
+}
+
+html[data-theme="steampunk"] .dropdown-item:hover,
+html[data-theme="steampunk"] .dropdown-item:focus {
+  background: rgb(143 74 29 / 85%);
+  color: #fff4dc;
+}
+
+html[data-theme="steampunk"] .dropdown-divider {
+  border-top: 1px dashed #b09060;
+}
+
+/* ---------- The data notice: an enamel railway sign ---------- */
+html[data-theme="steampunk"] .unofficial-schedule-warning {
+  margin: 0.25rem 0 0;
+  padding: 0.9rem 2.6rem 1rem;
+  border: 0;
+  border-radius: 10px;
+  background:
+    var(--sp-rivet) 9px 9px / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 9px) 9px / 9px 9px no-repeat,
+    var(--sp-rivet) 9px calc(100% - 9px) / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 9px) calc(100% - 9px) / 9px 9px no-repeat,
+    radial-gradient(ellipse 90% 140% at 50% 0%, rgb(255 255 255 / 35%), rgb(255 255 255 / 0%) 60%),
+    #f4ead2;
+  box-shadow:
+    inset 0 0 0 5px #f4ead2,
+    inset 0 0 0 9px #8b1a1a,
+    inset 0 0 0 10px #f4ead2,
+    0 6px 16px rgb(0 0 0 / 60%);
+  color: #1f1410;
+  font-family: var(--sp-text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+html[data-theme="steampunk"] .unofficial-schedule-warning::before {
+  content: "\2014  Notice to Passengers  \2014";
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #8b1a1a;
+  font-family: var(--sp-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+html[data-theme="steampunk"] .unofficial-schedule-warning > span {
+  color: #8b1a1a;
+}
+
+/* ---------- Page titles: a ship's plaque with a gear on each side ---------- */
+html[data-theme="steampunk"] h1 {
+  --sp-gear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cpath fill='%23d5ae55' stroke='%233b2412' stroke-width='.8' fill-rule='evenodd' d='M-1.7-11.2h3.4l.7 2.6 2.1.9 2.4-1.3 2.4 2.4-1.3 2.4.9 2.1 2.6.7v3.4l-2.6.7-.9 2.1 1.3 2.4-2.4 2.4-2.4-1.3-2.1.9-.7 2.6h-3.4l-.7-2.6-2.1-.9-2.4 1.3-2.4-2.4 1.3-2.4-.9-2.1-2.6-.7v-3.4l2.6-.7.9-2.1-1.3-2.4 2.4-2.4 2.4 1.3 2.1-.9zM0-3.6A3.6 3.6 0 1 0 0 3.6 3.6 3.6 0 1 0 0-3.6z'/%3E%3C/svg%3E");
+
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.4rem auto 1.7rem;
+  padding: 0.45em 1.6em 0.5em;
+  border-radius: 6px;
+  background:
+    var(--sp-rivet) 10px 50% / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 10px) 50% / 9px 9px no-repeat,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 7%) 0 1px, rgb(0 0 0 / 5%) 1px 3px),
+    var(--sp-brass);
+  box-shadow:
+    inset 0 2px 0 rgb(255 248 220 / 70%),
+    inset 0 -2px 0 rgb(0 0 0 / 35%),
+    inset 0 0 0 4px rgb(0 0 0 / 0%),
+    inset 0 0 0 5px rgb(75 48 8 / 55%),
+    0 0 0 2px #3b2412,
+    0 8px 18px rgb(0 0 0 / 55%);
+  color: #2b1a08;
+  font-family: var(--sp-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-shadow: 0 1px 0 rgb(255 240 200 / 75%), 0 -1px 0 rgb(0 0 0 / 25%);
+}
+
+html[data-theme="steampunk"] h1::before,
+html[data-theme="steampunk"] h1::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 46px;
+  height: 46px;
+  margin-top: -23px;
+  background: var(--sp-gear) center / contain no-repeat;
+  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 60%));
+}
+
+html[data-theme="steampunk"] h1::before {
+  right: calc(100% + 10px);
+}
+
+html[data-theme="steampunk"] h1::after {
+  left: calc(100% + 10px);
+}
+
+/* ---------- Panels: parchment in riveted brass frames ---------- */
+
+/* Framed things: a brass border-image around parchment, with rivets on an overlay */
+html[data-theme="steampunk"] .card,
+html[data-theme="steampunk"] .jumbotron,
+html[data-theme="steampunk"] .modal-content {
+  position: relative;
+  border: 7px solid;
+  border-image: var(--sp-brass) 1;
+  border-radius: 0;
+  background: var(--sp-parchment);
+  background-clip: padding-box;
+  box-shadow:
+    0 0 0 1px #2b1a08,
+    0 8px 18px rgb(0 0 0 / 60%);
+}
+
+html[data-theme="steampunk"] .card::before,
+html[data-theme="steampunk"] .modal-content::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  z-index: 3;
+  background: var(--sp-frame-rivets);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 248 220 / 35%),
+    inset 0 0 0 7px rgb(0 0 0 / 0%),
+    inset 0 0 0 8px rgb(75 48 8 / 55%);
+  pointer-events: none;
+}
+
+html[data-theme="steampunk"] .card-header {
+  border: 0;
+  border-radius: 0 !important;
+}
+
+html[data-theme="steampunk"] .card-body {
+  background: transparent;
+}
+
+/* School panels: a brass label plate for the name, departments with gear bullets */
+html[data-theme="steampunk"] .department-cards .card {
+  margin-bottom: 1.4rem;
+}
+
+html[data-theme="steampunk"] .department-cards .card-header {
+  padding: 0.5rem 0.9rem 0.55rem !important;
+  border-bottom: 2px solid #4a3008;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 7%) 0 1px, rgb(0 0 0 / 5%) 1px 3px),
+    var(--sp-brass);
+  color: #2b1a08;
+  font-family: var(--sp-caps);
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  text-align: center;
+  text-shadow: 0 1px 0 rgb(255 240 200 / 70%);
+}
+
+html[data-theme="steampunk"] .department-cards .card-body {
+  padding: 0.6rem 0.8rem 0.8rem;
+}
+
+html[data-theme="steampunk"] .department-cards .department-link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.18rem 0.4rem !important;
+  border-radius: 3px;
+  color: var(--sp-ink) !important;
+  font-size: 1.08rem !important;
+  line-height: 1.3;
+}
+
+html[data-theme="steampunk"] .department-cards .department-link::before {
+  content: "";
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  align-self: center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cpath fill='%23a5782a' stroke='%233b2412' stroke-width='1' fill-rule='evenodd' d='M-1.7-11.2h3.4l.7 2.6 2.1.9 2.4-1.3 2.4 2.4-1.3 2.4.9 2.1 2.6.7v3.4l-2.6.7-.9 2.1 1.3 2.4-2.4 2.4-2.4-1.3-2.1.9-.7 2.6h-3.4l-.7-2.6-2.1-.9-2.4 1.3-2.4-2.4 1.3-2.4-.9-2.1-2.6-.7v-3.4l2.6-.7.9-2.1-1.3-2.4 2.4-2.4 2.4 1.3 2.1-.9zM0-3.6A3.6 3.6 0 1 0 0 3.6 3.6 3.6 0 1 0 0-3.6z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+html[data-theme="steampunk"] .department-cards .department-link:hover,
+html[data-theme="steampunk"] .department-cards .department-link:focus-visible {
+  background: rgb(143 74 29 / 14%);
+  color: #000 !important;
+}
+
+html[data-theme="steampunk"] .department-code {
+  flex: none;
+  min-width: 3.6em;
+  color: #8f4a1d;
+  font-family: var(--sp-type) !important;
+  font-size: 1rem !important;
+  font-weight: 400;
+}
+
+/* Course panels */
+html[data-theme="steampunk"] .course-card {
+  margin-bottom: 1.15rem;
+}
+
+html[data-theme="steampunk"] .course-card-header {
+  padding: 0.75rem 1rem 0.85rem;
+  border-radius: 0 !important;
+  color: var(--sp-ink-soft) !important;
+  line-height: 1.45;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="steampunk"] .course-card-header.header_expanded {
+  border-bottom: 2px solid rgb(107 74 20 / 45%);
+}
+
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="steampunk"] .course-card-header .course-code {
+  margin: 0 0.15rem 0 0.2rem;
+  color: #8f4a1d;
+  font-family: var(--sp-type);
+  font-size: 1.3rem;
+}
+
+html[data-theme="steampunk"] .course-card-header .font-weight-bold {
+  color: var(--sp-ink);
+  font-family: var(--sp-caps);
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="steampunk"] .course-card .open_close_icon {
+  color: #8f4a1d;
+}
+
+html[data-theme="steampunk"] .prerequisiteError {
+  border: 1px solid rgb(59 36 18 / 50%);
+  border-radius: 3px;
+  font-family: var(--sp-type);
+  font-size: 0.82em;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Section tables: ruled ledger paper ---------- */
+html[data-theme="steampunk"] .table {
+  margin-bottom: 0;
+}
+
+html[data-theme="steampunk"] .table-bordered,
+html[data-theme="steampunk"] .table-bordered td,
+html[data-theme="steampunk"] .table-bordered th {
+  border-color: #c9b07c;
+}
+
+html[data-theme="steampunk"] .table thead th {
+  border-bottom: 2px solid #8f6420;
+  background: rgb(213 174 85 / 35%);
+  color: #3b2412;
+  font-family: var(--sp-caps);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+html[data-theme="steampunk"] .table tbody tr.selected {
+  box-shadow: inset 4px 0 0 var(--sp-verdigris);
+}
+
+html[data-theme="steampunk"] .table tbody tr.selected .font-weight-bold {
+  color: #2e6b4f;
+}
+
+html[data-theme="steampunk"] .info-icon {
+  color: #8f4a1d;
+}
+
+html[data-theme="steampunk"] .time-cell {
+  font-family: var(--sp-type);
+}
+
+html[data-theme="steampunk"] .current-schedule-badge {
+  border-color: #2e6b4f !important;
+  border-radius: 3px !important;
+  color: #2e6b4f;
+  font-family: var(--sp-type);
+}
+
+/* ---------- Buttons: brass push plates ---------- */
+html[data-theme="steampunk"] .btn {
+  --sp-btn: var(--sp-brass);
+
+  position: relative;
+  padding: 0.38rem 1.5rem 0.42rem;
+  border: 0;
+  border-radius: 3px;
+  background:
+    var(--sp-rivet) 5px 50% / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 5px) 50% / 9px 9px no-repeat,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 8%) 0 1px, rgb(0 0 0 / 6%) 1px 2px),
+    var(--sp-btn);
+  box-shadow:
+    inset 0 1px 0 rgb(255 248 220 / 75%),
+    inset 0 -1px 0 rgb(0 0 0 / 40%),
+    0 0 0 1px #3b2412,
+    0 3px 0 #3b2412,
+    0 6px 10px rgb(0 0 0 / 50%);
+  color: #2b1a08;
+  font-family: var(--sp-caps);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 0 rgb(255 240 200 / 65%);
+}
+
+html[data-theme="steampunk"] .btn-primary {
+  --sp-btn: var(--sp-copper);
+
+  color: #2b1004;
+  text-shadow: 0 1px 0 rgb(255 220 190 / 55%);
+}
+
+html[data-theme="steampunk"] .btn-outline-danger,
+html[data-theme="steampunk"] .btn-danger {
+  --sp-btn: linear-gradient(180deg, #d06a5a 0%, #9b2a1f 45%, #6b1610 70%, #a33a2c 100%);
+
+  color: #fff0e0;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 55%);
+}
+
+html[data-theme="steampunk"] .btn:hover,
+html[data-theme="steampunk"] .btn:focus {
+  border: 0;
+  background:
+    var(--sp-rivet) 5px 50% / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 5px) 50% / 9px 9px no-repeat,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 8%) 0 1px, rgb(0 0 0 / 6%) 1px 2px),
+    var(--sp-btn);
+  color: #000;
+  filter: brightness(110%);
+}
+
+html[data-theme="steampunk"] .btn-outline-danger:hover,
+html[data-theme="steampunk"] .btn-outline-danger:focus {
+  color: #fff;
+}
+
+html[data-theme="steampunk"] .btn:disabled,
+html[data-theme="steampunk"] .btn.disabled {
+  filter: grayscale(55%);
+  opacity: 70%;
+}
+
+html[data-theme="steampunk"] .btn:not(:disabled):not(.disabled):active {
+  background:
+    var(--sp-rivet) 5px 50% / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 5px) 50% / 9px 9px no-repeat,
+    var(--sp-btn);
+  box-shadow:
+    inset 0 2px 4px rgb(0 0 0 / 45%),
+    0 0 0 1px #3b2412,
+    0 0 0 #3b2412,
+    0 2px 4px rgb(0 0 0 / 50%);
+  transform: translateY(3px);
+}
+
+/* Fields: parchment in brass */
+html[data-theme="steampunk"] .form-control,
+html[data-theme="steampunk"] .custom-select {
+  border: 3px solid transparent;
+  border-radius: 4px;
+  background-color: transparent;
+  background-image: linear-gradient(#f6ebcf, #efe1bd), var(--sp-brass);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 20%);
+  color: var(--sp-ink);
+  font-family: var(--sp-type);
+}
+
+html[data-theme="steampunk"] .custom-select {
+  padding-right: 2.4rem;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5' fill='none' stroke='%236b4a14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+    linear-gradient(#f6ebcf, #efe1bd),
+    var(--sp-brass);
+  background-position: right 0.9rem center, 0 0, 0 0;
+  background-repeat: no-repeat;
+  background-size: 12px 8px, auto, auto;
+  background-clip: padding-box, padding-box, border-box;
+}
+
+html[data-theme="steampunk"] .form-control:focus,
+html[data-theme="steampunk"] .custom-select:focus {
+  border-color: transparent;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 20%), 0 0 0 3px rgb(255 179 71 / 55%);
+  color: var(--sp-ink);
+}
+
+/* Switches: an iron slot with a brass ball; on, the slot glows like a lamp */
+html[data-theme="steampunk"] .custom-switch .custom-control-label::before {
+  border: 1px solid #1c120a;
+  background: var(--sp-iron);
+  box-shadow: inset 0 2px 3px rgb(0 0 0 / 60%);
+}
+
+html[data-theme="steampunk"] .custom-switch .custom-control-label::after {
+  background: radial-gradient(circle at 38% 32%, #fff4c8, #d5ae55 45%, #6b4a14);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+}
+
+html[data-theme="steampunk"] .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #8f4a1d;
+  background: radial-gradient(ellipse at 50% 50%, #ffd27a, #ff9a1f 60%, #b85a10);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 45%), 0 0 10px rgb(255 154 31 / 60%);
+}
+
+html[data-theme="steampunk"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background: radial-gradient(circle at 38% 32%, #fff4c8, #d5ae55 45%, #6b4a14);
+}
+
+/* ---------- Prerequisites: a parchment letter with a wax seal ---------- */
+html[data-theme="steampunk"] .jumbotron {
+  background: var(--sp-parchment) !important;
+  background-clip: padding-box !important;
+  color: var(--sp-ink);
+}
+
+html[data-theme="steampunk"] .jumbotron::after {
+  content: "Q";
+  position: absolute;
+  right: 1.6rem;
+  bottom: 1.2rem;
+  display: grid;
+  place-items: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 46% 54% 51% 49% / 52% 47% 53% 48%;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0%) 52%, rgb(0 0 0 / 18%) 56%, rgb(0 0 0 / 0%) 60%),
+    radial-gradient(circle at 35% 30%, #d2463a, #9b1f1a 55%, #5e0d0a);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 45%), inset 0 -3px 6px rgb(0 0 0 / 35%);
+  color: #7a1612;
+  font-family: var(--sp-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgb(255 160 140 / 45%), 0 -1px 1px rgb(0 0 0 / 55%);
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+html[data-theme="steampunk"] .jumbotron .lead {
+  color: var(--sp-ink-soft);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ---------- Schedule: a nixie counter, and the calendar is a blueprint ---------- */
+html[data-theme="steampunk"] .schedule-select {
+  width: fit-content;
+  margin: 0.4rem auto 0.8rem;
+  padding: 0.5rem 0.75rem !important;
+  border: 6px solid transparent;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0%) 0 14px,
+      rgb(255 255 255 / 6%) 14px 16px,
+      rgb(255 255 255 / 0%) 16px 22px
+    ) padding-box,
+    radial-gradient(ellipse at 50% 120%, #2a140a, #0d0805 70%) padding-box,
+    var(--sp-brass) border-box;
+  box-shadow: 0 0 0 1px #2b1a08, 0 8px 18px rgb(0 0 0 / 60%), inset 0 0 14px rgb(0 0 0 / 85%);
+}
+
+html[data-theme="steampunk"] .schedule-num {
+  color: #ff9a3c;
+  font-family: var(--sp-nixie);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 0 4px #ff7a1a,
+    0 0 10px rgb(255 110 20 / 80%),
+    0 0 22px rgb(255 90 0 / 45%);
+}
+
+/* Brass knobs with knurled edges */
+html[data-theme="steampunk"] .schedule-select-button {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.6rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 35%, #fff4c8 0 8%, #d5ae55 34%, #8f6420 62%, rgb(0 0 0 / 0%) 64%),
+    repeating-conic-gradient(#6b4a14 0 6deg, #d5ae55 6deg 12deg);
+  box-shadow: 0 0 0 2px #2b1a08, 0 3px 6px rgb(0 0 0 / 60%);
+  color: #2b1a08;
+  font-size: 1rem !important;
+}
+
+html[data-theme="steampunk"] .schedule-select-button:hover {
+  transform: rotate(30deg);
+}
+
+html[data-theme="steampunk"] .calendar {
+  padding: 0.5rem 0.2rem;
+  border: 7px solid transparent;
+  border-radius: 6px;
+  background:
+    linear-gradient(rgb(255 255 255 / 7%) 1px, rgb(0 0 0 / 0%) 1px) 0 0 / 18px 18px padding-box,
+    linear-gradient(90deg, rgb(255 255 255 / 7%) 1px, rgb(0 0 0 / 0%) 1px) 0 0 / 18px 18px padding-box,
+    radial-gradient(ellipse at 50% 40%, #2d64ad, #1a3f75 75%, #142f58) padding-box,
+    var(--sp-brass) border-box;
+  box-shadow: 0 0 0 1px #2b1a08, 0 10px 24px rgb(0 0 0 / 60%);
+}
+
+html[data-theme="steampunk"] .calendar .day-label,
+html[data-theme="steampunk"] .calendar .hour-label {
+  font-family: var(--sp-type);
+}
+
+html[data-theme="steampunk"] .calendar-event {
+  border: 1.5px solid !important;
+  border-left-width: 4px !important;
+  border-radius: 2px;
+}
+
+html[data-theme="steampunk"] .calendar-event .event-text {
+  font-family: var(--sp-type);
+  font-weight: 400;
+}
+
+html[data-theme="steampunk"] .crn-list,
+html[data-theme="steampunk"] .credits {
+  color: #f1e4c4;
+  font-family: var(--sp-type);
+}
+
+html[data-theme="steampunk"] .b-overlay .bg-light {
+  background: var(--sp-parchment) !important;
+}
+
+html[data-theme="steampunk"] .b-overlay h3,
+html[data-theme="steampunk"] .b-overlay h4 {
+  color: var(--sp-ink);
+}
+
+/* ---------- Dialogs: brass-framed parchment, closed with a valve wheel ---------- */
+html[data-theme="steampunk"] .modal-content {
+  box-shadow: 0 0 0 1px #2b1a08, 0 24px 60px rgb(0 0 0 / 70%);
+}
+
+html[data-theme="steampunk"] .modal-header {
+  align-items: center;
+  border-bottom: 2px solid #4a3008;
+  border-radius: 0;
+  background:
+    var(--sp-rivet) 0 3px / 22px 9px repeat-x,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 5%) 0 1px, rgb(0 0 0 / 5%) 1px 3px),
+    var(--sp-copper);
+}
+
+html[data-theme="steampunk"] .modal-title {
+  color: #2b1004;
+  font-family: var(--sp-caps);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 0 rgb(255 220 190 / 55%);
+}
+
+html[data-theme="steampunk"] .modal-header .close {
+  width: 2.4rem;
+  height: 2.4rem;
+  margin: -0.25rem -0.25rem -0.25rem auto;
+  padding: 0;
+  overflow: hidden;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -20 40 40'%3E%3Cdefs%3E%3CradialGradient id='b' cx='.38' cy='.32' r='.8'%3E%3Cstop offset='0' stop-color='%23ff9a8a'/%3E%3Cstop offset='.5' stop-color='%23b8261a'/%3E%3Cstop offset='1' stop-color='%23560c06'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg fill='none' stroke='%232b0806' stroke-width='6.4'%3E%3Ccircle r='15.5'/%3E%3Cpath d='M0-15V15M-15 0H15M-10.6-10.6l21.2 21.2M10.6-10.6l-21.2 21.2'/%3E%3C/g%3E%3Cg fill='none' stroke='url(%23b)' stroke-width='4.2'%3E%3Ccircle r='15.5'/%3E%3Cpath d='M0-15V15M-15 0H15M-10.6-10.6l21.2 21.2M10.6-10.6l-21.2 21.2' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle r='5.2' fill='%23d5ae55' stroke='%232b0806' stroke-width='1.2'/%3E%3Ccircle r='1.8' fill='%236b4a14'/%3E%3C/svg%3E") center / contain no-repeat;
+  color: transparent;
+  opacity: 100%;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 55%));
+}
+
+html[data-theme="steampunk"] .modal-header .close:hover,
+html[data-theme="steampunk"] .modal-header .close:focus {
+  color: transparent;
+  transform: rotate(-60deg);
+}
+
+html[data-theme="steampunk"] .modal-footer {
+  border-top: 1px dashed #b09060;
+}
+
+html[data-theme="steampunk"] .modal-backdrop.show {
+  opacity: 65%;
+}
+
+/* Tooltips: a leather tag with a brass edge */
+html[data-theme="steampunk"] .tooltip-inner {
+  border: 2px solid #c9a24a;
+  border-radius: 4px;
+  background: #3a2213;
+  color: #f5df98;
+  font-family: var(--sp-type);
+}
+
+html[data-theme="steampunk"] .tooltip .arrow {
+  display: none;
+}
+
+html[data-theme="steampunk"] #crn-copy-indicator {
+  border: 3px solid #c9a24a;
+  border-radius: 4px;
+  font-family: var(--sp-type);
+}
+
+/* ---------- Footer: a riveted iron plate, with the links in portholes ---------- */
+html[data-theme="steampunk"] .footer {
+  position: relative;
+  margin-top: 2.5rem;
+  padding-top: 2.4rem;
+  background:
+    var(--sp-rivet) 0 22px / 26px 9px repeat-x,
+    var(--sp-rivet) 13px calc(100% - 8px) / 26px 9px repeat-x,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 3%) 0 1px, rgb(0 0 0 / 5%) 1px 3px),
+    var(--sp-iron);
+  box-shadow: inset 0 3px 6px rgb(0 0 0 / 60%);
+}
+
+/* The pipe along the top of the plate */
+html[data-theme="steampunk"] .footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--sp-pipe);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 55%);
+}
+
+html[data-theme="steampunk"] .footer-links {
+  gap: 1.5rem;
+}
+
+html[data-theme="steampunk"] .footer-updated a {
+  color: #f0c36a !important;
+}
+
+html[data-theme="steampunk"] .footer-links > a {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  padding: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 30%, rgb(255 255 255 / 40%) 0 10%, rgb(255 255 255 / 0%) 26%),
+    radial-gradient(circle, #16242b 0 54%, rgb(0 0 0 / 0%) 55%),
+    radial-gradient(circle, rgb(0 0 0 / 0%) 0 54%, #3b2412 55% 57%, rgb(0 0 0 / 0%) 58%),
+    var(--sp-rivet) 50% 4px / 9px 9px no-repeat,
+    var(--sp-rivet) 50% calc(100% - 4px) / 9px 9px no-repeat,
+    var(--sp-rivet) 4px 50% / 9px 9px no-repeat,
+    var(--sp-rivet) calc(100% - 4px) 50% / 9px 9px no-repeat,
+    radial-gradient(circle at 40% 35%, #f5df98, #c9a24a 45%, #7a5414);
+  box-shadow: 0 0 0 1px #1c120a, 0 4px 8px rgb(0 0 0 / 60%);
+  color: #d5ae55;
+  font-size: 1.5rem;
+}
+
+html[data-theme="steampunk"] .footer-links > a:hover {
+  color: var(--sp-amber);
+  filter: drop-shadow(0 0 8px rgb(255 179 71 / 70%));
+}
+
+html[data-theme="steampunk"] #footer-logo {
+  filter: sepia(100%) saturate(250%) brightness(80%) hue-rotate(-12deg);
+}
+
+html[data-theme="steampunk"] .footer-updated,
+html[data-theme="steampunk"] .footer-copyright {
+  color: #d9c9a2;
+  font-family: var(--sp-type);
+}
+
+html[data-theme="steampunk"] :focus-visible {
+  outline: 3px solid var(--sp-amber);
+  outline-offset: 2px;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="steampunk"] .navbar-collapse {
+    padding: 0.5rem 0 0.3rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="steampunk"] h1 {
+    font-size: 1.45rem;
+  }
+
+  html[data-theme="steampunk"] h1::before,
+  html[data-theme="steampunk"] h1::after {
+    display: none;
+  }
+
+  html[data-theme="steampunk"] .unofficial-schedule-warning {
+    padding: 0.9rem 1.6rem 1rem;
+    font-size: 1.05rem;
+  }
+
+  html[data-theme="steampunk"] .schedule-num {
+    font-size: 1.05rem;
+  }
+
+  html[data-theme="steampunk"] .jumbotron::after {
+    width: 3.4rem;
+    height: 3.4rem;
+    font-size: 1.4rem;
+  }
+}
+
+/* ---------- Motion ---------- */
+@keyframes sp-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sp-turn-back {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme="steampunk"] h1::before {
+    animation: sp-turn 14s linear infinite;
+  }
+
+  html[data-theme="steampunk"] h1::after {
+    animation: sp-turn-back 14s linear infinite;
+  }
+
+  html[data-theme="steampunk"] .department-cards .department-link:hover::before {
+    animation: sp-turn 2.5s linear infinite;
+  }
+
+  html[data-theme="steampunk"] .schedule-select-button,
+  html[data-theme="steampunk"] .modal-header .close {
+    transition: transform 0.4s ease;
+  }
+}

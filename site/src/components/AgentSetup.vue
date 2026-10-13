@@ -189,7 +189,7 @@ export default class AgentSetup extends Vue {
   padding: 0.5rem 0.75rem 0;
   border-radius: 6px 6px 0 0;
   background: rgba(127, 127, 127, 0.12);
-  color: var(--global-text);
+  color: var(--modal-body-text);
   -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent);
   mask-image: linear-gradient(to bottom, black 30%, transparent);
 }
@@ -206,7 +206,7 @@ export default class AgentSetup extends Vue {
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   background: rgba(127, 127, 127, 0.12);
-  color: var(--global-text);
+  color: var(--modal-body-text);
 }
 
 summary {

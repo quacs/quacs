@@ -23,6 +23,7 @@ import "@/assets/styles/themes/artisanal.css";
 import "@/assets/styles/themes/luma.css";
 import "@/assets/styles/themes/wingdings.css";
 import "@/assets/styles/themes/trains.css";
+// The newer themes load their CSS when picked instead (THEME_STYLES in utilities.ts)
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -72,12 +73,19 @@ Vue.component("font-awesome-icon", FontAwesomeIcon);
 import "./registerServiceWorker";
 import router from "@/router";
 import store from "@/store";
-import { setColorTheme } from "@/utilities";
+import { loadThemeStyles, resolveColorTheme, setColorTheme } from "@/utilities";
 import { registerWebMcpTools } from "@/webmcp";
 
 Vue.config.productionTip = false;
 
-new Vue({
+// "random" is resolved once, so the theme whose CSS the page waits for is the one it shows
+const savedColorTheme: string = store.getters["settings/getColorTheme"]();
+const firstColorTheme = resolveColorTheme(savedColorTheme);
+// Started before the router loads the page's own CSS, so the theme's CSS comes first, like the
+// other themes' CSS in the main bundle
+const firstThemeStyles = loadThemeStyles(firstColorTheme);
+
+const app = new Vue({
   router,
   store,
   render: (h) => h(App),
@@ -87,8 +95,20 @@ new Vue({
     this.$store.dispatch("schedule/init");
   },
   mounted() {
-    setColorTheme(this.$store.state.settings.colorTheme);
+    const colorTheme = this.$store.state.settings.colorTheme;
+    setColorTheme(
+      colorTheme,
+      colorTheme === savedColorTheme ? firstColorTheme : undefined
+    );
   },
-}).$mount("#app");
+});
+
+// Mount once the theme's CSS is in, so the page never paints in the wrong theme. Only the newer
+// themes have CSS to wait for.
+firstThemeStyles
+  .catch(() => {
+    // Mount anyway if it can't load (e.g. offline); the page then shows the default theme
+  })
+  .then(() => app.$mount("#app"));
 
 registerWebMcpTools(store);

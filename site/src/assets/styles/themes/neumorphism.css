@@ -1,0 +1,834 @@
+/* Neumorphism (soft UI): everything is cut from one sheet of soft gray clay. Surfaces are the same
+color as the page; shape comes only from a pair of shadows, light from the top left and dark to
+the bottom right. Raised things (cards, buttons, the navbar) cast both shadows outward; wells
+(search, fields, the calendar, pressed and active things) carry them inside. One accent, a soft
+indigo, marks what is selected. The logo is pressed into the clay. Contrast is kept above WCAG AA
+for all text, which plain neumorphism famously is not. */
+[data-theme="neumorphism"] {
+  --nm-bg: #e6e9ef;
+  --nm-light: #fff;
+  --nm-dark: #b8bfcc;
+  --nm-dark-strong: #a3abba;
+  --nm-ink: #2f3747;
+  --nm-ink-soft: #5b6476;
+  --nm-accent: #5a64d8;
+  --nm-accent-soft: #c9cdf6;
+  --nm-red: #c2410c;
+  --nm-raise: 7px 7px 15px var(--nm-dark), -7px -7px 15px var(--nm-light);
+  --nm-raise-sm: 4px 4px 9px var(--nm-dark), -4px -4px 9px var(--nm-light);
+  --nm-raise-lg: 12px 12px 26px var(--nm-dark), -12px -12px 26px var(--nm-light);
+  --nm-well: inset 5px 5px 10px var(--nm-dark), inset -5px -5px 10px var(--nm-light);
+  --nm-well-sm: inset 3px 3px 6px var(--nm-dark), inset -3px -3px 6px var(--nm-light);
+  --nm-font: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* QuACS tokens */
+  --background: var(--nm-bg);
+  --background-image: none;
+  --global-text: var(--nm-ink);
+  --global-text-hover: var(--nm-accent);
+  --raw-link: var(--nm-accent);
+  --text-default: var(--nm-ink);
+  --footer-background: var(--nm-bg);
+  --font-body: var(--nm-font);
+  --font-heading: var(--nm-font);
+  --warning-color: var(--nm-red);
+  --warning-border-width: 0;
+  --card-background: var(--nm-bg);
+  --card-body-background: var(--nm-bg);
+  --card-body-text: var(--nm-ink);
+  --card-header-background: var(--nm-bg);
+  --card-header-text: var(--nm-ink);
+  --card-header-hover: var(--nm-bg);
+  --card-border-color: transparent;
+  --card-border-width: 0;
+  --card-border-radius: 22px;
+  --card-inner-radius: 22px;
+  --card-shadow: var(--nm-raise);
+  --navbar-background: var(--nm-bg);
+  --navbar-unselected-text: var(--nm-ink-soft);
+  --navbar-unselected-text-hover: var(--nm-ink);
+  --navbar-text-focus: var(--nm-ink);
+  --navbar-text-disabled: var(--nm-ink-soft);
+  --navbar-text-active: var(--nm-accent);
+  --navbar-text-show: var(--nm-accent);
+  --modal-header-background: var(--nm-bg);
+  --modal-header-text: var(--nm-ink);
+  --modal-body-background: var(--nm-bg);
+  --modal-body-text: var(--nm-ink);
+  --modal-footer-background: var(--nm-bg);
+  --modal-footer-text: var(--nm-ink);
+  --modal-close-x-hover: var(--nm-ink);
+  --btn-primary-background: var(--nm-bg);
+  --btn-primary-text: var(--nm-accent);
+  --btn-border: 0;
+  --btn-border-radius: 14px;
+  --btn-box-shadow: var(--nm-raise-sm);
+  --btn-transition: box-shadow 0.18s ease, color 0.18s ease;
+  --btn-secondary-background: var(--nm-bg);
+  --btn-secondary-text: var(--nm-ink);
+  --department-link-hover: var(--nm-bg);
+  --select-background: var(--nm-bg);
+  --select-text: var(--nm-ink);
+  --table-text: var(--nm-ink);
+  --table-border: transparent;
+  --course-row-hover: #dfe3ea;
+  --conflict-row: #f1dcd5;
+  --conflict-row-hover: #ecd0c7;
+  --selected-row: var(--nm-bg);
+  --selected-row-hover: var(--nm-bg);
+  --list-group-item-background: var(--nm-bg);
+  --search-bar-background: var(--nm-bg);
+  --search-bar-border: transparent;
+  --overlay-background: var(--nm-bg);
+  --trash-btn: var(--nm-ink-soft);
+  --trash-btn-hover: var(--nm-red);
+  --prerequisite-jumbotron: var(--nm-bg);
+  --prerequisite-text: var(--nm-ink);
+  --prerequisite-warn-icon: #f3d9a4;
+  --prerequisite-error-icon: #f2c1b3;
+  --taken-course: #2f7d4f;
+  --not-taken-course: var(--nm-red);
+  --toast-background: var(--nm-bg);
+  --toast-text: var(--nm-ink);
+  --calendar-grid-color: #d3d8e1;
+  --calendar-label: var(--nm-ink-soft);
+
+  /* Calendar: tinted clay, each course a raised tile in a soft hue */
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #dfe2fa;
+  --calendar-border-color-0: #5a64d8;
+  --calendar-text-color-0: #262d6b;
+  --calendar-bg-color-1: #d9f0e4;
+  --calendar-border-color-1: #2f9e66;
+  --calendar-text-color-1: #17462e;
+  --calendar-bg-color-2: #fbe4d6;
+  --calendar-border-color-2: #e07b39;
+  --calendar-text-color-2: #6b3410;
+  --calendar-bg-color-3: #f7dbe6;
+  --calendar-border-color-3: #cf4f86;
+  --calendar-text-color-3: #63213d;
+  --calendar-bg-color-4: #d9edf5;
+  --calendar-border-color-4: #2b8fb8;
+  --calendar-text-color-4: #134257;
+  --calendar-bg-color-5: #f4efd2;
+  --calendar-border-color-5: #b59a1e;
+  --calendar-text-color-5: #554709;
+  --calendar-bg-color-6: #e8def7;
+  --calendar-border-color-6: #8a5cd6;
+  --calendar-text-color-6: #3d2369;
+  --calendar-sb-track-color-0: transparent;
+  --calendar-sb-thumb-color-0: rgb(0 0 0 / 18%);
+  --calendar-sb-track-color-1: transparent;
+  --calendar-sb-thumb-color-1: rgb(0 0 0 / 18%);
+  --calendar-sb-track-color-2: transparent;
+  --calendar-sb-thumb-color-2: rgb(0 0 0 / 18%);
+  --calendar-sb-track-color-3: transparent;
+  --calendar-sb-thumb-color-3: rgb(0 0 0 / 18%);
+  --calendar-sb-track-color-4: transparent;
+  --calendar-sb-thumb-color-4: rgb(0 0 0 / 18%);
+  --calendar-sb-track-color-5: transparent;
+  --calendar-sb-thumb-color-5: rgb(0 0 0 / 18%);
+  --calendar-sb-track-color-6: transparent;
+  --calendar-sb-thumb-color-6: rgb(0 0 0 / 18%);
+
+  scrollbar-color: var(--nm-dark) var(--nm-bg);
+}
+
+html[data-theme="neumorphism"] ::selection {
+  background: var(--nm-accent-soft);
+  color: var(--nm-ink);
+}
+
+html[data-theme="neumorphism"] body {
+  font-size: 1.02rem;
+  letter-spacing: 0.005em;
+}
+
+html[data-theme="neumorphism"] h1,
+html[data-theme="neumorphism"] h2,
+html[data-theme="neumorphism"] h3,
+html[data-theme="neumorphism"] h4 {
+  color: var(--nm-ink);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Page titles are embossed into the clay */
+html[data-theme="neumorphism"] h1 {
+  margin: 0.6rem 0 1.6rem;
+  color: var(--nm-bg);
+  font-size: 2.6rem;
+  text-align: center;
+  text-shadow:
+    -2px -2px 3px var(--nm-light),
+    3px 3px 5px var(--nm-dark-strong);
+}
+
+:where([data-theme="neumorphism"]) a {
+  color: var(--nm-accent);
+}
+
+/* ---------- Navbar: a raised slab with the links as soft keys ---------- */
+html[data-theme="neumorphism"] .navbar.bg-light {
+  position: sticky;
+  top: 12px;
+  z-index: 1030;
+  width: calc(100% - 40px);
+  max-width: 1360px;
+  margin: 14px auto 6px;
+  padding: 10px 14px 10px 22px;
+  border-radius: 26px;
+  box-shadow: var(--nm-raise);
+}
+
+/* The logo is pressed into the slab: it takes the background color with a debossed shadow */
+html[data-theme="neumorphism"] .navbar-brand {
+  padding: 0;
+}
+
+/* Raised in the clay: the letters keep the duck's amber, softened toward the clay, with the theme's
+light and dark shadows. A colorless version read as washed out. */
+html[data-theme="neumorphism"] .navbar-brand img {
+  filter: saturate(70%) brightness(108%) drop-shadow(-2px -2px 2px #fff) drop-shadow(2px 2px 3px #a3abba);
+}
+
+html[data-theme="neumorphism"] .navbar-nav .nav-link {
+  margin: 4px 5px;
+  padding: 0.5rem 1rem !important;
+  border-radius: 14px;
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-ink-soft);
+  font-size: 0.98rem;
+  font-weight: 700;
+  transition: box-shadow 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+}
+
+html[data-theme="neumorphism"] .navbar-nav .nav-text {
+  font-size: 0.98rem;
+}
+
+html[data-theme="neumorphism"] .navbar-nav .nav-link:hover,
+html[data-theme="neumorphism"] .navbar-nav .nav-link:focus-visible {
+  color: var(--nm-ink);
+  box-shadow: 6px 6px 12px var(--nm-dark), -6px -6px 12px var(--nm-light);
+}
+
+html[data-theme="neumorphism"] .navbar-nav .nav-link:active,
+html[data-theme="neumorphism"] .navbar-nav .nav-link.active,
+html[data-theme="neumorphism"] .navbar-nav .show > .nav-link {
+  box-shadow: var(--nm-well-sm);
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="neumorphism"] .navbar-light .navbar-toggler {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: var(--nm-raise-sm);
+}
+
+html[data-theme="neumorphism"] .navbar-light .navbar-toggler[aria-expanded="true"] {
+  box-shadow: var(--nm-well-sm);
+}
+
+/* Search: a well */
+html[data-theme="neumorphism"] #search-bar {
+  border: 0;
+  border-radius: 16px;
+  background-color: var(--nm-bg);
+  box-shadow: var(--nm-well);
+  color: var(--nm-ink);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+html[data-theme="neumorphism"] #search-bar::placeholder {
+  color: #7a8396;
+}
+
+html[data-theme="neumorphism"] #search-bar:focus {
+  background-color: var(--nm-bg);
+  box-shadow: var(--nm-well), 0 0 0 2px var(--nm-accent-soft);
+}
+
+/* Menus float off the page */
+html[data-theme="neumorphism"] .dropdown-menu {
+  margin-top: 12px !important;
+  padding: 8px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-raise-lg);
+}
+
+html[data-theme="neumorphism"] .dropdown-item {
+  border-radius: 12px;
+  color: var(--nm-ink);
+  font-weight: 600;
+}
+
+html[data-theme="neumorphism"] .dropdown-item:hover,
+html[data-theme="neumorphism"] .dropdown-item:focus {
+  background: var(--nm-bg);
+  box-shadow: var(--nm-well-sm);
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] .dropdown-divider {
+  border-top: 2px solid #d6dbe3;
+}
+
+/* ---------- Warning: a raised plate with a soft amber light ---------- */
+html[data-theme="neumorphism"] .unofficial-schedule-warning {
+  position: relative;
+  margin: 1.25rem 0 0;
+  padding: 1.1rem 1.4rem 1.2rem 4.6rem;
+  border: 0;
+  border-radius: 22px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-raise);
+  color: var(--nm-ink);
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: left;
+}
+
+html[data-theme="neumorphism"] .unofficial-schedule-warning > span {
+  color: var(--nm-red);
+}
+
+html[data-theme="neumorphism"] .unofficial-schedule-warning::before {
+  content: "!";
+  position: absolute;
+  top: 50%;
+  left: 1.3rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffd27a, #f59e0b 70%);
+  box-shadow: 0 0 14px rgb(245 158 11 / 60%), var(--nm-raise-sm);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+/* ---------- Cards ---------- */
+html[data-theme="neumorphism"] .card {
+  margin-bottom: 1.6rem;
+  border: 0;
+}
+
+html[data-theme="neumorphism"] .card-header {
+  border: 0;
+}
+
+html[data-theme="neumorphism"] .department-cards {
+  column-gap: 2rem;
+}
+
+html[data-theme="neumorphism"] .department-cards .card {
+  margin-bottom: 2rem;
+}
+
+html[data-theme="neumorphism"] .department-cards .card-header {
+  padding: 1.15rem 1.4rem 0.4rem !important;
+  font-size: 1.2rem !important;
+  font-weight: 800 !important;
+}
+
+html[data-theme="neumorphism"] .department-cards .card-body {
+  padding: 0.4rem 0.9rem 1rem;
+}
+
+/* Department rows press in when hovered */
+html[data-theme="neumorphism"] .department-cards .department-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2px 0;
+  padding: 0.5rem 0.7rem !important;
+  border-radius: 14px;
+  color: var(--nm-ink) !important;
+  font-size: 1rem !important;
+  font-weight: 600;
+  transition: box-shadow 0.18s ease;
+}
+
+html[data-theme="neumorphism"] .department-cards .department-link:hover,
+html[data-theme="neumorphism"] .department-cards .department-link:focus-visible {
+  box-shadow: var(--nm-well-sm);
+  color: var(--nm-accent) !important;
+}
+
+html[data-theme="neumorphism"] .department-code {
+  flex: none;
+  min-width: 3.7rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 10px;
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-accent);
+  font-family: var(--nm-font) !important;
+  font-size: 0.82rem !important;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+html[data-theme="neumorphism"] .department-cards .department-link:hover .department-code {
+  box-shadow: var(--nm-well-sm);
+}
+
+/* Course cards: the header is a soft key that sinks in when the card is open */
+html[data-theme="neumorphism"] .course-card {
+  margin-bottom: 1.5rem;
+  overflow: visible;
+}
+
+html[data-theme="neumorphism"] .course-card-header {
+  padding: 1rem 1.3rem 1.1rem;
+  border-radius: 22px !important;
+  background: var(--nm-bg) !important;
+  color: var(--nm-ink-soft) !important;
+  line-height: 1.5;
+  transition: box-shadow 0.2s ease;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="neumorphism"] .course-card-header.header_expanded {
+  margin: 10px;
+  border-radius: 16px !important;
+  box-shadow: var(--nm-well-sm);
+}
+
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="neumorphism"] .course-card-header .course-code {
+  color: var(--nm-ink);
+  font-family: var(--nm-font);
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+html[data-theme="neumorphism"] .course-card-header .font-weight-bold {
+  color: var(--nm-ink);
+  font-weight: 800 !important;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="neumorphism"] .course-card .open_close_icon {
+  color: var(--nm-accent);
+}
+
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="neumorphism"] .section-grow {
+  border-radius: 0 0 22px 22px;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="neumorphism"] .prerequisiteError {
+  border-radius: 10px;
+  box-shadow: var(--nm-raise-sm);
+  font-size: 0.85em;
+  font-weight: 700;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Tables: rows of soft keys, selected ones pressed in ---------- */
+html[data-theme="neumorphism"] .table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  margin: 0;
+  padding: 0 10px 6px;
+}
+
+html[data-theme="neumorphism"] .table-bordered,
+html[data-theme="neumorphism"] .table-bordered td,
+html[data-theme="neumorphism"] .table-bordered th {
+  border: 0;
+}
+
+html[data-theme="neumorphism"] .table thead th {
+  color: var(--nm-ink-soft);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+html[data-theme="neumorphism"] .table tbody tr td:first-child {
+  border-radius: 14px 0 0 14px;
+}
+
+html[data-theme="neumorphism"] .table tbody tr td:last-child {
+  border-radius: 0 14px 14px 0;
+}
+
+html[data-theme="neumorphism"] .table tbody tr.select-section {
+  transition: box-shadow 0.18s ease;
+}
+
+html[data-theme="neumorphism"] .table tbody tr.selected,
+html[data-theme="neumorphism"] .table tbody tr.selected:hover {
+  border-radius: 14px;
+  box-shadow: var(--nm-well-sm);
+}
+
+html[data-theme="neumorphism"] .table tbody tr.selected .font-weight-bold {
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] .info-icon {
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] .current-schedule-badge {
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-accent);
+}
+
+/* ---------- Buttons: soft keys ---------- */
+html[data-theme="neumorphism"] .btn {
+  padding: 0.55rem 1.2rem;
+  border: 0;
+  border-radius: 14px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-ink);
+  font-weight: 700;
+  transition: box-shadow 0.18s ease, color 0.18s ease;
+}
+
+html[data-theme="neumorphism"] .btn-primary {
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] .btn-outline-danger {
+  color: var(--nm-red);
+}
+
+html[data-theme="neumorphism"] .btn:hover,
+html[data-theme="neumorphism"] .btn:focus {
+  border: 0;
+  background: var(--nm-bg);
+  box-shadow: 6px 6px 12px var(--nm-dark), -6px -6px 12px var(--nm-light);
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] .btn-outline-danger:hover,
+html[data-theme="neumorphism"] .btn-outline-danger:focus {
+  color: var(--nm-red);
+}
+
+html[data-theme="neumorphism"] .btn:disabled,
+html[data-theme="neumorphism"] .btn.disabled {
+  box-shadow: none;
+  color: #8f97a6;
+  opacity: 100%;
+}
+
+html[data-theme="neumorphism"] .btn:not(:disabled):not(.disabled):active {
+  background: var(--nm-bg);
+  box-shadow: var(--nm-well-sm);
+  color: var(--nm-accent);
+}
+
+/* Fields: wells */
+html[data-theme="neumorphism"] .form-control,
+html[data-theme="neumorphism"] .custom-select {
+  height: auto;
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 14px;
+  background-color: var(--nm-bg);
+  box-shadow: var(--nm-well-sm);
+  color: var(--nm-ink);
+}
+
+html[data-theme="neumorphism"] .custom-select {
+  padding-right: 2.6rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5' fill='none' stroke='%235a64d8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 12px 8px;
+}
+
+html[data-theme="neumorphism"] .form-control:focus,
+html[data-theme="neumorphism"] .custom-select:focus {
+  background-color: var(--nm-bg);
+  box-shadow: var(--nm-well-sm), 0 0 0 2px var(--nm-accent-soft);
+  color: var(--nm-ink);
+}
+
+/* Switches: a well with a raised knob that turns indigo when on */
+html[data-theme="neumorphism"] .custom-switch {
+  min-height: 1.9rem;
+  padding-left: 3.9rem;
+}
+
+html[data-theme="neumorphism"] .custom-switch .custom-control-label {
+  line-height: 1.9rem;
+}
+
+html[data-theme="neumorphism"] .custom-switch .custom-control-label::before {
+  top: 0;
+  left: -3.9rem;
+  width: 3.1rem;
+  height: 1.8rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-well-sm);
+}
+
+html[data-theme="neumorphism"] .custom-switch .custom-control-label::after {
+  top: 0.25rem;
+  left: calc(-3.9rem + 0.25rem);
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  background: var(--nm-bg);
+  box-shadow: 2px 2px 5px var(--nm-dark), -2px -2px 5px var(--nm-light);
+}
+
+html[data-theme="neumorphism"] .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+  background: var(--nm-bg);
+  box-shadow: var(--nm-well-sm);
+}
+
+html[data-theme="neumorphism"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background: radial-gradient(circle at 35% 30%, #8d95f0, var(--nm-accent));
+  transform: translateX(1.3rem);
+}
+
+/* As specific as the checked rule above and after it, so a checked switch shows its focus ring too */
+html[data-theme="neumorphism"] .custom-switch .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: var(--nm-well-sm), 0 0 0 2px var(--nm-accent-soft);
+}
+
+/* ---------- Prerequisites ---------- */
+html[data-theme="neumorphism"] .jumbotron {
+  border-radius: 28px;
+  box-shadow: var(--nm-raise);
+}
+
+html[data-theme="neumorphism"] .jumbotron h1 {
+  margin-top: 0;
+}
+
+html[data-theme="neumorphism"] .jumbotron .lead {
+  color: var(--nm-ink-soft);
+  font-weight: 600;
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="neumorphism"] .schedule-select {
+  width: fit-content;
+  margin: 0.4rem auto 0;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 20px;
+  box-shadow: var(--nm-raise);
+}
+
+html[data-theme="neumorphism"] .schedule-num {
+  color: var(--nm-ink-soft);
+  font-weight: 700;
+}
+
+html[data-theme="neumorphism"] .schedule-select-button {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.6rem;
+  border-radius: 50%;
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-accent);
+  font-size: 1rem !important;
+  transition: box-shadow 0.18s ease;
+}
+
+html[data-theme="neumorphism"] .schedule-select-button:active {
+  box-shadow: var(--nm-well-sm);
+}
+
+/* The calendar is a broad well; course blocks are raised tiles in it */
+html[data-theme="neumorphism"] .calendar {
+  padding: 0.6rem 0.25rem;
+  border-radius: 24px;
+  box-shadow: var(--nm-well);
+}
+
+html[data-theme="neumorphism"] .calendar-event {
+  border: 0 !important;
+  border-left: 4px solid !important;
+  border-radius: 10px;
+  box-shadow: 3px 3px 7px var(--nm-dark), -3px -3px 7px rgb(255 255 255 / 85%);
+}
+
+html[data-theme="neumorphism"] .calendar-event .event-text {
+  font-weight: 700;
+}
+
+html[data-theme="neumorphism"] .b-overlay .bg-light {
+  border-radius: 24px;
+}
+
+/* ---------- Dialogs ---------- */
+html[data-theme="neumorphism"] .modal-content {
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  background: var(--nm-bg);
+  box-shadow: 18px 18px 40px rgb(93 103 122 / 45%), -12px -12px 30px rgb(255 255 255 / 70%);
+}
+
+html[data-theme="neumorphism"] .modal-header {
+  padding: 1.2rem 1.4rem 0.6rem;
+  border-bottom: 0;
+}
+
+html[data-theme="neumorphism"] .modal-title {
+  font-weight: 800;
+}
+
+html[data-theme="neumorphism"] .modal-header .close {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin: -0.3rem -0.3rem 0 auto;
+  padding: 0 0 3px;
+  border-radius: 50%;
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-ink-soft);
+  font-weight: 500;
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-theme="neumorphism"] .modal-header .close:active {
+  box-shadow: var(--nm-well-sm);
+}
+
+html[data-theme="neumorphism"] .modal-footer {
+  border-top: 0;
+}
+
+html[data-theme="neumorphism"] .modal-backdrop {
+  background: #9aa3b3;
+}
+
+html[data-theme="neumorphism"] .modal-backdrop.show {
+  opacity: 45%;
+}
+
+html[data-theme="neumorphism"] .tooltip-inner {
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-ink);
+  font-weight: 600;
+}
+
+html[data-theme="neumorphism"] .tooltip .arrow {
+  display: none;
+}
+
+html[data-theme="neumorphism"] #crn-copy-indicator {
+  border-radius: 16px;
+  box-shadow: var(--nm-raise);
+  font-weight: 700;
+}
+
+/* ---------- Footer: a raised slab with round icon keys ---------- */
+html[data-theme="neumorphism"] .footer {
+  width: calc(100% - 40px);
+  max-width: 900px;
+  margin: 3rem auto 22px;
+  padding: 1.8rem 1rem 1.5rem;
+  border-radius: 28px;
+  box-shadow: var(--nm-raise);
+}
+
+html[data-theme="neumorphism"] .footer-links {
+  gap: 1.4rem;
+}
+
+html[data-theme="neumorphism"] .footer-links > a {
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: var(--nm-raise-sm);
+  color: var(--nm-ink-soft);
+  font-size: 1.6rem;
+  transition: box-shadow 0.18s ease, color 0.18s ease;
+}
+
+html[data-theme="neumorphism"] .footer-updated a {
+  color: var(--nm-accent) !important;
+}
+
+html[data-theme="neumorphism"] .footer-links > a:hover {
+  box-shadow: var(--nm-well-sm);
+  color: var(--nm-accent);
+}
+
+html[data-theme="neumorphism"] #footer-logo {
+  filter: brightness(0) invert(37%);
+}
+
+html[data-theme="neumorphism"] .footer-updated,
+html[data-theme="neumorphism"] .footer-copyright {
+  color: var(--nm-ink-soft);
+  font-size: 0.92rem;
+}
+
+html[data-theme="neumorphism"] :focus-visible {
+  outline: 2px solid var(--nm-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="neumorphism"] .navbar.bg-light {
+    top: 8px;
+    width: calc(100% - 20px);
+    padding: 8px 10px 8px 16px;
+    border-radius: 22px;
+  }
+
+  html[data-theme="neumorphism"] .navbar-collapse {
+    padding: 0.6rem 0 0.2rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="neumorphism"] h1 {
+    font-size: 2rem;
+  }
+
+  html[data-theme="neumorphism"] .unofficial-schedule-warning {
+    padding-left: 4rem;
+    font-size: 1rem;
+  }
+
+  html[data-theme="neumorphism"] .unofficial-schedule-warning::before {
+    left: 0.9rem;
+  }
+}

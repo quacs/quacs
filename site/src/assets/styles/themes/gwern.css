@@ -1,0 +1,1127 @@
+/* Gwern, after gwern.net: a monochrome page set in Source Serif 4 with true small caps and oldstyle
+figures. The navbar is a row of dotted boxes, section headings are small caps over a hairline rule,
+lists use gwern's star bullets, notices are gray admonitions, menus and dialogs are double-bordered
+popups, and tables are booktabs style. The logo is a Fraktur Q in the spirit of gwern's Fraktur G.
+Like gwern.net it follows the device's dark mode, and a small toolbar on the right (GwernDecor.vue)
+pins it to light or dark; utilities.ts applies the saved choice before the page paints.
+Fonts: Source Serif 4 (Adobe, SIL OFL) is self-hosted because Google Fonts strips its small caps.
+The logo is the Q of UnifrakturCook (SIL OFL) turned into a path. */
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../../fonts/source-serif-4/SourceSerif4-Roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../../fonts/source-serif-4/SourceSerif4-Italic.woff2") format("woff2");
+}
+
+[data-theme="gwern"] {
+  /* gwern.net's palette */
+  --gw-bg: #fff;
+  --gw-text: #000;
+  --gw-muted: #666;
+  --gw-link: #333;
+  --gw-link-hover: #888;
+  --gw-nav: #000;
+  --gw-nav-hover: #888;
+  --gw-rule: #888;
+  --gw-box-bg: #f8f8f8;
+  --gw-box-border: #ccc;
+  --gw-abstract-border: #bbb;
+  --gw-hover-bg: #ececec;
+  --gw-zebra: #f6f6f6;
+  --gw-selected: #e2e2e2;
+  --gw-popup-border: #ccc;
+  --gw-popup-shadow: #ccc;
+  --gw-popup-button: #bbb;
+  --gw-table-rule: #000;
+  --gw-note-bg: #d8d8d8;
+  --gw-note-border: #909090;
+  --gw-warning-bg: #8a8a8a;
+  --gw-warning-border: #5a5a5a;
+  --gw-warning-text: #fff;
+  --gw-selection-bg: #333;
+  --gw-selection-text: #fff;
+  --gw-invert: none;
+  --gw-dotted: url("data:image/gif;base64,R0lGODlhEAAQAPAAMebm5v///ywAAAAAEAAQAAACHowPcKgb6V6LtFoDXV6b3Q9aHTZ5WhmmJodK0ajGBQA7");
+  --gw-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0C4 4 4 4 0 5c4 1 4 1 5 5 1-4 1-4 5-5-4-1-4-1-5-5Z'/%3E%3C/svg%3E");
+  --gw-star-circle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0c1 4 1 4 5 5A5 5 0 0 0 5 0Zm0 0a5 5 0 0 0-5 5c4-1 4-1 5-5ZM0 5a5 5 0 0 0 5 5C4 6 4 6 0 5Zm5 5a5 5 0 0 0 5-5c-4 1-4 1-5 5Z'/%3E%3C/svg%3E");
+  --gw-serif:
+    "Source Serif 4",
+    "Apple Garamond",
+    "Baskerville",
+    "Libre Baskerville",
+    "Droid Serif",
+    "Times New Roman",
+    "Times",
+    serif;
+  --gw-sans: "Source Sans 3", "Lucida Sans Unicode", "Helvetica", "Trebuchet MS", sans-serif;
+
+  /* QuACS tokens, all drawn from the palette so dark mode flips them too */
+  --background: var(--gw-bg);
+  --background-image: none;
+  --global-text: var(--gw-text);
+  --global-text-hover: var(--gw-link-hover);
+  --raw-link: var(--gw-link);
+  --text-default: var(--gw-link);
+  --footer-background: var(--gw-bg);
+  --font-body: var(--gw-serif);
+  --font-heading: var(--gw-serif);
+  --warning-color: var(--gw-warning-text);
+  --card-background: var(--gw-bg);
+  --card-body-background: var(--gw-bg);
+  --card-body-text: var(--gw-text);
+  --card-header-background: var(--gw-bg);
+  --card-header-text: var(--gw-text);
+  --card-header-hover: var(--gw-box-bg);
+  --card-border-color: var(--gw-box-border);
+  --card-border-width: 1px;
+  --card-border-radius: 0;
+  --card-shadow: none;
+  --navbar-background: var(--gw-bg);
+  --navbar-unselected-text: var(--gw-nav);
+  --navbar-unselected-text-hover: var(--gw-nav-hover);
+  --navbar-text-focus: var(--gw-nav-hover);
+  --navbar-text-disabled: var(--gw-rule);
+  --navbar-text-active: var(--gw-nav);
+  --navbar-text-show: var(--gw-nav);
+  --modal-header-background: var(--gw-bg);
+  --modal-header-text: var(--gw-link-hover);
+  --modal-body-background: var(--gw-bg);
+  --modal-body-text: var(--gw-text);
+  --modal-footer-background: var(--gw-bg);
+  --modal-footer-text: var(--gw-text);
+  --modal-close-x-hover: var(--gw-text);
+  --btn-primary-background: var(--gw-text);
+  --btn-primary-text: var(--gw-bg);
+  --btn-border: 1px solid var(--gw-text);
+  --btn-border-radius: 0;
+  --btn-box-shadow: none;
+  --btn-transition: all 0s ease 0s;
+  --btn-secondary-background: var(--gw-bg);
+  --btn-secondary-text: var(--gw-link);
+  --department-link-hover: transparent;
+  --select-background: var(--gw-bg);
+  --select-text: var(--gw-text);
+  --table-text: var(--gw-text);
+  --table-border: var(--gw-box-border);
+  --course-row-hover: var(--gw-hover-bg);
+  --conflict-row: var(--gw-dotted);
+  --conflict-row-hover: var(--gw-dotted);
+  --selected-row: var(--gw-selected);
+  --selected-row-hover: var(--gw-selected);
+  --list-group-item-background: var(--gw-bg);
+  --search-bar-background: var(--gw-bg);
+  --search-bar-border: var(--gw-text);
+  --overlay-background: var(--gw-bg);
+  --trash-btn: var(--gw-link-hover);
+  --trash-btn-hover: var(--gw-text);
+  --prerequisite-jumbotron: transparent;
+  --prerequisite-text: var(--gw-text);
+  --prerequisite-warn-icon: transparent;
+  --prerequisite-error-icon: var(--gw-text);
+  --taken-course: var(--gw-text);
+  --not-taken-course: var(--gw-link-hover);
+  --toast-background: var(--gw-text);
+  --toast-text: var(--gw-bg);
+  --calendar-grid-color: var(--gw-box-border);
+  --calendar-label: var(--gw-link-hover);
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: #fff;
+  --calendar-bg-color-1: #e8e8e8;
+  --calendar-bg-color-2: #f6f6f6;
+  --calendar-bg-color-3: #d6d6d6;
+  --calendar-bg-color-4: #efefef;
+  --calendar-bg-color-5: #dfdfdf;
+  --calendar-bg-color-6: #c8c8c8;
+  --calendar-border-color-0: #000;
+  --calendar-border-color-1: #333;
+  --calendar-border-color-2: #666;
+  --calendar-border-color-3: #000;
+  --calendar-border-color-4: #444;
+  --calendar-border-color-5: #222;
+  --calendar-border-color-6: #000;
+  --calendar-text-color-0: #000;
+  --calendar-text-color-1: #000;
+  --calendar-text-color-2: #000;
+  --calendar-text-color-3: #000;
+  --calendar-text-color-4: #000;
+  --calendar-text-color-5: #000;
+  --calendar-text-color-6: #000;
+  --calendar-sb-track-color-0: transparent;
+  --calendar-sb-thumb-color-0: #aaa;
+  --calendar-sb-track-color-1: transparent;
+  --calendar-sb-thumb-color-1: #aaa;
+  --calendar-sb-track-color-2: transparent;
+  --calendar-sb-thumb-color-2: #aaa;
+  --calendar-sb-track-color-3: transparent;
+  --calendar-sb-thumb-color-3: #aaa;
+  --calendar-sb-track-color-4: transparent;
+  --calendar-sb-thumb-color-4: #aaa;
+  --calendar-sb-track-color-5: transparent;
+  --calendar-sb-thumb-color-5: #aaa;
+  --calendar-sb-track-color-6: transparent;
+  --calendar-sb-thumb-color-6: #aaa;
+}
+
+/* gwern.net's dark mode: on when the device asks for it, unless the toolbar pins light, or pinned on.
+The two blocks are the same; CSS has no way to share them between a media query and a selector. */
+@media (prefers-color-scheme: dark) {
+  html[data-theme="gwern"]:not([data-gwern-mode="light"]) {
+    --gw-bg: #161616;
+    --gw-text: #f1f1f1;
+    --gw-muted: #a0a0a0;
+    --gw-link: #dcdcdc;
+    --gw-link-hover: #999;
+    --gw-nav: #f1f1f1;
+    --gw-nav-hover: #999;
+    --gw-rule: #999;
+    --gw-box-bg: #212121;
+    --gw-box-border: #5c5c5c;
+    --gw-abstract-border: #6c6c6c;
+    --gw-hover-bg: #2b2b2b;
+    --gw-zebra: #1d1d1d;
+    --gw-selected: #3a3a3a;
+    --gw-popup-border: #5c5c5c;
+    --gw-popup-shadow: #000;
+    --gw-popup-button: #666;
+    --gw-table-rule: #f1f1f1;
+    --gw-note-bg: #3a3a3a;
+    --gw-note-border: #707070;
+    --gw-warning-bg: #5a5a5a;
+    --gw-warning-border: #2d2d2d;
+    --gw-warning-text: #fff;
+    --gw-selection-bg: #dcdcdc;
+    --gw-selection-text: #000;
+    --gw-invert: invert(100%);
+    --gw-dotted: url("data:image/gif;base64,R0lGODlhEAAQAPAAMRYWFiUlJSwAAAAAEAAQAAACHowPcKgb6V6LtFoDXV6b3Q9aHTZ5WhmmJodK0ajGBQA7");
+    --calendar-bg-color-0: #161616;
+    --calendar-bg-color-1: #2a2a2a;
+    --calendar-bg-color-2: #1f1f1f;
+    --calendar-bg-color-3: #3a3a3a;
+    --calendar-bg-color-4: #252525;
+    --calendar-bg-color-5: #333;
+    --calendar-bg-color-6: #444;
+    --calendar-border-color-0: #f1f1f1;
+    --calendar-border-color-1: #ccc;
+    --calendar-border-color-2: #999;
+    --calendar-border-color-3: #f1f1f1;
+    --calendar-border-color-4: #bbb;
+    --calendar-border-color-5: #ddd;
+    --calendar-border-color-6: #f1f1f1;
+    --calendar-text-color-0: #f1f1f1;
+    --calendar-text-color-1: #f1f1f1;
+    --calendar-text-color-2: #f1f1f1;
+    --calendar-text-color-3: #f1f1f1;
+    --calendar-text-color-4: #f1f1f1;
+    --calendar-text-color-5: #f1f1f1;
+    --calendar-text-color-6: #f1f1f1;
+
+    color-scheme: dark;
+  }
+}
+
+html[data-theme="gwern"][data-gwern-mode="dark"] {
+  --gw-bg: #161616;
+  --gw-text: #f1f1f1;
+  --gw-muted: #a0a0a0;
+  --gw-link: #dcdcdc;
+  --gw-link-hover: #999;
+  --gw-nav: #f1f1f1;
+  --gw-nav-hover: #999;
+  --gw-rule: #999;
+  --gw-box-bg: #212121;
+  --gw-box-border: #5c5c5c;
+  --gw-abstract-border: #6c6c6c;
+  --gw-hover-bg: #2b2b2b;
+  --gw-zebra: #1d1d1d;
+  --gw-selected: #3a3a3a;
+  --gw-popup-border: #5c5c5c;
+  --gw-popup-shadow: #000;
+  --gw-popup-button: #666;
+  --gw-table-rule: #f1f1f1;
+  --gw-note-bg: #3a3a3a;
+  --gw-note-border: #707070;
+  --gw-warning-bg: #5a5a5a;
+  --gw-warning-border: #2d2d2d;
+  --gw-warning-text: #fff;
+  --gw-selection-bg: #dcdcdc;
+  --gw-selection-text: #000;
+  --gw-invert: invert(100%);
+  --gw-dotted: url("data:image/gif;base64,R0lGODlhEAAQAPAAMRYWFiUlJSwAAAAAEAAQAAACHowPcKgb6V6LtFoDXV6b3Q9aHTZ5WhmmJodK0ajGBQA7");
+  --calendar-bg-color-0: #161616;
+  --calendar-bg-color-1: #2a2a2a;
+  --calendar-bg-color-2: #1f1f1f;
+  --calendar-bg-color-3: #3a3a3a;
+  --calendar-bg-color-4: #252525;
+  --calendar-bg-color-5: #333;
+  --calendar-bg-color-6: #444;
+  --calendar-border-color-0: #f1f1f1;
+  --calendar-border-color-1: #ccc;
+  --calendar-border-color-2: #999;
+  --calendar-border-color-3: #f1f1f1;
+  --calendar-border-color-4: #bbb;
+  --calendar-border-color-5: #ddd;
+  --calendar-border-color-6: #f1f1f1;
+  --calendar-text-color-0: #f1f1f1;
+  --calendar-text-color-1: #f1f1f1;
+  --calendar-text-color-2: #f1f1f1;
+  --calendar-text-color-3: #f1f1f1;
+  --calendar-text-color-4: #f1f1f1;
+  --calendar-text-color-5: #f1f1f1;
+  --calendar-text-color-6: #f1f1f1;
+
+  color-scheme: dark;
+}
+
+/* ---------- Type ---------- */
+html[data-theme="gwern"] body {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  font-variant-numeric: oldstyle-nums;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-theme="gwern"] ::selection {
+  background: var(--gw-selection-bg);
+  color: var(--gw-selection-text);
+  text-shadow: none;
+}
+
+html[data-theme="gwern"] h1,
+html[data-theme="gwern"] h2,
+html[data-theme="gwern"] h3,
+html[data-theme="gwern"] h4,
+html[data-theme="gwern"] h5 {
+  color: var(--gw-text);
+  font-weight: 600;
+}
+
+/* Page titles, like gwern's article headers: centered small caps */
+html[data-theme="gwern"] h1 {
+  margin: 0.4em 0 0.9em;
+  font-size: 2.5rem;
+  font-variant-caps: small-caps;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  text-align: center;
+}
+
+/* Links: dark gray with a hairline underline that skips descenders, lighter on hover */
+:where([data-theme="gwern"]) a {
+  color: var(--gw-link);
+}
+
+html[data-theme="gwern"] a:hover {
+  color: var(--gw-link-hover);
+}
+
+/* Links in running text get the hairline underline. Department links have their own, further down. */
+html[data-theme="gwern"] .jumbotron a,
+html[data-theme="gwern"] .footer-updated a,
+html[data-theme="gwern"] .modal-body a:not(.btn) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
+  font-variant-numeric: lining-nums;
+}
+
+/* ---------- Page width: a single centered column, as on gwern.net ---------- */
+@media (min-width: 992px) {
+  html[data-theme="gwern"] #wrapper,
+  html[data-theme="gwern"] .footer {
+    width: 100%;
+    max-width: 1080px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  html[data-theme="gwern"] #wrapper .col-lg-1 {
+    display: none;
+  }
+}
+
+/* ---------- Navbar: gwern's row of dotted boxes ---------- */
+html[data-theme="gwern"] .navbar.bg-light {
+  padding: 1rem 0 0;
+  background: var(--gw-bg) !important;
+}
+
+html[data-theme="gwern"] .navbar-brand {
+  margin-right: 2px;
+  padding: 0;
+}
+
+html[data-theme="gwern"] .navbar-brand img {
+  height: 2.6rem !important;
+  padding: 0.3rem 0.35rem;
+  border: 1px dotted var(--gw-nav);
+  filter: var(--gw-invert);
+}
+
+/* On wide screens the logo hangs in the left margin, half faded until hovered, like gwern's */
+@media (min-width: 1180px) {
+  html[data-theme="gwern"] .navbar-brand {
+    position: absolute;
+    top: 1rem;
+    right: 100%;
+    margin-right: 0.9rem;
+    opacity: 50%;
+    transition: opacity 1s ease;
+  }
+
+  html[data-theme="gwern"] .navbar-brand:hover,
+  html[data-theme="gwern"] .navbar-brand:focus-visible {
+    opacity: 100%;
+    transition: none;
+  }
+
+  html[data-theme="gwern"] .navbar-brand img {
+    height: 4.6rem !important;
+    padding: 0;
+    border: 0;
+  }
+}
+
+html[data-theme="gwern"] #nav-collapse {
+  align-items: stretch;
+}
+
+html[data-theme="gwern"] .navbar .input-group {
+  flex: 1 1 11rem;
+  width: auto;
+  min-width: 9rem;
+  margin: 1px 0 1px 2px;
+}
+
+html[data-theme="gwern"] #search-bar {
+  width: 100%;
+  height: 100%;
+  min-height: 2.4rem;
+  border: 1px dotted var(--gw-nav);
+  border-radius: 0;
+  background-color: var(--gw-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4-4'/%3E%3C/svg%3E");
+  background-position: 0.6rem 50%;
+  background-size: 1rem;
+  color: var(--gw-text);
+  font-family: var(--gw-serif);
+  font-size: 1rem;
+  padding-left: 2.1rem;
+}
+
+html[data-theme="gwern"] #search-bar::placeholder {
+  color: var(--gw-link-hover);
+  font-style: italic;
+}
+
+html[data-theme="gwern"] #search-bar:focus {
+  border-style: solid;
+  box-shadow: none;
+}
+
+html[data-theme="gwern"] .navbar-nav.ml-auto,
+html[data-theme="gwern"] .navbar-nav.ml-auto > .navbar-nav {
+  flex: 1 1 auto;
+}
+
+html[data-theme="gwern"] .navbar-nav.ml-auto {
+  margin-left: 0 !important;
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-item {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+@media (min-width: 1200px) {
+  html[data-theme="gwern"] .navbar-nav .nav-item.mobile-only {
+    display: none;
+  }
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-link svg {
+  margin-right: 0.35em;
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-link svg[data-icon="cog"] {
+  margin-right: 0;
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-link {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  margin: 1px 0 1px 2px;
+  padding: 0.25em 0.75em !important;
+  border: 1px dotted currentColor;
+  color: var(--gw-nav);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-text {
+  font-size: 1rem;
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-link:hover,
+html[data-theme="gwern"] .navbar-nav .nav-link:focus-visible {
+  color: var(--gw-nav-hover);
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-link.active {
+  border-style: solid;
+}
+
+html[data-theme="gwern"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="gwern"] .navbar-light .navbar-toggler {
+  border: 1px dotted var(--gw-nav);
+  border-radius: 0;
+}
+
+html[data-theme="gwern"] .navbar-light .navbar-toggler-icon {
+  filter: var(--gw-invert);
+}
+
+/* Menus open as gwern-style popups */
+html[data-theme="gwern"] .dropdown-menu {
+  padding: 0.3rem 0;
+  border: 3px double var(--gw-popup-border);
+  border-radius: 0;
+  background: var(--gw-bg);
+  box-shadow: 1px 2px 8px 0 var(--gw-popup-shadow);
+  font-family: var(--gw-serif);
+}
+
+html[data-theme="gwern"] .dropdown-item {
+  color: var(--gw-link);
+  font-variant-numeric: oldstyle-nums;
+}
+
+html[data-theme="gwern"] .dropdown-item:hover,
+html[data-theme="gwern"] .dropdown-item:focus {
+  background: var(--gw-hover-bg);
+  box-shadow: inset 3px 0 var(--gw-box-border);
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .dropdown-divider {
+  border-top: 1px dotted var(--gw-rule);
+}
+
+/* ---------- The data warning, as a gwern "warning" admonition ---------- */
+html[data-theme="gwern"] .unofficial-schedule-warning {
+  position: relative;
+  margin: 1.75rem 0 0;
+  padding: 0.75em 1.25em 0.875em 1.125em;
+  border: 0;
+  border-left: 2.875em solid var(--gw-warning-border);
+  background: var(--gw-warning-bg);
+  color: var(--gw-warning-text);
+  font-family: var(--gw-sans);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+html[data-theme="gwern"] .unofficial-schedule-warning::before {
+  content: "";
+  position: absolute;
+  top: 0.75em;
+  right: 100%;
+  width: 2.875em;
+  height: 1.35em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M12 3 22 20H2Z'/%3E%3Cpath d='M12 9.5v5' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='17.2' r='.6' fill='%23fff'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+html[data-theme="gwern"] .unofficial-schedule-warning b,
+html[data-theme="gwern"] .unofficial-schedule-warning strong {
+  font-weight: 600;
+}
+
+/* ---------- Home: each school is a section with gwern's small-caps heading and star bullets ---------- */
+@media (min-width: 992px) {
+  html[data-theme="gwern"] .department-cards {
+    column-count: 2;
+    column-gap: 3rem;
+  }
+}
+
+html[data-theme="gwern"] .department-cards .card {
+  margin-bottom: 1.6rem;
+  border: 0;
+  background: transparent;
+  break-inside: avoid;
+}
+
+html[data-theme="gwern"] .department-cards .card-header {
+  padding: 0 0.05em 0.05em 0 !important;
+  border: 0;
+  border-bottom: 1px solid var(--gw-rule);
+  border-radius: 0 !important;
+  background: transparent;
+  font-size: 1.6rem !important;
+  font-variant-caps: small-caps;
+  font-weight: 600 !important;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+
+html[data-theme="gwern"] .department-cards .card-body {
+  padding: 0.55rem 0 0;
+  background: transparent;
+}
+
+html[data-theme="gwern"] .department-cards .department-link {
+  position: relative;
+  padding: 0.05rem 0 0.05rem 1.5rem !important;
+  color: var(--gw-link) !important;
+  font-size: 1.1rem !important;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
+}
+
+html[data-theme="gwern"] .department-cards .department-link::before {
+  content: "";
+  position: absolute;
+  top: 0.48em;
+  left: 0.15rem;
+  width: 0.7em;
+  height: 0.7em;
+  background: var(--gw-star) center / contain no-repeat;
+  filter: var(--gw-invert);
+  opacity: 65%;
+}
+
+html[data-theme="gwern"] .department-cards .card:nth-child(odd) .department-link::before {
+  background-image: var(--gw-star-circle);
+  opacity: 70%;
+}
+
+html[data-theme="gwern"] .department-cards .department-link:hover {
+  color: var(--gw-link-hover) !important;
+}
+
+/* Acronyms in small caps, the gwern.net way */
+html[data-theme="gwern"] .department-code,
+html[data-theme="gwern"] .course-code {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-variant-caps: all-small-caps;
+  font-variant-numeric: lining-nums;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Course cards: bordered blocks, justified descriptions ---------- */
+html[data-theme="gwern"] .course-card {
+  margin-bottom: 1.1rem;
+  border: 1px solid var(--gw-box-border);
+}
+
+html[data-theme="gwern"] .course-card-header {
+  padding: 0.8em 1.1em 0.9em;
+  border-bottom: 0;
+  background: var(--gw-bg) !important;
+  color: var(--gw-text) !important;
+  font-size: 1rem;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+}
+
+html[data-theme="gwern"] .course-card-header:hover {
+  background: var(--gw-box-bg) !important;
+}
+
+html[data-theme="gwern"] .course-card-header > div:first-child {
+  margin-bottom: 0.3em;
+  font-size: 1.1em;
+  text-align: left;
+}
+
+html[data-theme="gwern"] .course-card-header .course-code {
+  margin-left: 0.15rem;
+  font-size: 1.15em !important;
+}
+
+html[data-theme="gwern"] .course-card-header .font-weight-bold {
+  font-weight: 600 !important;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="gwern"] .course-card .open_close_icon {
+  color: var(--gw-link-hover);
+}
+
+html[data-theme="gwern"] .header_expanded {
+  border-bottom: 1px dotted var(--gw-box-border);
+}
+
+html[data-theme="gwern"] .prerequisiteError {
+  padding: 0.05rem 0.4rem;
+  border: 1px solid currentColor;
+  font-family: var(--gw-sans);
+  font-size: 0.85em;
+}
+
+html[data-theme="gwern"] .prerequisiteBkgError {
+  background: var(--gw-text);
+  color: var(--gw-bg);
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ---------- Tables: booktabs rules, zebra stripes, lining figures ---------- */
+html[data-theme="gwern"] .table {
+  border-top: 2px solid var(--gw-table-rule);
+  border-bottom: 2px solid var(--gw-table-rule);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+html[data-theme="gwern"] .table-bordered,
+html[data-theme="gwern"] .table-bordered td,
+html[data-theme="gwern"] .table-bordered th {
+  border-right: 0;
+  border-left: 0;
+}
+
+html[data-theme="gwern"] .table-bordered td {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+html[data-theme="gwern"] .table thead th {
+  border-top: 0;
+  border-bottom: 1px solid var(--gw-table-rule);
+  font-variant-caps: small-caps;
+  font-weight: 600;
+}
+
+html[data-theme="gwern"] .table tbody tr:nth-child(even) {
+  background: var(--gw-zebra);
+}
+
+html[data-theme="gwern"] .table tbody tr.select-section:hover {
+  background: var(--gw-hover-bg);
+}
+
+html[data-theme="gwern"] .table tbody tr.selected,
+html[data-theme="gwern"] .table tbody tr.selected:hover {
+  background: var(--gw-selected);
+  box-shadow: inset 4px 0 var(--gw-text);
+}
+
+html[data-theme="gwern"] .table tbody tr.conflict,
+html[data-theme="gwern"] .table tbody tr.conflict:hover {
+  background: var(--gw-dotted);
+  background-size: 8px;
+  color: var(--gw-muted);
+}
+
+html[data-theme="gwern"] .info-icon {
+  color: var(--gw-link-hover);
+}
+
+html[data-theme="gwern"] .current-schedule-badge {
+  border-radius: 0 !important;
+  font-variant-caps: small-caps;
+}
+
+/* ---------- Prerequisites: a gwern article header with a "note" admonition ---------- */
+html[data-theme="gwern"] .jumbotron {
+  padding: 0 0 1rem;
+  border-radius: 0;
+  background: transparent !important;
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .jumbotron .lead {
+  margin: -0.4rem 3rem 1.6rem;
+  font-size: 1.2rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+}
+
+html[data-theme="gwern"] .jumbotron p:not(.lead) {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+}
+
+html[data-theme="gwern"] .jumbotron .font-weight-bold {
+  position: relative;
+  display: block;
+  margin-top: -1.2em;
+  padding: 0.75em 1.25em 0.875em 1.125em;
+  border-left: 2.875em solid var(--gw-note-border);
+  background: var(--gw-note-bg);
+  color: var(--gw-text);
+  font-family: var(--gw-sans);
+  font-size: 0.95rem;
+  font-weight: 400 !important;
+  text-align: left;
+}
+
+html[data-theme="gwern"] .jumbotron .font-weight-bold::before {
+  content: "";
+  position: absolute;
+  top: 0.8em;
+  right: 100%;
+  width: 2.875em;
+  height: 1.3em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11h9M3 11v6h2.5c1 2 3 3 5.5 3h2a3 3 0 0 0 3-3v-5a2 2 0 0 0-2-2H8'/%3E%3Cpath d='M12 11h9a1.5 1.5 0 0 0 0-3H9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+html[data-theme="gwern"] .home > div:not(.department-cards) > .card {
+  border: 1px solid var(--gw-box-border);
+  background: var(--gw-box-bg);
+}
+
+html[data-theme="gwern"] .home > div:not(.department-cards) > .card .card-body {
+  background: transparent;
+}
+
+html[data-theme="gwern"] .home h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-bottom: 1px dotted var(--gw-rule);
+}
+
+/* ---------- Buttons and fields ---------- */
+html[data-theme="gwern"] .btn {
+  border-radius: 0;
+  box-shadow: none !important;
+  font-family: var(--gw-serif);
+  font-variant-caps: small-caps;
+  letter-spacing: 0.03em;
+}
+
+html[data-theme="gwern"] .btn-primary {
+  border: 1px solid var(--gw-text);
+  background: var(--gw-text);
+  color: var(--gw-bg);
+}
+
+html[data-theme="gwern"] .btn-primary:hover,
+html[data-theme="gwern"] .btn-primary:focus,
+html[data-theme="gwern"] .btn-primary:not(:disabled):not(.disabled):active {
+  border-color: var(--gw-text);
+  background: var(--gw-bg);
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .btn-secondary,
+html[data-theme="gwern"] .btn-outline-danger,
+html[data-theme="gwern"] .btn-outline-secondary {
+  border: 1px dotted var(--gw-text);
+  background: var(--gw-bg);
+  color: var(--gw-link);
+}
+
+html[data-theme="gwern"] .btn-secondary:hover,
+html[data-theme="gwern"] .btn-secondary:focus,
+html[data-theme="gwern"] .btn-outline-danger:hover,
+html[data-theme="gwern"] .btn-outline-danger:focus,
+html[data-theme="gwern"] .btn-outline-secondary:hover {
+  border: 1px solid var(--gw-text);
+  background: var(--gw-hover-bg);
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .btn:disabled,
+html[data-theme="gwern"] .btn.disabled {
+  opacity: 45%;
+}
+
+html[data-theme="gwern"] .form-control,
+html[data-theme="gwern"] .custom-select {
+  border: 1px solid var(--gw-box-border);
+  border-radius: 0;
+  background-color: var(--gw-bg);
+  color: var(--gw-text);
+  font-family: var(--gw-serif);
+}
+
+html[data-theme="gwern"] .form-control:focus,
+html[data-theme="gwern"] .custom-select:focus {
+  border-color: var(--gw-text);
+  background-color: var(--gw-bg);
+  box-shadow: none;
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .form-control::placeholder {
+  color: var(--gw-link-hover);
+  font-style: italic;
+}
+
+html[data-theme="gwern"] .custom-control-label::before {
+  border-color: var(--gw-rule);
+  background: var(--gw-bg);
+}
+
+html[data-theme="gwern"] .custom-switch .custom-control-label::after {
+  background-color: var(--gw-rule);
+}
+
+html[data-theme="gwern"] .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: var(--gw-text);
+  background-color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background-color: var(--gw-bg);
+}
+
+html[data-theme="gwern"] .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: none;
+  outline: 1px dotted var(--gw-text);
+  outline-offset: 2px;
+}
+
+html[data-theme="gwern"] .invalid-feedback {
+  color: var(--gw-muted);
+  font-style: italic;
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="gwern"] .schedule-num {
+  font-style: italic;
+}
+
+html[data-theme="gwern"] .schedule-select-button {
+  color: var(--gw-link-hover);
+}
+
+html[data-theme="gwern"] .schedule-select-button:hover {
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .calendar-event {
+  border: 1px solid var(--gw-rule) !important;
+  border-left: 4px solid !important;
+  font-family: var(--gw-serif);
+  font-variant-numeric: lining-nums;
+}
+
+html[data-theme="gwern"] .calendar-event .event-text {
+  font-weight: 400;
+  font-size: 66%;
+}
+
+html[data-theme="gwern"] .crn-list,
+html[data-theme="gwern"] .credits {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+html[data-theme="gwern"] .credits {
+  font-style: italic;
+}
+
+html[data-theme="gwern"] .b-overlay .bg-light {
+  background: var(--gw-bg) !important;
+}
+
+/* ---------- Dialogs and tooltips: gwern popups ---------- */
+html[data-theme="gwern"] .modal-content {
+  border: 3px double var(--gw-popup-border);
+  border-radius: 0;
+  background: var(--gw-bg);
+  box-shadow: 1px 2px 8px 0 var(--gw-popup-shadow);
+}
+
+html[data-theme="gwern"] .modal-header {
+  padding: 0.35rem 0.75rem;
+  border-bottom: 1px solid var(--gw-popup-border);
+  border-radius: 0;
+}
+
+html[data-theme="gwern"] .modal-title {
+  color: var(--gw-link-hover);
+  font-size: 1.05rem;
+  font-variant-caps: small-caps;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+html[data-theme="gwern"] .modal-header .close {
+  color: var(--gw-popup-button);
+  font-weight: 400;
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-theme="gwern"] .modal-header .close:hover {
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] .modal-footer {
+  border-top: 1px dotted var(--gw-popup-border);
+}
+
+html[data-theme="gwern"] .modal-backdrop.show {
+  opacity: 15%;
+}
+
+html[data-theme="gwern"] .tooltip {
+  font-family: var(--gw-serif);
+}
+
+html[data-theme="gwern"] .tooltip-inner {
+  padding: 0.45em 0.7em;
+  border: 3px double var(--gw-popup-border);
+  border-radius: 0;
+  background: var(--gw-bg);
+  box-shadow: 1px 2px 8px 0 var(--gw-popup-shadow);
+  color: var(--gw-text);
+  font-size: 0.95rem;
+}
+
+html[data-theme="gwern"] .tooltip .arrow {
+  display: none;
+}
+
+/* ---------- Footer: gwern's dotted rule with the logo in the middle ---------- */
+html[data-theme="gwern"] .footer {
+  position: relative;
+  margin-top: 2.5rem;
+  padding-top: 0;
+  background: var(--gw-bg);
+}
+
+html[data-theme="gwern"] .footer::before {
+  content: "";
+  align-self: stretch;
+  height: 34px;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(to right, var(--gw-rule) 50%, transparent 50%) 0 50% / 2px 1px repeat-x;
+  mask-image:
+    linear-gradient(
+      to right,
+      #000 calc(50% - 28px),
+      transparent calc(50% - 28px) calc(50% + 28px),
+      #000 calc(50% + 28px)
+    );
+  opacity: 50%;
+}
+
+html[data-theme="gwern"] .footer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 34px;
+  background: url("../../images/gwern/logo.svg") center / contain no-repeat;
+  filter: var(--gw-invert);
+  opacity: 30%;
+  pointer-events: none;
+}
+
+html[data-theme="gwern"] .footer-links > * {
+  color: var(--gw-link-hover);
+  font-size: 1.5rem;
+}
+
+html[data-theme="gwern"] .footer-links > a:hover {
+  color: var(--gw-text);
+}
+
+html[data-theme="gwern"] #footer-logo {
+  filter: brightness(0) opacity(55%);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="gwern"]:not([data-gwern-mode="light"]) #footer-logo {
+    filter: opacity(60%);
+  }
+}
+
+html[data-theme="gwern"][data-gwern-mode="dark"] #footer-logo {
+  filter: opacity(60%);
+}
+
+html[data-theme="gwern"] .footer-updated,
+html[data-theme="gwern"] .footer-copyright {
+  color: var(--gw-muted);
+  font-size: 0.95rem;
+}
+
+html[data-theme="gwern"] .footer .footer-updated a {
+  color: var(--gw-link) !important;
+}
+
+html[data-theme="gwern"] .footer-copyright {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Focus ---------- */
+html[data-theme="gwern"] :focus-visible {
+  outline: 1px dotted var(--gw-text);
+  outline-offset: 2px;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="gwern"] .navbar.bg-light {
+    padding: 0.6rem 0.75rem 0;
+  }
+
+  html[data-theme="gwern"] .navbar .input-group {
+    flex: 1 1 auto;
+    margin: 0.5rem 0 0;
+  }
+
+  html[data-theme="gwern"] .navbar-nav .nav-link {
+    margin: 2px 0 0;
+    font-variant-caps: small-caps;
+    text-transform: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="gwern"] h1 {
+    font-size: 2rem;
+  }
+
+  html[data-theme="gwern"] .jumbotron .lead {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  html[data-theme="gwern"] .unofficial-schedule-warning {
+    margin: 1rem 0 0;
+    font-size: 0.95rem;
+  }
+}
