@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script builds a single semester (stored in $CURR_SEMESTER).  It relies on some setup
 # from build_entry.sh (namely setting up one-time dependencies like Umami and quacs-data)

@@ -45,6 +45,8 @@ Instructions for installing `wasm-pack` can be found [here](https://rustwasm.git
 
 **NOTE:** If you are using a Mac, you may need to edit `quacs-rs/Cargo.toml` to set `wasm-opt = false`.
 
+With [Nix](https://nixos.org), run `nix develop` in the repository root instead, for Node, Yarn, Rust and `wasm-pack`, and on Linux a Cypress that runs under Nix for the e2e tests.
+
 ### Compiles and hot-reloads for development
 ```
 yarn serve
@@ -67,6 +69,10 @@ yarn test:e2e
 Or run it headlessly with:
 ```
 yarn test:e2e:headless
+```
+Or do all of it in one go, the way CI does (stop `yarn serve` first, since this rebuilds the WebAssembly for the test semester). Any arguments go to `cypress run`:
+```
+yarn test:e2e:ci --spec tests/e2e/specs/themes.js
 ```
 
 ## Contributing a theme
