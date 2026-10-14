@@ -84,5 +84,15 @@ module.exports = {
         instance: "vendor",
         compilerOptions: { target: "es2017" },
       });
+
+    // Production CSS goes through cssnano 4, whose value minifier caps opacity at 1 but keeps the
+    // unit, so every percentage opacity above 1% would ship as 1%. stylelint-config-standard has
+    // opacity written as a percentage, so leave values as they are.
+    if (config.plugins.has("optimize-css")) {
+      config.plugin("optimize-css").tap(([options]) => {
+        options.cssnanoOptions.preset[1].convertValues = false;
+        return [options];
+      });
+    }
   },
 };
