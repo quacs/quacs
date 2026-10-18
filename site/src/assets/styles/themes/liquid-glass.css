@@ -302,6 +302,22 @@ html[data-theme="liquid-glass"] .lg-glass-lens {
   will-change: filter;
 }
 
+/* During touch scrolling the native backdrop follows the pond on the compositor. The tint and rim
+stay in place, and the original refractive copy returns as soon as scrolling settles. */
+html[data-theme="liquid-glass"] .lg-pane.lg-pane-scrolling {
+  backdrop-filter: var(--lg-frost-light);
+}
+
+html[data-theme="liquid-glass"] .lg-pane-scrolling.lg-pane-frost {
+  backdrop-filter: var(--lg-frost);
+}
+
+html[data-theme="liquid-glass"] .lg-pane-scrolling .lg-glass-lens {
+  visibility: hidden;
+}
+
+/* End touch scrolling */
+
 html[data-theme="liquid-glass"] .lg-glass-copy {
   position: absolute;
   top: 0;

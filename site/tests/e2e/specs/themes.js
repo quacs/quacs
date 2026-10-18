@@ -238,6 +238,45 @@ describe("Test color themes", () => {
     cy.get(".lg-btn, .lg-glass").should("not.exist");
   });
 
+  it("Rests touch-screen glass during a swipe and restores the original lens after", () => {
+    cy.viewport(390, 844);
+    cy.visit("/", {
+      onBeforeLoad(win) {
+        const matchMedia = win.matchMedia.bind(win);
+        cy.stub(win, "matchMedia").callsFake((query) => {
+          const media = matchMedia(query);
+          if (query === "(hover: none) and (pointer: coarse)") {
+            Object.defineProperty(media, "matches", { value: true });
+          }
+          return media;
+        });
+        win.localStorage.setItem(
+          "inter-semester-storage",
+          JSON.stringify({ settings: { colorTheme: "liquid-glass" } })
+        );
+      },
+    });
+    cy.get(".department-cards > .card .lg-glass-lens")
+      .first()
+      .as("phoneLens")
+      .should(($lens) => expect($lens[0].style.filter).to.contain("url("));
+    // Hold the scroll-idle timer so this assertion cannot race a slow test runner.
+    cy.clock(0, ["setTimeout", "clearTimeout"]);
+    cy.scrollTo(0, 200);
+    cy.get("@phoneLens").should("have.css", "will-change", "auto");
+    cy.get("@phoneLens").should("have.css", "visibility", "hidden");
+    cy.get("@phoneLens").should(($lens) =>
+      expect($lens[0].style.filter).to.equal("")
+    );
+    cy.tick(140);
+    cy.get("@phoneLens").should(($lens) =>
+      expect($lens[0].style.filter).to.contain("url(")
+    );
+    cy.get("@phoneLens").should("have.css", "will-change", "filter");
+    cy.get("@phoneLens").should("have.css", "visibility", "visible");
+    cy.clock().invoke("restore");
+  });
+
   it("Stands your courses on the Skeuomorphism theme's bookshelf", () => {
     selectTheme("Skeuomorphism");
     // With nothing chosen, the shelf holds the QuACS handbook

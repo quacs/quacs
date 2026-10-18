@@ -5,6 +5,7 @@ import {
   GlassOptics,
   LIMITED,
   own,
+  touchOnly,
 } from "./engine";
 
 // How a pane gets its glass:
@@ -124,6 +125,7 @@ export class Panes {
   private resize: ResizeObserver | null;
   private alignFrame = 0;
   private scrolling = false;
+  private readonly pauseOnScroll = LIMITED || touchOnly.matches;
   private scrollIdle = 0;
   private destroyed = false;
   // The Control Centre's refraction slider scales the panes' bend
@@ -321,7 +323,8 @@ export class Panes {
       "lg-pane-backdrop",
       "lg-pane-frost",
       "lg-pane-frosted",
-      "lg-pane-rim"
+      "lg-pane-rim",
+      "lg-pane-scrolling"
     );
     pane.layer = pane.lens = pane.copy = null;
     pane.glass = null;
@@ -355,13 +358,21 @@ export class Panes {
   }
 
   // A lens rests (the pane shows its pond without bending it) while the pane changes size, and in
-  // Safari and Firefox while the page scrolls. The pane's own rim stands in for it meanwhile.
+  // Safari, Firefox and touch devices while the page scrolls. The pane's own rim stands in for it
+  // meanwhile; the identical optical filter returns after the swipe settles.
   private refreshLens(pane: Pane): void {
     const lens = pane.lens;
     if (!lens) {
       return;
     }
-    const resting = pane.resizing || (LIMITED && this.scrolling);
+    const resting = pane.resizing || (this.pauseOnScroll && this.scrolling);
+    // Do not retain a filter compositing surface while the lens is resting, especially at a
+    // phone's 3x pixel density. The stylesheet's original hint returns with the lens.
+    lens.style.willChange = resting ? "auto" : "";
+    pane.el.classList.toggle(
+      "lg-pane-scrolling",
+      touchOnly.matches && this.scrolling
+    );
     pane.glass?.update({
       hidden: resting,
       width: pane.width,
@@ -372,7 +383,7 @@ export class Panes {
 
   private onScroll = (): void => {
     this.queueAlign();
-    if (!LIMITED || this.destroyed) {
+    if (!this.pauseOnScroll || this.destroyed) {
       return;
     }
     if (!this.scrolling) {
@@ -382,6 +393,7 @@ export class Panes {
     clearTimeout(this.scrollIdle);
     this.scrollIdle = window.setTimeout(() => {
       this.scrolling = false;
+      this.queueAlign();
       this.visible.forEach((pane) => this.refreshLens(pane));
     }, SCROLL_IDLE_MS);
   };
@@ -427,6 +439,11 @@ export class Panes {
   // scrolls. All reads happen before any writes.
   private align = (): void => {
     this.alignFrame = 0;
+    // Touch scrolling uses the browser's native frosted backdrop. Its compositor keeps the
+    // pond aligned, so we need no per-frame layout reads or viewport-sized copy transforms.
+    if (touchOnly.matches && this.scrolling) {
+      return;
+    }
     const width = document.documentElement.clientWidth;
     const height = document.documentElement.clientHeight;
     const panes = [...this.visible];
