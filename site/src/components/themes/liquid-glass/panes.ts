@@ -47,7 +47,9 @@ const PANEL: GlassOptics = {
   refraction: PANE_REFRACTION,
   bezel: 0.3,
   curvature: 4,
-  chroma: 0.1,
+  // Full-size text panes keep the same bend and rim with one displacement pass. The tiny colour
+  // fringe otherwise needs three full-pane passes whenever content above the glass animates.
+  chroma: 0,
   blur: 0,
   specular: 0.5,
   specularWidth: 2,

@@ -1856,32 +1856,3 @@ html[data-theme="liquid-glass"] .lg-cal-lens-shadow {
     color: var(--lg-label);
   }
 }
-
-/* Chromium's fixed SVG backdrops rest while pointer highlights animate, then return unchanged. */
-html[data-theme="liquid-glass"].lg-pointer-moving .navbar .lg-glass {
-  backdrop-filter: var(--lg-frost-light) !important;
-}
-
-/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class name */
-html[data-theme="liquid-glass"].lg-pointer-moving .lg-quacs-dock .lg-surface__glass {
-  backdrop-filter: blur(2px) !important;
-}
-/* stylelint-enable selector-class-pattern */
-
-/* The pane under a moving pointer uses the same native frosting as a touch swipe. */
-html[data-theme="liquid-glass"] .lg-pane.lg-pane-pointer-moving {
-  backdrop-filter: var(--lg-frost-light);
-}
-
-html[data-theme="liquid-glass"] .lg-pane-pointer-moving.lg-pane-frost {
-  backdrop-filter: var(--lg-frost);
-}
-
-html[data-theme="liquid-glass"] .lg-pane-pointer-moving .lg-glass-lens {
-  visibility: hidden;
-  will-change: auto;
-}
-
-html[data-theme="liquid-glass"] .lg-pane.lg-pane-pointer-moving::before {
-  display: block;
-}

@@ -277,7 +277,21 @@ describe("Test color themes", () => {
     cy.clock().invoke("restore");
   });
 
-  it("Tracks the latest mouse position with a single Liquid Glass light", () => {
+  it("Tracks the latest mouse position without changing Liquid Glass optics", () => {
+    let optics;
+    const readOptics = (pane) => {
+      const win = pane.ownerDocument.defaultView;
+      return [
+        pane,
+        ...pane.querySelectorAll(".lg-glass-lens"),
+        ...pane.ownerDocument.querySelectorAll(
+          ".navbar .lg-glass, .lg-quacs-dock .lg-surface__glass"
+        ),
+      ].map((el) => {
+        const style = win.getComputedStyle(el);
+        return [style.filter, style.backdropFilter, style.visibility];
+      });
+    };
     selectTheme("Liquid Glass");
     cy.get(".department-cards > .card.lg-pane")
       .first()
@@ -285,6 +299,7 @@ describe("Test color themes", () => {
         const pane = $pane[0];
         const win = pane.ownerDocument.defaultView;
         const box = pane.getBoundingClientRect();
+        optics = readOptics(pane);
         // Two inputs in one frame must render the latest position rather than lagging a frame.
         for (const [x, y] of [
           [20, 30],
@@ -309,8 +324,10 @@ describe("Test color themes", () => {
       expect(transform.m42).to.be.closeTo(-100, 0.1);
     });
     cy.get(".lg-pointer-light").should("have.length", 1);
-    // Full pane optics return after the pointer settles.
-    cy.get(".lg-pane-pointer-moving").should("not.exist");
+    // Mouse movement must never switch from refraction to a different blur effect.
+    cy.get(".department-cards > .card.lg-pane")
+      .first()
+      .should(($pane) => expect(readOptics($pane[0])).to.deep.equal(optics));
     selectTheme("Light");
     cy.get(".lg-pointer-light, .lg-pointer-glow").should("not.exist");
     cy.get(".lg-pane-pointer-moving").should("not.exist");

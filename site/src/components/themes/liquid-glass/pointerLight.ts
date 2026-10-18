@@ -1,4 +1,4 @@
-import { browserEngine, element, own } from "./engine";
+import { element, own } from "./engine";
 
 // One prepainted light moves on its own compositing layer. Updating inherited CSS variables on
 // a pane instead invalidates its entire subtree, including the expensive refracted background.
@@ -8,7 +8,6 @@ export class PointerLight {
   );
   private glow = element("span", "lg-pointer-glow");
   private host: HTMLElement | null = null;
-  private movingPane: HTMLElement | null = null;
   private rect: DOMRect | null = null;
   private point: {
     x: number;
@@ -16,7 +15,6 @@ export class PointerLight {
     target: EventTarget | null;
   } | null = null;
   private frame = 0;
-  private settle = 0;
   private resize = new ResizeObserver(() => {
     this.rect = null;
   });
@@ -44,8 +42,6 @@ export class PointerLight {
 
   destroy(): void {
     this.hide();
-    clearTimeout(this.settle);
-    this.rest();
     this.resize.disconnect();
     document.removeEventListener("pointermove", this.onMove);
     document.documentElement.removeEventListener("pointerleave", this.hide);
@@ -90,27 +86,6 @@ export class PointerLight {
       point.y - rect.top - 220
     }px, 0)`;
     this.light.style.opacity = "1";
-    if (this.movingPane !== pane) {
-      this.movingPane?.classList.remove("lg-pane-pointer-moving");
-      this.movingPane = pane.classList.contains("lg-pane-copy") ? pane : null;
-      this.movingPane?.classList.add("lg-pane-pointer-moving");
-    }
-    if (browserEngine === "blink") {
-      // Chromium re-captures fixed SVG backdrops when the content below them animates. Native
-      // frosting keeps the bar/Dock smooth during pointer motion; full optics return at rest.
-      if (!this.settle) {
-        document.documentElement.classList.add("lg-pointer-moving");
-      }
-    }
-    clearTimeout(this.settle);
-    this.settle = window.setTimeout(this.rest, 160);
-  };
-
-  private rest = (): void => {
-    this.settle = 0;
-    document.documentElement.classList.remove("lg-pointer-moving");
-    this.movingPane?.classList.remove("lg-pane-pointer-moving");
-    this.movingPane = null;
   };
 
   private hide = (): void => {
