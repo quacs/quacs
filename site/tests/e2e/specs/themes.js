@@ -289,7 +289,13 @@ describe("Test color themes", () => {
         ),
       ].map((el) => {
         const style = win.getComputedStyle(el);
-        return [style.filter, style.backdropFilter, style.visibility];
+        // The engine reissues filter IDs after map decode without changing the optics.
+        const effect = (value) => value.replace(/-v\d+/g, "");
+        return [
+          effect(style.filter),
+          effect(style.backdropFilter),
+          style.visibility,
+        ];
       });
     };
     selectTheme("Liquid Glass");
