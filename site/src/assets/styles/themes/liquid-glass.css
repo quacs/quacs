@@ -247,28 +247,33 @@ html[data-theme="liquid-glass"] .btn::before {
   pointer-events: none;
 }
 
-/* The pointer light: LiquidGlassDecor.vue sets --lg-mx, --lg-my and --lg-lit on the pane under the pointer */
-html[data-theme="liquid-glass"] .card::after,
-html[data-theme="liquid-glass"] .jumbotron::after,
-html[data-theme="liquid-glass"] .modal-content::after,
-html[data-theme="liquid-glass"] .navbar.bg-light::after,
-html[data-theme="liquid-glass"] .calendar::after,
-html[data-theme="liquid-glass"] .footer::after,
-html[data-theme="liquid-glass"] .btn::after {
-  content: "";
+/* The pointer light moves a fixed gradient texture instead of repainting the whole glass pane. */
+html[data-theme="liquid-glass"] .lg-pointer-light {
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden;
   border-radius: inherit;
+  opacity: 0%;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  contain: paint;
+}
+
+html[data-theme="liquid-glass"] .lg-pointer-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 440px;
+  height: 440px;
   background:
     radial-gradient(
-      220px circle at var(--lg-mx, 50%) var(--lg-my, 50%),
+      220px circle at 50% 50%,
       rgb(255 255 255 / 34%),
       rgb(255 255 255 / 0%) 70%
     );
-  opacity: var(--lg-lit, 0%);
-  transition: opacity 0.35s ease;
   pointer-events: none;
+  will-change: transform;
 }
 
 /* ---------- Live glass, from LiquidGlassDecor.vue ---------- */
@@ -753,6 +758,7 @@ html[data-theme="liquid-glass"] .department-cards .card-body {
 
 html[data-theme="liquid-glass"] .department-cards .department-link {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -762,7 +768,20 @@ html[data-theme="liquid-glass"] .department-cards .department-link {
   font-size: 1rem !important;
   font-weight: 500;
   line-height: 1.3;
-  transition: background-color 0.2s ease, transform 0.35s var(--lg-spring);
+  transition: transform 0.12s var(--lg-spring);
+}
+
+html[data-theme="liquid-glass"] .department-cards .department-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgb(255 255 255 / 55%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 85%), 0 2px 8px rgb(0 0 0 / 8%);
+  opacity: 0%;
+  transition: opacity 0.08s ease;
+  pointer-events: none;
 }
 
 html[data-theme="liquid-glass"] .department-cards .department-link::after {
@@ -774,10 +793,9 @@ html[data-theme="liquid-glass"] .department-cards .department-link::after {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M1.5 1.5 6.5 7l-5 5.5' fill='none' stroke='%233c3c43' stroke-opacity='.4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
-html[data-theme="liquid-glass"] .department-cards .department-link:hover,
-html[data-theme="liquid-glass"] .department-cards .department-link:focus-visible {
-  background: rgb(255 255 255 / 55%);
-  box-shadow: inset 0 1px 1px rgb(255 255 255 / 85%), 0 2px 8px rgb(0 0 0 / 8%);
+html[data-theme="liquid-glass"] .department-cards .department-link:hover::before,
+html[data-theme="liquid-glass"] .department-cards .department-link:focus-visible::before {
+  opacity: 100%;
 }
 
 html[data-theme="liquid-glass"] .department-code {
@@ -1838,3 +1856,14 @@ html[data-theme="liquid-glass"] .lg-cal-lens-shadow {
     color: var(--lg-label);
   }
 }
+
+/* Chromium's fixed SVG backdrops rest while pointer highlights animate, then return unchanged. */
+html[data-theme="liquid-glass"].lg-pointer-moving .navbar .lg-glass {
+  backdrop-filter: var(--lg-frost-light) !important;
+}
+
+/* stylelint-disable selector-class-pattern -- liquidglass.dev's own class name */
+html[data-theme="liquid-glass"].lg-pointer-moving .lg-quacs-dock .lg-surface__glass {
+  backdrop-filter: blur(2px) !important;
+}
+/* stylelint-enable selector-class-pattern */

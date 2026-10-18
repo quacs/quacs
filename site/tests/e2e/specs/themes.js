@@ -277,6 +277,43 @@ describe("Test color themes", () => {
     cy.clock().invoke("restore");
   });
 
+  it("Tracks the latest mouse position with a single Liquid Glass light", () => {
+    selectTheme("Liquid Glass");
+    cy.get(".department-cards > .card.lg-pane")
+      .first()
+      .then(($pane) => {
+        const pane = $pane[0];
+        const win = pane.ownerDocument.defaultView;
+        const box = pane.getBoundingClientRect();
+        // Two inputs in one frame must render the latest position rather than lagging a frame.
+        for (const [x, y] of [
+          [20, 30],
+          [100, 120],
+        ]) {
+          pane.dispatchEvent(
+            new win.PointerEvent("pointermove", {
+              bubbles: true,
+              pointerType: "mouse",
+              clientX: box.left + x,
+              clientY: box.top + y,
+            })
+          );
+        }
+      });
+    cy.get(".lg-pointer-glow").should(($glow) => {
+      const win = $glow[0].ownerDocument.defaultView;
+      const transform = new win.DOMMatrixReadOnly(
+        win.getComputedStyle($glow[0]).transform
+      );
+      expect(transform.m41).to.be.closeTo(-120, 0.1);
+      expect(transform.m42).to.be.closeTo(-100, 0.1);
+    });
+    cy.get(".lg-pointer-light").should("have.length", 1);
+    selectTheme("Light");
+    cy.get(".lg-pointer-light, .lg-pointer-glow").should("not.exist");
+    cy.get("html").should("not.have.class", "lg-pointer-moving");
+  });
+
   it("Stands your courses on the Skeuomorphism theme's bookshelf", () => {
     selectTheme("Skeuomorphism");
     // With nothing chosen, the shelf holds the QuACS handbook
