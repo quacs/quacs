@@ -309,8 +309,11 @@ describe("Test color themes", () => {
       expect(transform.m42).to.be.closeTo(-100, 0.1);
     });
     cy.get(".lg-pointer-light").should("have.length", 1);
+    // Full pane optics return after the pointer settles.
+    cy.get(".lg-pane-pointer-moving").should("not.exist");
     selectTheme("Light");
     cy.get(".lg-pointer-light, .lg-pointer-glow").should("not.exist");
+    cy.get(".lg-pane-pointer-moving").should("not.exist");
     cy.get("html").should("not.have.class", "lg-pointer-moving");
   });
 
