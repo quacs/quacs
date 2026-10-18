@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { OWN } from "./liquid-glass/engine";
+import { needsScan } from "./liquid-glass/mutations";
 import { Panes, PANE_REFRACTION } from "./liquid-glass/panes";
 import { MenuBar } from "./liquid-glass/menubar";
 import { Menus } from "./liquid-glass/menus";
@@ -106,11 +106,7 @@ export default class LiquidGlassDecor extends Vue {
     this.dock.setPath(this.$route.path);
     // Parts find their elements as Vue adds them; the theme's own additions don't count
     this.mutation = new MutationObserver((records) => {
-      if (
-        records.some(
-          (record) => !(record.target as Element).closest?.(`[${OWN}]`)
-        )
-      ) {
+      if (records.some(needsScan)) {
         this.queueScan();
       }
     });

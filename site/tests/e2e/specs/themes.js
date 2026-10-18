@@ -200,6 +200,44 @@ describe("Test color themes", () => {
       .and("contain", "url(");
   });
 
+  it("Prepares Liquid Glass buttons near the viewport and releases them offscreen", () => {
+    selectTheme("Liquid Glass");
+    cy.document().then((doc) => {
+      const fixture = doc.createElement("div");
+      fixture.id = "glass-button-fixture";
+      fixture.style.cssText = "margin-top: 2000px; padding: 20px;";
+      const button = doc.createElement("button");
+      button.className = "btn btn-primary";
+      button.textContent = "Test glass button";
+      button.addEventListener("click", () => {
+        button.dataset.clicked = "true";
+      });
+      fixture.append(button);
+      doc.body.append(fixture);
+    });
+    cy.get("#glass-button-fixture .btn").should("not.have.class", "lg-btn");
+    cy.get("#glass-button-fixture").scrollIntoView();
+    cy.get("#glass-button-fixture .btn")
+      .should("have.class", "lg-btn")
+      .find(".lg-surface__glass")
+      .should("have.attr", "style")
+      .and("contain", "url(");
+    cy.get("#glass-button-fixture .btn")
+      .click()
+      .should("have.attr", "data-clicked", "true");
+    cy.scrollTo("top");
+    cy.get("#glass-button-fixture .lg-surface").should("not.exist");
+    // Coming back creates the same interactive glass again.
+    cy.get("#glass-button-fixture").scrollIntoView();
+    cy.get("#glass-button-fixture .btn").should("have.class", "lg-btn");
+    cy.document().then((doc) =>
+      doc.getElementById("glass-button-fixture").remove()
+    );
+    cy.scrollTo("top");
+    selectTheme("Light");
+    cy.get(".lg-btn, .lg-glass").should("not.exist");
+  });
+
   it("Stands your courses on the Skeuomorphism theme's bookshelf", () => {
     selectTheme("Skeuomorphism");
     // With nothing chosen, the shelf holds the QuACS handbook

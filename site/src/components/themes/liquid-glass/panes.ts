@@ -4,6 +4,7 @@ import {
   Glass,
   GlassOptics,
   LIMITED,
+  own,
 } from "./engine";
 
 // How a pane gets its glass:
@@ -29,7 +30,8 @@ interface Pane {
   copy: HTMLElement | null;
   glass: Glass | null;
   alignKey: string;
-  size: string;
+  width: number;
+  height: number;
   settle: number;
   resizing: boolean;
 }
@@ -179,7 +181,8 @@ export class Panes {
           copy: null,
           glass: null,
           alignKey: "",
-          size: "",
+          width: 0,
+          height: 0,
           settle: 0,
           resizing: false,
         };
@@ -216,13 +219,30 @@ export class Panes {
   }
 
   private onIntersect(entries: IntersectionObserverEntry[]): void {
+    // Measure every entering pane before inserting any layers. Alternating insertion and
+    // offsetWidth reads forces the browser to lay out the page once for each pane.
+    const boxes = new Map<
+      Pane,
+      { width: number; height: number; radius: number }
+    >();
+    for (const entry of entries) {
+      const pane = this.panes.get(entry.target as HTMLElement);
+      if (pane && entry.isIntersecting && !pane.layer) {
+        boxes.set(pane, {
+          width: pane.el.clientWidth,
+          height: pane.el.clientHeight,
+          radius:
+            parseFloat(getComputedStyle(pane.el).borderTopLeftRadius) || 0,
+        });
+      }
+    }
     for (const entry of entries) {
       const pane = this.panes.get(entry.target as HTMLElement);
       if (!pane) {
         continue;
       }
       if (entry.isIntersecting) {
-        this.attach(pane);
+        this.attach(pane, boxes.get(pane));
       } else {
         this.detach(pane);
       }
@@ -230,17 +250,22 @@ export class Panes {
     this.queueAlign();
   }
 
-  private attach(pane: Pane): void {
+  private attach(
+    pane: Pane,
+    box?: { width: number; height: number; radius: number }
+  ): void {
     if (pane.layer || this.destroyed) {
       return;
     }
     const { el, kind } = pane;
-    const layer = document.createElement("span");
+    const layer = own(document.createElement("span"));
     layer.className = "lg-glass";
     layer.setAttribute("aria-hidden", "true");
     const tint = document.createElement("span");
     tint.className = "lg-glass-tint";
-    const radius = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+    const radius =
+      box?.radius ??
+      (parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0);
     if (kind.mode === "copy") {
       const lens = document.createElement("span");
       lens.className = "lg-glass-lens";
@@ -251,7 +276,8 @@ export class Panes {
       el.prepend(layer);
       pane.lens = lens;
       pane.copy = copy;
-      pane.size = `${lens.offsetWidth}x${lens.offsetHeight}`;
+      pane.width = box?.width ?? el.clientWidth;
+      pane.height = box?.height ?? el.clientHeight;
       this.resize?.observe(el);
       this.visible.add(pane);
       this.fitLens(pane, radius);
@@ -310,14 +336,13 @@ export class Panes {
     if (!lens) {
       return;
     }
-    const afford =
-      !LIMITED || lens.offsetWidth * lens.offsetHeight <= LIMITED_AREA;
+    const afford = !LIMITED || pane.width * pane.height <= LIMITED_AREA;
     if (afford && !pane.glass) {
       pane.glass = createGlass(lens, {
         ...pane.kind.optics,
         refraction: this.refractionOf(pane),
-        width: lens.offsetWidth,
-        height: lens.offsetHeight,
+        width: pane.width,
+        height: pane.height,
         radius:
           radius ??
           (parseFloat(getComputedStyle(pane.el).borderTopLeftRadius) || 0),
@@ -339,8 +364,8 @@ export class Panes {
     const resting = pane.resizing || (LIMITED && this.scrolling);
     pane.glass?.update({
       hidden: resting,
-      width: lens.offsetWidth,
-      height: lens.offsetHeight,
+      width: pane.width,
+      height: pane.height,
     });
     pane.el.classList.toggle("lg-pane-rim", resting || !pane.glass);
   }
@@ -364,17 +389,22 @@ export class Panes {
   // A pane that changes size (a course card opening) drops its lens until it holds still, then
   // gets a lens drawn for its new size
   private onResize(entries: ResizeObserverEntry[]): void {
-    for (const entry of entries) {
+    const sizes = entries.map((entry) => ({
+      entry,
+      width: (entry.target as HTMLElement).clientWidth,
+      height: (entry.target as HTMLElement).clientHeight,
+    }));
+    for (const { entry, width, height } of sizes) {
       const pane = this.panes.get(entry.target as HTMLElement);
       const lens = pane?.lens;
       if (!pane || !lens) {
         continue;
       }
-      const size = `${lens.offsetWidth}x${lens.offsetHeight}`;
-      if (size === pane.size) {
+      if (width === pane.width && height === pane.height) {
         continue;
       }
-      pane.size = size;
+      pane.width = width;
+      pane.height = height;
       pane.resizing = true;
       this.refreshLens(pane);
       clearTimeout(pane.settle);
