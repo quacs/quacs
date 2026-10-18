@@ -5,7 +5,6 @@ import {
   GlassOptics,
   LIMITED,
   own,
-  touchOnly,
 } from "./engine";
 
 // How a pane gets its glass:
@@ -28,9 +27,7 @@ interface Pane {
   kind: PaneKind;
   layer: HTMLElement | null;
   lens: HTMLElement | null;
-  copy: HTMLElement | null;
   glass: Glass | null;
-  alignKey: string;
   width: number;
   height: number;
   settle: number;
@@ -39,9 +36,8 @@ interface Pane {
 
 // Optics follow liquidglass.dev's starting values: panels bend the pond in a narrow rim and stay flat
 // in the middle so text reads; the menu bar is a glass rod that lenses across its whole height.
-// Every pane on the pond is redrawn while the page scrolls, so they skip the engine's costly passes:
-// panes full of text bend a pond that was blurred ahead of time instead of blurring it live, and only
-// the few showpiece panes get the colour fringe.
+// Native background anchoring keeps the pond fixed while panes scroll. Dense panes use a pond
+// blurred ahead of time, and the few small showpiece controls get the colour fringe.
 export const PANE_REFRACTION = 28;
 const PANEL: GlassOptics = {
   refraction: PANE_REFRACTION,
@@ -114,21 +110,12 @@ const NOT_ON_POND = `${COPY_SELECTOR}, .modal, .navbar, .dropdown-menu`;
 const FALLBACK = "blur(16px) saturate(1.8)";
 // Course cards grow and shrink as they open; their lens is redrawn once they hold still
 const SETTLE_MS = 160;
-// In Safari and Firefox, panes larger than this (in CSS px²) keep the frosted pond without a lens,
-// and lenses rest while the page scrolls
-const LIMITED_AREA = 420000;
-const SCROLL_IDLE_MS = 140;
-
 // The panes of glass: cards, dialogs, menus and the menu bar
 export class Panes {
   private panes = new Map<HTMLElement, Pane>();
   private visible = new Set<Pane>();
   private intersection: IntersectionObserver | null;
   private resize: ResizeObserver | null;
-  private alignFrame = 0;
-  private scrolling = false;
-  private readonly pauseOnScroll = LIMITED || touchOnly.matches;
-  private scrollIdle = 0;
   private destroyed = false;
   // The Control Centre's refraction slider scales the panes' bend
   private refractionScale = 1;
@@ -139,11 +126,6 @@ export class Panes {
       { rootMargin: "60px 0px" }
     );
     this.resize = new ResizeObserver((entries) => this.onResize(entries));
-    window.addEventListener("scroll", this.onScroll, {
-      capture: true,
-      passive: true,
-    });
-    window.addEventListener("resize", this.queueAlign);
   }
 
   destroy(): void {
@@ -152,10 +134,6 @@ export class Panes {
     this.intersection?.disconnect();
     this.resize?.disconnect();
     this.intersection = this.resize = null;
-    window.removeEventListener("scroll", this.onScroll, { capture: true });
-    window.removeEventListener("resize", this.queueAlign);
-    clearTimeout(this.scrollIdle);
-    cancelAnimationFrame(this.alignFrame);
     this.panes.forEach((pane) => this.detach(pane));
     this.panes.clear();
   }
@@ -182,9 +160,7 @@ export class Panes {
           kind,
           layer: null,
           lens: null,
-          copy: null,
           glass: null,
-          alignKey: "",
           width: 0,
           height: 0,
           settle: 0,
@@ -251,7 +227,6 @@ export class Panes {
         this.detach(pane);
       }
     }
-    this.queueAlign();
   }
 
   private attach(
@@ -279,7 +254,6 @@ export class Panes {
       layer.append(lens, tint);
       el.prepend(layer);
       pane.lens = lens;
-      pane.copy = copy;
       pane.width = box?.width ?? el.clientWidth;
       pane.height = box?.height ?? el.clientHeight;
       this.resize?.observe(el);
@@ -326,11 +300,10 @@ export class Panes {
       "lg-pane-frost",
       "lg-pane-frosted",
       "lg-pane-rim",
-      "lg-pane-scrolling"
+      "lg-pane-flat"
     );
-    pane.layer = pane.lens = pane.copy = null;
+    pane.layer = pane.lens = null;
     pane.glass = null;
-    pane.alignKey = "";
     pane.resizing = false;
     this.visible.delete(pane);
   }
@@ -341,7 +314,9 @@ export class Panes {
     if (!lens) {
       return;
     }
-    const afford = !LIMITED || pane.width * pane.height <= LIMITED_AREA;
+    // WebKit/Gecko run SVG displacement on the CPU. Pick a steady pond + CSS rim once rather
+    // than dropping/restoring a costly lens (and changing the visible image) on every swipe.
+    const afford = !LIMITED;
     if (afford && !pane.glass) {
       pane.glass = createGlass(lens, {
         ...pane.kind.optics,
@@ -359,46 +334,29 @@ export class Panes {
     }
   }
 
-  // A lens rests (the pane shows its pond without bending it) while the pane changes size, and in
-  // Safari, Firefox and touch devices while the page scrolls. The pane's own rim stands in for it
-  // meanwhile; the identical optical filter returns after the swipe settles.
+  // Resizing can regenerate a lens; scrolling never changes its filter or background treatment.
   private refreshLens(pane: Pane): void {
     const lens = pane.lens;
     if (!lens) {
       return;
     }
-    const resting = pane.resizing || (this.pauseOnScroll && this.scrolling);
-    // Do not retain a filter compositing surface while the lens is resting, especially at a
-    // phone's 3x pixel density. The stylesheet's original hint returns with the lens.
-    lens.style.willChange = resting ? "auto" : "";
-    pane.el.classList.toggle(
-      "lg-pane-scrolling",
-      touchOnly.matches && this.scrolling
-    );
+    const flat = !pane.glass;
+    lens.style.willChange = pane.resizing || flat ? "auto" : "";
     pane.glass?.update({
-      hidden: resting,
+      hidden: pane.resizing,
       width: pane.width,
       height: pane.height,
     });
-    pane.el.classList.toggle("lg-pane-rim", resting || !pane.glass);
+    pane.el.classList.toggle("lg-pane-rim", pane.resizing || flat);
+    pane.el.classList.toggle("lg-pane-flat", flat);
+    // A clip path clips the flat pane's fixed child without turning it into a local containing
+    // block. The image stays anchored to the viewport, including on mobile Safari.
+    if (pane.layer && flat) {
+      const radius =
+        parseFloat(getComputedStyle(pane.el).borderTopLeftRadius) || 0;
+      pane.layer.style.clipPath = `inset(0 round ${radius}px)`;
+    }
   }
-
-  private onScroll = (): void => {
-    this.queueAlign();
-    if (!this.pauseOnScroll || this.destroyed) {
-      return;
-    }
-    if (!this.scrolling) {
-      this.scrolling = true;
-      this.visible.forEach((pane) => this.refreshLens(pane));
-    }
-    clearTimeout(this.scrollIdle);
-    this.scrollIdle = window.setTimeout(() => {
-      this.scrolling = false;
-      this.queueAlign();
-      this.visible.forEach((pane) => this.refreshLens(pane));
-    }, SCROLL_IDLE_MS);
-  };
 
   // A pane that changes size (a course card opening) drops its lens until it holds still, then
   // gets a lens drawn for its new size
@@ -428,41 +386,5 @@ export class Panes {
         this.refreshLens(pane);
       }, SETTLE_MS);
     }
-    this.queueAlign();
   }
-
-  private queueAlign = (): void => {
-    if (!this.alignFrame && !this.destroyed) {
-      this.alignFrame = requestAnimationFrame(this.align);
-    }
-  };
-
-  // Keeps each pane's copy of the pond lined up with the real one, which stays put while the page
-  // scrolls. All reads happen before any writes.
-  private align = (): void => {
-    this.alignFrame = 0;
-    // Touch scrolling uses the browser's native frosted backdrop. Its compositor keeps the
-    // pond aligned, so we need no per-frame layout reads or viewport-sized copy transforms.
-    if (touchOnly.matches && this.scrolling) {
-      return;
-    }
-    const width = document.documentElement.clientWidth;
-    const height = document.documentElement.clientHeight;
-    const panes = [...this.visible];
-    const rects = panes.map((pane) => pane.lens?.getBoundingClientRect());
-    panes.forEach((pane, i) => {
-      const rect = rects[i];
-      if (!rect || !pane.copy) {
-        return;
-      }
-      const key = `${width}|${height}|${rect.left}|${rect.top}`;
-      if (key === pane.alignKey) {
-        return;
-      }
-      pane.alignKey = key;
-      pane.copy.style.width = `${width}px`;
-      pane.copy.style.height = `${height}px`;
-      pane.copy.style.transform = `translate(${-rect.left}px, ${-rect.top}px)`;
-    });
-  };
 }

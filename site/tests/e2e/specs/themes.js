@@ -238,7 +238,7 @@ describe("Test color themes", () => {
     cy.get(".lg-btn, .lg-glass").should("not.exist");
   });
 
-  it("Rests touch-screen glass during a swipe and restores the original lens after", () => {
+  it("Keeps the pond and glass stable through touch scrolls and viewport changes", () => {
     cy.viewport(390, 844);
     cy.visit("/", {
       onBeforeLoad(win) {
@@ -260,21 +260,32 @@ describe("Test color themes", () => {
       .first()
       .as("phoneLens")
       .should(($lens) => expect($lens[0].style.filter).to.contain("url("));
-    // Hold the scroll-idle timer so this assertion cannot race a slow test runner.
-    cy.clock(0, ["setTimeout", "clearTimeout"]);
+    const checkPond = ($lens) => {
+      const lens = $lens[0];
+      const win = lens.ownerDocument.defaultView;
+      const copy = lens.querySelector(".lg-glass-copy");
+      const background = win.getComputedStyle(
+        lens.ownerDocument.body,
+        "::before"
+      );
+      const pond = win.getComputedStyle(copy);
+      expect(pond.backgroundImage).to.equal(background.backgroundImage);
+      expect(pond.backgroundPosition).to.equal(background.backgroundPosition);
+      expect(pond.backgroundAttachment.split(",")[0].trim()).to.equal("fixed");
+      expect(copy.style.transform).to.equal("");
+      expect(win.getComputedStyle(lens).visibility).to.equal("visible");
+      expect(lens.style.filter).to.contain("url(");
+    };
+    cy.get("@phoneLens").should(checkPond);
     cy.scrollTo(0, 200);
-    cy.get("@phoneLens").should("have.css", "will-change", "auto");
-    cy.get("@phoneLens").should("have.css", "visibility", "hidden");
-    cy.get("@phoneLens").should(($lens) =>
-      expect($lens[0].style.filter).to.equal("")
-    );
-    cy.tick(140);
-    cy.get("@phoneLens").should(($lens) =>
-      expect($lens[0].style.filter).to.contain("url(")
-    );
-    cy.get("@phoneLens").should("have.css", "will-change", "filter");
-    cy.get("@phoneLens").should("have.css", "visibility", "visible");
-    cy.clock().invoke("restore");
+    cy.get("@phoneLens").should(checkPond);
+    cy.get(".lg-pane-scrolling").should("not.exist");
+    cy.scrollTo("top");
+    cy.get("@phoneLens").should(checkPond);
+    cy.viewport(1280, 800);
+    cy.get("@phoneLens").should(checkPond);
+    cy.viewport(390, 844);
+    cy.get("@phoneLens").should(checkPond);
   });
 
   it("Tracks the latest mouse position without changing Liquid Glass optics", () => {
