@@ -8,45 +8,38 @@ export class PointerLight {
   );
   private glow = element("span", "lg-pointer-glow");
   private host: HTMLElement | null = null;
-  private rect: DOMRect | null = null;
   private point: {
     x: number;
     y: number;
     target: EventTarget | null;
   } | null = null;
   private frame = 0;
-  private resize = new ResizeObserver(() => {
-    this.rect = null;
-  });
 
   constructor() {
     this.light.append(this.glow);
     document.addEventListener("pointermove", this.onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", this.hide);
-    window.addEventListener("scroll", this.onScroll, {
+    window.addEventListener("scroll", this.hide, {
       capture: true,
       passive: true,
     });
-    window.addEventListener("resize", this.onScroll);
+    window.addEventListener("resize", this.hide);
   }
 
   scan(): void {
-    this.rect = null;
     if (this.host && !this.host.isConnected) {
       this.hide();
       this.light.remove();
       this.host = null;
-      this.resize.disconnect();
     }
   }
 
   destroy(): void {
     this.hide();
-    this.resize.disconnect();
     document.removeEventListener("pointermove", this.onMove);
     document.documentElement.removeEventListener("pointerleave", this.hide);
-    window.removeEventListener("scroll", this.onScroll, { capture: true });
-    window.removeEventListener("resize", this.onScroll);
+    window.removeEventListener("scroll", this.hide, { capture: true });
+    window.removeEventListener("resize", this.hide);
     this.light.remove();
     this.host = null;
   }
@@ -73,15 +66,13 @@ export class PointerLight {
       this.hide();
       return;
     }
+    // A sibling can move this pane without resizing it. Read fresh geometry once per frame,
+    // before writes, so the light also follows layout changes that do not produce scroll events.
+    const rect = pane.getBoundingClientRect();
     if (pane !== this.host) {
       this.host = pane;
-      this.rect = null;
-      this.resize.disconnect();
       pane.append(this.light);
-      this.resize.observe(pane);
     }
-    const rect = this.rect ?? pane.getBoundingClientRect();
-    this.rect = rect;
     this.glow.style.transform = `translate3d(${point.x - rect.left - 220}px, ${
       point.y - rect.top - 220
     }px, 0)`;
@@ -93,10 +84,5 @@ export class PointerLight {
     this.frame = 0;
     this.point = null;
     this.light.style.opacity = "0";
-  };
-
-  private onScroll = (): void => {
-    this.rect = null;
-    this.hide();
   };
 }

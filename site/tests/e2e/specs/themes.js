@@ -341,6 +341,44 @@ describe("Test color themes", () => {
       expect(transform.m42).to.be.closeTo(-100, 0.1);
     });
     cy.get(".lg-pointer-light").should("have.length", 1);
+    // A sibling's expansion can move a pane without resizing the pane itself.
+    cy.get(".department-cards > .card.lg-pane")
+      .first()
+      .then(($pane) => {
+        const pane = $pane[0];
+        const win = pane.ownerDocument.defaultView;
+        const move = () => {
+          const box = pane.getBoundingClientRect();
+          pane.dispatchEvent(
+            new win.PointerEvent("pointermove", {
+              bubbles: true,
+              pointerType: "mouse",
+              clientX: box.left + 100,
+              clientY: box.top + 120,
+            })
+          );
+        };
+        return new Cypress.Promise((resolve) => {
+          win.requestAnimationFrame(() => {
+            move();
+            win.requestAnimationFrame(() => {
+              pane.parentElement.style.paddingTop = "80px";
+              move();
+              win.requestAnimationFrame(resolve);
+            });
+          });
+        });
+      });
+    cy.get(".lg-pointer-glow").should(($glow) => {
+      const win = $glow[0].ownerDocument.defaultView;
+      const transform = new win.DOMMatrixReadOnly(
+        win.getComputedStyle($glow[0]).transform
+      );
+      expect(transform.m42).to.be.closeTo(-100, 0.1);
+    });
+    cy.get(".department-cards").then(($cards) => {
+      $cards[0].style.paddingTop = "";
+    });
     // Mouse movement must never switch from refraction to a different blur effect.
     cy.get(".department-cards > .card.lg-pane")
       .first()
