@@ -315,22 +315,29 @@ describe("Test color themes", () => {
       .then(($pane) => {
         const pane = $pane[0];
         const win = pane.ownerDocument.defaultView;
-        const box = pane.getBoundingClientRect();
-        optics = readOptics(pane);
-        // Two inputs in one frame must render the latest position rather than lagging a frame.
-        for (const [x, y] of [
-          [20, 30],
-          [100, 120],
-        ]) {
-          pane.dispatchEvent(
-            new win.PointerEvent("pointermove", {
-              bubbles: true,
-              pointerType: "mouse",
-              clientX: box.left + x,
-              clientY: box.top + y,
-            })
-          );
-        }
+        // Let initial viewport/resize notifications finish before injecting input. Then wait for
+        // the app's render frame instead of racing it with Cypress's next command.
+        return new Cypress.Promise((resolve) => {
+          win.requestAnimationFrame(() => {
+            const box = pane.getBoundingClientRect();
+            optics = readOptics(pane);
+            // Two inputs in one frame must render the latest position.
+            for (const [x, y] of [
+              [20, 30],
+              [100, 120],
+            ]) {
+              pane.dispatchEvent(
+                new win.PointerEvent("pointermove", {
+                  bubbles: true,
+                  pointerType: "mouse",
+                  clientX: box.left + x,
+                  clientY: box.top + y,
+                })
+              );
+            }
+            win.requestAnimationFrame(resolve);
+          });
+        });
       });
     cy.get(".lg-pointer-glow").should(($glow) => {
       const win = $glow[0].ownerDocument.defaultView;
