@@ -39,12 +39,38 @@ interface Button {
 // behind them where the browser can.
 export class GlassButtons {
   private buttons = new Map<HTMLElement, Button>();
+  private tracked = new Set<HTMLElement>();
+  private intersection = new IntersectionObserver(
+    (entries) => {
+      if (this.destroyed) {
+        return;
+      }
+      for (const entry of entries) {
+        const el = entry.target as HTMLElement;
+        if (!this.tracked.has(el)) {
+          continue;
+        }
+        const button = this.buttons.get(el);
+        if (entry.isIntersecting && !button) {
+          this.attach(el);
+        } else if (!entry.isIntersecting && button) {
+          this.detach(el, button);
+          this.buttons.delete(el);
+        }
+      }
+    },
+    // Prepare the original glass before a button scrolls into view. Offscreen and collapsed
+    // buttons need neither SVG filters nor the library's per-scroll Surface updates.
+    { rootMargin: "120px 0px" }
+  );
   private destroyed = false;
 
   destroy(): void {
     this.destroyed = true;
+    this.intersection.disconnect();
     this.buttons.forEach((button, el) => this.detach(el, button));
     this.buttons.clear();
+    this.tracked.clear();
   }
 
   scan(): void {
@@ -53,16 +79,22 @@ export class GlassButtons {
     }
     document.querySelectorAll<HTMLElement>(".btn").forEach((el) => {
       if (
-        !this.buttons.has(el) &&
+        !this.tracked.has(el) &&
         !el.closest(".input-group, .navbar, .lg-cc, .lg-dock-wrap")
       ) {
-        this.attach(el);
+        this.tracked.add(el);
+        this.intersection.observe(el);
       }
     });
-    this.buttons.forEach((button, el) => {
+    this.tracked.forEach((el) => {
       if (!el.isConnected) {
-        this.detach(el, button);
+        this.intersection.unobserve(el);
+        const button = this.buttons.get(el);
+        if (button) {
+          this.detach(el, button);
+        }
         this.buttons.delete(el);
+        this.tracked.delete(el);
       }
     });
   }
@@ -87,6 +119,7 @@ export class GlassButtons {
       bleed: 12,
       optics: BUTTON,
     });
+    own(surface.root);
     surface.attach();
     const press = createSpring(
       0,

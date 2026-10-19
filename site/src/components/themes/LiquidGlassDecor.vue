@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { OWN } from "./liquid-glass/engine";
+import { needsScan } from "./liquid-glass/mutations";
 import { Panes, PANE_REFRACTION } from "./liquid-glass/panes";
 import { MenuBar } from "./liquid-glass/menubar";
 import { Menus } from "./liquid-glass/menus";
@@ -27,6 +27,7 @@ import {
 } from "./liquid-glass/controls";
 import { Dock } from "./liquid-glass/dock";
 import { ControlCentre, QuacsStore } from "./liquid-glass/controlCentre";
+import { PointerLight } from "./liquid-glass/pointerLight";
 
 interface Part {
   scan?(): void;
@@ -51,22 +52,17 @@ export default class LiquidGlassDecor extends Vue {
   controlCentre?: ControlCentre;
   mutation?: MutationObserver;
   scanFrame?: number;
-  lit?: HTMLElement | null;
-  pointerFrame?: number;
   destroyed?: boolean;
 
   mounted(): void {
     if (this.place !== "overlay") {
       return;
     }
-    document.addEventListener("pointermove", this.onPointerMove, {
-      passive: true,
-    });
-    document.documentElement.addEventListener("pointerleave", this.unlight);
     const store = this.$store as unknown as QuacsStore;
     const chrome = this.$refs.chrome as HTMLElement;
     const parts: Part[] = [];
     this.parts = parts;
+    parts.push(new PointerLight());
     // With "reduce transparency" on, the glass is solid (liquid-glass.css), so nothing bends
     const solid = window.matchMedia(
       "(prefers-reduced-transparency: reduce)"
@@ -106,11 +102,7 @@ export default class LiquidGlassDecor extends Vue {
     this.dock.setPath(this.$route.path);
     // Parts find their elements as Vue adds them; the theme's own additions don't count
     this.mutation = new MutationObserver((records) => {
-      if (
-        records.some(
-          (record) => !(record.target as Element).closest?.(`[${OWN}]`)
-        )
-      ) {
+      if (records.some(needsScan)) {
         this.queueScan();
       }
     });
@@ -121,12 +113,8 @@ export default class LiquidGlassDecor extends Vue {
   beforeDestroy(): void {
     this.destroyed = true;
     cancelAnimationFrame(this.scanFrame ?? 0);
-    cancelAnimationFrame(this.pointerFrame ?? 0);
     this.mutation?.disconnect();
     this.mutation = undefined;
-    document.removeEventListener("pointermove", this.onPointerMove);
-    document.documentElement.removeEventListener("pointerleave", this.unlight);
-    this.unlight();
     for (const part of this.parts ?? []) {
       part.destroy();
     }
@@ -194,39 +182,6 @@ export default class LiquidGlassDecor extends Vue {
       field.focus();
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  // ---------- The pointer's light on the glass ----------
-
-  onPointerMove(event: PointerEvent): void {
-    if (event.pointerType !== "mouse" || this.pointerFrame) {
-      return;
-    }
-    const { clientX, clientY, target } = event;
-    this.pointerFrame = requestAnimationFrame(() => {
-      this.pointerFrame = 0;
-      const pane =
-        target instanceof Element
-          ? target.closest<HTMLElement>(".lg-pane, .lg-btn")
-          : null;
-      if (pane !== this.lit) {
-        this.unlight();
-        this.lit = pane;
-      }
-      if (pane) {
-        const box = pane.getBoundingClientRect();
-        pane.style.setProperty("--lg-mx", `${clientX - box.left}px`);
-        pane.style.setProperty("--lg-my", `${clientY - box.top}px`);
-        pane.style.setProperty("--lg-lit", "1");
-      }
-    });
-  }
-
-  unlight(): void {
-    if (this.lit) {
-      this.lit.style.removeProperty("--lg-lit");
-      this.lit = null;
-    }
   }
 }
 </script>

@@ -88,6 +88,11 @@ export const toast = components.toast;
 // breaks very large filtered areas into tiles, so the theme does less there
 export const LIMITED = browserEngine !== "blink";
 
+// Primary touch input, rather than viewport width: desktop windows keep their full live glass.
+export const touchOnly = window.matchMedia(
+  "(hover: none) and (pointer: coarse)"
+);
+
 // Sizes and moves an element the way the library does for its shadows and thumbs
 export function place(
   node: HTMLElement,

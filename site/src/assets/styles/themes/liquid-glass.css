@@ -15,6 +15,9 @@ on, the glass turns nearly opaque.
 Background: "Duck Water" (a wood duck) by Bob Richards, CC0 (stocksnap.io/photo/duck-water-MS42VO9HTG). */
 [data-theme="liquid-glass"] {
   --lg-label: #1c1c1e;
+  --lg-pond-image: url("../../images/liquid-glass/duck-pond.jpg");
+  --lg-pond-frost-image: url("../../images/liquid-glass/duck-pond-frost.jpg");
+  --lg-pond-position: 60% 45%;
   --lg-label-2: rgb(46 46 52 / 86%);
   --lg-label-3: rgb(60 60 67 / 55%);
   --lg-hairline: rgb(60 60 67 / 16%);
@@ -176,17 +179,14 @@ html[data-theme="liquid-glass"] body::before {
   inset: 0;
   z-index: -2;
   pointer-events: none;
-  background: url("../../images/liquid-glass/duck-pond.jpg") 60% 45% / cover no-repeat, #3c4a12;
+  background: var(--lg-pond-image) var(--lg-pond-position) / cover no-repeat, #3c4a12;
 }
 
 @media (max-width: 991.98px) {
-  html[data-theme="liquid-glass"] body::before,
-  html[data-theme="liquid-glass"] .lg-glass-copy {
-    background: url("../../images/liquid-glass/duck-pond-small.jpg") 66% 45% / cover no-repeat, #3c4a12;
-  }
-
-  html[data-theme="liquid-glass"] .lg-pane-frost .lg-glass-copy {
-    background-image: url("../../images/liquid-glass/duck-pond-small-frost.jpg");
+  [data-theme="liquid-glass"] {
+    --lg-pond-image: url("../../images/liquid-glass/duck-pond-small.jpg");
+    --lg-pond-frost-image: url("../../images/liquid-glass/duck-pond-small-frost.jpg");
+    --lg-pond-position: 66% 45%;
   }
 }
 
@@ -247,28 +247,33 @@ html[data-theme="liquid-glass"] .btn::before {
   pointer-events: none;
 }
 
-/* The pointer light: LiquidGlassDecor.vue sets --lg-mx, --lg-my and --lg-lit on the pane under the pointer */
-html[data-theme="liquid-glass"] .card::after,
-html[data-theme="liquid-glass"] .jumbotron::after,
-html[data-theme="liquid-glass"] .modal-content::after,
-html[data-theme="liquid-glass"] .navbar.bg-light::after,
-html[data-theme="liquid-glass"] .calendar::after,
-html[data-theme="liquid-glass"] .footer::after,
-html[data-theme="liquid-glass"] .btn::after {
-  content: "";
+/* The pointer light moves a fixed gradient texture instead of repainting the whole glass pane. */
+html[data-theme="liquid-glass"] .lg-pointer-light {
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden;
   border-radius: inherit;
+  opacity: 0%;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  contain: paint;
+}
+
+html[data-theme="liquid-glass"] .lg-pointer-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 440px;
+  height: 440px;
   background:
     radial-gradient(
-      220px circle at var(--lg-mx, 50%) var(--lg-my, 50%),
+      220px circle at 50% 50%,
       rgb(255 255 255 / 34%),
       rgb(255 255 255 / 0%) 70%
     );
-  opacity: var(--lg-lit, 0%);
-  transition: opacity 0.35s ease;
   pointer-events: none;
+  will-change: transform;
 }
 
 /* ---------- Live glass, from LiquidGlassDecor.vue ---------- */
@@ -302,16 +307,21 @@ html[data-theme="liquid-glass"] .lg-glass-lens {
   will-change: filter;
 }
 
+/* The browser anchors the pond directly; no scroll-event transforms or blur-mode swaps. */
 html[data-theme="liquid-glass"] .lg-glass-copy {
   position: absolute;
-  top: 0;
-  left: 0;
-  background: url("../../images/liquid-glass/duck-pond.jpg") 60% 45% / cover no-repeat, #3c4a12;
+  inset: 0;
+  background: var(--lg-pond-image) var(--lg-pond-position) / cover no-repeat fixed, #3c4a12;
+}
+
+/* CPU-filtered engines use a consistently clipped fixed image and the existing CSS rim. */
+html[data-theme="liquid-glass"] .lg-pane-flat .lg-glass-copy {
+  position: fixed;
 }
 
 /* The same pond blurred ahead of time, so frosted panes don't blur it live on every frame */
 html[data-theme="liquid-glass"] .lg-pane-frost .lg-glass-copy {
-  background-image: url("../../images/liquid-glass/duck-pond-frost.jpg");
+  background-image: var(--lg-pond-frost-image);
 }
 
 html[data-theme="liquid-glass"] .lg-glass-tint {
@@ -737,6 +747,7 @@ html[data-theme="liquid-glass"] .department-cards .card-body {
 
 html[data-theme="liquid-glass"] .department-cards .department-link {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -746,7 +757,20 @@ html[data-theme="liquid-glass"] .department-cards .department-link {
   font-size: 1rem !important;
   font-weight: 500;
   line-height: 1.3;
-  transition: background-color 0.2s ease, transform 0.35s var(--lg-spring);
+  transition: transform 0.12s var(--lg-spring);
+}
+
+html[data-theme="liquid-glass"] .department-cards .department-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgb(255 255 255 / 55%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 85%), 0 2px 8px rgb(0 0 0 / 8%);
+  opacity: 0%;
+  transition: opacity 0.08s ease;
+  pointer-events: none;
 }
 
 html[data-theme="liquid-glass"] .department-cards .department-link::after {
@@ -758,10 +782,9 @@ html[data-theme="liquid-glass"] .department-cards .department-link::after {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M1.5 1.5 6.5 7l-5 5.5' fill='none' stroke='%233c3c43' stroke-opacity='.4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
-html[data-theme="liquid-glass"] .department-cards .department-link:hover,
-html[data-theme="liquid-glass"] .department-cards .department-link:focus-visible {
-  background: rgb(255 255 255 / 55%);
-  box-shadow: inset 0 1px 1px rgb(255 255 255 / 85%), 0 2px 8px rgb(0 0 0 / 8%);
+html[data-theme="liquid-glass"] .department-cards .department-link:hover::before,
+html[data-theme="liquid-glass"] .department-cards .department-link:focus-visible::before {
+  opacity: 100%;
 }
 
 html[data-theme="liquid-glass"] .department-code {
@@ -1376,12 +1399,12 @@ html[data-theme="liquid-glass"] .lg-pond {
   inset: 0;
   z-index: -3;
   visibility: hidden;
-  background: url("../../images/liquid-glass/duck-pond.jpg") 60% 45% / cover no-repeat, #3c4a12;
+  background: var(--lg-pond-image) var(--lg-pond-position) / cover no-repeat, #3c4a12;
   pointer-events: none;
 }
 
 html[data-theme="liquid-glass"] .lg-pond-frost {
-  background-image: url("../../images/liquid-glass/duck-pond-frost.jpg");
+  background-image: var(--lg-pond-frost-image);
 }
 
 /* Tinted glass (the Control Centre's Glass setting): the panes frost over more */

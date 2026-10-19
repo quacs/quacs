@@ -81,6 +81,30 @@ export class Dock {
 
     this.wrap = own(element("div", "lg-dock-wrap"));
     const dock = element("lg-dock", "lg-quacs-dock", { "aria-label": "Dock" });
+    // A tap also focuses its button. Do not turn that into the library's mouse-hover lens:
+    // its spring regenerates a displacement PNG every frame, right as navigation starts.
+    // Native focus/click behavior and the keyboard's visible focus highlight still work.
+    dock.addEventListener(
+      "focusin",
+      (event) => {
+        if (
+          event.target instanceof Element &&
+          !event.target.matches(":focus-visible")
+        ) {
+          event.stopPropagation();
+        }
+      },
+      true
+    );
+    dock.addEventListener(
+      "pointermove",
+      (event) => {
+        if (event.pointerType === "touch") {
+          event.stopPropagation();
+        }
+      },
+      true
+    );
     for (const app of apps) {
       dock.append(this.button(app));
     }
@@ -119,10 +143,16 @@ export class Dock {
     });
     button.innerHTML = app.glyph();
     button.addEventListener("click", app.run);
-    button.addEventListener("pointerenter", () =>
-      this.showTip(button, app.label)
-    );
-    button.addEventListener("focus", () => this.showTip(button, app.label));
+    button.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "touch") {
+        this.showTip(button, app.label);
+      }
+    });
+    button.addEventListener("focus", () => {
+      if (button.matches(":focus-visible")) {
+        this.showTip(button, app.label);
+      }
+    });
     button.addEventListener("pointerleave", this.hideTip);
     button.addEventListener("blur", this.hideTip);
     this.buttons.set(app.id, button);

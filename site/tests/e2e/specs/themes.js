@@ -200,6 +200,202 @@ describe("Test color themes", () => {
       .and("contain", "url(");
   });
 
+  it("Prepares Liquid Glass buttons near the viewport and releases them offscreen", () => {
+    selectTheme("Liquid Glass");
+    cy.document().then((doc) => {
+      const fixture = doc.createElement("div");
+      fixture.id = "glass-button-fixture";
+      fixture.style.cssText = "margin-top: 2000px; padding: 20px;";
+      const button = doc.createElement("button");
+      button.className = "btn btn-primary";
+      button.textContent = "Test glass button";
+      button.addEventListener("click", () => {
+        button.dataset.clicked = "true";
+      });
+      fixture.append(button);
+      doc.body.append(fixture);
+    });
+    cy.get("#glass-button-fixture .btn").should("not.have.class", "lg-btn");
+    cy.get("#glass-button-fixture").scrollIntoView();
+    cy.get("#glass-button-fixture .btn")
+      .should("have.class", "lg-btn")
+      .find(".lg-surface__glass")
+      .should("have.attr", "style")
+      .and("contain", "url(");
+    cy.get("#glass-button-fixture .btn")
+      .click()
+      .should("have.attr", "data-clicked", "true");
+    cy.scrollTo("top");
+    cy.get("#glass-button-fixture .lg-surface").should("not.exist");
+    // Coming back creates the same interactive glass again.
+    cy.get("#glass-button-fixture").scrollIntoView();
+    cy.get("#glass-button-fixture .btn").should("have.class", "lg-btn");
+    cy.document().then((doc) =>
+      doc.getElementById("glass-button-fixture").remove()
+    );
+    cy.scrollTo("top");
+    selectTheme("Light");
+    cy.get(".lg-btn, .lg-glass").should("not.exist");
+  });
+
+  it("Keeps the pond and glass stable through touch scrolls and viewport changes", () => {
+    cy.viewport(390, 844);
+    cy.visit("/", {
+      onBeforeLoad(win) {
+        const matchMedia = win.matchMedia.bind(win);
+        cy.stub(win, "matchMedia").callsFake((query) => {
+          const media = matchMedia(query);
+          if (query === "(hover: none) and (pointer: coarse)") {
+            Object.defineProperty(media, "matches", { value: true });
+          }
+          return media;
+        });
+        win.localStorage.setItem(
+          "inter-semester-storage",
+          JSON.stringify({ settings: { colorTheme: "liquid-glass" } })
+        );
+      },
+    });
+    cy.get(".department-cards > .card .lg-glass-lens")
+      .first()
+      .as("phoneLens")
+      .should(($lens) => expect($lens[0].style.filter).to.contain("url("));
+    const checkPond = ($lens) => {
+      const lens = $lens[0];
+      const win = lens.ownerDocument.defaultView;
+      const copy = lens.querySelector(".lg-glass-copy");
+      const background = win.getComputedStyle(
+        lens.ownerDocument.body,
+        "::before"
+      );
+      const pond = win.getComputedStyle(copy);
+      expect(pond.backgroundImage).to.equal(background.backgroundImage);
+      expect(pond.backgroundPosition).to.equal(background.backgroundPosition);
+      expect(pond.backgroundAttachment.split(",")[0].trim()).to.equal("fixed");
+      expect(copy.style.transform).to.equal("");
+      expect(win.getComputedStyle(lens).visibility).to.equal("visible");
+      expect(lens.style.filter).to.contain("url(");
+    };
+    cy.get("@phoneLens").should(checkPond);
+    cy.scrollTo(0, 200);
+    cy.get("@phoneLens").should(checkPond);
+    cy.get(".lg-pane-scrolling").should("not.exist");
+    cy.scrollTo("top");
+    cy.get("@phoneLens").should(checkPond);
+    cy.viewport(1280, 800);
+    cy.get("@phoneLens").should(checkPond);
+    cy.viewport(390, 844);
+    cy.get("@phoneLens").should(checkPond);
+  });
+
+  it("Tracks the latest mouse position without changing Liquid Glass optics", () => {
+    let optics;
+    const readOptics = (pane) => {
+      const win = pane.ownerDocument.defaultView;
+      return [
+        pane,
+        ...pane.querySelectorAll(".lg-glass-lens"),
+        ...pane.ownerDocument.querySelectorAll(
+          ".navbar .lg-glass, .lg-quacs-dock .lg-surface__glass"
+        ),
+      ].map((el) => {
+        const style = win.getComputedStyle(el);
+        // The engine reissues filter IDs after map decode without changing the optics.
+        const effect = (value) => value.replace(/-v\d+/g, "");
+        return [
+          effect(style.filter),
+          effect(style.backdropFilter),
+          style.visibility,
+        ];
+      });
+    };
+    selectTheme("Liquid Glass");
+    cy.get(".department-cards > .card.lg-pane")
+      .first()
+      .then(($pane) => {
+        const pane = $pane[0];
+        const win = pane.ownerDocument.defaultView;
+        // Let initial viewport/resize notifications finish before injecting input. Then wait for
+        // the app's render frame instead of racing it with Cypress's next command.
+        return new Cypress.Promise((resolve) => {
+          win.requestAnimationFrame(() => {
+            const box = pane.getBoundingClientRect();
+            optics = readOptics(pane);
+            // Two inputs in one frame must render the latest position.
+            for (const [x, y] of [
+              [20, 30],
+              [100, 120],
+            ]) {
+              pane.dispatchEvent(
+                new win.PointerEvent("pointermove", {
+                  bubbles: true,
+                  pointerType: "mouse",
+                  clientX: box.left + x,
+                  clientY: box.top + y,
+                })
+              );
+            }
+            win.requestAnimationFrame(resolve);
+          });
+        });
+      });
+    cy.get(".lg-pointer-glow").should(($glow) => {
+      const win = $glow[0].ownerDocument.defaultView;
+      const transform = new win.DOMMatrixReadOnly(
+        win.getComputedStyle($glow[0]).transform
+      );
+      expect(transform.m41).to.be.closeTo(-120, 0.1);
+      expect(transform.m42).to.be.closeTo(-100, 0.1);
+    });
+    cy.get(".lg-pointer-light").should("have.length", 1);
+    // A sibling's expansion can move a pane without resizing the pane itself.
+    cy.get(".department-cards > .card.lg-pane")
+      .first()
+      .then(($pane) => {
+        const pane = $pane[0];
+        const win = pane.ownerDocument.defaultView;
+        const move = () => {
+          const box = pane.getBoundingClientRect();
+          pane.dispatchEvent(
+            new win.PointerEvent("pointermove", {
+              bubbles: true,
+              pointerType: "mouse",
+              clientX: box.left + 100,
+              clientY: box.top + 120,
+            })
+          );
+        };
+        return new Cypress.Promise((resolve) => {
+          win.requestAnimationFrame(() => {
+            move();
+            win.requestAnimationFrame(() => {
+              pane.parentElement.style.paddingTop = "80px";
+              move();
+              win.requestAnimationFrame(resolve);
+            });
+          });
+        });
+      });
+    cy.get(".lg-pointer-glow").should(($glow) => {
+      const win = $glow[0].ownerDocument.defaultView;
+      const transform = new win.DOMMatrixReadOnly(
+        win.getComputedStyle($glow[0]).transform
+      );
+      expect(transform.m42).to.be.closeTo(-100, 0.1);
+    });
+    cy.get(".department-cards").then(($cards) => {
+      $cards[0].style.paddingTop = "";
+    });
+    // Mouse movement must never switch from refraction to a different blur effect.
+    cy.get(".department-cards > .card.lg-pane")
+      .first()
+      .should(($pane) => expect(readOptics($pane[0])).to.deep.equal(optics));
+    selectTheme("Light");
+    cy.get(".lg-pointer-light, .lg-pointer-glow").should("not.exist");
+    cy.get(".lg-pane-pointer-moving").should("not.exist");
+    cy.get("html").should("not.have.class", "lg-pointer-moving");
+  });
+
   it("Stands your courses on the Skeuomorphism theme's bookshelf", () => {
     selectTheme("Skeuomorphism");
     // With nothing chosen, the shelf holds the QuACS handbook

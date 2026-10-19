@@ -7,6 +7,7 @@ import {
   OWN,
   place,
   Spring,
+  touchOnly,
 } from "./engine";
 import { batteryIcon, icon } from "./icons";
 
@@ -50,6 +51,7 @@ export class MenuBar {
   private wide = window.matchMedia("(min-width: 1200px)");
   private clockTimer = 0;
   private toneFrame = 0;
+  private toneTimer = 0;
   private destroyed = false;
 
   constructor(
@@ -96,6 +98,7 @@ export class MenuBar {
     );
     clearInterval(this.clockTimer);
     cancelAnimationFrame(this.toneFrame);
+    clearTimeout(this.toneTimer);
     this.xs.stop();
     this.ws.stop();
   }
@@ -404,7 +407,18 @@ export class MenuBar {
     this.goTo(this.restingLink());
   };
 
-  private queueTone = (): void => {
+  private queueTone = (event?: Event): void => {
+    // Hit-testing the content under a fixed glass bar can force layout/compositing. During a
+    // swipe, sample its tone at most every 80 ms; the last sample still sees the final position.
+    if (touchOnly.matches && event?.type === "scroll") {
+      if (!this.toneTimer && !this.destroyed) {
+        this.toneTimer = window.setTimeout(() => {
+          this.toneTimer = 0;
+          this.queueTone();
+        }, 80);
+      }
+      return;
+    }
     if (!this.toneFrame && !this.destroyed) {
       this.toneFrame = requestAnimationFrame(this.updateTone);
     }
