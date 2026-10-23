@@ -12,6 +12,7 @@ const NEW_THEMES = {
   Skeuomorphism: "skeuomorphism",
   Steampunk: "steampunk",
   GeoCities: "geocities",
+  Malfoyd: "malfoyd",
 };
 
 // Picks a theme in the settings dialog and closes it
@@ -414,6 +415,28 @@ describe("Test color themes", () => {
       });
     cy.getOne(".sk-shelf .sk-book").should("contain", "CSCI 1100").click();
     cy.location("hash").should("equal", "#/search?CSCI-1100");
+  });
+
+  it("Grades your course set with the Malfoyd theme's chibi", () => {
+    selectTheme("Malfoyd");
+    // Nothing picked yet, so she sneers. Plain get: she ignores the pointer, so Cypress
+    // reads her as covered and getOne would time out on its visibility check.
+    cy.get(".mf-chibi")
+      .should("have.attr", "src")
+      .and("contain", "chibi-sneer");
+
+    // One picked section earns a pout
+    cy.containsOne("CSCI").click();
+    cy.getBody()
+      .get(".course-card")
+      .first()
+      .within(() => {
+        cy.get(".card-header").containsOne("CSCI-1100").click();
+        cy.getOne("#section-grow-CSCI-1100").within(() => {
+          cy.get(".course-row").first().click();
+        });
+      });
+    cy.get(".mf-chibi").should("have.attr", "src").and("contain", "chibi-pout");
   });
 
   it("Keeps the look of the existing light theme", () => {
