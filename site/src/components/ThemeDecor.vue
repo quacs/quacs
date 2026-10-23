@@ -21,6 +21,7 @@ const DECORATIONS: { [theme: string]: AsyncComponent } = {
   steampunk: () => import("@/components/themes/SteampunkDecor.vue"),
   skeuomorphism: () => import("@/components/themes/SkeuomorphismDecor.vue"),
   geocities: () => import("@/components/themes/GeocitiesDecor.vue"),
+  malfoyd: () => import("@/components/themes/MalfoydDecor.vue"),
 };
 
 @Component
