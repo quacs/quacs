@@ -66,35 +66,55 @@ async def scrape_txt(filename, list_of_terms):
             # and sometimes he does not, so we remove the left bracket
             # and split on whitespace to find the term name.
             term = courses[0].replace("[", "").split(" ")[0]
-            list_of_terms[goldschmidt_term_to_sis_term(term)] = parse_term(courses[1:])
+            catalog = parse_term(courses[1:])
+            if catalog:
+                list_of_terms[goldschmidt_term_to_sis_term(term)] = catalog
         return list_of_terms
+
+
+# Matches the course codes at the start of a course block's first line, like
+# "CSCI 4962/6962 SAFE AUTONOMY" or "CSCI 4966/ITWS 4966 ..."
+COURSE_HEADER = re.compile(r"^[A-Z]{4} \d{4}(/([A-Z]{4} )?\d{4})* ")
+COURSE_CODE = re.compile(r"(?:([A-Z]{4}) )?(\d{4})")
+DESCRIPTION = re.compile(r"^(Course )?Description: *", re.IGNORECASE)
+# Lines like "Credits: 4" or "Cross-listed from: COGS 4960/6960"
+METADATA = re.compile(r"^[A-Za-z][A-Za-z -]*: ")
 
 
 def parse_term(courses):
     catalog = {}
     for course in courses:
-        lines = [line for line in course.split("\n") if line.strip()]
+        lines = [line.strip() for line in course.split("\n") if line.strip()]
+        # Skip placeholder blocks like "<none>" for terms without topics courses
+        if not COURSE_HEADER.match(lines[0]):
+            continue
         entry = {}
-        desc = [line for line in lines if line.startswith("Description:")]
-        if not desc:
-            desc = [lines[-1]]
-        entry["description"] = re.sub(r"^Description: *", "", desc[0])
-        course_title = lines[0].split(" ")
-        subj = course_title[0]
-        entry["subj"] = subj
+        desc = [line for line in lines if DESCRIPTION.match(line)]
+        if desc:
+            entry["description"] = DESCRIPTION.sub("", desc[0])
+        elif len(lines) > 1 and not METADATA.match(lines[-1]):
+            # Older files sometimes have an unlabeled note like "[see COGS 4410]"
+            entry["description"] = lines[-1]
+        # Otherwise leave the description out so the SIS one is kept when merged
+
+        # Drop tags like "[CI]" (communication intensive) from the title
+        title = re.sub(r" *\[[^\]]*\]", "", lines[0])
+        codes = COURSE_HEADER.match(title).group(0)
+        course_title = title[len(codes) :].split(" ")
 
         # This is because Goldschmidt sometimes includes the section
         # number and sometimes does not
-        if all(elmt.isdigit() for elmt in course_title[2].split("-")):
+        if all(elmt.isdigit() for elmt in course_title[0].split("-")):
             # if it is a section number, do not put that in the course name
-            name = course_title[3:]
-        else:
-            name = course_title[2:]
-        entry["name"] = " ".join(name).title()
+            course_title = course_title[1:]
+        entry["name"] = " ".join(course_title).title()
         entry["source"] = "CSCI topics"
 
-        crses = course_title[1].split("/")
-        for crse in crses:
+        subj = None
+        for code_subj, crse in COURSE_CODE.findall(codes):
+            # "4962/6962" reuses the subject of the code before it
+            subj = code_subj or subj
+            entry["subj"] = subj
             entry["crse"] = crse
             catalog["-".join([subj, crse])] = copy.deepcopy(entry)
     return catalog
