@@ -31,7 +31,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13.3'
+          python-version: '3.13'
 
       - name: Install pip requirements
         run: |
@@ -71,7 +71,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13.3'
+          python-version: '3.13'
 
       - name: Install pip requirements
         run: |
@@ -133,7 +133,7 @@ jobs:
   #     - name: Set up Python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.13.3'
+  #         python-version: '3.13'
 
   #     - name: Set up Rust
   #       uses: actions-rs/toolchain@v1
@@ -170,7 +170,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.13.3'
+  #         python-version: '3.13'
 
   #     - name: Install pip requirements
   #       run: |
@@ -197,7 +197,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13.3'
+          python-version: '3.13'
 
       - name: Install pip requirements
         run: |
@@ -225,7 +225,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.13.3'
+  #         python-version: '3.13'
 
   #     - name: Install pip requirements
   #       run: |
@@ -259,7 +259,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13.3'
+          python-version: '3.13'
 
       - name: Install pip requirements
         run: |
@@ -286,7 +286,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13.3'
+          python-version: '3.13'
 
       - name: Intall pip requirements
         run: |
@@ -312,7 +312,7 @@ jobs:
       #- scrape-hass-pathways
       - scrape-prereq-graph
       - scrape-catalog
-      # - scrape-csci-topics
+      - scrape-csci-topics
       # - scrape-transfer
     if: |
       always()
@@ -418,7 +418,7 @@ jobs:
   #     - name: Set up python
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.13.3'
+  #         python-version: '3.13'
 
   #     - name: Install pip requirements
   #       run: |
