@@ -1,0 +1,3 @@
+chibi-sneer.webp, chibi-pout.webp, chibi-blushing.webp: Richard Sun's chibi Malfoyd sprites from
+https://github.com/RichardJSun/pottah-portfolio (art/sprites/), copied with the author's permission.
+Original character art made for that site. The files carry no EXIF, XMP or ICC chunks.

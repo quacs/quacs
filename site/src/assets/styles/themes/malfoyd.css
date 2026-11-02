@@ -1,0 +1,758 @@
+/* Malfoyd, after pottah.richardsuns.space (Richard Sun's portfolio, a parody dating sim where
+Draco Malfoyd spends a Saturday with Harry Pottah): a sheet of Sheet Pink with a white dot grid,
+and everything on it is a die-cut sticker, white with a white ring and a plum lift shadow. Plum ink,
+Nunito for text and Fredoka for titles, Hot Pink only on the nameplates and hearts, lemon
+selection, and her uniform's emerald and silver on what is picked. Primary buttons sit at a slight
+tilt and press down. A chibi Malfoyd (MalfoydDecor.vue) grades your schedule from the corner.
+Text stays plum or white, because the pinks fail WCAG AA as text on white. */
+[data-theme="malfoyd"] {
+  --mf-sheet: #f58db3;
+  --mf-sheet-press: #f27aa6;
+  --mf-dot: rgb(255 255 255 / 55%);
+  --mf-white: #fff;
+  --mf-pale: #fde3ec;
+  --mf-rule: #f2c2d4;
+  --mf-rose: #e7a3b9;
+  --mf-hot: #ff6fa8;
+  --mf-deep: #e04a8a;
+  --mf-lemon: #ffe36e;
+  --mf-plum: #3a1d47;
+  --mf-plum-soft: #5c3d69;
+  --mf-emerald: #1f6b4a;
+  --mf-emerald-pale: #d9efe3;
+  --mf-silver: #c9ced6;
+  --mf-die: 0 0 0 4px var(--mf-white);
+  --mf-lift: 0 6px 14px rgb(58 29 71 / 22%), 0 2px 3px rgb(58 29 71 / 18%);
+  --mf-mini-die: 0 0 0 3px var(--mf-white), 0 3px 6px rgb(58 29 71 / 20%);
+  --mf-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --mf-font: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mf-display: "Fredoka", "Nunito", system-ui, sans-serif;
+
+  /* QuACS tokens */
+  --background: var(--mf-sheet);
+  --background-image: radial-gradient(circle at 8px 8px, var(--mf-dot) 2.5px, transparent 3px);
+  --background-attachment: scroll;
+  --global-text: var(--mf-plum);
+  --global-text-hover: var(--mf-plum);
+  --raw-link: var(--mf-plum);
+  --text-default: var(--mf-plum);
+  --footer-background: var(--mf-white);
+  --font-body: var(--mf-font);
+  --font-heading: var(--mf-display);
+  --warning-color: var(--mf-plum);
+  --warning-font-size: 1.1rem;
+  --warning-border-width: 0;
+  --card-background: var(--mf-white);
+  --card-body-background: var(--mf-white);
+  --card-body-text: var(--mf-plum);
+  --card-header-background: var(--mf-white);
+  --card-header-text: var(--mf-plum-soft);
+  --card-header-hover: var(--mf-pale);
+  --card-border-color: transparent;
+  --card-border-width: 0;
+  --card-border-radius: 24px;
+  --card-inner-radius: 24px;
+  --card-shadow: var(--mf-die), var(--mf-lift);
+  --navbar-background: var(--mf-white);
+  --navbar-unselected-text: var(--mf-plum-soft);
+  --navbar-unselected-text-hover: var(--mf-plum);
+  --navbar-text-focus: var(--mf-plum);
+  --navbar-text-disabled: var(--mf-plum-soft);
+  --navbar-text-active: var(--mf-plum);
+  --navbar-text-show: var(--mf-plum);
+  --modal-header-background: var(--mf-white);
+  --modal-header-text: var(--mf-plum);
+  --modal-body-background: var(--mf-white);
+  --modal-body-text: var(--mf-plum);
+  --modal-footer-background: var(--mf-white);
+  --modal-footer-text: var(--mf-plum);
+  --modal-close-x-hover: var(--mf-deep);
+  --department-link-hover: var(--mf-pale);
+  --select-background: var(--mf-white);
+  --select-text: var(--mf-plum);
+  --table-text: var(--mf-plum);
+  --table-border: var(--mf-rule);
+  --course-row-hover: var(--mf-pale);
+  --conflict-row: #fff3c4;
+  --conflict-row-hover: #ffeca3;
+  --selected-row: var(--mf-emerald-pale);
+  --selected-row-hover: #c8e6d6;
+  --list-group-item-background: var(--mf-white);
+  --search-bar-background: var(--mf-white);
+  --search-bar-border: transparent;
+  --overlay-background: var(--mf-white);
+  --trash-btn: var(--mf-plum-soft);
+  --trash-btn-hover: var(--mf-deep);
+  --prerequisite-jumbotron: var(--mf-white);
+  --prerequisite-text: var(--mf-plum);
+  --prerequisite-warn-icon: var(--mf-lemon);
+  --prerequisite-error-icon: var(--mf-rose);
+  --taken-course: var(--mf-emerald);
+  --not-taken-course: #b3245f;
+  --toast-background: var(--mf-white);
+  --toast-text: var(--mf-plum);
+  --calendar-grid-color: var(--mf-rule);
+  --calendar-label: var(--mf-plum-soft);
+
+  /* Calendar: pastel stickers, each course a tile; the first is her emerald and silver */
+  --num-calendar-colors: 7;
+  --calendar-bg-color-0: var(--mf-emerald-pale);
+  --calendar-border-color-0: var(--mf-emerald);
+  --calendar-text-color-0: #123d2a;
+  --calendar-bg-color-1: #ffe0ec;
+  --calendar-border-color-1: var(--mf-hot);
+  --calendar-text-color-1: #6b1f44;
+  --calendar-bg-color-2: #fff4c2;
+  --calendar-border-color-2: #e0b400;
+  --calendar-text-color-2: #5c4600;
+  --calendar-bg-color-3: #e8def7;
+  --calendar-border-color-3: #8a5cd6;
+  --calendar-text-color-3: var(--mf-plum);
+  --calendar-bg-color-4: #d9edf5;
+  --calendar-border-color-4: #2b8fb8;
+  --calendar-text-color-4: #134257;
+  --calendar-bg-color-5: #fde4d4;
+  --calendar-border-color-5: #e07b39;
+  --calendar-text-color-5: #6b3410;
+  --calendar-bg-color-6: #e9ecf1;
+  --calendar-border-color-6: #7c8694;
+  --calendar-text-color-6: #2f3747;
+  --calendar-sb-track-color-0: transparent;
+  --calendar-sb-thumb-color-0: rgb(58 29 71 / 25%);
+  --calendar-sb-track-color-1: transparent;
+  --calendar-sb-thumb-color-1: rgb(58 29 71 / 25%);
+  --calendar-sb-track-color-2: transparent;
+  --calendar-sb-thumb-color-2: rgb(58 29 71 / 25%);
+  --calendar-sb-track-color-3: transparent;
+  --calendar-sb-thumb-color-3: rgb(58 29 71 / 25%);
+  --calendar-sb-track-color-4: transparent;
+  --calendar-sb-thumb-color-4: rgb(58 29 71 / 25%);
+  --calendar-sb-track-color-5: transparent;
+  --calendar-sb-thumb-color-5: rgb(58 29 71 / 25%);
+  --calendar-sb-track-color-6: transparent;
+  --calendar-sb-thumb-color-6: rgb(58 29 71 / 25%);
+
+  scrollbar-color: var(--mf-plum-soft) var(--mf-sheet);
+}
+
+html[data-theme="malfoyd"] body {
+  background-size: 22px 22px;
+  font-weight: 500;
+}
+
+html[data-theme="malfoyd"] ::selection {
+  background: var(--mf-lemon);
+  color: var(--mf-plum);
+}
+
+html[data-theme="malfoyd"] h1,
+html[data-theme="malfoyd"] h2,
+html[data-theme="malfoyd"] h3,
+html[data-theme="malfoyd"] h4 {
+  font-weight: 700;
+}
+
+/* Page titles are doodled on the sheet with a white stroke, like the game's title cards */
+html[data-theme="malfoyd"] h1 {
+  margin: 0.8rem 0 1.4rem;
+  font-size: 2.8rem;
+  text-align: center;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 6px var(--mf-white);
+}
+
+:where([data-theme="malfoyd"]) a {
+  color: var(--mf-plum);
+  text-decoration-color: var(--mf-deep);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+html[data-theme="malfoyd"] :focus-visible {
+  outline: 3px solid var(--mf-plum);
+  outline-offset: 3px;
+}
+
+/* ---------- Navbar: a sticker strip, the links as pills ---------- */
+html[data-theme="malfoyd"] .navbar.bg-light {
+  position: sticky;
+  top: 12px;
+  z-index: 1030;
+  width: calc(100% - 40px);
+  max-width: 1360px;
+  margin: 14px auto 6px;
+  padding: 8px 14px 8px 18px;
+  border-radius: 22px;
+  box-shadow: var(--mf-die), var(--mf-lift);
+}
+
+html[data-theme="malfoyd"] .navbar-brand {
+  padding: 0;
+}
+
+/* The duck is a sticker too: a white halo for the die-cut edge, with the lift under it */
+html[data-theme="malfoyd"] .navbar-brand img {
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 3px 3px rgb(58 29 71 / 25%));
+}
+
+html[data-theme="malfoyd"] .navbar-nav .nav-link {
+  margin: 2px 3px;
+  padding: 0.45rem 0.9rem !important;
+  border-radius: 14px;
+  font-weight: 800;
+  transition: background-color 120ms ease, color 120ms ease;
+  white-space: nowrap;
+}
+
+html[data-theme="malfoyd"] .navbar-nav .nav-link:hover,
+html[data-theme="malfoyd"] .navbar-nav .nav-link:focus-visible {
+  background: var(--mf-pale);
+}
+
+html[data-theme="malfoyd"] .navbar-nav .nav-link.active,
+html[data-theme="malfoyd"] .navbar-nav .show > .nav-link {
+  background: var(--mf-sheet);
+}
+
+html[data-theme="malfoyd"] .navbar-nav .nav-link.disabled {
+  display: none;
+}
+
+html[data-theme="malfoyd"] .navbar-light .navbar-toggler {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: var(--mf-mini-die);
+}
+
+html[data-theme="malfoyd"] #search-bar {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: var(--mf-mini-die);
+  color: var(--mf-plum);
+  font-weight: 600;
+}
+
+html[data-theme="malfoyd"] #search-bar::placeholder {
+  color: var(--mf-plum-soft);
+}
+
+html[data-theme="malfoyd"] #search-bar:focus {
+  box-shadow: var(--mf-mini-die), 0 0 0 6px var(--mf-rose);
+}
+
+/* Menus are stickers that float off the strip */
+html[data-theme="malfoyd"] .dropdown-menu {
+  margin-top: 14px !important;
+  padding: 8px;
+  border: 0;
+  border-radius: 18px;
+  box-shadow: var(--mf-die), var(--mf-lift);
+}
+
+html[data-theme="malfoyd"] .dropdown-item {
+  border-radius: 12px;
+  color: var(--mf-plum);
+  font-weight: 700;
+}
+
+html[data-theme="malfoyd"] .dropdown-item:hover,
+html[data-theme="malfoyd"] .dropdown-item:focus {
+  background: var(--mf-pale);
+  color: var(--mf-plum);
+}
+
+html[data-theme="malfoyd"] .dropdown-divider {
+  border-top: 2px solid var(--mf-rule);
+}
+
+/* ---------- Warning: a sticker with a heart on it ---------- */
+html[data-theme="malfoyd"] .unofficial-schedule-warning {
+  position: relative;
+  margin: 1.25rem 0 0;
+  padding: 1rem 1.4rem 1.1rem 4rem;
+  border-radius: 22px;
+  background: var(--mf-white);
+  box-shadow: var(--mf-die), var(--mf-lift);
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: left;
+}
+
+html[data-theme="malfoyd"] .unofficial-schedule-warning > span {
+  color: var(--not-taken-course);
+}
+
+html[data-theme="malfoyd"] .unofficial-schedule-warning::before {
+  content: "♥";
+  position: absolute;
+  top: 50%;
+  left: 1.2rem;
+  transform: translateY(-52%) rotate(-8deg);
+  color: var(--mf-hot);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* ---------- Cards: stickers, with the game's nameplate for a header ---------- */
+html[data-theme="malfoyd"] .card {
+  margin-bottom: 1.6rem;
+}
+
+html[data-theme="malfoyd"] .card-header {
+  border: 0;
+}
+
+html[data-theme="malfoyd"] .department-cards {
+  column-gap: 2rem;
+}
+
+html[data-theme="malfoyd"] .department-cards .card {
+  margin-bottom: 2rem;
+  padding-top: 0.9rem;
+}
+
+/* The nameplate: a Hot Pink tag with an arrow tip, as on the dialogue stickers */
+html[data-theme="malfoyd"] .department-cards .card-header {
+  width: fit-content;
+  max-width: calc(100% - 2rem);
+  margin: 0 0 0.3rem 1rem;
+  padding: 0.3rem 1.6rem 0.3rem 0.9rem !important;
+  border-radius: 0;
+  background: var(--mf-hot);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  color: var(--mf-plum);
+  font-family: var(--mf-display);
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+}
+
+html[data-theme="malfoyd"] .department-cards .card-body {
+  padding: 0.2rem 0.8rem 0.9rem;
+}
+
+html[data-theme="malfoyd"] .department-cards .department-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2px 0;
+  padding: 0.45rem 0.7rem !important;
+  border-radius: 14px;
+  font-size: 1rem !important;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+html[data-theme="malfoyd"] .department-cards .department-link:focus-visible {
+  background: var(--mf-pale);
+}
+
+/* Department codes wear her tie: emerald with silver stripes */
+html[data-theme="malfoyd"] .department-code {
+  flex: none;
+  min-width: 3.7rem;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--mf-silver);
+  border-radius: 10px;
+  background: var(--mf-emerald);
+  color: var(--mf-white);
+  font-family: var(--mf-font) !important;
+  font-size: 0.82rem !important;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+html[data-theme="malfoyd"] .course-card {
+  margin-bottom: 1.5rem;
+  overflow: visible;
+}
+
+html[data-theme="malfoyd"] .course-card-header {
+  padding: 1rem 1.3rem 1.1rem;
+  border-radius: 24px !important;
+  line-height: 1.5;
+  transition: background-color 120ms ease;
+}
+
+/* stylelint-disable selector-class-pattern -- these class names come from the QuACS components */
+html[data-theme="malfoyd"] .course-card-header.header_expanded {
+  border-radius: 24px 24px 0 0 !important;
+  background: var(--mf-pale) !important;
+}
+
+html[data-theme="malfoyd"] .course-card .open_close_icon {
+  color: var(--mf-deep);
+}
+
+html[data-theme="malfoyd"] .prerequisiteError {
+  border-radius: 10px;
+  font-size: 0.85em;
+  font-weight: 700;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+html[data-theme="malfoyd"] .course-card-header .course-code {
+  color: var(--mf-plum);
+  font-family: var(--mf-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+html[data-theme="malfoyd"] .course-card-header .font-weight-bold {
+  color: var(--mf-plum);
+  font-weight: 800 !important;
+}
+
+html[data-theme="malfoyd"] .section-grow {
+  border-radius: 0 0 24px 24px;
+}
+
+/* ---------- Tables: picked rows take her emerald ---------- */
+html[data-theme="malfoyd"] .table {
+  margin: 0;
+}
+
+html[data-theme="malfoyd"] .table thead th {
+  border-top: 0;
+  color: var(--mf-plum-soft);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+html[data-theme="malfoyd"] .table tbody tr.selected .font-weight-bold {
+  color: var(--mf-emerald);
+}
+
+html[data-theme="malfoyd"] .info-icon {
+  color: var(--mf-deep);
+}
+
+html[data-theme="malfoyd"] .current-schedule-badge {
+  border: 2px solid var(--mf-silver) !important;
+  border-radius: 10px !important;
+  background: var(--mf-emerald);
+  color: var(--mf-white);
+}
+
+/* ---------- Buttons: stickers that press; the primary one is pink and sits a little crooked ---------- */
+html[data-theme="malfoyd"] .btn {
+  padding: 0.5rem 1.1rem;
+  border: 0;
+  border-radius: 14px;
+  background: var(--mf-white);
+  box-shadow: var(--mf-mini-die);
+  color: var(--mf-plum);
+  font-weight: 800;
+  transition: transform 120ms var(--mf-ease), background-color 120ms ease;
+}
+
+html[data-theme="malfoyd"] .btn-primary {
+  --mf-tilt: -1.5deg;
+
+  background: var(--mf-sheet);
+  transform: rotate(var(--mf-tilt));
+}
+
+html[data-theme="malfoyd"] .btn-outline-danger {
+  color: var(--not-taken-course);
+}
+
+html[data-theme="malfoyd"] .btn:hover,
+html[data-theme="malfoyd"] .btn:focus {
+  border: 0;
+  background: var(--mf-pale);
+  box-shadow: var(--mf-mini-die);
+  color: var(--mf-plum);
+}
+
+html[data-theme="malfoyd"] .btn-primary:hover,
+html[data-theme="malfoyd"] .btn-primary:focus {
+  background: var(--mf-sheet-press);
+}
+
+html[data-theme="malfoyd"] .btn-outline-danger:hover,
+html[data-theme="malfoyd"] .btn-outline-danger:focus {
+  color: var(--not-taken-course);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-theme="malfoyd"] .btn:not(:disabled):not(.disabled):hover {
+    transform: translateY(-2px) rotate(var(--mf-tilt, 0deg));
+  }
+}
+
+html[data-theme="malfoyd"] .btn:disabled,
+html[data-theme="malfoyd"] .btn.disabled {
+  box-shadow: none;
+  color: var(--mf-plum-soft);
+  opacity: 60%;
+}
+
+html[data-theme="malfoyd"] .btn:not(:disabled):not(.disabled):active {
+  background: var(--mf-pale);
+  box-shadow: var(--mf-mini-die);
+  color: var(--mf-plum);
+  transform: scale(0.97) rotate(var(--mf-tilt, 0deg));
+}
+
+html[data-theme="malfoyd"] .btn-primary:not(:disabled):not(.disabled):active {
+  background: var(--mf-sheet-press);
+}
+
+/* Fields: stickers with a rose ring when focused */
+html[data-theme="malfoyd"] .form-control,
+html[data-theme="malfoyd"] .custom-select {
+  height: auto;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: var(--mf-mini-die);
+  color: var(--mf-plum);
+  font-weight: 600;
+}
+
+html[data-theme="malfoyd"] .custom-select {
+  padding-right: 2.6rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5' fill='none' stroke='%233a1d47' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 12px 8px;
+}
+
+html[data-theme="malfoyd"] .form-control:focus,
+html[data-theme="malfoyd"] .custom-select:focus {
+  box-shadow: var(--mf-mini-die), 0 0 0 6px var(--mf-rose);
+  color: var(--mf-plum);
+}
+
+/* Switches fill Rose when on, as the game's settings switch does */
+html[data-theme="malfoyd"] .custom-switch .custom-control-label::before {
+  border: 2px solid var(--mf-plum-soft);
+}
+
+html[data-theme="malfoyd"] .custom-switch .custom-control-label::after {
+  background: var(--mf-plum-soft);
+}
+
+html[data-theme="malfoyd"] .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+  border-color: var(--mf-rose);
+  background: var(--mf-rose);
+}
+
+html[data-theme="malfoyd"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  background: var(--mf-white);
+}
+
+html[data-theme="malfoyd"] .custom-switch .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 4px var(--mf-pale);
+}
+
+/* ---------- Prerequisites ---------- */
+html[data-theme="malfoyd"] .jumbotron {
+  border-radius: 28px;
+  box-shadow: var(--mf-die), var(--mf-lift);
+}
+
+html[data-theme="malfoyd"] .jumbotron h1 {
+  margin-top: 0;
+}
+
+html[data-theme="malfoyd"] .jumbotron .lead {
+  color: var(--mf-plum-soft);
+  font-weight: 600;
+}
+
+/* ---------- Schedule ---------- */
+html[data-theme="malfoyd"] .schedule-select {
+  width: fit-content;
+  margin: 0.4rem auto 0;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 20px;
+  background: var(--mf-white);
+  box-shadow: var(--mf-die), var(--mf-lift);
+}
+
+html[data-theme="malfoyd"] .schedule-num {
+  color: var(--mf-plum);
+  font-weight: 800;
+}
+
+html[data-theme="malfoyd"] .schedule-select-button {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.6rem;
+  border-radius: 50%;
+  font-size: 1rem !important;
+}
+
+/* The calendar is a photo window; course blocks are stickers on it */
+html[data-theme="malfoyd"] .calendar {
+  padding: 0.6rem 0.25rem;
+  border-radius: 24px;
+  background: var(--mf-white);
+  box-shadow: var(--mf-die), var(--mf-lift);
+}
+
+html[data-theme="malfoyd"] .calendar-event {
+  border-width: 2px !important;
+  border-radius: 10px;
+  box-shadow: var(--mf-mini-die);
+}
+
+html[data-theme="malfoyd"] .calendar-event .event-text {
+  font-weight: 700;
+}
+
+html[data-theme="malfoyd"] .b-overlay .bg-light {
+  border-radius: 24px;
+}
+
+/* ---------- Dialogs: one big sticker over the dimmed sheet ---------- */
+html[data-theme="malfoyd"] .modal-content {
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  box-shadow: var(--mf-die), 0 18px 40px rgb(58 29 71 / 35%);
+}
+
+html[data-theme="malfoyd"] .modal-header {
+  padding: 1.2rem 1.4rem 0.6rem;
+  border-bottom: 0;
+}
+
+html[data-theme="malfoyd"] .modal-title {
+  font-family: var(--mf-display);
+  font-weight: 600;
+}
+
+html[data-theme="malfoyd"] .modal-header .close {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin: -0.3rem -0.3rem 0 auto;
+  padding: 0 0 3px;
+  border-radius: 50%;
+  background: var(--mf-pale);
+  color: var(--mf-plum);
+  font-weight: 500;
+  opacity: 100%;
+  text-shadow: none;
+}
+
+html[data-theme="malfoyd"] .modal-footer {
+  border-top: 0;
+}
+
+html[data-theme="malfoyd"] .modal-backdrop {
+  background: var(--mf-plum);
+}
+
+html[data-theme="malfoyd"] .modal-backdrop.show {
+  opacity: 45%;
+}
+
+html[data-theme="malfoyd"] .tooltip-inner {
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  background: var(--mf-white);
+  box-shadow: var(--mf-mini-die);
+  color: var(--mf-plum);
+  font-weight: 700;
+}
+
+html[data-theme="malfoyd"] .tooltip .arrow {
+  display: none;
+}
+
+html[data-theme="malfoyd"] #crn-copy-indicator {
+  border-radius: 16px;
+  box-shadow: var(--mf-die), var(--mf-lift);
+  font-weight: 700;
+}
+
+/* ---------- Footer: the last sticker on the sheet ---------- */
+html[data-theme="malfoyd"] .footer {
+  width: calc(100% - 40px);
+  max-width: 900px;
+  margin: 3rem auto 150px;
+  padding: 1.6rem 1rem 1.4rem;
+  border-radius: 28px;
+  box-shadow: var(--mf-die), var(--mf-lift);
+}
+
+html[data-theme="malfoyd"] .footer-links {
+  gap: 1.2rem;
+}
+
+html[data-theme="malfoyd"] .footer-links > a {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--mf-pale);
+  font-size: 1.5rem;
+  transition: background-color 120ms ease;
+}
+
+html[data-theme="malfoyd"] .footer-links > a:hover {
+  background: var(--mf-sheet);
+  color: var(--mf-plum);
+}
+
+html[data-theme="malfoyd"] #footer-logo {
+  filter: brightness(0) invert(25%);
+}
+
+html[data-theme="malfoyd"] .footer-updated,
+html[data-theme="malfoyd"] .footer-copyright {
+  color: var(--mf-plum-soft);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+/* ---------- Phones ---------- */
+
+/* The navbar collapses below 1200px */
+@media (max-width: 1199.98px) {
+  html[data-theme="malfoyd"] .navbar.bg-light {
+    top: 8px;
+    width: calc(100% - 20px);
+    padding: 8px 10px 8px 14px;
+  }
+
+  html[data-theme="malfoyd"] .navbar-collapse {
+    padding: 0.6rem 0 0.2rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  html[data-theme="malfoyd"] h1 {
+    font-size: 2.1rem;
+    -webkit-text-stroke-width: 4px;
+  }
+
+  html[data-theme="malfoyd"] .unofficial-schedule-warning {
+    padding-left: 3.4rem;
+
+    --warning-font-size: 1rem;
+  }
+
+  html[data-theme="malfoyd"] .footer {
+    margin-bottom: 90px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="malfoyd"] .btn {
+    transition: background-color 120ms ease;
+  }
+}

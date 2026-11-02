@@ -182,6 +182,7 @@ const THEME_FONT_QUERIES: { [theme: string]: string } = {
   "liquid-glass": "family=Inter:wght@400;500;600;700",
   "flappy-bird": "family=Pixelify+Sans:wght@400;600",
   neumorphism: "family=Nunito:wght@400;600;700;800;900",
+  malfoyd: "family=Fredoka:wght@600;700&family=Nunito:wght@500;600;700;800",
   skeuomorphism:
     "family=Arimo:ital,wght@0,400;0,700;1,400&family=Patrick+Hand&family=Roboto+Condensed:wght@700",
   steampunk:
@@ -283,6 +284,7 @@ export const THEME_OPTIONS: ThemeOption[] = [
     saved: true,
     logo: require("@/assets/images/geocities/logo-mortarboard.png"),
   },
+  { value: "malfoyd", text: "Malfoyd", saved: true },
   { value: "wingdings", text: "Wingdings", saved: false },
 ];
 
@@ -365,6 +367,10 @@ const THEME_STYLES: { [theme: string]: () => Promise<unknown> } = {
   geocities: () =>
     import(
       /* webpackChunkName: "theme-geocities" */ "@/assets/styles/themes/geocities-ring.css"
+    ),
+  malfoyd: () =>
+    import(
+      /* webpackChunkName: "theme-malfoyd" */ "@/assets/styles/themes/malfoyd.css"
     ),
 };
 const loadedThemeStyles = new Set<() => Promise<unknown>>();
