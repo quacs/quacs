@@ -59,6 +59,10 @@ jobs:
         with:
           name: courses
           path: scrapers/data/
+      
+      - name: Get block types
+        working-directory: ./scrapers
+        run: python3 sis_scrapers/block_types.py
 
   scrape-prereq-graph:
     name: Scrapes prerequisite graph

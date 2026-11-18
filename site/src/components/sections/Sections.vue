@@ -390,6 +390,7 @@ export default class Section extends Vue {
           dateStart: "",
           dateEnd: "",
           location: "",
+          type: "",
         });
       }
 
