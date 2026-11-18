@@ -134,9 +134,9 @@ async def get_school_data(s, id) -> None:
             sys.exit(1)
 
         full_table = soup.find("table", {"id": "TransArtTable"})
-        rows = full_table.findAll("tr")
+        rows = full_table.find_all("tr")
         for i in range(len(rows)):
-            cells = rows[i].findAll("td")
+            cells = rows[i].find_all("td")
             if len(cells) > 3:
                 course_id = cells[3].text.strip()
                 if course_id in non_course_id_options:
@@ -144,10 +144,10 @@ async def get_school_data(s, id) -> None:
 
                 # gets the offsets because some data actually fills more than one row
                 row_offset_up = 0
-                while len(rows[i - row_offset_up].findAll("td")) > 1:
+                while len(rows[i - row_offset_up].find_all("td")) > 1:
                     row_offset_up += 1
                 row_offset_down = 0
-                while len(rows[i + row_offset_down].findAll("td")) > 1:
+                while len(rows[i + row_offset_down].find_all("td")) > 1:
                     row_offset_down += 1
 
                 # scrape data between the offsets
@@ -163,15 +163,15 @@ async def get_school_data(s, id) -> None:
                 }
 
                 for offset in range(i - row_offset_up + 1, i + row_offset_down):
-                    current_cells = rows[offset].findAll("td")
+                    current_cells = rows[offset].find_all("td")
 
                     get_operator(
-                        school_data, "rpi_operator", current_cells[-1].findAll("strong")
+                        school_data, "rpi_operator", current_cells[-1].find_all("strong")
                     )
                     get_operator(
                         school_data,
                         "transfer_operator",
-                        current_cells[0].findAll("strong"),
+                        current_cells[0].find_all("strong"),
                     )
 
                     for j in range(
