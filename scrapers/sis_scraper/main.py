@@ -72,12 +72,12 @@ async def get_section_information(section_url):
         seating = soup.find(
             "table",
             {"summary": "This layout table is used to present the seating numbers."},
-        ).findAll("tr")
+        ).find_all("tr")
 
         for seat_type in seating[1:]:
             kind = seat_type.find("th").text
             capacity, actual, remaining = tuple(
-                int(x.text.replace("\xa0", "0")) for x in seat_type.findAll("td")
+                int(x.text.replace("\xa0", "0")) for x in seat_type.find_all("td")
             )
 
             if kind == "Seats":
@@ -102,7 +102,7 @@ async def get_class_information(class_url):
         data = BeautifulSoup(await data.text())
 
         # Iterate through each section in the course and retrieve appropriate data
-        section_data = data.findAll("th", {"class": "ddtitle", "scope": "colgroup"})
+        section_data = data.find_all("th", {"class": "ddtitle", "scope": "colgroup"})
 
         # Get registration start and end dates, unless they don't exist/are hidden for
         # some reason (this happened with arch planning course)
@@ -113,7 +113,7 @@ async def get_class_information(class_url):
                 for d in (dates_rgx.group(1).split(" to "))
             )
 
-        meeting_times = data.findAll(
+        meeting_times = data.find_all(
             "table",
             {
                 "class": "datadisplaytable",
@@ -161,10 +161,10 @@ async def get_class_information(class_url):
                     }
                 )
                 continue
-            for meeting in time.findAll("tr")[
+            for meeting in time.find_all("tr")[
                 1:
             ]:  # skip the first entry as its just the elabels
-                meeting_data = [x.text for x in meeting.findAll("td")]
+                meeting_data = [x.text for x in meeting.find_all("td")]
                 timeStart, timeEnd = util.time_to_military(meeting_data[1])
                 days = list(meeting_data[2])
                 # Empty days comes up as '\xa0', so remove that if applicable
@@ -199,10 +199,10 @@ async def get_class_information(class_url):
 
 
 def parse_semester_page(text):
-    soup = BeautifulSoup(text).findAll("td", {"class": "ntdefault"})
+    soup = BeautifulSoup(text).find_all("td", {"class": "ntdefault"})
 
     for s in soup:
-        links = s.findAll("a")
+        links = s.find_all("a")
         for link_data in links:
             link = link_data["href"]
             # These links are confused for classes
@@ -267,7 +267,7 @@ async def get_subjects_for_term(term):
         soup = BeautifulSoup(await request.text())
         return [
             (entry.text, entry["value"])
-            for entry in soup.find("select", {"id": "subj_id"}).findAll("option")
+            for entry in soup.find("select", {"id": "subj_id"}).find_all("option")
         ]
 
 
@@ -395,7 +395,7 @@ async def scrape_term_catalog(term):
     async with session.get(url) as request:
         soup = BeautifulSoup(await request.text())
         catalog = {}
-        for subj in map(lambda x: x["value"], soup.find("select").findAll("option")):
+        for subj in map(lambda x: x["value"], soup.find("select").find_all("option")):
             catalog.update(await scrape_subject_catalog(term, subj))
         with open(f"data/{term}/catalog_sis.json", "w") as outfile:
             json.dump(catalog, outfile, sort_keys=False, indent=2)
@@ -410,11 +410,11 @@ async def scrape_subject_catalog(term, search_subj):
         links = soup.find(
             "table",
             {"summary": "This table lists all course detail for the selected term."},
-        ).findAll("a")
+        ).find_all("a")
         links = filter(lambda a: "p_disp_course_detail" in a["href"], links)
         for a in links:
             desc = (
-                a.findNext("td", {"class": "ntdefault"})
+                a.find_next("td", {"class": "ntdefault"})
                 .contents[0]
                 .strip()
                 .split("\n")[0]
